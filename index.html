@@ -35,10 +35,13 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .toprow{display:flex;align-items:baseline;gap:12px}
 .ttl{font-family:var(--serif);font-size:17px;color:var(--ink-2);letter-spacing:.14em}
 .day{font-size:13px;color:var(--ink-3);font-weight:600}
-.rank{margin-left:auto;text-align:right;line-height:1.25}
-.rank b{font-size:15px;color:var(--ink);font-weight:700}
-.rank span{display:block;font-size:11.5px;color:var(--ink-3);letter-spacing:.08em}
-.rank.none b{color:var(--ink-3);font-weight:500}
+.rank{margin-left:auto;text-align:right;line-height:1.2;min-width:128px}
+.rank b{font-size:19px;color:var(--ink);font-weight:400;font-family:var(--serif);letter-spacing:.02em}
+.rank b em{font-style:normal;font-size:11.5px;color:var(--ink-3);margin-left:2px;font-family:var(--sans)}
+.rank span{display:block;font-size:11px;color:var(--ink-3);letter-spacing:.06em}
+.rank .asc{display:block;height:3px;background:var(--sunk);margin-top:4px;border-radius:2px;overflow:hidden}
+.rank .asc i{display:block;height:100%;background:linear-gradient(90deg,var(--blood-deep),var(--gold));transition:width .8s ease}
+.rank.none b{color:var(--ink-3);font-weight:500;font-size:14px;font-family:var(--sans)}
 #stats{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
 .st{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .st em{font-style:normal;font-family:var(--serif);font-size:13px;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line-2);border-radius:4px;color:var(--ink-2)}
@@ -84,6 +87,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .ch::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-2);transition:background .15s}
 .ch:hover{border-color:var(--blood-deep)}
 .ch:hover::before{background:var(--blood)}
+.ch::after{content:"";position:absolute;top:0;bottom:0;left:-45%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,245,220,.055),transparent);transform:skewX(-14deg);transition:left .5s ease;pointer-events:none}
+.ch:hover::after{left:115%}
 .ch:active{transform:translateY(1px)}
 .ch.mem::before{background:var(--curse)}
 .ch.danger::before{background:var(--blood-deep)}
@@ -127,17 +132,31 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .up .lv{font-size:11.5px;color:var(--ink-3);white-space:nowrap}
 
 /* ---- 비무 ---- */
-.duel{border:1px solid var(--line-2);background:var(--paper);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.duel{border:1px solid var(--line-2);background:linear-gradient(180deg,var(--raise),var(--paper));padding:16px;display:flex;flex-direction:column;gap:9px}
 .duel .vs{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.duel .vs b{font-family:var(--serif);font-size:16px}
+.duel .vs b{font-family:var(--serif);font-size:17px}
 .duel .vs span{font-size:12px;color:var(--ink-3)}
 .duel .odds{font-size:12.5px;color:var(--ink-2)}
+.oddsbar{height:4px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.oddsbar i{display:block;height:100%;background:linear-gradient(90deg,var(--blood-deep),var(--blood));transition:width .9s ease}
+/* ---- 서열 변동 연출 ---- */
+.rankshift{position:relative;overflow:hidden;border:1px solid var(--line-2);background:linear-gradient(180deg,var(--raise),var(--paper));padding:18px 16px 15px;text-align:center;display:flex;flex-direction:column;gap:5px}
+.rankshift::before{content:"";position:absolute;inset:0;background:radial-gradient(70% 110% at 50% 0,rgba(201,162,39,.09),transparent);pointer-events:none}
+.rs-old{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rs-old s{color:var(--ink-3)}
+.rs-new{font-family:var(--serif);font-size:36px;line-height:1.15;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.rs-new small{font-size:15px;color:var(--ink-2);letter-spacing:.1em}
+.rs-tier{font-size:12.5px;color:var(--ink-2);letter-spacing:.18em}
+.rs-tierup{font-family:var(--serif);color:var(--gold);font-size:15.5px;letter-spacing:.28em;padding:5px 0 1px;text-indent:.28em;animation:tierflash 1.3s both}
+@keyframes tierflash{0%{opacity:0;transform:scale(.9);filter:blur(3px)}45%{opacity:1;filter:none}100%{transform:none}}
+.rs-pct{font-size:11.5px;color:var(--ink-3);letter-spacing:.06em}
 .title-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px}
 .title-screen{position:relative}
 .title-screen .mts{width:min(400px,92%);height:auto;opacity:.85;margin-bottom:-6px}
 .title-screen h1{font-family:var(--serif);font-weight:400;font-size:44px;letter-spacing:.26em;margin:0;text-indent:.26em;text-shadow:0 2px 24px rgba(192,52,52,.18)}
 .title-screen::after{content:"歿";position:absolute;right:max(14px,6%);bottom:8px;width:44px;height:44px;border:2px solid var(--blood);color:var(--blood);font-family:var(--serif);font-size:20px;display:grid;place-items:center;transform:rotate(-9deg);opacity:.9}
 .title-screen p{margin:0;font-size:13px;color:var(--ink-3);letter-spacing:.14em}
+.title-screen .t8m{font-family:var(--serif);font-size:13.5px;color:var(--gold);letter-spacing:.34em;margin-top:2px}
 .title-screen .btns{display:flex;flex-direction:column;gap:10px;margin-top:26px;width:min(260px,80%)}
 .tbtn{padding:13px;border:1px solid var(--line-2);color:var(--ink);font-size:15px;letter-spacing:.2em;background:var(--paper)}
 .tbtn:hover{border-color:var(--blood)}
@@ -234,12 +253,16 @@ function tierName(r){ /* 원작 경지 체계: 구경(九境) */
   if(r<=10000)return"五경 화경(化境)";if(r<=100000)return"四경 관맥(貫脈)";if(r<=1000000)return"三경 운위(運位)";
   if(r<=3000000)return"二경 취위(取位)";return"一경 식위(識位)";
 }
+function pctTxt(r){const p=r/8000000*100;return "상위 "+(p>=1?p.toFixed(1):p>=0.01?p.toFixed(2):p.toFixed(4))+"%"}
+function ascW(r){return clamp((1-Math.log10(Math.max(1,r))/Math.log10(8000000))*100,2,100)}
 function hud(){
   $("#top").hidden=!G||G.phase==="title";
   if(!G||G.phase==="title")return;
   $("#hudDay").textContent=`제 ${G.day}일`;
   $("#hudRank").className="rank"+(G.rank?"":" none");
-  $("#hudRank").innerHTML=G.rank?`<b class="tnum">강호 서열 ${fmt(G.rank)}위</b><span>${tierName(G.rank)}</span>`:`<b>서열 없음</b><span>강호는 아직 당신을 모른다</span>`;
+  $("#hudRank").innerHTML=G.rank
+    ?`<b class="tnum">${fmt(G.rank)}<em>위</em></b><span>${tierName(G.rank)} · ${pctTxt(G.rank)}</span><span class="asc"><i style="width:${ascW(G.rank)}%"></i></span>`
+    :`<b>서열 없음</b><span>강호는 아직 당신을 모른다</span>`;
   $("#stats").innerHTML=[["hp",`${G.hp}/${G.hpMax}`],["ng",G.ng],["sw",G.sw],["sl",G.sl],["mn",G.mn]]
     .map(([k,v])=>`<span class="st ${k}" id="st-${k}" title="${SK[k]}"><em class="${SET.hanja?"":"kr"}">${SET.hanja?SH[k]:SK[k]}</em><b>${v}</b></span>`).join("");
   $("#curseFill").style.width=clamp(G.curse,0,100)+"%";
@@ -2074,12 +2097,33 @@ function makeFoe(kind){
   return{n:pick(names),rank:target,p};
 }
 function myPower(){return G.sw*1.1+G.ng*1.3+(G.hp/G.hpMax)*3+(G.sl>=5?2:0)}
+/* 서열 변동 연출: 숫자가 굴러 내려간다 */
+function rankShift(oldR,newR){
+  const tierUp=tierName(oldR)!==tierName(newR);
+  const d=el("",`<div class="rankshift">
+    <span class="rs-old">${oldR?`강호 서열 <s>${fmt(oldR)}위</s>`:`강호 서열록 — 이름이 오른다`}</span>
+    <b class="rs-new tnum">${fmt(oldR||8000000)}<small> 위</small></b>
+    ${tierUp?`<div class="rs-tierup">─ ${tierName(newR)} 진입 ─</div>`:`<span class="rs-tier">${tierName(newR)}</span>`}
+    <span class="rs-pct">팔백만 무인 가운데 · ${pctTxt(newR)}</span>
+  </div>`);
+  const numEl=d.querySelector(".rs-new");
+  const from=oldR||8000000,to=newR,dur=reduced?0:1500,t0=performance.now();
+  function tick(t){
+    const k=dur?Math.min(1,(t-t0)/dur):1;
+    const e=1-Math.pow(1-k,3);
+    numEl.innerHTML=fmt(Math.round(from+(to-from)*e))+"<small> 위</small>";
+    if(k<1)requestAnimationFrame(tick);else hud();
+  }
+  requestAnimationFrame(tick);
+}
 function duelStart(kind){
   G.phase="duel";const f=makeFoe(kind);G.duel={f,kind};save();
   const mp=myPower(),odds=clamp(Math.round(50+(mp-f.p)*5),5,92);
   artBlock("duel");
-  el("",`<div class="duel"><div class="vs"><b>${esc(f.n)}</b><span class="tnum">강호 서열 ${fmt(f.rank)}위 · ${tierName(f.rank)}</span></div>
-    <p class="odds">상대의 기세를 읽는다. 승산, 어림잡아 <b class="tnum">열에 ${clamp(Math.round(odds/10),1,9)}</b>.</p></div>`);
+  const dd=el("",`<div class="duel"><div class="vs"><b>${esc(f.n)}</b><span class="tnum">강호 서열 ${fmt(f.rank)}위 · ${tierName(f.rank)}</span></div>
+    <p class="odds">상대의 기세를 읽는다. 승산, 어림잡아 <b class="tnum">열에 ${clamp(Math.round(odds/10),1,9)}</b>.</p>
+    <div class="oddsbar"><i style="width:0%"></i></div></div>`);
+  requestAnimationFrame(()=>{const ob=dd.querySelector(".oddsbar i");if(ob)ob.style.width=odds+"%"});
   buttons([
     {cls:"ch",html:`정면으로 벤다`,on:()=>duelResolve(0)},
     {cls:"ch",html:`살기를 실어 선공한다<span class="req">${G.sl>=3?'<span class="ok">살기 3 — 가능</span>':'<span class="no">살기 3 필요</span>'}</span>`,disabled:G.sl<3,on:()=>duelResolve(1)},
@@ -2116,7 +2160,7 @@ function duelResolve(style){
     const dmg=rnd(0,Math.max(1,hpRisk-2));
     fx({hp:-dmg,sw:1,mn:kind==="unju"?3:(kind==="hochi"?8:(kind==="cheolsan"?100:1)),sl:style===1||style===3?1:0},false);
     if(kind==="cheolsan")narr("철산도가 제 핏속에 가라앉는다.\n\n\"…언젠가, 이런 날이 올 줄 알았지.\"\n\n품에서 나온 것은 은자가 아니라 전표(錢票) 묶음—표국 어음으로 백 냥. 살인과 약탈로 모은 돈이, 주인을 바꾼다.\n\n주모가 문틈으로 그 광경을 보고, 말없이 문을 닫는다. 이 주막은 오늘 일을 평생 발설하지 않을 것이다.");
-    sys(old?`서열 <b class="tnum">${fmt(old)}위 → ${fmt(G.rank)}위</b>`:`<b>강호 서열록에 이름이 오른다 — ${fmt(G.rank)}위</b>`);
+    if(G.rank<(old||8000001))rankShift(old,G.rank);
     if(f.boss==="hochi"){G.flags.hm_saved=1;
       narr("호치가 제 피 웅덩이에 무릎을 꿇는다.\n\n\"…독아단은, 끝까지 너를….\"\n\n뒷말은 뼈 장식 소리에 묻힌다. 패거리가 저희 아장을 버리고 흩어진다. 주인 잃은 개들은 뒤를 돌아보지 않는다.");
       narr("마을 사람들이 하나둘 골목으로 나온다.\n\n임회가 지팡이를 짚고 깊이 허리를 숙인다. 하설이 소리 없이 운다. 오담이—처음으로—웃는다.\n\n\"끌려간 사람들이 있소.\"\n\n임회가 말한다.\n\n\"이 아이의 형, 오치도. 독아단의 위에는 단주 견아(犬牙)라는 자가 있다 들었소. 언젠가, 힘이 닿으면….\"\n\n당신은 고개를 끄덕인다. 갚아야 할 목록이 하나 늘었다.");
@@ -2613,6 +2657,7 @@ function title(){
     </svg>
     <h1>몰락검신</h1>
     <p>沒 落 劍 神</p>
+    <p class="t8m tnum">8,000,000 ─ 1</p>
     <p class="verse">하늘 아래 모든 검이 녹슬었다.\n단 한 자루, 부러진 검만이 기억한다.</p>
     <div class="btns">
       ${run&&run.phase!=="dead"&&run.phase!=="title"?`<button class="tbtn" id="btnCont">이 어 서</button>`:""}
