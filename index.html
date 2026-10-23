@@ -85,6 +85,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .ch.mem::before{background:var(--curse)}
 .ch.danger::before{background:var(--blood-deep)}
 .tapnote{margin:0;text-align:center;font-size:12px;color:var(--ink-3);letter-spacing:.15em;padding:14px 0}
+#morehint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--raise);border:1px solid var(--line-2);color:var(--ink-2);font-size:12.5px;letter-spacing:.12em;padding:7px 15px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35);animation:rise .3s both}
+#morehint:hover{color:var(--ink);border-color:var(--blood-deep)}
 .ch .req{display:block;font-size:12px;color:var(--ink-3);margin-top:3px;font-variant-numeric:tabular-nums}
 .ch .req.ok{color:var(--ok)} .ch .req.no{color:var(--blood)}
 .ch[disabled]{opacity:.45;cursor:not-allowed}
@@ -244,7 +246,9 @@ function hud(){
 
 /* =================== 출력 =================== */
 const SC=$("#scroll");
-function el(cls,html){const d=document.createElement("div");d.className="block "+cls;d.innerHTML=html;SC.appendChild(d);SC.scrollTop=SC.scrollHeight;return d}
+/* 읽던 위치 보호: 바닥 근처에 있을 때만 따라 내려간다 */
+function nearBottom(){return SC.scrollHeight-SC.scrollTop-SC.clientHeight<160}
+function el(cls,html){const nb=nearBottom();const d=document.createElement("div");d.className="block "+cls;d.innerHTML=html;SC.appendChild(d);if(nb)SC.scrollTop=SC.scrollHeight;return d}
 /* 대사·방(榜) 줄 색 구분 — 가독성 */
 function fmtNarr(t){return String(t).split("\n").map(l=>{
   const s=l.trim();
@@ -255,7 +259,7 @@ function fmtNarr(t){return String(t).split("\n").map(l=>{
 function narr(t){el("narr0",`<p class="narr" style="margin:0">${fmtNarr(t)}</p>`)}
 function sys(t){el("sys0",`<p class="sys" style="margin:0">${t}</p>`)}
 function divider(){el("",`<div class="divider">◆　◆　◆</div>`)}
-function clearScroll(){SC.innerHTML=""}
+function clearScroll(){SC.innerHTML="";if(typeof updateHint==="function"&&hintEl)hintEl.hidden=true}
 function choiceEcho(t){el("",`<p class="chosen" style="margin:0">${esc(t)}</p>`)}
 
 /* 타자 효과: 한 노드 텍스트를 서서히 */
@@ -264,7 +268,7 @@ function finishType(){
   if(!typing)return false;
   clearInterval(typing);typing=null;
   if(typeEl)typeEl.innerHTML=fmtNarr(typeFull);
-  SC.scrollTop=SC.scrollHeight;
+  // 스크롤을 건드리지 않는다 — 읽던 자리에서 이어 읽도록
   const d=typeDone;typeDone=null;d&&d();
   return true;
 }
@@ -281,7 +285,7 @@ function typeNarr(text,done){
     const part=parts[pi];
     if(part.startsWith("<")){p.innerHTML+=part;pi++;ci=0}
     else{ci+=1;p.innerHTML=parts.slice(0,pi).join("")+esc(part.slice(0,ci));if(ci>=part.length){pi++;ci=0}}
-    SC.scrollTop=SC.scrollHeight;
+    if(nearBottom())SC.scrollTop=SC.scrollHeight;
   },iv);
   SC.scrollTop=SC.scrollHeight;
 }
@@ -360,19 +364,42 @@ const req=(r)=>{if(!r)return true;for(const[k,v]of Object.entries(r)){if(k==="fl
 const reqTxt=(r)=>{if(!r)return"";const W={hp:"체력",ng:"내공",sw:"검술",sl:"살기",mn:"은자",mem:"전생의 기억"};return Object.entries(r).filter(([k])=>k!=="flag").map(([k,v])=>`${W[k]||k} ${v}`).join(" · ")};
 
 /* =================== 선택지 렌더 (본문 끝에 이어 붙음) =================== */
+/* 화면 밖에 선택지가 생기면 떠오르는 안내 */
+let hintEl=null;
+function updateHint(){
+  if(!hintEl){
+    hintEl=document.createElement("button");hintEl.id="morehint";hintEl.textContent="▾ 선택지";hintEl.hidden=true;
+    hintEl.onclick=()=>{const b=document.getElementById("choices");if(!b)return;
+      const top=b.getBoundingClientRect().top-SC.getBoundingClientRect().top+SC.scrollTop;
+      SC.scrollTo({top:top-SC.clientHeight*0.5,behavior:reduced?"auto":"smooth"})};
+    document.body.appendChild(hintEl);
+  }
+  const box=document.getElementById("choices");
+  if(!box){hintEl.hidden=true;return}
+  const rb=box.getBoundingClientRect(),rs=SC.getBoundingClientRect();
+  hintEl.hidden=!(rb.top>rs.bottom-24);
+}
+SC.addEventListener("scroll",updateHint,{passive:true});
 function chBox(){
   const old=document.getElementById("choices");if(old)old.remove();
   const d=document.createElement("div");d.id="choices";SC.appendChild(d);return d;
+}
+/* 선택지가 떠도 읽던 글을 밀어내지 않는다: 머리만 화면 하단에 걸치게 */
+function revealBox(box){
+  if(!nearBottom())return; // 위로 올라가 읽는 중이면 건드리지 않는다
+  const top=box.getBoundingClientRect().top-SC.getBoundingClientRect().top+SC.scrollTop;
+  const target=top-SC.clientHeight*0.58;
+  if(target>SC.scrollTop)SC.scrollTo({top:target,behavior:reduced?"auto":"smooth"});
 }
 function buttons(list){
   const box=chBox();
   list.forEach(c=>{
     const b=document.createElement("button");
     b.className=c.cls||"ch";b.innerHTML=c.html;
-    if(c.disabled)b.disabled=true;else b.onclick=()=>{finishType();box.remove();c.on()};
+    if(c.disabled)b.disabled=true;else b.onclick=()=>{finishType();box.remove();updateHint();c.on()};
     box.appendChild(b);
   });
-  SC.scrollTop=SC.scrollHeight;
+  revealBox(box);updateHint();
 }
 function contBtn(label,on){buttons([{cls:"cont",html:label||"…",on}])}
 
@@ -1879,9 +1906,9 @@ function hub(fresh){
   box.appendChild(head);
   const grid=document.createElement("div");grid.className="hub";
   acts.forEach(a=>{const b=document.createElement("button");b.className="act";b.disabled=!!a.dis;
-    b.innerHTML=`<b>${a.label}</b><span>${a.desc}</span>`;if(!a.dis)b.onclick=()=>{finishType();box.remove();a.on()};grid.appendChild(b)});
+    b.innerHTML=`<b>${a.label}</b><span>${a.desc}</span>`;if(!a.dis)b.onclick=()=>{finishType();box.remove();updateHint();a.on()};grid.appendChild(b)});
   box.appendChild(grid);
-  SC.scrollTop=SC.scrollHeight;
+  revealBox(box);updateHint();
 }
 const TRAIN_LINES=["마당 구석. 천 번의 횡소(橫掃).","빗자루로도 검은 검이다. 손바닥이 터지고, 감각이 쌓인다.","제자검법 여덟 초식. 삼 년 내내 몸에 새긴 것을, 이제는 더 깊이 새긴다.","땀이 흙 위에 점을 찍는다. 어제보다 반 치 깊게 벤다."];
 const QI_LINES=["가부좌. 들숨. 혀끝을 입천장에.","조식(調息), 취기(聚氣), 운기(運氣)… 토탁(吐濁)에서 막힌다. 뱉어야 할 탁기를, 가슴의 <span class='cu'>문양이 먼저 삼킨다</span>.","기운이 도는 만큼, 저주도 큰다. 알면서도 멈출 수 없다. 힘없이는 아무것도 못 하니까.","탁기를 밀어낼수록 문양이 선명해진다. 노인의 목소리가 들리는 것 같다. '진정한 의미를 깨닫겠지.'"];
