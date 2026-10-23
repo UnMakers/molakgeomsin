@@ -1384,7 +1384,7 @@ const HUB_FLAVOR=[
 "국밥 끓는 냄새. 허기가 당신이 살아 있다는 증거처럼 군다.",
 ];
 function hub(fresh){
-  G.phase="hub";save();hud();
+  G.phase="hub";G.freeEvent=0;save();hud();
   if(fresh){divider();el("",`<p class="sys" style="margin:0">제 ${G.day}일 · 여유 반시진 <b>${G.slots-G.slot}</b></p>`);if(Math.random()<.4)artBlock("inn");narr(pick(HUB_FLAVOR))}
   const left=G.slots-G.slot;
   const acts=[];
@@ -1392,6 +1392,7 @@ function hub(fresh){
   A("검을 수련한다","몸이 기억하는 초식을 꺼낸다<br>검술 + · 체력 −1",()=>doAct("sw"));
   A("운기조식","얕은 단전에 진기를 모은다<br>내공 + · 체력 + · <span class='cu'>저주가 자란다</span>",()=>doAct("qi"));
   A("날품을 판다","장작, 물지게, 지붕 수리<br>은자 + · 체력 −1",()=>doAct("work"));
+  A("폐관 수련 — 사흘","사흘을 검과 호흡에 쏟는다. 세상 일은 그동안에도 흐른다<br>검술·내공 ++ · 체력/은자 − · <span class='cu'>저주 누적</span>",()=>{finishType();montage()});
   A("저잣거리를 돈다","무슨 일이든 일어난다",()=>doAct("explore"));
   const bossKind=G.rank&&G.rank<=10&&G.flags.wolf_down?"lord":(G.rank&&G.rank<=100&&!G.flags.wolf_down?"wolf":"any");
   A(bossKind==="lord"?"혈마곡으로 간다":bossKind==="wolf"?"혈쇄문주와 비무":"비무를 건다",
@@ -1448,6 +1449,15 @@ function afterAct(){
   if(G.slot>=G.slots)endDay();else hub(false);
   hud();save();
 }
+/* 날짜가 차면 자동으로 찾아오는 이야기 */
+function dueStory(){
+  if(G.day>=3&&!G.flags.soa_met&&!G.flags.soa_auto){G.flags.soa_auto=1;return"soa1"}
+  if(G.day>=15&&!G.flags.unju_done){G.flags.unju_done=1;return"unju1"}
+  if(G.day>=22&&!G.flags.shrine_seen&&!G.flags.shrine_done){G.flags.shrine_seen=1;return"shr1"}
+  if(G.flags.bilok&&!G.flags.bilok_seen&&G.day>=24){G.flags.bilok_seen=1;return"e_bilok"}
+  if(G.day>=26&&!G.flags.hm_seen){G.flags.hm_seen=1;return"hm1"}
+  return null;
+}
 function endDay(){
   G.day++;G.slot=0;if(G.duelCool>0)G.duelCool--;
   {const root=0.4*(1-0.12*(meta.up.seal||0));G.curse=clamp(G.curse+root,0,100);
@@ -1457,13 +1467,47 @@ function endDay(){
   else{fx({hp:-2},true);sys(`은자가 없다. 끼니를 거른다. <b class="loss">체력 −2</b>`)}
   if(G.hp<=0){gameOver("굶주림은 검보다 느리지만, 더 집요하다.","아사");return}
   divider();
-  // 보름: 운주 들판
-  if(G.day===15&&!G.flags.unju_done){G.flags.unju_done=1;runNode("unju1",true);return}
-  if(G.day===22&&!G.flags.shrine_done&&!G.flags.shrine_seen){G.flags.shrine_seen=1;runNode("shr1",true);return}
-  if(G.flags.bilok&&!G.flags.bilok_seen&&G.day>=24){G.flags.bilok_seen=1;runNode("e_bilok",true);return}
-  if(G.day===26&&!G.flags.hm_seen){G.flags.hm_seen=1;runNode("hm1",true);return}
+  const beat=dueStory();
+  if(beat){G.freeEvent=1;runNode(beat,true);return}
   if(G.day===8&&!G.flags.wanted_hint){narr("저잣거리에 낯선 자들이 늘었다.\n\n붉은 끈을 소매에 감은 자들. 누군가를 찾는 눈으로 행인을 훑는다.");G.flags.wanted_hint=1}
+  // 하루가 저물 때, 사건이 제 발로 찾아온다
+  if(G.day>=2&&Math.random()<.45){sys(`하루가 저무는 길목에서—`);G.freeEvent=1;explore();return}
   hub(true);
+}
+/* 폐관 수련: 사흘을 한 번에 */
+const MONTAGE_LINES=[
+"객잔 뒷마당. 해가 뜨고, 지고, 다시 뜬다.\n\n천 번의 횡소. 천 번의 호흡. 손바닥의 물집이 터지고 굳은살이 된다.",
+"사흘을 말없이 보낸다.\n\n검을 긋고, 숨을 고르고, 밥을 먹고, 다시 검을 긋는다. 하진무는 아무것도 묻지 않고 밥상만 들인다.",
+"수련에는 극적인 것이 없다.\n\n어제의 반 치, 오늘의 반 치. 그것이 쌓여 벽이 되는 것을, 당신은 이제 안다.",
+];
+function montage(){
+  if(G.hp<=2){narr("몸이 먼저 고개를 젓는다.\n\n지금 폐관에 들면 수련이 아니라 자해다. 하루를 쉬는 것도 수련이다.");contBtn("…",()=>hub(true));return}
+  narr(pick(MONTAGE_LINES));
+  const manual=G.flags.bilok_half||G.flags.bilok_learn;
+  let gsw=0,gng=0,days=0;
+  for(let i=0;i<3;i++){
+    if(G.hp<=2){sys(`몸이 한계를 고한다 — 사흘을 채우지 못하고 멈춘다`);break}
+    let gain=manual?2:1;
+    if(G.sw>=(G.ng+5)*2)gain=Math.random()<.5?1:0;
+    G.sw+=gain;gsw+=gain;G.ng+=1;gng+=1;
+    G.hp=Math.max(0,G.hp-1);
+    const cu=Math.max(1,Math.round((G.flags.breath?1.6:2.2)*(1-0.12*(meta.up.seal||0))));
+    G.curse=clamp(G.curse+cu,0,100);
+    G.day++;G.slot=0;days++;if(G.duelCool>0)G.duelCool--;
+    const root=0.4*(1-0.12*(meta.up.seal||0));G.curse=clamp(G.curse+root,0,100);
+    if(G.mn>0)G.mn--;else G.hp=Math.max(0,G.hp-2);
+    if(G.day>=8)G.flags.wanted_hint=1;
+    growBody();hud();
+    if(checkCurse()){return}
+    if(G.hp<=0){gameOver(G.mn<=0?"굶주림은 검보다 느리지만, 더 집요하다.\n\n수련은 밥을 이기지 못한다.":"몸이 앞으로 쏠린다.\n다리에 힘이 들어가지 않는다.\n\n무리한 수련의 값은, 언제나 몸으로 치른다.",G.mn<=0?"아사":"탈진");return}
+    const b=dueStory();
+    if(b){
+      sys(`${days}일의 수련 — <b class="gain">검술 +${gsw} · 내공 +${gng}</b>`);
+      narr(`${days===1?"이튿날":days===2?"사흘째 되던 날":"수련을 마치던 날"}—세상이 당신을 찾아온다.`);
+      divider();save();G.freeEvent=1;runNode(b,true);return}
+  }
+  if(days>0)sys(`${days===3?"사흘":days+"일"}의 수련 — <b class="gain">검술 +${gsw} · 내공 +${gng}</b> · 체력과 은자가 줄었다`);
+  divider();hud();save();hub(true);
 }
 function checkCurse(){
   if(G.curse>=100){
@@ -1625,7 +1669,8 @@ function go(dest){
   runNode(dest);
 }
 function afterActFromStory(){
-  // 프롤로그(p*)는 반시진을 먹지 않는다. 탐색 사건은 먹는다.
+  // 프롤로그(p*)와 '찾아온 사건'은 반시진을 먹지 않는다. 직접 나간 탐색은 먹는다.
+  if(G.freeEvent){G.freeEvent=0;hub(true);hud();save();return}
   if(G.node&&/^p\d/.test(G.node)){hub(true);hud();save();return}
   afterAct();
 }
