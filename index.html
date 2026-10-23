@@ -2,27 +2,27 @@
 /* 단일 세계: 먹지 위의 핏빛. 라이트 모드 없음 — 혈마교의 하늘 아래는 늘 어둡다. */
 :root,:root[data-mtheme="dark"]{
   --bg:#100D0C; --paper:#191411; --raise:#221B17; --sunk:#0B0908; --line:#2E2520; --line-2:#453831;
-  --ink:#E9DFCB; --ink-2:#B3A48B; --ink-3:#7E715D;
+  --ink:#F2E8D4; --ink-2:#C2B298; --ink-3:#8A7D67;
   --blood:#C03434; --blood-deep:#8E1F1F; --blood-soft:#2E1413;
-  --qi:#7FA8C9; --gold:#C9A227; --ok:#7FA474; --curse:#8E62B8;
+  --qi:#7FA8C9; --gold:#C9A227; --ok:#7FA474; --curse:#9A70C4; --dlg:#E6CB92;
   --serif:"Gowun BS","Gowun Batang","Nanum Myeongjo",serif;
   --sans:"Pretendard BS","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-  --mt1:#241c17; --mt2:#1c1512; --grain-op:.05; --vig:rgba(0,0,0,.42);
+  --mt1:#241c17; --mt2:#1c1512; --grain-op:.05; --vig:rgba(0,0,0,.3);
   color-scheme:dark;
 }
 :root[data-mtheme="light"]{
   --bg:#ECE2CE; --paper:#F6EFDE; --raise:#FBF6E9; --sunk:#E0D4BC; --line:#D5C7AB; --line-2:#B4A181;
   --ink:#2B2117; --ink-2:#5E4F3B; --ink-3:#8B7A5F;
   --blood:#A32424; --blood-deep:#7E1B1B; --blood-soft:#EFDCD0;
-  --qi:#2F618A; --gold:#876413; --ok:#4E7A3E; --curse:#6B4A96;
-  --mt1:#CBBC9D; --mt2:#B9A882; --grain-op:.5; --vig:rgba(96,74,40,.22);
+  --qi:#2F618A; --gold:#876413; --ok:#4E7A3E; --curse:#6B4A96; --dlg:#6E5214;
+  --mt1:#CBBC9D; --mt2:#B9A882; --grain-op:.5; --vig:rgba(96,74,40,.16);
   color-scheme:light;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;height:100%}
 body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.7;letter-spacing:-.005em;word-break:keep-all;overflow-wrap:anywhere}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
-  opacity:1;background:radial-gradient(130% 90% at 50% 8%,transparent 55%,var(--vig)),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .33 0 0 0 0 .2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+  opacity:1;background:radial-gradient(130% 90% at 50% 8%,transparent 60%,var(--vig)),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .33 0 0 0 0 .2 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 #app{position:relative;z-index:2}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
@@ -55,10 +55,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 #scroll{flex:1;overflow-y:auto;padding:22px 2px 28px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
 .block{margin:0 0 20px;animation:rise .45s ease-out both}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}}
-.narr{font-family:var(--serif);font-size:17px;line-height:2.0;color:var(--ink);white-space:pre-wrap}
+.narr{font-family:var(--serif);font-size:17.5px;line-height:2.12;color:var(--ink);white-space:pre-wrap;letter-spacing:.004em}
 .narr em{font-style:normal;color:var(--blood)}
 .narr .qi{color:var(--qi)} .narr .cu{color:var(--curse)}
-.sys{font-size:13.5px;color:var(--ink-3);border-left:2px solid var(--line-2);padding:2px 0 2px 12px;white-space:pre-wrap;font-variant-numeric:tabular-nums}
+.narr .dlg{color:var(--dlg)}
+.narr .inscr{color:var(--gold);letter-spacing:.06em}
+.sys{font-size:14px;color:var(--ink-3);border-left:2px solid var(--line-2);padding:2px 0 2px 12px;white-space:pre-wrap;font-variant-numeric:tabular-nums}
 .sys b{color:var(--ink-2)}
 .gain{color:var(--ok)} .loss{color:var(--blood)}
 .chosen{font-size:14px;color:var(--ink-3);padding:6px 0 0;font-style:normal}
@@ -244,7 +246,14 @@ function hud(){
 /* =================== 출력 =================== */
 const SC=$("#scroll");
 function el(cls,html){const d=document.createElement("div");d.className="block "+cls;d.innerHTML=html;SC.appendChild(d);SC.scrollTop=SC.scrollHeight;return d}
-function narr(t){el("narr0",`<p class="narr" style="margin:0">${t}</p>`)}
+/* 대사·방(榜) 줄 색 구분 — 가독성 */
+function fmtNarr(t){return String(t).split("\n").map(l=>{
+  const s=l.trim();
+  if(/^["“]/.test(s))return `<span class="dlg">${l}</span>`;
+  if(/^[「『]/.test(s))return `<span class="inscr">${l}</span>`;
+  return l;
+}).join("\n")}
+function narr(t){el("narr0",`<p class="narr" style="margin:0">${fmtNarr(t)}</p>`)}
 function sys(t){el("sys0",`<p class="sys" style="margin:0">${t}</p>`)}
 function divider(){el("",`<div class="divider">◆　◆　◆</div>`)}
 function clearScroll(){SC.innerHTML=""}
@@ -255,7 +264,7 @@ let typing=null,typeFull=null,typeDone=null,typeEl=null;
 function finishType(){
   if(!typing)return false;
   clearInterval(typing);typing=null;
-  if(typeEl)typeEl.innerHTML=typeFull;
+  if(typeEl)typeEl.innerHTML=fmtNarr(typeFull);
   SC.scrollTop=SC.scrollHeight;
   const d=typeDone;typeDone=null;d&&d();
   return true;
@@ -264,12 +273,12 @@ function typeNarr(text,done){
   const p=document.createElement("p");p.className="narr";p.style.margin="0";
   const d=document.createElement("div");d.className="block";d.appendChild(p);SC.appendChild(d);
   typeFull=String(text);typeDone=done;typeEl=p;
-  if(reduced||SET.speed==="즉시"){p.innerHTML=typeFull;SC.scrollTop=SC.scrollHeight;typeDone=null;done&&done();return}
+  if(reduced||SET.speed==="즉시"){p.innerHTML=fmtNarr(typeFull);SC.scrollTop=SC.scrollHeight;typeDone=null;done&&done();return}
   const iv={"느림":46,"보통":30,"빠름":14}[SET.speed]||30;
   const parts=typeFull.split(/(<em>.*?<\/em>|<span class="qi">.*?<\/span>|<span class="cu">.*?<\/span>)/g).filter(Boolean);
   let pi=0,ci=0;typing&&clearInterval(typing);
   typing=setInterval(()=>{
-    if(pi>=parts.length){clearInterval(typing);typing=null;const dn=typeDone;typeDone=null;dn&&dn();return}
+    if(pi>=parts.length){clearInterval(typing);typing=null;p.innerHTML=fmtNarr(typeFull);const dn=typeDone;typeDone=null;dn&&dn();return}
     const part=parts[pi];
     if(part.startsWith("<")){p.innerHTML+=part;pi++;ci=0}
     else{ci+=1;p.innerHTML=parts.slice(0,pi).join("")+esc(part.slice(0,ci));if(ci>=part.length){pi++;ci=0}}
@@ -303,6 +312,11 @@ const NODE_ART={p1:"burn",p1a:"night",p1b:"burn",p1c:"burn",p2:"mark",p3:"inn",p
  e_cultists:"field",e_cult_f:"field",e_cult_s:"mark",e_cult_q:"field",e_cult_r:"field",e_bilok:"night",
  shr1:"shrine",shr1b:"shrine",shr_bow:"shrine",shr_open:"shrine",shr_grab:"shrine",shr_leave:"shrine",shr_pass:"rain",shr_after:"field",
  hm1:"village",hm1b:"village",hm2:"alley",hm_talk:"alley",hm_fight:"alley",hm_f1:"alley",hm_f2:"alley",hm3:"village",hm4:"inn",hm_go:"night",hm_stay:"village",
+ town1:"market",town_b:"market",town_m:"market",town_j:"alley",
+ e_acup:"alley",e_acup2:"night",e_coldspring:"field",e_talisman:"market",e_sutra:"shrine",e_dream:"night",
+ e_soa2:"inn",e_village_news:"inn",e_storyteller:"market",e_funeral:"field",e_spar:"inn",
+ e_gamble:"alley",e_gamble2:"alley",e_guard:"market",e_dok_revenge:"alley",
+ e_amhyang:"night",e_amhyang2:"night",e_oldvision:"night",
  unju1:"field",unju2:"field",unju_m:"field"};
 let hitEl=null;
 function hitFX(kind){
@@ -322,7 +336,7 @@ function fx(e,quiet){
     if(k==="hpMax"){G.hpMax+=v;G.hp=Math.min(G.hp+Math.max(0,v),G.hpMax);out.push(`체력 상한 ${v>0?"+":""}${v}`);continue}
     if(!(k in W))continue;
     let dv=v;
-    if(k==="curse"&&dv>0)dv=Math.max(1,Math.round(dv*(1-0.12*(meta.up.seal||0))));
+    if(k==="curse"&&dv>0)dv=Math.max(1,Math.round(dv*(1-0.12*(meta.up.seal||0))*(G.flags&&G.flags.soa_seal?0.85:1)));
     G[k]=Math.round((G[k]+dv)*10)/10;
     if(k==="hp")G.hp=Math.min(G.hp,G.hpMax);
     if(k!=="curse")G[k]=Math.max(0,G[k]);
@@ -1296,6 +1310,228 @@ unju2:{t:`둘러본다.
  fx:{sw:1},
  c:[{t:"서열전에 나선다",go:"@duel:unju"},
     {t:"오늘은 보기만 하고 돌아간다",go:"@echo:칼을 섞지 않고도 배우는 날이 있다. 오늘이 그런 날이다."}]},
+
+/* ================= 상점가 (상시 방문) ================= */
+town1:{t:`저자 상점가.
+
+백초당의 약장 냄새, 단야방의 쇳내, 전당포 뒷문의 눅눅한 그늘.
+
+은자가 할 수 있는 일이 여기 모여 있다.`,
+ c:[{t:"백초당 — 백초 할멈",go:"town_b"},
+    {t:"단야방 — 무고",go:"town_m"},
+    {t:"전당포 뒷문 — 쥐눈이 장",go:"town_j"},
+    {t:"객잔으로 돌아간다",go:"@hub"}]},
+town_b:{t:`백초당. 약장 냄새가 깊다.
+
+백초 할멈이 눈을 들지도 않고 묻는다.
+
+"뭐가 필요해."`,
+ c:[{t:"지혈환 (은자 2) — 상처를 다스린다",req:{mn:2},fx:{mn:-2,hp:4},go:"town_b"},
+    {t:"청혈산 (은자 3) — 피를 맑게 한다",req:{mn:3},fx:{mn:-3,curse:-4},go:"town_b"},
+    {t:"정심단 (은자 6) — 저주의 뿌리를 누른다",req:{mn:6},show:{curse:20},fx:{mn:-6,curse:-8},go:"town_b"},
+    {t:"돌아선다",go:"town1"}]},
+town_m:{t:`단야방. 화로가 낮게 운다.
+
+무고가 망치질을 멈추지 않은 채 턱으로 묻는다. 무슨 일이냐는 뜻이다.`,
+ c:[{t:"맡겨진 검을 받아간다 (은자 20)",req:{mn:20},hide:{flag:"cheonggang"},fx:{mn:-20,sw:2,flag:"cheonggang"},go:"@echo:청강검. 복면의 백발 노인이 맡기고 간, 청운검파 장문인의 검이다. 날이 물처럼 운다."},
+    {t:"검을 손질한다 (은자 2)",req:{mn:2},fx:{mn:-2,sw:1},go:"town_m"},
+    {t:"돌아선다",go:"town1"}]},
+town_j:{t:`전당포 뒷문. 쥐눈이 장이 그늘에서 손가락을 비빈다.
+
+"돈이 되는 이야기, 돈이 드는 이야기. 어느 쪽이오."`,
+ c:[{t:"혈마곡의 길과 진(陣) (은자 10)",req:{mn:10},hide:{flag:"jang_info"},fx:{mn:-10,flag:"jang_info"},go:"@echo:혈마곡은 북쪽 닷새. 입구의 혈천진은 보법 세 걸음이 전부라고, 장이 모래 위에 그림을 그려 보인다. 결전의 날, 이 지식이 칼 반 자루 몫은 할 것이다."},
+    {t:"혈쇄문주의 사슬 버릇 (은자 10)",req:{mn:10},hide:{flag:"chain_info"},show:{rank:1},fx:{mn:-10,flag:"chain_info"},go:"@echo:\"사슬이 왼쪽 어깨를 돌 때, 그자의 오른 무릎이 반 호흡 늦게 따라온다오.\" 장의 정보는 비싸고, 비싼 값을 한다."},
+    {t:"독아단 본단의 소문 (은자 6)",req:{mn:6},hide:{flag:"dok_info"},fx:{mn:-6,flag:"dok_info"},go:"@echo:독아단의 위에는 단주 견아(犬牙)가 있다. 사경(四境) 관맥의 고수. 그리고—끌려간 사람들은 북쪽 골짜기로 옮겨진다고 한다. 아장쯤은 버릇까지 들었다."},
+    {t:"잡소문 (은자 2)",req:{mn:2},fx:{mn:-2},go:"@echo:암향루의 향이 요즘 관도까지 흘러나온다느니, 운검류의 사당에 향을 피우는 여인이 있다느니. 잡소문이란 대개, 나중에야 값이 매겨진다."},
+    {t:"돌아선다",go:"town1"}]},
+
+/* ================= 저주를 다루는 수단들 ================= */
+e_acup:{t:`파락호 골목 끝, 깃발도 없는 의원.
+
+안에는 금침(金針)을 늘어놓은 노인 하나. 당신이 들어서자, 노인의 눈이 정확히 당신의 가슴께에 멎는다.
+
+"…혈도가 탁하군. 그 언저리만."
+
+노인이 침통을 연다.
+
+"금침으로 둘레 혈을 묶으면, 번지는 것이 한동안 느려지지. 은자 다섯."`,
+ c:[{t:"시술을 받는다 (은자 5)",req:{mn:5},fx:{mn:-5,curse:-6},go:"@echo:침이 들어갈 때마다 문양이 가늘게 떤다. 갇히는 것을 아는 짐승처럼. 가슴의 열이 눈에 띄게 식는다."},
+    {t:"\"외상은 안 되나.\"",go:"e_acup2"},
+    {t:"돌아선다",go:"@hub"}]},
+e_acup2:{t:`노인이 피식 웃는다.
+
+"뒷문으로 와. 해 지고 나서."
+
+해 진 뒤의 시술은 등잔 하나로 한다. 노인의 손이 낮에 보던 것보다 떨린다.
+
+"젊어서는 관(官)의 어의(御醫)였어. 지금은… 보다시피."
+
+침이 두 번 빗나간다.`,
+ fx:{hp:-2,curse:-4},
+ c:[{t:"그래도 고맙다고 한다",go:"@echo:빗나간 침 자국이 욱신거린다. 그래도 가슴의 열은 식었다. 공짜의 값이다."}]},
+e_coldspring:{t:`산기슭의 한천(寒泉).
+
+바위틈에서 솟는 물이 한겨울 얼음장이다. 예부터 무인들이 탁기를 씻으러 오던 자리라고, 나무꾼이 일러주었다.
+
+옷을 벗고 들어가면, 뼈까지 시리겠지.`,
+ c:[{t:"샘에 몸을 담근다",fx:{hp:-1,curse:-4},go:"@echo:숨이 멎을 듯한 차가움. 그 차가움이 가슴의 열을 정면으로 누른다. 이가 딱딱 부딪치는 소리를 들으며, 당신은 버틴다. 문양이 조용해진다."},
+    {t:"손발만 씻고 간다",fx:{hp:1},go:"@echo:찬물에 얼굴을 씻는다. 그것만으로도 머리가 맑아진다."}]},
+e_talisman:{t:`장터 어귀, 부적 장수.
+
+"재액을 막고, 사기(邪氣)를 누르는 영부(靈符)요!"
+
+늘어놓은 부적 가운데 하나—먹선이 유난히 깊은 것이 있다. 진품이 섞여 있을지도 모른다.
+
+"한 장에 은자 셋."`,
+ c:[{t:"깊은 먹선의 것을 고른다 (은자 3)",req:{mn:3},go:"@talisman"},
+    {t:"기(氣)로 진품을 가려낸다 (은자 3)",req:{ng:12,mn:3},fx:{mn:-3,curse:-5},go:"@echo:단전의 기를 눈에 모은다. 쌓인 부적 중 단 한 장—미약하게 빛이 도는 것이 있다. 그것을 산다. 품에 넣자 가슴의 열이 한 김 내려앉는다."},
+    {t:"지나친다",go:"@hub"}]},
+e_sutra:{t:`반쯤 무너진 산사(山寺).
+
+늙은 주지가 혼자 경판을 지키고 있다. 당신을 보더니, 묻지도 않고 붓과 종이를 내민다.
+
+"사경(寫經) 한 축이면, 마음 하나가 가라앉지."`,
+ c:[{t:"반나절, 경을 베낀다",fx:{curse:-3,sl:-2},go:"@echo:획 하나, 숨 하나. 쓰다 보면 손이 조용해지고, 손이 조용해지면 가슴도 조용해진다. 문양도—잠시—조용하다."},
+    {t:"불목하니 일을 돕고 삯을 받는다",fx:{mn:2,hp:-1},go:"@echo:장작을 패고 물을 긷는다. 주지가 말없이 주먹밥을 싸준다."},
+    {t:"합장만 하고 떠난다",go:"@hub"}]},
+e_dream:{t:`꿈.
+
+불타는 산장. 그 불길을 등지고 선 복면의 백발.
+
+꿈속에서 당신은 매번 같은 자리에서, 같은 거리만큼 떨어져 노인을 본다. 가까워지려 하면 불이 길을 막는다.
+
+노인이 입을 연다. 소리는 들리지 않는다. 그러나 입 모양은 읽을 수 있다.
+
+<span class="cu">'깨, 달, 았, 느, 냐.'</span>`,
+ c:[{t:"\"아직이다.\"",fx:{curse:1},go:"@echo:눈을 뜬다. 가슴의 문양이 식은땀 아래에서 미지근하게 뛰고 있다. 질문은 꿈에서도 숙제다."},
+    {t:"대답하지 않고 돌아선다",go:"@echo:꿈속에서 등을 돌리는 데도 용기가 든다. 눈을 뜨자, 베개가 식어 있다."}]},
+e_soa2:{t:`객잔 앞. 낯익은 쌍검이 기둥에 기대 있다.
+
+소아다. 당신을 기다렸다는 듯, 묻지도 않고 본론부터.
+
+"그 문양, 요즘 얼마나 자랐어."
+
+당신이 대답하기 전에, 그녀는 제 왼팔 소매를 걷는다. 흉터—아니, 흉터 둘레에 가늘게 찍힌 침 자국들.
+
+"달이 찰 때마다 둘레 혈도를 짚어. 거웅혈(巨雄穴), 그다음 염천(廉泉). 뿌리는 못 뽑아도, 굶길 수는 있어."
+
+그녀가 소매를 내린다.
+
+"적운에서 그렇게 버텼어. 다들."`,
+ fx:{flag:"soa_seal"},
+ c:[{t:"혈도의 자리를 몸에 새긴다",go:"@echo:그날 밤부터 당신은 달의 차고 기움을 센다. 문양이 자라는 속이 눈에 띄게 무뎌진다. 적운검파가 피로 산 지식이다."}]},
+e_village_news:{t:`객잔으로 꾸러미 하나가 와 있다.
+
+보낸 이의 이름은 없다. 풀어보니—잘 말린 약초 한 다발과, 서툰 글씨의 쪽지.
+
+「아전씨. 오담」
+
+'아저씨'를 쓰다 만 글씨다. 약초는 하설의 솜씨일 것이다. 회목촌의 밭에서 자란.
+
+당신은 한참 그 쪽지를 들여다본다.`,
+ fx:{hp:3,curse:-5},
+ c:[{t:"약초를 달여 마신다",go:"@echo:약탕이 쓰고, 달다. 지키는 데 성공한 것이 있다는 사실이—이상하게도—저주보다 깊은 곳을 데운다."}]},
+
+/* ================= 저자의 나날 (볼륨) ================= */
+e_storyteller:{t:`장터 한복판, 설서인(說書人)이 부채를 접었다 폈다 하며 좌중을 쥐고 있다.
+
+"—하여, 청운검파 백스물세 명이 하룻밤에 스러졌으니!"
+
+심장이 멎는다. 당신의 이야기다.
+
+"허나 들리는 말로는, 그 밤에 산을 내려간 그림자가 하나 있었다지."
+
+좌중이 웅성인다. 설서인의 눈이—스치듯—당신을 지나간다.`,
+ c:[{t:"끝까지 듣는다",fx:{curse:-2},go:"@echo:이야기 속에서 사형들은 하나같이 끝까지 싸우다 갔다. 사실과 다르다. 사실보다 낫다. 당신은 처음으로, 그 밤을 남의 이야기처럼 들어본다."},
+    {t:"동전을 던지고 자리를 뜬다",req:{mn:1},fx:{mn:-1},go:"@echo:설서인이 동전을 받으며 당신에게만 들리게 중얼거린다. \"살아 계셨구려.\" 부채가 다시 펴진다. 입이 무거운 자다."},
+    {t:"바로 떠난다",go:"@hub"}]},
+e_funeral:{t:`상여 행렬이 지나간다.
+
+곡소리가 낮다. 울 사람이 몇 남지 않은 집이라는 뜻이다. 베 조각에 쓰인 글—서열전에서 패해 죽은 떠돌이 무사라 한다.
+
+서열록의 팔백만 이름 가운데 하나가 오늘 지워졌다. 아무도 번호를 기억하지 않는다.`,
+ c:[{t:"길을 비켜 고개를 숙인다",fx:{sl:-1},go:"@echo:알지 못하는 자의 죽음에 예를 표한다. 언젠가 누군가 당신에게도 그래 주기를 바라는 마음으로."},
+    {t:"행렬을 등지고 걷는다",fx:{sl:1},go:"@echo:죽음에 일일이 걸음을 멈추면, 이 세상에서는 영영 걸을 수 없다."}]},
+e_spar:{t:`객잔 뒷마당에서 낭인 하나가 목검을 깎고 있다.
+
+당신의 걸음을 보더니, 깎던 목검을 던져 준다.
+
+"합 좀 맞춥시다. 서열 걸지 말고. 요즘 통 검을 섞을 일이 없어서."
+
+눈이 맑다. 칼로 밥은 벌어도, 칼에 잡아먹히지는 않은 부류다.`,
+ c:[{t:"목검을 받아 든다",fx:{sw:2,hp:-2},go:"@echo:백 합. 이기고 지는 것 없이, 서로의 버릇만 주고받는다. 헤어질 때 낭인이 말했다. \"당신 검, 어디 명문(名門) 것인데.\" 당신은 웃기만 했다."},
+    {t:"사양한다",go:"@hub"}]},
+e_gamble:{t:`뒷골목 투전판.
+
+패가 돌고, 은자가 돈다. 끗발 좋은 날은 하루 품삯이 반 시진에 나온다. 나쁜 날은—그 반대다.
+
+"한 자리 끼시오?"`,
+ c:[{t:"은자 둘을 건다",req:{mn:2},go:"@gamble"},
+    {t:"패 도는 손부터 읽는다",req:{sl:4},go:"e_gamble2"},
+    {t:"지나친다",go:"@hub"}]},
+e_gamble2:{t:`살기를 띤 눈은 패보다 손을 본다.
+
+과연—패 돌리는 자의 왼손 소매에서, 세 판에 한 번 꼴로 패가 바뀐다. 타짜다.
+
+당신이 그 손목을 지그시 바라보자, 타짜의 손이 멎는다. 눈이 마주친다.
+
+그가 슬그머니 당신 몫의 판돈을 밀어 보낸다. 입막음 값이다.`,
+ fx:{mn:4,sl:1},
+ c:[{t:"받고 조용히 떠난다",go:"@hub"}]},
+e_guard:{t:`표국(鏢局) 앞이 분주하다.
+
+"반나절 길, 호위 하나 급히 구하오! 삯은 은자 다섯!"
+
+현 경계까지 비단 수레를 호위하는 일이다. 요즘 길에는 독아단이 돈다.`,
+ c:[{t:"맡는다",fx:{mn:5,hp:-2,sw:1},go:"@echo:수레는 무사히 닿았다. 돌아오는 길, 표사가 당신의 보법을 흘끔거린다. \"어느 문파 출신이시오?\" \"…떠돌이요.\" 질문은 거기서 끝난다. 이 바닥의 예의다."},
+    {t:"사양한다",go:"@hub"}]},
+e_dok_revenge:{t:`좁은 길목. 뼈 장식 소리.
+
+독아단 둘—낯이 익다. 지난번의 그 패거리, 혹은 그 형제들.
+
+"찾았다, 이 새끼."
+
+이번에는 처음부터 칼을 빼 들고 있다.`,
+ c:[{t:"정면으로 부순다",req:{sw:10},fx:{sw:1,sl:1,mn:3,hp:-2},go:"@echo:두 합. 두 합이면 충분했다. 지난번과 같은 상대가 아니라는 것을, 당신의 검이 먼저 안다. 놈들의 전낭에서 통행세를 거꾸로 받는다."},
+    {t:"사술을 끌어쓴다",cls:"danger",fx:{curse:5,sl:2,mn:3},go:"@echo:문양이 응답한다. 놈들의 움직임이 물속처럼 느려진다. 끝내고 나니, 손이 떨리지 않는다. 그것이 무섭다."},
+    {t:"지붕을 타고 따돌린다",fx:{hp:-1},go:"@echo:기와 석 장 값을 치르고 목숨을 아낀다. 독아단의 끈질김에는 끝이 없다. 언젠가는 매듭을 지어야 한다."}]},
+/* ---- 후반 자동 스토리 ---- */
+e_amhyang:{t:`주막의 밤.
+
+낯선 여인이 당신의 탁자에 술병을 내려놓는다. 청하지 않은 술이다.
+
+"혼자 드시는 등이 쓸쓸해 보여서."
+
+목소리가 부드럽다. 손끝이 희다. 눈빛이—너무 자연스럽다.
+
+술병에서, 아주 옅게, 단내가 난다. 어디선가 맡아본.`,
+ c:[{t:"잔을 받는다",cls:"danger",go:"@amhyang"},
+    {t:"\"향이 좋군. 암향루(暗香樓)의 것인가.\"",req:{ng:16},go:"e_amhyang2"},
+    {t:"사양하고 일어선다",go:"@echo:여인은 잡지 않는다. 다만 등 뒤에서, 웃음기 없는 목소리가 따라온다. \"조심성이 많으시네.\" 돌아보니 아무도 없다."}]},
+e_amhyang2:{t:`여인의 손이 멎는다.
+
+긴 침묵. 그러고는—처음으로 진짜 표정이 나온다. 재미있다는 얼굴.
+
+"코가 좋으시네."
+
+여인이 술병을 거둔다.
+
+"오늘은 값 없이 물러가 드리죠. 루(樓)의 향을 맡아본 손님은 귀하니까."
+
+그녀가 사라진 자리에 향만 남는다. 암향루가 당신을 저울에 올렸다—그리고 아직, 값을 매기지 못했다.`,
+ fx:{sl:1,flag:"amhyang_known"},
+ c:[{t:"잔에 손대지 않고 일어선다",go:"@hub"}]},
+e_oldvision:{t:`해 질 녘. 객잔 지붕 너머.
+
+맞은편 전각의 용마루 위에, 사람이 서 있다.
+
+복면. 백발. 역광이라 눈은 보이지 않는다. 그러나 당신은 안다—저 시선은 지금 당신의 가슴, 문양이 있는 자리에 꽂혀 있다.
+
+눈을 한 번 깜빡인 사이.
+
+용마루 위에는 아무도 없다.`,
+ fx:{curse:2,flag:"old_seen"},
+ c:[{t:"그 자리를 오래 바라본다",go:"@echo:실험을 지켜보는 눈이었다. 확신에 가까운 직감이다. 노인은 당신을 잊지 않았다. 처음부터, 단 한 번도."}]},
 };
 
 /* =================== 비무 =================== */
@@ -1333,6 +1569,8 @@ function duelResolve(style){
   if(style===2){bonus=-1;hpRisk=2}
   if(style===3){bonus=3+G.curse*0.06;hpRisk=2}
   if(kind==="lord"&&G.flags.jang_info)bonus+=1.5;
+  if(kind==="wolf"&&G.flags.chain_info)bonus+=1.5;
+  if(kind==="hochi"&&G.flags.dok_info)bonus+=1.5;
   const p=clamp(50+(mp+bonus-f.p)*5,5,92);
   const win=rnd(1,100)<=p;
   const lines={
@@ -1382,6 +1620,11 @@ const HUB_FLAVOR=[
 "하진무가 주판알을 튕기다 말고, 당신의 안색부터 살핀다. 일 년을 간호한 사람의 버릇이다.",
 "관아의 깃발이 바람에 펄럭인다. 보지 않으려 해도 붉은색은 눈에 밟힌다.",
 "국밥 끓는 냄새. 허기가 당신이 살아 있다는 증거처럼 군다.",
+"우물가의 아낙들이 목소리를 낮춘다. 또 누가 서열전에서 죽었다는 이야기일 것이다.",
+"마구간의 말이 투레질을 한다. 짐승이 먼저 아는 날씨가 있다.",
+"객잔 바닥을 훔치던 점소이가 당신과 눈이 마주치자 꾸벅, 고개를 숙인다.",
+"멀리 북쪽 하늘이 유난히 검다. 혈마곡이 있는 방향이다.",
+"햇살이 마당에 비스듬히 든다. 이런 날은, 아무 일도 없을 것처럼 군다.",
 ];
 function hub(fresh){
   G.phase="hub";G.freeEvent=0;save();hud();
@@ -1394,6 +1637,7 @@ function hub(fresh){
   A("날품을 판다","장작, 물지게, 지붕 수리<br>은자 + · 체력 −1",()=>doAct("work"));
   A("폐관 수련 — 사흘","사흘을 검과 호흡에 쏟는다. 세상 일은 그동안에도 흐른다<br>검술·내공 ++ · 체력/은자 − · <span class='cu'>저주 누적</span>",()=>{finishType();montage()});
   A("저잣거리를 돈다","무슨 일이든 일어난다",()=>doAct("explore"));
+  A("상점가에 간다","백초당 · 단야방 · 정보상<br>약과 검과 정보에 은자를 쓴다",()=>{finishType();runNode("town1",true)});
   const bossKind=G.rank&&G.rank<=10&&G.flags.wolf_down?"lord":(G.rank&&G.rank<=100&&!G.flags.wolf_down?"wolf":"any");
   A(bossKind==="lord"?"혈마곡으로 간다":bossKind==="wolf"?"혈쇄문주와 비무":"비무를 건다",
     G.duelCool>0?`소문이 가라앉길 기다린다 (${G.duelCool}일)`:bossKind==="lord"?"<span class='cu'>모든 것이 끝나거나, 다시 시작된다</span>":bossKind==="wolf"?"혈마교가 보낸 시험. 피할 수 없다":"서열을 빼앗는다. 혹은 빼앗긴다",
@@ -1430,16 +1674,26 @@ function doAct(k){
   afterAct();
 }
 function clearChoicesEcho(){}
+/* [id, 시작일, 1회성, 조건] — 안 본 사건 우선, 본 사건은 5일 쿨타임 */
+const EVENT_DEFS=[
+ ["soa1",2,1,()=>!G.flags.soa_met],
+ ["e_herb",1,0],["e_thugs",1,1],["e_beggar",2,1],["e_monk",3,1],["e_notice",4,1],
+ ["e_duelist",2,0],["e_rain",3,0],["e_spy",5,1],["e_peddler",4,0],
+ ["e_gamble",3,0],["e_spar",5,0],["e_storyteller",4,1],["e_funeral",7,1],["e_guard",8,0],
+ ["e_coldspring",4,0],["e_acup",5,0],["e_talisman",6,0],["e_sutra",6,0],
+ ["e_cultists",12,0],["e_hunter",8,0,()=>G.flags.wanted_hint],
+ ["e_dok_revenge",14,1,()=>G.flags.dokad],
+ ["e_simma",1,0,()=>G.sl>=7],["e_dream",6,0,()=>G.curse>=30],
+ ["e_soa2",18,1,()=>G.flags.soa_met],
+ ["e_village_news",29,1,()=>G.flags.hm_saved],
+];
 function explore(){
-  const pool=[];
-  if(!G.flags.soa_met&&G.day>=2)pool.push("soa1","soa1");
-  ["e_herb","e_thugs","e_beggar","e_monk","e_notice","e_duelist","e_rain","e_spy","e_peddler"].forEach(id=>{if(!G.flags["seen_"+id]||Math.random()<.35)pool.push(id)});
-  if(G.day>=12&&(!G.flags["seen_e_cultists"]||Math.random()<.3))pool.push("e_cultists","e_cultists");
-  if(G.flags.wanted_hint&&Math.random()<.5)pool.push("e_hunter","e_hunter");
-  if(G.sl>=7&&!G.flags["seen_e_simma_recent"])pool.push("e_simma","e_simma","e_simma");
-  if(pool.includes("e_simma"))G.flags["seen_e_simma_recent"]=1;
-  const id=pick(pool);
-  G.flags["seen_"+id]=1;
+  const ids=EVENT_DEFS.filter(([id,min,once,cond])=>
+    G.day>=min&&!(once&&G.flags["seen_"+id])&&(!cond||cond())).map(c=>c[0]);
+  const unseen=ids.filter(id=>!G.flags["seen_"+id]);
+  const cooled=ids.filter(id=>G.flags["seen_"+id]&&(G.day-(G.flags["seenday_"+id]||0))>=5);
+  const id=pick(unseen.length?unseen:(cooled.length?cooled:ids));
+  G.flags["seen_"+id]=1;G.flags["seenday_"+id]=G.day;
   runNode(id,true);
 }
 function afterAct(){
@@ -1456,11 +1710,13 @@ function dueStory(){
   if(G.day>=22&&!G.flags.shrine_seen&&!G.flags.shrine_done){G.flags.shrine_seen=1;return"shr1"}
   if(G.flags.bilok&&!G.flags.bilok_seen&&G.day>=24){G.flags.bilok_seen=1;return"e_bilok"}
   if(G.day>=26&&!G.flags.hm_seen){G.flags.hm_seen=1;return"hm1"}
+  if(G.day>=30&&!G.flags.amhyang_beat){G.flags.amhyang_beat=1;return"e_amhyang"}
+  if(G.day>=36&&!G.flags.old_beat){G.flags.old_beat=1;return"e_oldvision"}
   return null;
 }
 function endDay(){
   G.day++;G.slot=0;if(G.duelCool>0)G.duelCool--;
-  {const root=0.4*(1-0.12*(meta.up.seal||0));G.curse=clamp(G.curse+root,0,100);
+  {const root=0.4*(1-0.12*(meta.up.seal||0))*(G.flags.soa_seal?0.85:1);G.curse=clamp(G.curse+root,0,100);
    if(G.day===10)narr("가슴의 문양이, 아무것도 하지 않은 날에도 <span class='cu'>조금 자라 있다</span>.\n\n사술은 뿌리를 내렸다. 이제 시간은 당신의 편이 아니다.")}
   // 숙식비
   if(G.mn>0){G.mn--;}
@@ -1491,10 +1747,11 @@ function montage(){
     if(G.sw>=(G.ng+5)*2)gain=Math.random()<.5?1:0;
     G.sw+=gain;gsw+=gain;G.ng+=1;gng+=1;
     G.hp=Math.max(0,G.hp-1);
-    const cu=Math.max(1,Math.round((G.flags.breath?1.6:2.2)*(1-0.12*(meta.up.seal||0))));
+    const sealF=(1-0.12*(meta.up.seal||0))*(G.flags.soa_seal?0.85:1);
+    const cu=Math.max(1,Math.round((G.flags.breath?1.6:2.2)*sealF));
     G.curse=clamp(G.curse+cu,0,100);
     G.day++;G.slot=0;days++;if(G.duelCool>0)G.duelCool--;
-    const root=0.4*(1-0.12*(meta.up.seal||0));G.curse=clamp(G.curse+root,0,100);
+    G.curse=clamp(G.curse+0.4*sealF,0,100);
     if(G.mn>0)G.mn--;else G.hp=Math.max(0,G.hp-2);
     if(G.day>=8)G.flags.wanted_hint=1;
     growBody();hud();
@@ -1627,6 +1884,67 @@ function go(dest){
   if(dest==="@hmbattle"){
     G.day+=3;G.curse=clamp(G.curse+1,0,100);hud();
     duelStart("hochi");return}
+  if(dest==="@talisman"){
+    fx({mn:-3},true);
+    if(rnd(1,100)<=55){
+      narr(`그날 밤, 부적을 가슴께에 붙이고 눕는다.
+
+먹선에서 미미한 서늘함이 번진다. 진품이었다. 문양의 열이 부적 아래에서 숨을 죽인다.`);
+      fx({curse:-5},false);
+    }else{
+      narr(`그날 밤, 부적을 붙이고 눕는다.
+
+아무 일도 일어나지 않는다. 먹물 냄새만 난다.
+
+속았다. 부적 장수는 내일이면 이 장터에 없을 것이다.`);
+    }
+    contBtn("잠을 청한다",()=>afterActFromStory());return}
+  if(dest==="@gamble"){
+    fx({mn:-2},true);
+    if(rnd(1,100)<=45){
+      narr(`끗발이 선다.
+
+석 판을 내리 먹었다. 판이 험해지기 전에, 당신은 미련 없이 자리를 턴다. 따는 법보다 일어서는 법이 어려운 곳이다.`);
+      fx({mn:7},false);
+    }else{
+      narr(`패가 손에 붙지 않는 날이다.
+
+은자 두 닢이 남의 주머니로 건너간다. 투전판의 교훈은 늘 같은 값이다.`);
+    }
+    contBtn("자리를 뜬다",()=>afterActFromStory());return}
+  if(dest==="@amhyang"){
+    if(G.sl>=6){
+      narr(`잔이 입술에 닿기 직전—
+
+몸속의 살기가 먼저 곤두선다. 몇 번의 죽음을 건너온 짐승의 감각이, 혀보다 빨리 독을 안다.
+
+잔을 내려놓는다. 여인의 눈에서 처음으로 웃음기가 걷힌다.
+
+"…아깝네."
+
+다음 순간 여인은 없다. 탁자 위에는 향내 나는 술병만 남아 있다.`);
+      fx({sl:1,flag:"amhyang_known"},false);
+      contBtn("술병을 엎어버린다",()=>afterActFromStory());return}
+    narr(`술이 달다.
+
+달아서, 한 잔이 두 잔이 된다.`);
+    gameOver(`경계했어야 했다.
+그녀의 눈빛이 너무 자연스러웠다.
+목소리도.
+손끝도.
+
+술잔을 받아들었을 때.
+이미 늦었다는 걸 몰랐다.
+
+언제부터였을까.
+몸이 무거워지기 시작한 건.
+
+"잘 자요."
+
+낮고 부드러운 목소리.
+눈꺼풀이 내려앉는다.
+
+바보같이.`,"미인계");return}
   if(dest==="@herbbet"){
     const pw=clamp(45+G.ng*2,45,85);
     if(rnd(1,100)<=pw){
