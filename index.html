@@ -324,7 +324,10 @@ const NODE_ART={p1:"burn",p1a:"night",p1b:"burn",p1c:"burn",p2:"mark",p3:"inn",p
  e_amhyang:"night",e_amhyang2:"night",e_oldvision:"night",
  e_pilgrim:"field",e_swordgrave:"field",e_teaseller:"market",e_nightmarket:"night",e_childplay:"market",
  e_bloodtax:"market",e_lostblade:"rain",e_ferry:"field",e_rival:"inn",e_echoes:"mark",
- wf1:"duel",wf2:"duel",ld1:"field",ld1a:"field",ld1b:"mark",ld1c:"field",ld2:"night",ld3:"night",ld3b:"night",ld_re:"night",
+ wf1:"duel",wf2:"duel",ld0:"field",ld0a:"inn",ld0b:"inn",ld0c:"night",ld0d:"inn",ld0e:"inn",
+ ld1:"field",ld1a:"field",ld1b:"mark",ld1c:"field",ld1t:"field",ld2:"night",ld3:"night",ld3b:"night",ld_re:"night",
+ e_yong:"night",e_yong_f:"night",e_yong_sp:"night",e_yong_sp2:"night",e_yong_k:"night",e_yong_t:"night",e_yong_c:"mark",
+ unju0:"field",unju0b:"field",
  unju1:"field",unju2:"field",unju_m:"field"};
 let hitEl=null;
 function hitFX(kind){
@@ -424,12 +427,50 @@ function victory(){
   sys(`회차 완료 · <b>깨달음 +${gained}</b>`);
   narr(`그러나 가슴의 문양은 사라지지 않는다.
 
-교주가 죽어도 사술은 남는다. 이것을 새긴 손이 따로 있다는 뜻이다.
+교주가 죽어도 사술은 남는다. 이것을 새긴 손이 따로 있다는 뜻이다.`);
+  contBtn("대전을 나선다",()=>{
+    clearScroll();artBlock("night");
+    narr(`대전 밖. 혈마교의 깃발이 타고 있다.
 
-복면 아래의 백발. 운검사태의 사당에서도, 단야방의 검에서도 어른거리던 그 그림자.
+그 불길을 등지고—노인이 서 있다.
 
-이야기는, 아직 끝나지 않았다.`);
-  contBtn("다 음 생 으 로",()=>metaShop());
+복면 위로 드러난 백발. 청운산장의 그 밤과 한 치도 다르지 않은 모습으로.
+
+당신은 검을 들려 한다. 들리지 않는다. 손가락 하나 움직이지 않는다. 공기가 통째로 당신을 쥐고 있다. 멸도의 교주를 벤 당신을—<em>숨 쉬듯이</em>.
+
+"깨달았느냐."
+
+그 목소리. 뼛속에 박혀 있던 못이 울린다.`);
+    contBtn("…",()=>{
+      narr(`"운검(雲劍)의 아이는 알고 있었다. 사(邪)를 모르고서는, 사를 벨 수 없다는 것을."
+
+노인이 불타는 깃발을 올려다본다.
+
+"그 아이가 떠난 뒤, 나는 그 말의 증명을 찾아다녔지. 청운과 적운—운검의 마지막 아이들에게, 내가 남길 수 있는 것은 이것뿐이었다."
+
+사술. 이 저주가—유산이었다는 말인가.
+
+"교주도 한때 내 돌이었다. 다 익기 전에 썩었지만."`);
+      if(G.flags.old_hint)narr(`문득, 죽어가던 교도의 말이 떠오른다. '교주께서도 그자만은—'
+
+이제 그 뒷말을 안다. <em>두려워했다.</em>`);
+      if(G.flags.bilok_learn)narr(`품속에서 운검비록이 <span class="cu">뜨겁게 운다</span>.
+
+드러나지 않던 나머지 절반의 글자가—한 자, 한 자—배어 나오기 시작한다.`);
+      narr(`"네 안의 사술이 다 익으면."
+
+노인이 등을 돌린다.
+
+"나를 찾을 수 있을 것이다."
+
+눈을 한 번 깜빡인 사이, 노인은 없다. 쥐고 있던 공기가 풀리고, 당신은 그제야 무릎을 꿇으며 숨을 토한다.
+
+복수는 끝났다.
+이야기는, 끝나지 않았다.`);
+      el("",`<div class="gameover" style="color:var(--ink)">[ 제一부 完 ]<small>몰락은 끝났다. 이제, 그 너머.</small></div>`);
+      contBtn("다 음 생 으 로",()=>metaShop());
+    });
+  });
 }
 
 /* =================== 깨달음(회귀 상점) =================== */
@@ -735,7 +776,7 @@ e_herb3:{t:`할멈의 손이 멎는다.
 "정심단(定心丹). 뿌리를 뽑지는 못해. 자라는 걸 보름쯤 늦출 뿐이지. 은자 여섯."
 
 "비싸거든, 안 사면 그만이고. 다만—그 냄새 맡고 오는 게 나 같은 늙은이만은 아닐 게다."`,
- c:[{t:"산다",req:{mn:6},fx:{mn:-6,curse:-8},go:"@echo:단약이 혀에서 녹는다. 가슴의 열이 한 김 식는다. 뽑은 것이 아니라 눌렀을 뿐이라는 것을, 몸이 안다."},
+ c:[{t:"산다",req:{mn:6},go:"@jsd:ev"},
     {t:"다음을 기약한다",go:"@hub"}]},
 e_peddler:{t:`관도변에 수레 하나가 멈춰 있다.
 
@@ -1288,11 +1329,30 @@ hm_stay:{t:`"…후회하실 거요."
  fx:{sw:1,hp:2},
  c:[{t:"검을 뽑는다",go:"@hmbattle"}]},
 /* ---- 운주 들판 (중간 보스 이벤트) ---- */
-unju1:{ep:"제二장",sub:"운주 들판",t:`보름째 날.
+unju0:{ep:"제二장",sub:"운주 들판",t:`보름째 날. 운주 들판.
 
-운주 들판에 무인들이 모인다는 날이다. 소아가 말한 그 모임.
+멀리서도 보인다—들판 가득 둘러선 무인들. 병장기의 쇳빛. 가운데 공터의 흙먼지.
 
-들판에는 이미 서른 남짓한 무인이 둘러서 있다. 가운데 공터에서 비무가 벌어지고, 서기 하나가 장부에 서열 변동을 적는다. 혈마교의 공인 서열전이다.
+들어가기 전에, 정해야 할 것이 있다.
+
+당신의 이름은 수배서에 올라 있다. 서기가 장부에 적는 순간, 그 이름은 혈마교의 문서가 된다. 그리고 가슴의 문양—무인들의 눈은 매섭다.
+
+모임에 혈마교의 눈이 섞여 있지 않을 리 없다.`,
+ c:[{t:"가명을 쓴다 — '운객(雲客)'",go:"unju1"},
+    {t:"청운검파의 이름을 그대로 올린다",cls:"danger",fx:{sl:1,flag:"openname"},go:"unju0b"},
+    {t:"문양부터 옷깃 안에 단단히 여민다",fx:{curse:-1},go:"unju1"}]},
+unju0b:{t:`"…청운검파?"
+
+서기의 붓이 멎는다. 주위의 수군거림이 파도처럼 번진다. 죽은 문파의 이름이 산 사람의 입에서 나왔으니.
+
+군중 어딘가에서, 누군가 조용히 자리를 빠져나간다. 전서구(傳書鳩)가 날아오를 것이다. 오늘 밤 안에.
+
+알고 한 선택이다. 숨어서 오르는 길과, 이름을 걸고 오르는 길. 당신은 후자를 골랐다.
+
+문파의 이름이 다시—서열록에 적혔다.`,
+ fx:{flag:"wanted_hint"},
+ c:[{t:"들판으로 들어선다",go:"unju1"}]},
+unju1:{t:`들판에는 이미 서른 남짓한 무인이 둘러서 있다. 가운데 공터에서 비무가 벌어지고, 서기 하나가 장부에 서열 변동을 적는다. 혈마교의 공인 서열전이다.
 
 흑의의 여자가 당신을 발견하고 눈썹을 든다. 소아다.
 
@@ -1339,7 +1399,7 @@ town_b:{t:`백초당. 약장 냄새가 깊다.
 "뭐가 필요해."`,
  c:[{t:"지혈환 (은자 2) — 상처를 다스린다",req:{mn:2},fx:{mn:-2,hp:4},go:"town_b"},
     {t:"청혈산 (은자 3) — 피를 맑게 한다",req:{mn:3},fx:{mn:-3,curse:-4},go:"town_b"},
-    {t:"정심단 (은자 6) — 저주의 뿌리를 누른다",req:{mn:6},show:{curse:20},fx:{mn:-6,curse:-8},go:"town_b"},
+    {t:"정심단 (은자 6) — 저주의 뿌리를 누른다",req:{mn:6},show:{curse:20},go:"@jsd:town"},
     {t:"돌아선다",go:"town1"}]},
 town_m:{t:`단야방. 화로가 낮게 운다.
 
@@ -1532,6 +1592,153 @@ e_amhyang2:{t:`여인의 손이 멎는다.
 그녀가 사라진 자리에 향만 남는다. 암향루가 당신을 저울에 올렸다—그리고 아직, 값을 매기지 못했다.`,
  fx:{sl:1,flag:"amhyang_known"},
  c:[{t:"잔에 손대지 않고 일어선다",go:"@hub"}]},
+/* ================= 제一장: 붉은 달 (원작 EP2) ================= */
+e_yong:{ep:"제一장",sub:"붉은 달",t:`해 질 녘, 현 밖 산길.
+
+약초꾼의 말만 믿고 나선 길이 늦어졌다. 어둠이 드리울 무렵—장정 셋이 길을 막아선다.
+
+누더기를 걸쳤지만, 사나운 눈빛. 필시 산적이렷다.
+
+"어이, 거기. 혼자야?"
+
+덩치 큰 놈이 동료들을 돌아보며 히죽 웃는다.
+
+"뭐 하는 놈이야?"
+"중요해? 혼자잖아."
+"그렇지, 혼자면 똑같지."
+
+산적들이 당신을 천천히 에워싼다.
+
+"죽여서 뒤져보자."
+
+홀쭉한 놈이 칼을 뽑아 들며 말했다. 상대는 고작 산적 셋. 무공에 문외한일 확률이 높다.`,
+ c:[{t:"맞서 싸운다",go:"e_yong_f"},
+    {t:"대화를 시도한다",go:"e_yong_t"},
+    {t:"위협하여 쫓아낸다",go:"e_yong_c"},
+    {t:"소지금을 전부 준다",cls:"danger",go:"@yongd"}]},
+e_yong_f:{t:`당신은 말없이 검을 뽑았다.
+
+"싸우려고?"
+
+홀쭉한 놈이 달려든다. 청운검파 제자검법—한결 정교해진 동작. 검이 막힘없이 뻗어나간다.
+
+놈이 칼을 맞대다 옆으로 쓰러진다.
+
+"이 자식이!"
+
+덩치가 이를 악물고 달려든다. 손목을 유연하게 비틀어 검로를 바꾼다. 서걱—검이 놈의 옆구리를 스쳤다. 덩치가 무릎을 꿇는다.
+
+작달막한 놈이 쓰러진 동료들을 보고 꽁무니를 뺐다.
+
+"살려주십쇼."
+
+덩치가 옆구리를 싸매고 말한다.`,
+ fx:{sw:1,hp:-2},
+ c:[{t:"살려준다",go:"e_yong_sp"},
+    {t:"죽인다",cls:"danger",go:"e_yong_k"}]},
+e_yong_sp:{t:`"이름이 뭡니까."
+
+"…용개요."
+
+당신은 그를 지긋이 쳐다본다. 청운검파의 제자로 살기 전—어느 골목에나 있던 얼굴과 다를 바 없는 사내.
+
+짤랑. 치료비 몇 닢을 던져준다.
+
+"마을로 내려가 치료받으시오. 이왕이면 도적질도 관두시오."
+
+"네, 알겠습니다! 이 은혜는 언젠간 갚겠습니다."
+
+"혹, 혈마교에 대해 아십니까?"
+
+"헉…! 저, 저는 아무것도 모릅니다!"
+
+듣지 못할 말을 들었다는 표정. 이 세력권에서 그 이름이 어떤 무게인지, 산적조차 안다.
+
+협의 길. 스승의 걸음은 어떤 모양이었을까.
+가슴에 사술을 품고 복수를 꿈꾸는 지금, 자격이 있을까 되묻는다.
+
+붉은 달이 걸렸다.`,
+ fx:{mn:-2,sl:-1,flag:"yong_spared"},
+ c:[{t:"갈 길을 재촉한다",go:"@hub"}]},
+e_yong_k:{t:`"더 할 말은?"
+
+당신은 무언가 다짐한 듯 다시 검을 뽑아 든다.
+
+"제발, 제발 살려주십쇼!"
+
+뻗어나간 검신이 유유히 지나간다.
+
+제자 시절, 감히 상상치 못했던 순간. 소중했던 모두가 쓰러지고, 꿈속에서마저 그들의 절규를 들었던—그날에야 마음을 고쳐먹었다.
+
+협의 길. 스승의 걸음은 어떤 모양이었을까.
+이제 돌이킬 수 없으니, 물음의 자격을 되묻는다.
+
+붉은 달이 걸렸다.`,
+ fx:{sl:2,curse:2},
+ c:[{t:"갈 길을 재촉한다",go:"@hub"}]},
+e_yong_sp2:{t:`"이름이 뭡니까."
+
+"…용개요."
+
+더 이상 볼 것도 없다.
+
+"꺼지시오."
+
+"…가, 감사합니다! 살려주셨으니 이만 가봐도 괜찮겠습니까."
+
+허겁지겁 달아나는 그를 뒤로하고, 당신도 갈 길을 재촉한다.
+
+협의 길. 스승의 걸음은 어떤 모양이었을까.
+어리석은 선택이었을까. 가슴에 사술을 품고 복수를 꿈꾸는 지금, 자격이 있을까 되묻는다.
+
+붉은 달이 걸렸다.`,
+ fx:{sl:-1},
+ c:[{t:"갈 길을 재촉한다",go:"@hub"}]},
+e_yong_t:{t:`"잠깐, 말로 합시다."
+
+홀쭉한 놈이 달려들려다 멈칫한다.
+
+"뭐야. 벙어린 줄 알았는데."
+
+"궁금한 게 있소. …혹, 혈마교에 대해 아십니까?"
+
+"헉…!"
+
+셋 모두, 듣지 못할 말을 들었다는 표정이다. 잠시 정적이 흘렀다.
+
+"우, 우린 아무것도 몰라!"
+"얌전히 보내줄 테니, 그냥 가."
+"다시 마주치지 맙시다!"
+
+오묘하게 말의 격식이 높아졌다. 산적들이 슬금슬금 자리를 뜬다.
+
+잘된 일이다. 손에 피를 묻힐 바엔 길을 돌아가라 배웠기에.
+
+협의 길. 조금은 걸맞은 선택이었을까.
+
+붉은 달이 걸렸다.`,
+ c:[{t:"갈 길을 재촉한다",go:"@hub"}]},
+e_yong_c:{t:`당신은 말없이 그들을 응시한다. 검집에 손을 올리지도 않고.
+
+"…야. 이상해."
+"갑자기?"
+"…이놈, 뭔가 있다."
+
+놈들이 섣불리 움직이지 못한다. 기회였다. 당신은 요란히 검을 뽑아 거머쥐었다.
+
+"죽고 싶으면 덤벼라."
+
+뜻밖의 말이 튀어나왔다—때마침, 가슴의 사술이 <span class="cu">반응한다</span>. 몸에서 어두운 기운이 흘러나온다.
+
+"…그냥 가자. 이놈은 위험해."
+
+작달막한 놈이 둘을 끌고 언덕 너머로 사라진다.
+
+통증 없이 잠잠해진 기운. 사술은, 무엇에 반응한 걸까.
+
+붉은 달이 걸렸다.`,
+ fx:{sl:1,curse:1},
+ c:[{t:"갈 길을 재촉한다",go:"@hub"}]},
 /* ================= 추가 사건들 ================= */
 e_pilgrim:{t:`관도에서 순례하는 노(老)무인을 만난다.
 
@@ -1661,10 +1868,88 @@ wf2:{t:`첫 사슬이 날아온다.
 
 그래도, 거미줄 한가운데에서 이겨야 의미가 있다.`,
  c:[{t:"결전",go:"@duel:wolf"}]},
-/* ================= 종장: 혈마곡 (보스 연출) ================= */
-ld1:{ep:"종장",sub:"혈마곡",t:`북쪽으로 닷새.
+/* ================= 종장: 혈마곡 (보스 연출 · 원작 EP10 주막) ================= */
+ld0:{ep:"종장",sub:"검은 산",t:`북쪽으로 닷새.
 
-걸을수록 초목이 성글어지고, 흙빛이 검붉어진다. 마지막 고개를 넘자—검은 산이 입을 벌리고 있다.
+마지막 고개에서—멀리 검은 산이 보인다. 혈마교의 본거지.
+
+산 입구 근처, 작은 주막이 하나 불을 밝히고 있다. 교의 턱밑에서 장사하는 간 큰 집이다. 저기서라면 마지막 정보를 얻을 수 있을지도 모른다.`,
+ fx:{flag:"tavern_done"},
+ c:[{t:"주막에 들어가 정보를 모은다",go:"ld0a"},
+    {t:"혈마교도들의 뒷모습을 미행한다",fx:{hp:-1,flag:"tavern_info"},go:"ld0c"},
+    {t:"지나쳐 바로 산으로 들어간다",go:"ld1"}]},
+ld0a:{t:`주막 문을 연다.
+
+거친 인상의 사내 몇이 술을 마시고 있다. 구석 자리에 앉아 술 한 잔을 시킨다.
+
+그때, 옆 탁자의 사내가 비틀거리며 다가온다. 잔뜩 취했다.
+
+"야, 너. 니 얼굴 처음 보는데? 이 근처 사람 아니지?"
+
+사내가 당신의 어깨를 친다. 주변의 시선이 집중된다. 교의 턱밑—소란은 금물이다.`,
+ c:[{t:"\"한잔 사드릴까요.\" (은자 5)",req:{mn:5},go:"ld0b"},
+    {t:"\"그냥 지나가는 사람입니다.\"",go:"ld0e"},
+    {t:"눈빛으로 눌러 앉힌다",req:{sl:8},fx:{sl:1},go:"ld0d"},
+    {t:"무시하고 술만 마신다",cls:"danger",go:"@tavernluck"}]},
+ld0b:{t:`"…어? 진짜?"
+
+"주인장, 여기 한 잔 더."
+
+사내가 술을 받아들고 활짝 웃는다.
+
+"크하하! 좋은 사람이네! 미안하이, 요즘 기분이 안 좋아서 말이야."
+
+술이 두어 순배 돌자, 사내의 목소리가 낮아진다.
+
+"북쪽 간다고? 거긴 험한데. 요즘 이상한 소문도 있어. 산골 마을에서 사람들이 실종된다는 거야. 한 달 사이에 벌써 다섯. 혈마교 짓인지, 독아단인지…."
+
+나가는 길, 주막 벽의 전단이 눈에 띈다.
+
+「심인계사(尋人啓事) — 철산도(鐵山盜) — 상금 은(銀) 백 냥 — 특징: 얼굴의 칼자국」
+
+그리고—구석 그늘에서 홀로 마시는 사내의 뺨에, 길게 지나간 칼자국.`,
+ fx:{mn:-5,flag:"tavern_info"},
+ c:[{t:"모르는 척 주막을 나선다",go:"ld1"},
+    {t:"철산도에게 다가간다 — 은자 백 냥",cls:"danger",go:"@duel:cheolsan"}]},
+ld0c:{t:`해 질 녘, 주막을 나선 혈마교도 둘의 뒤를 밟는다.
+
+놈들은 큰길을 버리고 바위 그늘로만 걷는다. 같은 자리에서 같은 보폭으로 꺾는다.
+
+—진(陣)을 피해 다니는 길이다.
+
+바위 뒤에 엎드려 반 시진. 놈들의 발자국을 눈에 새긴다. 돌아올 때쯤, 무릎이 다 젖어 있다.
+
+시간은 썼지만, 가장 안전한 정보를 얻었다.`,
+ c:[{t:"산으로 향한다",go:"ld1"}]},
+ld0d:{t:`당신은 잔을 내려놓고, 사내를 본다.
+
+몇 번의 죽음을 건너온 눈. 주정뱅이의 몸이 먼저 안다—건드리면 안 되는 것을 건드렸다는 것을.
+
+"…어, 미안하우."
+
+사내가 비척비척 제자리로 돌아간다. 주막이 조용해진다. 주모가 당신 앞에 안주 한 접시를 소리 없이 놓고 간다. 소란을 막아준 값이다.
+
+벽의 전단이 눈에 띈다.
+
+「심인계사 — 철산도(鐵山盜) — 상금 은 백 냥 — 특징: 얼굴의 칼자국」
+
+그리고 구석 그늘, 홀로 마시는 사내의 뺨에—칼자국.`,
+ fx:{hp:1},
+ c:[{t:"모르는 척 주막을 나선다",go:"ld1"},
+    {t:"철산도에게 다가간다 — 은자 백 냥",cls:"danger",go:"@duel:cheolsan"}]},
+ld0e:{t:`"그냥 지나가는 사람입니다."
+
+"지나가는 사람이 왜 북쪽을 봐?"
+
+취객의 눈이 생각보다 맑다. 당신은 잔을 비우고 조용히 일어선다. 더 캐묻기 전에.
+
+등 뒤에서 사내가 중얼거린다.
+
+"…북쪽 가지 마쇼. 요즘 산골에서 사람이 자꾸 사라져."
+
+나가는 길, 주막 벽의 전단이 눈에 걸린다. 「철산도 — 상금 은 백 냥」.`,
+ c:[{t:"산으로 향한다",go:"ld1"}]},
+ld1:{t:`걸을수록 초목이 성글어지고, 흙빛이 검붉어진다. 고개를 넘자—검은 산이 입을 벌리고 있다.
 
 혈마곡(血魔谷).
 
@@ -1673,8 +1958,17 @@ ld1:{ep:"종장",sub:"혈마곡",t:`북쪽으로 닷새.
 혈천진(血天陣). 모르고 들어서면 뼈도 못 추린다는, 혈마교의 수문진(守門陣)이다.`,
  fx:{flag:"lord_intro"},
  c:[{t:"진의 궤를 안다 — 세 걸음의 보법",show:{flag:"jang_info"},go:"ld1a"},
+    {t:"교도들의 발자국 길을 따른다",show:{flag:"tavern_info"},hide:{flag:"jang_info"},go:"ld1t"},
     {t:"공력으로 정면 돌파한다",hide:{flag:"jang_info"},fx:{hp:-4,curse:3},go:"ld1b"},
     {t:"반나절, 진의 숨을 더듬는다",hide:{flag:"jang_info"},fx:{hp:-2},go:"ld1c"}]},
+ld1t:{t:`주막에서 눈에 새긴 발자국 길.
+
+바위 그늘에서 바위 그늘로. 같은 보폭, 같은 꺾임. 교도들이 다니는 숨길을 그대로 밟는다.
+
+아지랑이가 좌우로 비켜 간다. 진의 이빨 사이를, 당신은 남의 걸음으로 통과한다.
+
+미행에 쓴 반 시진이, 오늘 목숨값을 했다.`,
+ c:[{t:"골짜기로 든다",go:"ld2"}]},
 ld1a:{t:`쥐눈이 장이 모래 위에 그렸던 그림을 떠올린다.
 
 왼발 사선. 멈춤. 오른발 반 보.
@@ -1767,15 +2061,16 @@ e_oldvision:{t:`해 질 녘. 객잔 지붕 너머.
 function makeFoe(kind){
   const base=G.rank||8000000;
   if(kind==="street")return{n:"떠돌이 무사",rank:7903211,p:6+rnd(0,2)};
-  if(kind==="hochi")return{n:"독아단 아장 호치",rank:184210,p:30+rnd(0,3),boss:"hochi"};
+  if(kind==="hochi")return{n:"독아단 아장 호치",rank:184210,p:31+rnd(0,3),boss:"hochi"};
   if(kind==="rival"){const t=Math.max(1,Math.floor((G.rank||8000000)*0.75));
-    return{n:"곽산(郭山)",rank:t,p:Math.round(5+Math.log10(8000001/t)*9+rnd(1,3))}}
-  if(kind==="wolf")return{n:"혈쇄문주(血鎖門主)",rank:77,p:40+rnd(0,4),boss:"wolf"};
-  if(kind==="lord")return{n:"혈마교주 혈천마(血天魔)",rank:1,p:64+rnd(0,4),boss:"lord"};
-  // 내 서열 기준 상대 생성: 위쪽 도전
-  const target=G.rank?Math.max(1,Math.floor(base*(0.45+Math.random()*0.3))):rnd(6500000,7900000);
+    return{n:"곽산(郭山)",rank:t,p:Math.round(5+Math.log10(8000001/t)*11+rnd(1,3))}}
+  if(kind==="cheolsan")return{n:"철산도(鐵山盜)",rank:5213,p:40+rnd(0,3)};
+  if(kind==="wolf")return{n:"혈쇄문주(血鎖門主)",rank:77,p:50+rnd(0,4),boss:"wolf"};
+  if(kind==="lord")return{n:"혈마교주 혈천마(血天魔)",rank:1,p:78+rnd(0,4),boss:"lord"};
+  // 내 서열 기준 상대 생성: 위쪽 도전 (가파른 사다리)
+  const target=G.rank?Math.max(1,Math.floor(base*(0.32+Math.random()*0.26))):rnd(6500000,7900000);
   const names=["유랑검객","파문제자","표국 무사","낭인","산채 부두목","무관 사범","비도객","도객","권사","창수"];
-  const p=Math.round(4+Math.log10(8000001/target)*9+rnd(0,3));
+  const p=Math.round(4+Math.log10(8000001/target)*11+rnd(0,3));
   return{n:pick(names),rank:target,p};
 }
 function myPower(){return G.sw*1.1+G.ng*1.3+(G.hp/G.hpMax)*3+(G.sl>=5?2:0)}
@@ -1819,7 +2114,8 @@ function duelResolve(style){
     const old=G.rank,nr=f.rank;
     G.rank=G.rank?Math.min(G.rank,nr):nr;
     const dmg=rnd(0,Math.max(1,hpRisk-2));
-    fx({hp:-dmg,sw:1,mn:kind==="unju"?3:(kind==="hochi"?8:1),sl:style===1||style===3?1:0},false);
+    fx({hp:-dmg,sw:1,mn:kind==="unju"?3:(kind==="hochi"?8:(kind==="cheolsan"?100:1)),sl:style===1||style===3?1:0},false);
+    if(kind==="cheolsan")narr("철산도가 제 핏속에 가라앉는다.\n\n\"…언젠가, 이런 날이 올 줄 알았지.\"\n\n품에서 나온 것은 은자가 아니라 전표(錢票) 묶음—표국 어음으로 백 냥. 살인과 약탈로 모은 돈이, 주인을 바꾼다.\n\n주모가 문틈으로 그 광경을 보고, 말없이 문을 닫는다. 이 주막은 오늘 일을 평생 발설하지 않을 것이다.");
     sys(old?`서열 <b class="tnum">${fmt(old)}위 → ${fmt(G.rank)}위</b>`:`<b>강호 서열록에 이름이 오른다 — ${fmt(G.rank)}위</b>`);
     if(f.boss==="hochi"){G.flags.hm_saved=1;
       narr("호치가 제 피 웅덩이에 무릎을 꿇는다.\n\n\"…독아단은, 끝까지 너를….\"\n\n뒷말은 뼈 장식 소리에 묻힌다. 패거리가 저희 아장을 버리고 흩어진다. 주인 잃은 개들은 뒤를 돌아보지 않는다.");
@@ -1832,9 +2128,9 @@ function duelResolve(style){
       :"상대가 진창에 무릎을 꿇는다.\n\n당신의 이름이 — 가짜 이름이지만 — 서열록 한 줄을 차지한다.\n팔백만 개의 이름 위로 올라가는 길. 그 첫 계단이다.");
     if(G.flags.soa_met&&kind==="unju")narr("멀리서 소아가 팔짱을 낀 채 이쪽을 본다.\n\n고개를 아주 조금, 끄덕인다.\n그녀 기준으로는 극찬이다.");
   }else{
-    const dmg=rnd(hpRisk,hpRisk+3)+(f.boss?3:0);
-    narr("판단보다 몸이 반 호흡 늦다.\n\n공력이 얕은 검은 결국 칼질일 뿐이라는 것을, 상대의 검이 가르쳐준다.");
-    fx({hp:-dmg,sw:1},false);
+    const dmg=rnd(hpRisk,hpRisk+3)+(f.boss?3:0)+Math.floor(f.p/9);
+    narr("판단보다 몸이 반 호흡 늦다.\n\n공력이 얕은 검은 결국 칼질일 뿐이라는 것을, 상대의 검이 가르쳐준다.\n\n위를 무는 짐승은, 제 급소부터 내놓는 법이다.");
+    fx({hp:-dmg},false);
     if(G.hp<=0){gameOver(f.boss?"막지 못했다.\n검을 쥔 손이 튕겨나갔다.\n\n가슴팍에 충격. 뒤로 날아가 벽에 박혔다.\n숨이 안 쉬어진다.\n\n고수가 당신을 내려다본다. 아무 말도 없다.\n그 눈빛에는 분노도, 경멸도 없었다.\n\n그저.\n관심이 없다.\n\n시야가 어두워졌다.":"검이 스쳤다고 생각했다.\n옆구리에서 열기가 느껴진다.\n손을 가져다 댔다. 붉다.\n\n계속 싸우려 했다. 검을 들어올리는데, 팔이 말을 듣지 않는다.\n무릎이 꺾인다.\n\n이상하다. 통증은 별로 없는데.\n시야가 좁아진다. 소리가 멀어진다.\n\n복수도 못 하고.","비무 패배");return}
     if(f.boss==="hochi"){G.flags.hm_failed=1;
       narr("호치가 침을 뱉고 당신을 넘어간다.\n\n\"촌놈 하나 믿고 까불었다 이거지.\"\n\n그날 회목촌은 다시 불탔다. 당신이 지키지 못한 것의 목록에, 마을 하나가 더해진다.");}
@@ -1842,7 +2138,7 @@ function duelResolve(style){
   }
   if(win&&G.rank<=1000&&!G.flags.hunt_order){G.flags.hunt_order=1;
     narr("그날 밤, 조운현 게시벽에 새 방이 붙는다.\n\n「서열 천위권 진입자 전원, 본교에 등적(登籍)하라. 불응 시 추살(追殺)」\n\n혈마교의 그물이 좁혀진다. 꼭대기가 가까워질수록, 숨을 곳은 줄어든다.")}
-  G.duel=null;G.duelCool=2;save();
+  G.duel=null;G.duelCool=1;save();
   contBtn("자리를 뜬다",()=>hub(true));
 }
 
@@ -1875,7 +2171,7 @@ function hub(fresh){
   A(bossKind==="lord"?"혈마곡으로 간다":bossKind==="wolf"?"혈쇄문주와 비무":"비무를 건다",
     G.duelCool>0?`소문이 가라앉길 기다린다 (${G.duelCool}일)`:bossKind==="lord"?"<span class='cu'>모든 것이 끝나거나, 다시 시작된다</span>":bossKind==="wolf"?"혈마교가 보낸 시험. 피할 수 없다":"서열을 빼앗는다. 혹은 빼앗긴다",
     ()=>{if(bossKind==="wolf"&&!G.flags.wolf_intro)runNode("wf1",true);
-      else if(bossKind==="lord")runNode(G.flags.lord_intro?"ld_re":"ld1",true);
+      else if(bossKind==="lord")runNode(G.flags.lord_intro?"ld_re":(G.flags.tavern_done?"ld1":"ld0"),true);
       else duelStart(bossKind)},G.duelCool>0);
   A("쉰다","아무것도 하지 않는 것도 수련이다<br>체력 +2",()=>doAct("rest"));
   CH.hidden=false;CH.innerHTML="";
@@ -1913,7 +2209,8 @@ function clearChoicesEcho(){}
 /* [id, 시작일, 1회성, 조건] — 안 본 사건 우선, 본 사건은 5일 쿨타임 */
 const EVENT_DEFS=[
  ["soa1",2,1,()=>!G.flags.soa_met],
- ["e_herb",1,0],["e_thugs",1,1],["e_beggar",2,1],["e_monk",3,1],["e_notice",4,1],
+ ["e_yong",2,1],
+ ["e_herb",1,0],["e_thugs",3,1],["e_beggar",2,1],["e_monk",3,1],["e_notice",4,1],
  ["e_duelist",2,0],["e_rain",3,0],["e_spy",5,1],["e_peddler",4,0],
  ["e_gamble",3,0],["e_spar",5,0],["e_storyteller",4,1],["e_funeral",7,1],["e_guard",8,0],
  ["e_coldspring",4,0],["e_acup",5,0],["e_talisman",6,0],["e_sutra",6,0],
@@ -1945,7 +2242,7 @@ function afterAct(){
 /* 날짜가 차면 자동으로 찾아오는 이야기 */
 function dueStory(){
   if(G.day>=3&&!G.flags.soa_met&&!G.flags.soa_auto){G.flags.soa_auto=1;return"soa1"}
-  if(G.day>=15&&!G.flags.unju_done){G.flags.unju_done=1;return"unju1"}
+  if(G.day>=15&&!G.flags.unju_done){G.flags.unju_done=1;return"unju0"}
   if(G.day>=22&&!G.flags.shrine_seen&&!G.flags.shrine_done){G.flags.shrine_seen=1;return"shr1"}
   if(G.flags.bilok&&!G.flags.bilok_seen&&G.day>=24){G.flags.bilok_seen=1;return"e_bilok"}
   if(G.day>=26&&!G.flags.hm_seen){G.flags.hm_seen=1;return"hm1"}
@@ -1955,7 +2252,8 @@ function dueStory(){
 }
 function endDay(){
   G.day++;G.slot=0;if(G.duelCool>0)G.duelCool--;
-  {const root=0.4*(1-0.12*(meta.up.seal||0))*(G.flags.soa_seal?0.85:1);G.curse=clamp(G.curse+root,0,100);
+  {const root=(0.7+0.03*G.day)*(1-0.12*(meta.up.seal||0))*(G.flags.soa_seal?0.85:1);G.curse=clamp(G.curse+root,0,100);
+   if(G.day===18)narr("가슴의 문양이 <span class='cu'>익어간다</span>.\n\n자라는 속도가 눈에 띄게 빨라졌다. 날이 갈수록, 더 빨라질 것이다.\n\n노인의 말이 떠오른다. '다 익으면'—그 다음은, 듣지 못했다.");
    if(G.day===10)narr("가슴의 문양이, 아무것도 하지 않은 날에도 <span class='cu'>조금 자라 있다</span>.\n\n사술은 뿌리를 내렸다. 이제 시간은 당신의 편이 아니다.")}
   // 숙식비
   if(G.mn>0){G.mn--;}
@@ -1987,10 +2285,10 @@ function montage(){
     G.sw+=gain;gsw+=gain;G.ng+=1;gng+=1;
     G.hp=Math.max(0,G.hp-1);
     const sealF=(1-0.12*(meta.up.seal||0))*(G.flags.soa_seal?0.85:1);
-    const cu=Math.max(1,Math.round((G.flags.breath?1.6:2.2)*sealF));
+    const cu=Math.max(1,Math.round((G.flags.breath?1.9:2.6)*sealF));
     G.curse=clamp(G.curse+cu,0,100);
     G.day++;G.slot=0;days++;if(G.duelCool>0)G.duelCool--;
-    G.curse=clamp(G.curse+0.4*sealF,0,100);
+    G.curse=clamp(G.curse+(0.7+0.03*G.day)*sealF,0,100);
     if(G.mn>0)G.mn--;else G.hp=Math.max(0,G.hp-2);
     if(G.day>=8)G.flags.wanted_hint=1;
     growBody();hud();
@@ -2123,6 +2421,60 @@ function go(dest){
   if(dest==="@hmbattle"){
     G.day+=3;G.curse=clamp(G.curse+1,0,100);hud();
     duelStart("hochi");return}
+  if(dest.startsWith("@jsd:")){
+    const n=G.flags.jsdN||0,eff=Math.max(4,8-n);
+    fx({mn:-6,curse:-eff},false);G.flags.jsdN=n+1;
+    narr(n===0
+      ?`단약이 혀에서 녹는다. 가슴의 열이 한 김 식는다.\n\n뽑은 것이 아니라 눌렀을 뿐이라는 것을, 몸이 안다.`
+      :`단약이 녹는다. 효험이—지난번만 못하다.\n\n"같은 약은 같은 몸에 오래 안 듣는다." 백초 할멈의 말대로, 몸이 약에 익숙해지고 있다. 약으로 버는 시간에는 끝이 있다.`);
+    if(dest==="@jsd:town"){contBtn("약방을 둘러본다",()=>runNode("town_b"));return}
+    contBtn("…",()=>afterActFromStory());return}
+  if(dest==="@tavernluck"){
+    if(rnd(1,100)<=60){
+      narr(`당신은 대꾸 없이 잔만 기울인다.
+
+"…재미없는 놈."
+
+취객이 제풀에 꺾여 물러난다. 조용히 술을 비우는 동안, 귀는 주막 안의 말들을 줍는다. 실종 소문. 독아단. 그리고—산길의 진(陣)을 피해 다닌다는 교도들의 이야기.`);
+      fx({flag:"tavern_info"},false);
+    }else{
+      narr(`무시가 불에 기름이었다.
+
+"이 자식이 사람을 무시해?"
+
+술상이 엎어지고, 주먹이 날아온다. 소란을 크게 만들 수는 없어, 당신은 맞아주며 끌어안아 눕히는 쪽을 택한다.
+
+주막이 조용해졌을 때, 입술이 터져 있다. 그리고 문가의 사내 하나가—붉은 끈을 소매에 감은 자가—당신의 얼굴을 오래 보고 나갔다.`);
+      fx({hp:-3,curse:2},false);
+    }
+    contBtn("주막을 나선다",()=>runNode("ld1"));return}
+  if(dest==="@yongd"){
+    const lost=G.mn;G.mn=0;hud();
+    narr(`휙. 당신은 가진 돈뭉치를 전부 던진다.
+
+"이게 전부니, 보내주시오."
+
+작은 녀석이 돈뭉치를 품에 넣는다.
+
+"그냥 보내."
+
+당신이 걸음을 옮기려는 찰나.
+
+"—라고 할 줄 알았냐?"
+
+놈이 히죽이며 둘에게 신호한다. 비겁한 놈들. 홀쭉한 놈이 달려든다.
+
+뭐에 홀린 듯, 몸이 반응한다. 청운검파 제자검법—검이 막힘없이 뻗어, 둘을 차례로 눕힌다. 작달막한 놈은 돈뭉치를 쥔 채 꽁무니를 뺐다.
+
+"살려주십쇼."
+
+덩치가 옆구리를 싸매고 말한다. 다 내어줬건만, 이리도 쉽게 신의를 저버린 자다.`);
+    sys(`은자 전부를 잃었다 <b class="loss">−${lost}</b>`);
+    fx({sw:1,hp:-2},true);
+    buttons([
+      {cls:"ch",html:"살려준다",on:()=>{choiceEcho("살려준다");runNode("e_yong_sp2")}},
+      {cls:"ch danger",html:"죽인다",on:()=>{choiceEcho("죽인다");runNode("e_yong_k")}},
+    ]);return}
   if(dest==="@nightpill"){
     fx({mn:-3},true);
     if(rnd(1,100)<=60){
