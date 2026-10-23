@@ -75,8 +75,11 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .ep-title::before{content:"❖";display:block;color:var(--blood-deep);font-size:11px;letter-spacing:0;text-indent:0;margin-bottom:10px}
 .ep-sub{text-align:center;color:var(--ink-3);font-size:12px;letter-spacing:.1em;margin-bottom:22px}
 
-/* ---- 선택지: 본문 흐름 속에 ---- */
-#choices{margin:4px 0 14px;display:flex;flex-direction:column;gap:8px;animation:rise .45s ease-out both}
+/* ---- 선택지: 하단 고정 박스 (크기 불변 — 본문이 절대 밀리지 않는다) ---- */
+#choices{flex:0 0 auto;height:min(312px,38vh);overflow-y:auto;border-top:1px solid var(--line-2);padding:12px 2px calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+#choices .ch,#choices .cont,#choices .hubhead,#choices .hub,#choices .meta,#choices .tbtn{animation:rise .3s ease-out both}
+#choices .ch{flex:0 0 auto}
+.panel-note{margin:auto;text-align:center;font-size:12px;color:var(--ink-3);letter-spacing:.15em}
 .ch{position:relative;overflow:hidden;text-align:left;padding:13px 16px 13px 22px;border:1px solid var(--line-2);background:linear-gradient(180deg,var(--raise),var(--paper));color:var(--ink);font-size:15.5px;line-height:1.55;transition:border-color .15s,background .15s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
 .ch::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-2);transition:background .15s}
 .ch:hover{border-color:var(--blood-deep)}
@@ -85,8 +88,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .ch.mem::before{background:var(--curse)}
 .ch.danger::before{background:var(--blood-deep)}
 .tapnote{margin:0;text-align:center;font-size:12px;color:var(--ink-3);letter-spacing:.15em;padding:14px 0}
-#morehint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--raise);border:1px solid var(--line-2);color:var(--ink-2);font-size:12.5px;letter-spacing:.12em;padding:7px 15px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35);animation:rise .3s both}
-#morehint:hover{color:var(--ink);border-color:var(--blood-deep)}
 .ch .req{display:block;font-size:12px;color:var(--ink-3);margin-top:3px;font-variant-numeric:tabular-nums}
 .ch .req.ok{color:var(--ok)} .ch .req.no{color:var(--blood)}
 .ch[disabled]{opacity:.45;cursor:not-allowed}
@@ -99,7 +100,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* ---- 일과(거점) ---- */
 .hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 @media(min-width:560px){.hub{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.act{position:relative;overflow:hidden;text-align:left;padding:13px 14px;border:1px solid var(--line-2);background:var(--paper);display:flex;flex-direction:column;gap:3px;min-height:72px}
+.act{position:relative;overflow:hidden;text-align:left;padding:10px 12px;border:1px solid var(--line-2);background:var(--paper);display:flex;flex-direction:column;gap:3px;min-height:60px}
 .act:hover{border-color:var(--blood-deep);background:var(--raise)}
 .act b{font-size:15.5px}
 .act span{font-size:12px;color:var(--ink-3);line-height:1.5}
@@ -187,6 +188,7 @@ body.shake #app{animation:shake .35s}
     <div class="cursebar" id="hudCurse"><span>저주</span><div class="tr"><i id="curseFill"></i></div><span class="tnum" id="curseNum"></span></div>
   </header>
   <main id="scroll" aria-live="polite"></main>
+  <footer id="choices" hidden></footer>
 </div>
 <div id="toast" hidden></div>
 
@@ -259,7 +261,7 @@ function fmtNarr(t){return String(t).split("\n").map(l=>{
 function narr(t){el("narr0",`<p class="narr" style="margin:0">${fmtNarr(t)}</p>`)}
 function sys(t){el("sys0",`<p class="sys" style="margin:0">${t}</p>`)}
 function divider(){el("",`<div class="divider">◆　◆　◆</div>`)}
-function clearScroll(){SC.innerHTML="";if(typeof updateHint==="function"&&hintEl)hintEl.hidden=true}
+function clearScroll(){SC.innerHTML=""}
 function choiceEcho(t){el("",`<p class="chosen" style="margin:0">${esc(t)}</p>`)}
 
 /* 타자 효과: 한 노드 텍스트를 서서히 */
@@ -363,43 +365,19 @@ function growBody(){const nm=10+2*(meta.up.body||0)+Math.floor((G.sw+G.ng)/9);
 const req=(r)=>{if(!r)return true;for(const[k,v]of Object.entries(r)){if(k==="flag"){if(!G.flags[v])return false}else if(k==="mem"){if((meta.up.mem||0)<v)return false}else if((G[k]||0)<v)return false}return true};
 const reqTxt=(r)=>{if(!r)return"";const W={hp:"체력",ng:"내공",sw:"검술",sl:"살기",mn:"은자",mem:"전생의 기억"};return Object.entries(r).filter(([k])=>k!=="flag").map(([k,v])=>`${W[k]||k} ${v}`).join(" · ")};
 
-/* =================== 선택지 렌더 (본문 끝에 이어 붙음) =================== */
-/* 화면 밖에 선택지가 생기면 떠오르는 안내 */
-let hintEl=null;
-function updateHint(){
-  if(!hintEl){
-    hintEl=document.createElement("button");hintEl.id="morehint";hintEl.textContent="▾ 선택지";hintEl.hidden=true;
-    hintEl.onclick=()=>{const b=document.getElementById("choices");if(!b)return;
-      const top=b.getBoundingClientRect().top-SC.getBoundingClientRect().top+SC.scrollTop;
-      SC.scrollTo({top:top-SC.clientHeight*0.5,behavior:reduced?"auto":"smooth"})};
-    document.body.appendChild(hintEl);
-  }
-  const box=document.getElementById("choices");
-  if(!box){hintEl.hidden=true;return}
-  const rb=box.getBoundingClientRect(),rs=SC.getBoundingClientRect();
-  hintEl.hidden=!(rb.top>rs.bottom-24);
-}
-SC.addEventListener("scroll",updateHint,{passive:true});
-function chBox(){
-  const old=document.getElementById("choices");if(old)old.remove();
-  const d=document.createElement("div");d.id="choices";SC.appendChild(d);return d;
-}
-/* 선택지가 떠도 읽던 글을 밀어내지 않는다: 머리만 화면 하단에 걸치게 */
-function revealBox(box){
-  if(!nearBottom())return; // 위로 올라가 읽는 중이면 건드리지 않는다
-  const top=box.getBoundingClientRect().top-SC.getBoundingClientRect().top+SC.scrollTop;
-  const target=top-SC.clientHeight*0.58;
-  if(target>SC.scrollTop)SC.scrollTo({top:target,behavior:reduced?"auto":"smooth"});
-}
+/* =================== 선택지 렌더 (하단 고정 박스 안에서만) =================== */
+const CH=$("#choices");
+function panelNote(t){CH.hidden=false;CH.innerHTML=`<p class="panel-note">${t}</p>`}
 function buttons(list){
-  const box=chBox();
-  list.forEach(c=>{
+  CH.hidden=false;CH.innerHTML="";
+  list.forEach((c,i)=>{
     const b=document.createElement("button");
     b.className=c.cls||"ch";b.innerHTML=c.html;
-    if(c.disabled)b.disabled=true;else b.onclick=()=>{finishType();box.remove();updateHint();c.on()};
-    box.appendChild(b);
+    b.style.animationDelay=Math.min(i*45,220)+"ms";
+    if(c.disabled)b.disabled=true;else b.onclick=()=>{finishType();c.on()};
+    CH.appendChild(b);
   });
-  revealBox(box);updateHint();
+  CH.scrollTop=0;
 }
 function contBtn(label,on){buttons([{cls:"cont",html:label||"…",on}])}
 
@@ -1900,15 +1878,15 @@ function hub(fresh){
       else if(bossKind==="lord")runNode(G.flags.lord_intro?"ld_re":"ld1",true);
       else duelStart(bossKind)},G.duelCool>0);
   A("쉰다","아무것도 하지 않는 것도 수련이다<br>체력 +2",()=>doAct("rest"));
-  const box=chBox();
+  CH.hidden=false;CH.innerHTML="";
   const head=document.createElement("div");head.className="hubhead";
   head.innerHTML=`<span class="loc">운락객잔 · 조운현</span><span class="slots tnum">여유 반시진 <b>${left}</b> · 은자 ${G.mn}</span>`;
-  box.appendChild(head);
+  CH.appendChild(head);
   const grid=document.createElement("div");grid.className="hub";
   acts.forEach(a=>{const b=document.createElement("button");b.className="act";b.disabled=!!a.dis;
-    b.innerHTML=`<b>${a.label}</b><span>${a.desc}</span>`;if(!a.dis)b.onclick=()=>{finishType();box.remove();updateHint();a.on()};grid.appendChild(b)});
-  box.appendChild(grid);
-  revealBox(box);updateHint();
+    b.innerHTML=`<b>${a.label}</b><span>${a.desc}</span>`;if(!a.dis)b.onclick=()=>{finishType();a.on()};grid.appendChild(b)});
+  CH.appendChild(grid);
+  CH.scrollTop=0;
 }
 const TRAIN_LINES=["마당 구석. 천 번의 횡소(橫掃).","빗자루로도 검은 검이다. 손바닥이 터지고, 감각이 쌓인다.","제자검법 여덟 초식. 삼 년 내내 몸에 새긴 것을, 이제는 더 깊이 새긴다.","땀이 흙 위에 점을 찍는다. 어제보다 반 치 깊게 벤다."];
 const QI_LINES=["가부좌. 들숨. 혀끝을 입천장에.","조식(調息), 취기(聚氣), 운기(運氣)… 토탁(吐濁)에서 막힌다. 뱉어야 할 탁기를, 가슴의 <span class='cu'>문양이 먼저 삼킨다</span>.","기운이 도는 만큼, 저주도 큰다. 알면서도 멈출 수 없다. 힘없이는 아무것도 못 하니까.","탁기를 밀어낼수록 문양이 선명해진다. 노인의 목소리가 들리는 것 같다. '진정한 의미를 깨닫겠지.'"];
@@ -2060,10 +2038,8 @@ function runNode(id,fresh){
   G.node=id;G.phase="story";save();hud();
   if(n.ep)el("",`<div class="ep-title">${n.ep}</div><div class="ep-sub">${n.sub||""}</div>`);
   artBlock(n.art||NODE_ART[id]);
-  {const old=document.getElementById("choices");if(old)old.remove()}
-  let tn=null;
+  panelNote("문장을 짚으면 끝까지 펼쳐집니다");
   typeNarr(n.t,()=>{
-    if(tn)tn.remove();
     if(n.fx)fx(n.fx);
     const list=(n.c||[]).filter(c=>(!c.hide||!req(c.hide))&&(!c.show||req(c.show))).map(c=>{
       const ok=req(c.req);
@@ -2073,7 +2049,6 @@ function runNode(id,fresh){
     });
     buttons(list);
   });
-  if(typing)tn=el("",`<p class="tapnote">문장을 짚으면 끝까지 펼쳐집니다</p>`);
 }
 function go(dest){
   hud();save();
@@ -2274,6 +2249,7 @@ function afterActFromStory(){
 /* =================== 타이틀 =================== */
 function title(){
   G={phase:"title"};hud();
+  CH.hidden=true;CH.innerHTML="";
   clearScroll();
   const run=loadRun();
   SC.innerHTML=`<div class="title-screen">
