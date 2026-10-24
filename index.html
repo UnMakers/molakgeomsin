@@ -53,9 +53,17 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cursebar .tr i{display:block;height:100%;background:linear-gradient(90deg,var(--blood-deep),var(--curse));transition:width .5s}
 .flash{animation:statflash .8s}
 @keyframes statflash{0%{color:var(--blood)}100%{}}
+.st.bump{animation:stbump .6s}
+.st.bump b{color:var(--gold)}
+@keyframes stbump{25%{transform:translateY(-2px)}60%{transform:none}}
+#hudCurse.hot .tr i{animation:hotpulse 1.1s infinite}
+#hudCurse.hot span{color:var(--blood)}
+@keyframes hotpulse{50%{filter:brightness(1.6)}}
+.act.boss{border-color:var(--blood-deep);background:linear-gradient(180deg,var(--blood-soft),var(--paper))}
+.act.boss b{color:var(--blood)}
 
 /* ---- 본문 ---- */
-#scroll{flex:1;overflow-y:auto;padding:22px 2px 28px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+#scroll{flex:1;overflow-y:auto;padding:22px 2px 40px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
 .block{margin:0 0 20px;animation:rise .45s ease-out both}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}}
 .narr{font-family:var(--serif);font-size:17.5px;line-height:2.12;color:var(--ink);white-space:pre-wrap;letter-spacing:.004em}
@@ -265,8 +273,10 @@ function hud(){
     :`<b>서열 없음</b><span>강호는 아직 당신을 모른다</span>`;
   $("#stats").innerHTML=[["hp",`${G.hp}/${G.hpMax}`],["ng",G.ng],["sw",G.sw],["sl",G.sl],["mn",G.mn]]
     .map(([k,v])=>`<span class="st ${k}" id="st-${k}" title="${SK[k]}"><em class="${SET.hanja?"":"kr"}">${SET.hanja?SH[k]:SK[k]}</em><b>${v}</b></span>`).join("");
+  bumpKeys.forEach(k=>{const e=$("#st-"+k);if(e){e.classList.add("bump")}});bumpKeys=[];
   $("#curseFill").style.width=clamp(G.curse,0,100)+"%";
   $("#curseNum").textContent=Math.floor(G.curse)+"";
+  $("#hudCurse").classList.toggle("hot",G.curse>=80);
 }
 
 /* =================== 출력 =================== */
@@ -363,12 +373,14 @@ function hitFX(kind){
 }
 
 /* =================== 효과 적용 =================== */
+let bumpKeys=[];
 function fx(e,quiet){
   if(!e)return[];
   const out=[];
   const W={hp:"체력",ng:"내공",sw:"검술",sl:"살기",mn:"은자",curse:"저주"};
   for(const[k,v]of Object.entries(e)){
     if(v===0)continue;
+    if(k in W&&k!=="curse")bumpKeys.push(k);
     if(k==="flag"){(Array.isArray(v)?v:[v]).forEach(f=>G.flags[f]=1);continue}
     if(k==="hpMax"){G.hpMax+=v;G.hp=Math.min(G.hp+Math.max(0,v),G.hpMax);out.push(`체력 상한 ${v>0?"+":""}${v}`);continue}
     if(!(k in W))continue;
@@ -2392,10 +2404,13 @@ const HUB_FLAVOR=[
 ];
 function hub(fresh){
   G.phase="hub";G.freeEvent=0;save();hud();
-  if(fresh){divider();el("",`<p class="sys" style="margin:0">제 ${G.day}일 · 여유 반시진 <b>${G.slots-G.slot}</b></p>`);if(Math.random()<.4)artBlock("inn");narr(pick(HUB_FLAVOR))}
+  if(fresh){
+    // 긴 회차의 로그 정리 (읽던 중이 아닐 때만)
+    if(nearBottom())while(SC.children.length>140)SC.removeChild(SC.firstChild);
+    divider();el("",`<p class="sys" style="margin:0">제 ${G.day}일 · 여유 반시진 <b>${G.slots-G.slot}</b></p>`);if(Math.random()<.4)artBlock("inn");narr(pick(HUB_FLAVOR))}
   const left=G.slots-G.slot;
   const acts=[];
-  const A=(label,desc,on,dis)=>acts.push({label,desc,on,dis});
+  const A=(label,desc,on,dis,boss)=>acts.push({label,desc,on,dis,boss});
   A("검을 수련한다","몸이 기억하는 초식을 꺼낸다<br>검술 + · 체력 −1",()=>doAct("sw"));
   A("운기조식","얕은 단전에 진기를 모은다<br>내공 + · 체력 + · <span class='cu'>저주가 자란다</span>",()=>doAct("qi"));
   A("날품을 판다","장작, 물지게, 지붕 수리<br>은자 + · 체력 −1",()=>doAct("work"));
@@ -2407,14 +2422,14 @@ function hub(fresh){
     G.duelCool>0?`소문이 가라앉길 기다린다 (${G.duelCool}일)`:bossKind==="lord"?"<span class='cu'>모든 것이 끝나거나, 다시 시작된다</span>":bossKind==="wolf"?"혈마교가 보낸 시험. 피할 수 없다":"서열을 빼앗는다. 혹은 빼앗긴다",
     ()=>{if(bossKind==="wolf"&&!G.flags.wolf_intro)runNode("wf1",true);
       else if(bossKind==="lord")runNode(G.flags.lord_intro?"ld_re":(G.flags.tavern_done?"ld1":"ld0"),true);
-      else duelStart(bossKind)},G.duelCool>0);
+      else duelStart(bossKind)},G.duelCool>0,bossKind!=="any");
   A("쉰다","아무것도 하지 않는 것도 수련이다<br>체력 +2",()=>doAct("rest"));
   CH.hidden=false;CH.innerHTML="";
   const head=document.createElement("div");head.className="hubhead";
   head.innerHTML=`<span class="loc">운락객잔 · 조운현</span><span class="slots tnum">여유 반시진 <b>${left}</b> · 은자 ${G.mn}</span>`;
   CH.appendChild(head);
   const grid=document.createElement("div");grid.className="hub";
-  acts.forEach(a=>{const b=document.createElement("button");b.className="act";b.disabled=!!a.dis;
+  acts.forEach(a=>{const b=document.createElement("button");b.className="act"+(a.boss&&!a.dis?" boss":"");b.disabled=!!a.dis;
     b.innerHTML=`<b>${a.label}</b><span>${a.desc}</span>`;if(!a.dis)b.onclick=()=>{finishType();a.on()};grid.appendChild(b)});
   CH.appendChild(grid);
   CH.scrollTop=0;
@@ -2871,7 +2886,11 @@ function title(){
       ${meta.runs?`<button class="tbtn sub" id="btnMeta">깨달음 ${meta.pts} · 회귀 ${meta.runs}회${meta.best?` · 최고 ${fmt(meta.best)}위`:""}</button>`:""}
     </div></div>`;
   const bc=$("#btnCont");if(bc)bc.onclick=()=>{G=run;clearScroll();hud();
-    narr("…어디까지였더라.\n\n기억을 더듬으며, 당신은 하루를 이어간다.");
+    narr(`…어디까지였더라.
+
+제 ${G.day}일. ${G.rank?`강호 서열 ${fmt(G.rank)}위, ${tierName(G.rank)}.`:"아직 서열 없음."} 가슴의 저주는 ${Math.floor(G.curse)}.
+
+기억을 더듬으며, 당신은 하루를 이어간다.`);
     if(G.phase==="duel"&&G.duel)duelStart(G.duel.kind);else hub(true)};
   $("#btnNew").onclick=()=>{
     if(run&&run.phase!=="dead"&&run.phase!=="title"&&!confirm_("진행 중인 생이 있다. 처음부터 다시 시작할까?"))return;
