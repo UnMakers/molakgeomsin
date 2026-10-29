@@ -5,32 +5,32 @@
 여자는 당신의 국밥을 한 숟갈 떠먹는다.
 "죽을상이네. 어느 문파 잔당이야?"
 말투는 가볍다. 남은 한쪽 눈은 아니다. 당신의 손, 어깨, 허리의 중심을 차례로 재고 있다.
-@choice "\"내력(來歷)을 밝힐 이유가 없소.\"" goto:.Soa1C0
-@choice "\"…청운검파요.\"" goto:.Soa1C1
-@choice "말없이 국밥을 뺏어온다" goto:.Soa1C2
-@choice "옷깃을 풀어 가슴의 문양을 보인다" goto:.Soa1C3
+@choice "\"내력(來歷)을 밝힐 이유가 없소.\"" goto:#Soa1C0
+@choice "\"…청운검파요.\"" goto:#Soa1C1
+@choice "말없이 국밥을 뺏어온다" goto:#Soa1C2
+@choice "옷깃을 풀어 가슴의 문양을 보인다" goto:#Soa1C3
 @stop
 # Soa1C0
-@goto .Soa2
+@goto #Soa2
 # Soa1C1
-@goto .Soa2a
+@goto #Soa2a
 # Soa1C2
-@goto .Soa2b
+@goto #Soa2b
 # Soa1C3
-@goto .H_Soamark
+@goto #H_Soamark
 
 # Soa2
 "…."
 순간, 싸늘한 기운이 몸을 감쌌다.
 반응할 새도 없이, 목에 젓가락이 들어와 있다. 깃털 같은 몸놀림. 고수임이 틀림없다.
 "…마지막이야. 내력을 말해."
-@choice "\"처, 청운검파요.\"" goto:.Soa2C0
-@choice "그래도 버틴다" goto:.Soa2C1
+@choice "\"처, 청운검파요.\"" goto:#Soa2C0
+@choice "그래도 버틴다" goto:#Soa2C1
 @stop
 # Soa2C0
-@goto .Soa2a
+@goto #Soa2a
 # Soa2C1
-@goto .H_Soastub
+@goto #H_Soastub
 
 # Soa2a
 "청운검…?"
@@ -41,13 +41,13 @@
 적운검파. 청운과 한 뿌리—운검류(雲劍類)에서 갈라진 또 하나의 검파. 그쪽에도 살아남은 이가 있는 줄은 몰랐다.
 "운주 들판. 보름째 되는 날, 무인들이 모여. 서열에 이름 올릴 작정이면 와."
 @set f_soamet=1
-@choice "국밥값이나 내고 가라고 한다" goto:.Soa2aC0
-@choice "고개만 끄덕인다" goto:.Soa2aC1
+@choice "국밥값이나 내고 가라고 한다" goto:#Soa2aC0
+@choice "고개만 끄덕인다" goto:#Soa2aC1
 @stop
 # Soa2aC0
-@goto .Soa2c
+@goto #Soa2c
 # Soa2aC1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # Soa2b
 그릇을 당기는 당신의 손목을, 여자의 젓가락이 정확히 겨눈다.
@@ -57,7 +57,7 @@
 "소아야. 적운검파. 운주 들판, 보름째 되는 날 무인들이 모여. 그 몸뚱이가 기억하는 게 뭔지 보고 싶거든 와."
 @fx sl:1
 @set f_soamet=1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # Soa2c
 "국밥값."
@@ -66,7 +66,7 @@
 "뻔뻔한 건 마음에 드네."
 @fx mn:1
 @set f_soamet=1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # SoaMarkSafe
 여자의 젓가락이 멎는다.
@@ -81,7 +81,7 @@
 여자가 소매를 내리고, 일어선다.
 "소아. 적운검파(赤雲劍派). 운주 들판, 보름째 되는 날. 그 몸으로 살아남을 작정이면, 와."
 @set f_soamet=1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # Shr1
 ; ===== 제三장 사당 =====
@@ -92,16 +92,16 @@
 운검사태. 운검류(雲劍類)의 종사(宗師). 청운과 적운, 두 검파가 모두 이 이름에서 갈라져 나왔다. 제자 시절에도 행장(行狀)은 들어본 적 없는 이름.
 사당 안을 들여다본다. 먼지 쌓인 제단. 향 한 자루가 꽂혀 있다—<color=#C03434>최근에 피운 것이다</color>. 누군가 당신보다 먼저 이곳에 왔다.
 그리고 제단 위에, 먼지 하나 앉지 않은 나무 상자 하나.
-@choice "무릎을 꿇고 예를 올린다" goto:.Shr1C0
-@choice "상자를 바로 확인한다" goto:.Shr1C1
-@choice "그냥 지나친다" goto:.Shr1C2
+@choice "무릎을 꿇고 예를 올린다" goto:#Shr1C0
+@choice "상자를 바로 확인한다" goto:#Shr1C1
+@choice "그냥 지나친다" goto:#Shr1C2
 @stop
 # Shr1C0
-@goto .ShrBow
+@goto #ShrBow
 # Shr1C1
-@goto .ShrGrab
+@goto #ShrGrab
 # Shr1C2
-@goto .ShrPass
+@goto #ShrPass
 
 # ShrBow
 먼지를 헤치고 제단 앞에 무릎을 꿇는다.
@@ -111,27 +111,27 @@
 가슴으로 <color=#7FA8C9>따뜻한 기운</color>이 흘러든다. 문양의 열이 한 김 식는다.
 예를 마치자, 제단 곁의 나무 상자에 눈이 간다. 손을 뻗으려다 멈춘다. 무엇이 들어 있을지 모른다.
 @fx hp:2 curse:-3
-@choice "열어본다" goto:.ShrBowC0
-@choice "그대로 둔다" goto:.ShrBowC1
+@choice "열어본다" goto:#ShrBowC0
+@choice "그대로 둔다" goto:#ShrBowC1
 @stop
 # ShrBowC0
-@goto .ShrOpen
+@goto #ShrOpen
 # ShrBowC1
-@goto .ShrLeave
+@goto #ShrLeave
 
 # ShrOpen
 심호흡하고 뚜껑을 연다.
 낡은 검보(劍譜) 한 권.<br>표지의 넉 자—「운검비록(雲劍秘錄)」.
 첫 장을 넘긴다.
 …아무것도 쓰여 있지 않다. 두 장. 세 장. 백지다.
-@goto .H_Bilokcheck
+@goto #H_Bilokcheck
 
 # ShrLeave
 예를 올렸으면 그것으로 충분하다.
 죽은 이의 것에 함부로 손대지 않는다. 그것도 배운 격식이다.
 사당을 나선다. 언젠가 다시 올 것만 같은 기분이 든다.
 등 뒤로 거센 바람이 분다.
-@goto .ShrAfter
+@goto #ShrAfter
 
 # ShrGrab
 예(禮)는 생략한다. 손을 뻗어 상자를 집고, 뚜껑을 연다.
@@ -141,13 +141,13 @@
 책을 내동댕이친다. 정신을 차려보니, 상자는 제자리로 돌아가 있다. 뚜껑까지 얌전히 닫힌 채.
 진법(陣法)이다. 예를 갖추지 않은 손을, 사당이 거절했다.
 @fx hp:-2 ng:-2
-@choice "무릎을 꿇고 예부터 올린다" goto:.ShrGrabC0
-@choice "도망치듯 사당을 나선다" goto:.ShrGrabC1
+@choice "무릎을 꿇고 예부터 올린다" goto:#ShrGrabC0
+@choice "도망치듯 사당을 나선다" goto:#ShrGrabC1
 @stop
 # ShrGrabC0
-@goto .ShrBow
+@goto #ShrBow
 # ShrGrabC1
-@goto .ShrAfter
+@goto #ShrAfter
 
 # ShrPass
 지나간다.
@@ -155,26 +155,26 @@
 그렇게 백 걸음.
 걸음이 느려진다. 백스무 걸음에서 멈춘다.
 바람 속에 혼자 앉아 있는 사당이, 꼭 누구 같아서.
-@choice "그래도 간다" goto:.ShrPassC0
-@choice "…돌아간다" goto:.ShrPassC1
+@choice "그래도 간다" goto:#ShrPassC0
+@choice "…돌아간다" goto:#ShrPassC1
 @stop
 # ShrPassC0
 @fx sl:1
 돌아보지 않는 법을 하나 더 익힌다. 이런 것만 늘어간다.
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 # ShrPassC1
-@goto .Shr1b
+@goto #Shr1b
 
 # Shr1b
 돌아와 현판 아래 선다.
 해가 저물기 전에 들렀다 가는 것뿐이라고, 스스로에게 둘러댄다. 아무도 묻지 않았는데.
-@choice "예를 올린다" goto:.Shr1bC0
-@choice "상자를 바로 확인한다" goto:.Shr1bC1
+@choice "예를 올린다" goto:#Shr1bC0
+@choice "상자를 바로 확인한다" goto:#Shr1bC1
 @stop
 # Shr1bC0
-@goto .ShrBow
+@goto #ShrBow
 # Shr1bC1
-@goto .ShrGrab
+@goto #ShrGrab
 
 # ShrAfter
 사당이 등 뒤로 멀어진다.
@@ -182,7 +182,7 @@
 혈마교가 세상에서 지우려는 것이 바로 이것이라면—이것을 다시 세우는 것보다 좋은 복수는 없다.
 등 뒤로 거센 바람이 분다.
 @set f_shrinedone=1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # Hm1
 ; ===== 제四장 잿빛 나무 =====
@@ -195,19 +195,19 @@
 갈라진 이정표에 이름이 남아 있다.
 「회목촌(灰木村)」
 살아 있지만, 호흡을 멈춘 듯한 마을. 그때—고요를 찢는 경박한 웃음소리.
-@choice "소리를 따라간다" goto:.Hm1C0
-@choice "주민들에게 묻는다" goto:.Hm1C1
+@choice "소리를 따라간다" goto:#Hm1C0
+@choice "주민들에게 묻는다" goto:#Hm1C1
 @stop
 # Hm1C0
-@goto .Hm2
+@goto #Hm2
 # Hm1C1
-@goto .Hm1b
+@goto #Hm1b
 
 # Hm1b
 "저게 무슨 소립니까."
 질문마다 뒷걸음질하는 사람들. 두려움이 역력하다. 몇 차례 물었으나 대답이 없다.
 답답한 마음을 뒤로하고, 당신은 소리가 난 곳으로 향한다.
-@goto .Hm2
+@goto #Hm2
 
 # Hm2
 마을 깊은 골목.
@@ -217,13 +217,13 @@
 당신은 골목 안으로 들어선다. 운을 떼기도 전에—
 "동작 그만."
 곰 가죽이 삐딱하게 돌아본다. 어느새 한 손에 도끼. 여우 가죽은 벌써 자취를 감췄다. 기습을 노리고.
-@choice "\"말로 합시다.\"" goto:.Hm2C0
-@choice "검을 뽑는다" goto:.Hm2C1
+@choice "\"말로 합시다.\"" goto:#Hm2C0
+@choice "검을 뽑는다" goto:#Hm2C1
 @stop
 # Hm2C0
-@goto .HmTalk
+@goto #HmTalk
 # Hm2C1
-@goto .HmFight
+@goto #HmFight
 
 # HmTalk
 "개뿔."
@@ -235,7 +235,7 @@
 "…가자." 여우가 곰에게 눈짓한다. "운 좋은 줄 알아. 곧 죽여주마."
 발소리가 멀어진다. 끝이 아닐 것이다.
 @fx sw:1
-@goto .Hm3
+@goto #Hm3
 
 # HmFight
 등 뒤의 기습부터 쳐내고, 돌아서는 도끼를 비켜낸다.
@@ -243,16 +243,16 @@
 "나부랭이는 아닌가 봐?" 여우 가죽이 말했다.<br>"어, 긴장해라." 곰 가죽이 도끼를 뽑으며 대답했다.
 운검류. 본디 받아내는 데 특화된 검(劍). 그러나 부드러움은 재빠른 상대를 잡기 어려운 법.
 놈들을 제압할 계책이 필요하다.
-@choice "좁은 골목—담벼락을 타고 위에서 친다" goto:.HmFightC0
-@choice "공격을 기다려 받아친다" goto:.HmFightC1
-@choice "미숙한 청운검법 하단 4식을 꺼낸다" goto:.HmFightC2
+@choice "좁은 골목—담벼락을 타고 위에서 친다" goto:#HmFightC0
+@choice "공격을 기다려 받아친다" goto:#HmFightC1
+@choice "미숙한 청운검법 하단 4식을 꺼낸다" goto:#HmFightC2
 @stop
 # HmFightC0
-@goto .HmF1
+@goto #HmF1
 # HmFightC1
-@goto .HmF2
+@goto #HmF2
 # HmFightC2
-@goto .H_Hmgamble
+@goto #H_Hmgamble
 
 # HmF1
 좌우 담벼락을 번갈아 차며 뛰어오른다. 하늘에서 치면 피할 곳이 없다.
@@ -262,7 +262,7 @@
 "네, 네놈… 우리가 도, 독아단(毒牙團)인 건 알고 있는 거냐. 곧 아장이 우, 우릴 찾으러 올 거다."
 @fx hp:-2 sw:2 sl:1
 @set f_dokad=1
-@goto .Hm3
+@goto #Hm3
 
 # HmF2
 자세를 낮추고 기다린다. 눈치 빠른 상대는 섣불리 움직이지 않는다.
@@ -272,7 +272,7 @@
 놈은 동료를 부축해 자리를 떴다. 찝찝한 승리. 끝이 아닐 것을 직감한다.
 @fx hp:-1 sw:1
 @set f_dokad=1
-@goto .Hm3
+@goto #Hm3
 
 # Hm3
 골목 끝에서 여인이 다시 나타난다. 무표정하나, 오라 손짓한다.
@@ -281,7 +281,7 @@
 여인—<color=#C03434>하설(河雪)</color>은 당신을 마을 가장 안쪽으로 이끈다. 낡았지만 단단하게 버티고 있는 집 하나.
 문이 열린다. 왼쪽 다리가 절단돼 지팡이를 짚는 노인. 예리한 눈이 당신을 위아래로 훑는다.
 "어서 들어오십시오."
-@goto .Hm4
+@goto #Hm4
 
 # Hm4
 임회(林灰). 촌장이라 자신을 소개한 노인은, 흔들림 없는 눈으로 당신을 관찰한다. 본디 무인임이 틀림없다.
@@ -298,13 +298,13 @@
 임회는 진심으로 당신이 떠나기를 바라고 있다.
 "싸울 수 있는 사람이 정녕 한 명도 없습니까."
 "…없소."
-@choice "싸우기로 한다" goto:.Hm4C0
-@choice "떠나기로 한다" goto:.Hm4C1
+@choice "싸우기로 한다" goto:#Hm4C0
+@choice "떠나기로 한다" goto:#Hm4C1
 @stop
 # Hm4C0
-@goto .HmStay
+@goto #HmStay
 # Hm4C1
-@goto .HmGo
+@goto #HmGo
 
 # HmGo
 밤, 당신은 마을을 나선다.
@@ -313,7 +313,7 @@
 협(俠)이란 무엇인가. 스승이 살아 있었다면 물었을 것이다. 스승은 없고, 물음만 남는다.
 @fx sl:1 curse:2
 @set f_hmleft=1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # HmStay
 "…후회하실 거요."
@@ -326,7 +326,7 @@
 독아단 아장(牙將), <color=#C03434>호치</color>.
 "네가 그 촌놈이냐."
 @fx sw:1 hp:2
-@goto .H_Hmbattle
+@goto #H_Hmbattle
 
 # Unju0
 ; ===== 제二장 운주 들판 =====
@@ -335,19 +335,19 @@
 들어가기 전에, 정해야 할 것이 있다.
 당신의 이름은 수배서에 올라 있다. 서기가 장부에 적는 순간, 그 이름은 혈마교의 문서가 된다. 그리고 가슴의 문양—무인들의 눈은 매섭다.
 모임에 혈마교의 눈이 섞여 있지 않을 리 없다.
-@choice "가명을 쓴다 — '운객(雲客)'" goto:.Unju0C0
-@choice "청운검파의 이름을 그대로 올린다" goto:.Unju0C1
-@choice "문양부터 옷깃 안에 단단히 여민다" goto:.Unju0C2
+@choice "가명을 쓴다 — '운객(雲客)'" goto:#Unju0C0
+@choice "청운검파의 이름을 그대로 올린다" goto:#Unju0C1
+@choice "문양부터 옷깃 안에 단단히 여민다" goto:#Unju0C2
 @stop
 # Unju0C0
-@goto .Unju1
+@goto #Unju1
 # Unju0C1
 @fx sl:1
 @set f_openname=1
-@goto .Unju0b
+@goto #Unju0b
 # Unju0C2
 @fx curse:-1
-@goto .Unju1
+@goto #Unju1
 
 # Unju0b
 "…청운검파?"
@@ -356,24 +356,24 @@
 알고 한 선택이다. 숨어서 오르는 길과, 이름을 걸고 오르는 길. 당신은 후자를 골랐다.
 문파의 이름이 다시—서열록에 적혔다.
 @set f_wanted=1
-@goto .Unju1
+@goto #Unju1
 
 # Unju1
 들판에는 이미 서른 남짓한 무인이 둘러서 있다. 가운데 공터에서 비무가 벌어지고, 서기 하나가 장부에 서열 변동을 적는다. 혈마교의 공인 서열전이다.
 흑의의 여자가 당신을 발견하고 눈썹을 든다. 소아다.
 "진짜 왔네."
-@choice "서열전에 이름을 올린다" goto:.Unju1C0
-@choice "먼저 판을 둘러본다" goto:.Unju1C1
-@choice "백발을 기억한다 — 저자와는 겨루지 않는다" if:g_up_mem>=2&&g_up_mem>=1 goto:.Unju1C2
+@choice "서열전에 이름을 올린다" goto:#Unju1C0
+@choice "먼저 판을 둘러본다" goto:#Unju1C1
+@choice "백발을 기억한다 — 저자와는 겨루지 않는다" if:g_up_mem>=2&&g_up_mem>=1 goto:#Unju1C2
 @stop
 # Unju1C0
 @set dkind="unju"
-@gosub MolakDuel.Run
-@goto Molak02.AfterChapter
+@gosub MolakDuel#Run
+@goto Molak02#AfterChapter
 # Unju1C1
-@goto .Unju2
+@goto #Unju2
 # Unju1C2
-@goto .UnjuM
+@goto #UnjuM
 
 # UnjuM
 전생의 기억이 경고한다.
@@ -381,15 +381,15 @@
 그 빈틈을 물었던 회차의 당신은, 숨이 끊기기 직전에야 그것이 낚싯바늘이었음을 알았다.
 오늘 당신은 백발의 눈을 피해 다른 상대만 고른다. 백발이 떠나기 전, 한 번 이쪽을 본다. 아는 얼굴을 보는 눈으로.
 @fx sw:1 sl:1
-@choice "서열전에 나선다" goto:.UnjuMC0
-@choice "오늘은 물러난다" goto:.UnjuMC1
+@choice "서열전에 나선다" goto:#UnjuMC0
+@choice "오늘은 물러난다" goto:#UnjuMC1
 @stop
 # UnjuMC0
 @set dkind="unju"
-@gosub MolakDuel.Run
-@goto Molak02.AfterChapter
+@gosub MolakDuel#Run
+@goto Molak02#AfterChapter
 # UnjuMC1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 # Unju2
 둘러본다.
@@ -398,43 +398,43 @@
 "눈썰미는 살아 있네. 창은 '곽산'. 백발은 몰라. 어제부터 저러고 서만 있어."
 당신의 눈이 백발의 발끝에 머문다. 반 보. 늘 반 보가 어긋나 있다. 일부러.
 @fx sw:1
-@choice "서열전에 나선다" goto:.Unju2C0
-@choice "오늘은 보기만 하고 돌아간다" goto:.Unju2C1
+@choice "서열전에 나선다" goto:#Unju2C0
+@choice "오늘은 보기만 하고 돌아간다" goto:#Unju2C1
 @stop
 # Unju2C0
 @set dkind="unju"
-@gosub MolakDuel.Run
-@goto Molak02.AfterChapter
+@gosub MolakDuel#Run
+@goto Molak02#AfterChapter
 # Unju2C1
 칼을 섞지 않고도 배우는 날이 있다. 오늘이 그런 날이다.
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 
 
 ; ===== 핸들러 =====
 # H_Soamark
-@goto .SoamarkDie if:curse>=50
-@goto .SoaMarkSafe
+@goto #SoamarkDie if:curse>=50
+@goto #SoaMarkSafe
 # SoamarkDie
 당신이 옷깃을 당기는 것과, 여자의 쌍검이 탁자를 쪼개는 것이 거의 동시다.
 <color=#9A70C4>짙게 물든 문양</color>이 그녀의 외눈에는 다르게 보였다. 사술에 이미 먹힌 자—마인(魔人)의 징후로.
 "…늦었네."
 그 한마디가 선고다. 변명할 틈은, 그녀의 검보다 느리다.
 @set deathcause="소아의 오인"
-@goto MolakOver.Dead
+@goto MolakOver#Dead
 # H_Soastub
 "이미 대답하지 않았소. 어찌…."
 "…혀가 길구나."
 검날에 등불이 반사된다. 고요한 빛.
 빛이 홍채에 맺힌 순간, 당신의 시야가 뒤틀린다.
 @set deathcause="소아의 검"
-@goto MolakOver.Dead
+@goto MolakOver#Dead
 # H_Bilokcheck
-@goto .BilokHalf if:f_cheonggang>0
+@goto #BilokHalf if:f_cheonggang>0
 한참을 들여다봐도 백지는 백지다.
 그러나 버릴 물건이 아니라는 것만은 안다. 종사(宗師)의 사당, 먼지 하나 앉지 않은 상자. 읽는 법이 따로 있을 것이다.
 책을 품에 넣는다.
 @set f_bilok=1
-@goto .ShrAfter
+@goto #ShrAfter
 # BilokHalf
 바로 그때. 허리춤의 청강검이 미세한 떨림을 반복한다.
 검을 뽑아 비록에 가까이 대자—희미한 빛이 번지며 글자의 윤곽이 드러난다.
@@ -442,9 +442,9 @@
 @fx sw:3 ng:1
 @set f_bilok=1
 @set f_bilokhalf=1
-@goto .ShrAfter
+@goto #ShrAfter
 # H_Hmgamble
-@goto .HmgambleWin if:sw>=12
+@goto #HmgambleWin if:sw>=12
 청운검법 하단 4식. 수련 중 몇 번 흉내만 내봤던 동작.
 첫 번째 검. 챙—흘려냈다.<br>두 번째. 캉—막혔다. 괜찮다.<br>세 번째. …왼쪽 사선이었던가.
 찰나의 공백. 여우 가죽은 그 틈을 놓치지 않았다.
@@ -453,7 +453,7 @@
 당신은 도박을 선택했고, 몸이 기억하지 못했다. 그것이 전부였다.
 골목 끝에서 소년이 달려오는 것이 보인다. 시야가 흐려진다.
 @set deathcause="미숙한 초식"
-@goto MolakOver.Dead
+@goto MolakOver#Dead
 # HmgambleWin
 청운검법(靑雲劍法) 하단 4식. 수련 중 몇 번 흉내만 내봤던 초식.
 푸른 하늘의 구름 줄기처럼, 방향을 바꾸며 연속으로 벤다.
@@ -462,17 +462,17 @@
 서걱. 여우 가죽이 제 검과 함께 갈라진 골목 바닥을 내려다보다, 무너진다.
 @fx sw:3 sl:1 hp:-1
 @set f_dokad=1
-@goto .Hm3
+@goto #Hm3
 # H_Hmbattle
 @fx day:3 curse:1
 @set dkind="hochi"
-@gosub MolakDuel.Run
-@goto .HmWin if:duelwin>0
+@gosub MolakDuel#Run
+@goto #HmWin if:duelwin>0
 호치가 침을 뱉고 당신을 넘어간다.
 "촌놈 하나 믿고 까불었다 이거지."
 그날 회목촌은 다시 불탔다. 당신이 지키지 못한 것의 목록에, 마을 하나가 더해진다.
 @set f_hmfailed=1
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 # HmWin
 호치가 제 피 웅덩이에 무릎을 꿇는다.
 "…독아단은, 끝까지 너를…."
@@ -484,9 +484,9 @@
 "이 아이의 형, 오치도. 독아단의 위에는 단주 견아(犬牙)라는 자가 있다 들었소. 언젠가, 힘이 닿으면…."
 당신은 고개를 끄덕인다. 갚아야 할 목록이 하나 늘었다.
 @fx hp:3 curse:-2
-@goto Molak02.AfterChapter
+@goto Molak02#AfterChapter
 # H_Amhyang
-@goto .AmhyangSave if:sl>=6
+@goto #AmhyangSave if:sl>=6
 술이 달다. 달아서, 한 잔이 두 잔이 된다.
 경계했어야 했다. 그녀의 눈빛이 너무 자연스러웠다. 목소리도. 손끝도.
 술잔을 받아들었을 때. 이미 늦었다는 걸 몰랐다.
@@ -495,7 +495,7 @@
 낮고 부드러운 목소리. 눈꺼풀이 내려앉는다.
 바보같이.
 @set deathcause="미인계"
-@goto MolakOver.Dead
+@goto MolakOver#Dead
 # AmhyangSave
 잔이 입술에 닿기 직전—
 몸속의 살기가 먼저 곤두선다. 몇 번의 죽음을 건너온 짐승의 감각이, 혀보다 빨리 독을 안다.
