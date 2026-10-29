@@ -18,8 +18,23 @@
 @goto #ChAmhyang if:day>=30&&b_amhyang<1
 @goto #B32 if:day>=32&&rank>0&&rank<=1000&&b_depart<1
 @goto #ChOld if:day>=36&&b_old<1
+@goto #A12 if:day>=12&&f_yongspared>0&&b_yong2<1
+@goto #A17 if:day>=17&&b_hajin2x<1
+@goto #A19 if:day>=19&&b_jang2<1
+@goto #A21 if:day>=21&&f_soamet>0&&f_shrinedone>0&&b_soa3<1
+@goto #A23 if:day>=23&&b_herb2<1
+@goto #A24 if:day>=24&&rank>0&&rank<=2000&&f_wolfdown<1&&f_wolfedge<1&&b_chain<1
+@goto #A27 if:day>=27&&seen_E_Rival>0&&b_rival2<1
+@goto #A28 if:day>=28&&f_soamet>0&&b_soa4<1
+@goto #A33 if:day>=33&&f_amhyangknown>0&&b_amh2<1
+@goto #A34 if:day>=34&&f_hmsaved>0&&f_ochisaved<1&&b_ochi<1
+@goto #A40 if:day>=40&&f_oldseen>0&&b_old2x<1
 ; --- 아침 풍경 ---
-@set mrand=random(1,4)
+@set mrand=random(1,8)
+@goto #M5 if:mrand==5
+@goto #M6 if:mrand==6
+@goto #M7 if:mrand==7
+@goto #M8 if:mrand==8
 @goto #M2 if:mrand==2
 @goto #M3 if:mrand==3
 @goto #M4 if:mrand==4
@@ -34,6 +49,18 @@
 # M4
 멀리 북쪽 하늘이 유난히 검다. 혈마곡이 있는 방향이다.
 @goto #Daytime
+# M5
+우물가의 아낙들이 목소리를 낮춘다. 또 누가 서열전에서 죽었다는 이야기일 것이다.
+@goto #Daytime
+# M6
+점소이가 마당을 쓸다 말고 당신에게 꾸벅, 고개를 숙인다. 어제보다 깊이. 소문이 도는 모양이다.
+@goto #Daytime
+# M7
+밤새 비가 다녀갔다. 처마 끝에서 떨어지는 물방울이 셈을 세듯 고르다.
+@goto #Daytime
+# M8
+관도 쪽에서 말발굽 소리. 붉은 끈의 전령이 북쪽으로 달려간다. 교의 소식은 늘 사람보다 빠르다.
+@goto #Daytime
 
 # Daytime
 @pickevent chance:60
@@ -45,7 +72,22 @@
 
 ; --- 밤: 반시진의 선택 ---
 # Night
+@set nrand=random(1,4)
+@goto #Nv2 if:nrand==2
+@goto #Nv3 if:nrand==3
+@goto #Nv4 if:nrand==4
 해가 저문다. 온전히 당신의 것인 반시진이 남았다.
+@goto #NightChoice
+# Nv2
+등불이 하나둘 켜진다. 하루의 셈이 끝나고—이제 당신의 반시진이다.
+@goto #NightChoice
+# Nv3
+객잔의 소음이 잦아든다. 몸은 피곤을 말하고, 가슴의 문양은 조용히 저 할 일을 한다. 반시진—어디에 쓸 것인가.
+@goto #NightChoice
+# Nv4
+창밖에 달이 올랐다. 그날 밤의 달보다 희다. 남은 반시진을 손에 쥔다.
+@goto #NightChoice
+# NightChoice
 @choice "마당에서 검을 간다" goto:#NSw
 @choice "가부좌를 틀고 운기조식한다" goto:#NQi
 @choice "저자로 나간다 — 날품과 가게들" goto:#NightTown
@@ -202,6 +244,41 @@
 @set b_old=1
 @gosub MolakEvents#E_Oldvision
 @goto #Night
+
+# A12
+@set b_yong2=1
+@goto Molak05#Yong2
+# A17
+@set b_hajin2x=1
+@goto Molak05#Hajin2
+# A19
+@set b_jang2=1
+@goto Molak05#Jang2
+# A21
+@set b_soa3=1
+@goto Molak05#Soa3
+# A23
+@set b_herb2=1
+@goto Molak05#Herb2
+# A24
+@set b_chain=1
+@goto Molak05#Chain1
+# A27
+@set b_rival2=1
+@goto Molak05#Rival2
+# A28
+@set b_soa4=1
+@goto Molak05#Soa4
+# A33
+@set b_amh2=1
+@goto Molak05#Amh2
+# A34
+@set b_ochi=1
+@goto Molak05#Ochi1
+# A40
+@set b_old2x=1
+@goto Molak05#Old2
+
 # ChWolf
 @set f_wolfinvite=1
 객잔 문틈에 서찰 한 장이 꽂혀 있다. 밀랍 대신—녹슨 사슬 고리 하나로 봉해져 있다.

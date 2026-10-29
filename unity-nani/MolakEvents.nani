@@ -1057,7 +1057,9 @@
 
 ; ===== 사건 핸들러 =====
 # H_Jsd
+@goto #JsdOut if:f_herbout>0&&f_herbfriend<1
 @set jsdn=jsdn+1
+@goto #JsdCheap if:f_herbfriend>0
 @goto #JsdLate if:jsdn>1
 @fx mn:-6 curse:-8
 단약이 혀에서 녹는다. 가슴의 열이 한 김 식는다.<br>뽑은 것이 아니라 눌렀을 뿐이라는 것을, 몸이 안다.
@@ -1072,6 +1074,15 @@
 # JsdMin
 @fx mn:-6 curse:-4
 약으로 버는 시간에는 끝이 있다. 이제 겨우, 숨 돌릴 틈이나 살 뿐이다.
+@return
+# JsdCheap
+@fx mn:-3 curse:-7
+"단골값이 아니라 목숨값." 할멈이 반값만 받는다. 단약이 혀에서 녹고, 가슴의 열이 식는다.
+@return
+# JsdOut
+할멈이 빈 약궤를 턱으로 가리킨다.
+"재료가 없다니까. 교가 약재 길을 막은 뒤로는—."
+정심단은 당분간 없다. 저주는 이제 몸으로 버티는 수밖에.
 @return
 # H_Herbbet
 @set r=random(1,100)
