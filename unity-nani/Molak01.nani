@@ -1,6 +1,5 @@
 ; ===== 몰락검신 — 서장: 붉은 달 =====
 # RunStart
-@initrun
 ; (자동 생성) 변수 선초기화
 @set b_amhyang=0
 @set b_bilok=0
@@ -89,6 +88,7 @@
 @set nextevent="none"
 @set oldrank="none"
 @set tiername="none"
+@initrun
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
 # Rebirth
