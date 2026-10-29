@@ -1,6 +1,7 @@
 ; ===== 몰락검신 — 서장: 붉은 달 =====
 # RunStart
 ; (자동 생성) 변수 선초기화
+@set aff=0
 @set b_amh2=0
 @set b_amhyang=0
 @set b_bilok=0
@@ -16,7 +17,21 @@
 @set b_ochi=0
 @set b_old=0
 @set b_old2x=0
+@set b_r1=0
+@set b_r1x=0
+@set b_r2=0
+@set b_r2x=0
+@set b_r3=0
+@set b_r3x=0
+@set b_r4=0
+@set b_r4x=0
+@set b_r5x=0
 @set b_rival2=0
+@set b_s1=0
+@set b_s2=0
+@set b_s3=0
+@set b_s4=0
+@set b_s5=0
 @set b_soa=0
 @set b_soa3=0
 @set b_soa4=0
@@ -33,6 +48,7 @@
 @set cost_sword=0
 @set curse=0
 @set day=0
+@set dice=0
 @set duelwin=0
 @set f_amhdeal=0
 @set f_amhyangknown=0
@@ -52,6 +68,9 @@
 @set f_hmsaved=0
 @set f_jangfriend=0
 @set f_janginfo=0
+@set f_jinbaek=0
+@set f_jinbaekdead=0
+@set f_jinbaektruth=0
 @set f_kyonadown=0
 @set f_lordedge=0
 @set f_lordintro=0
@@ -65,9 +84,11 @@
 @set f_shrseen=0
 @set f_simma=0
 @set f_soa3=0
+@set f_soabond=0
 @set f_soadone=0
 @set f_soamet=0
 @set f_soareq=0
+@set f_soasaved=0
 @set f_soaseal=0
 @set f_soatrain=0
 @set f_taverndone=0
@@ -85,6 +106,7 @@
 @set jsdeff=0
 @set jsdn=0
 @set lrand=0
+@set luck=0
 @set max_body=0
 @set max_coin=0
 @set max_core=0

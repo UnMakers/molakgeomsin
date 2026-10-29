@@ -29,6 +29,22 @@
 @goto #A33 if:day>=33&&f_amhyangknown>0&&b_amh2<1
 @goto #A34 if:day>=34&&f_hmsaved>0&&f_ochisaved<1&&b_ochi<1
 @goto #A40 if:day>=40&&f_oldseen>0&&b_old2x<1
+@set dice=random(1,100)
+@goto #BS1 if:day>=5&&f_soamet>0&&b_s1<1&&dice<=55
+@goto #BR1 if:day>=6&&b_r1x<1&&dice>=35
+@goto #BS2 if:day>=9&&f_soamet>0&&b_s2<1&&dice<=60
+@goto #BR2 if:day>=12&&f_janginfo>0&&b_r2x<1&&dice>=30
+@goto #BS3 if:day>=18&&f_soamet>0&&aff>=2&&b_s3<1&&dice<=60
+@goto #BR3 if:day>=19&&b_r2x>0&&b_r3x<1&&dice>=35
+@goto #BS4 if:day>=24&&f_soamet>0&&b_s4<1&&dice<=65
+@goto #BR4 if:day>=27&&b_r3x>0&&b_r4x<1&&dice>=30
+@goto #BS5 if:day>=30&&aff>=4&&f_soasaved>0&&b_s5<1
+@goto #BR5 if:day>=34&&b_r4x>0&&b_r5x<1
+@goto #BS1 if:day>=9&&f_soamet>0&&b_s1<1
+@goto #BR1 if:day>=10&&b_r1x<1
+@goto #BR2 if:day>=17&&f_janginfo>0&&b_r2x<1
+@goto #BR3 if:day>=24&&b_r2x>0&&b_r3x<1
+@goto #BR4 if:day>=32&&b_r3x>0&&b_r4x<1
 ; --- 아침 풍경 ---
 @set mrand=random(1,8)
 @goto #M5 if:mrand==5
@@ -245,6 +261,36 @@
 @gosub MolakEvents#E_Oldvision
 @goto #Night
 
+# BS1
+@set b_s1=1
+@goto Molak06#SoaN1
+# BS2
+@set b_s2=1
+@goto Molak06#SoaN2
+# BS3
+@set b_s3=1
+@goto Molak06#SoaN3
+# BS4
+@set b_s4=1
+@goto Molak06#SoaN4
+# BS5
+@set b_s5=1
+@goto Molak06#SoaN5
+# BR1
+@set b_r1x=1
+@goto Molak06#Rev1
+# BR2
+@set b_r2x=1
+@goto Molak06#Rev2
+# BR3
+@set b_r3x=1
+@goto Molak06#Rev3
+# BR4
+@set b_r4x=1
+@goto Molak06#Rev4
+# BR5
+@set b_r5x=1
+@goto Molak06#Rev5
 # A12
 @set b_yong2=1
 @goto Molak05#Yong2
