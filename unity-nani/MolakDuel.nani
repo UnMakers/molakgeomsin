@@ -1,0 +1,44 @@
+; ===== 공용 비무 =====
+# Run
+@duelinfo kind:{dkind}
+<color=#C03434>{foename}</color> — 강호 서열 {foerank}위 · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
+@choice "정면으로 벤다" goto:.StFront
+@choice "살기를 실어 선공한다" if:cansl>0 goto:.StKiller
+@choice "수를 아끼며 받아친다 — 안전하게" goto:.StGuard
+@choice "사술을 끌어낸다 — 저주 +5" if:cancurse>0 goto:.StCurse
+@choice "물러선다" goto:.Flee
+@stop
+# StFront
+호흡 하나. 반 보. 칼이 먼저 나간 쪽이 이긴다.
+@duel style:front
+@goto .Result
+# StKiller
+당신의 살기가 먼저 상대의 목을 조른다. 검은 그다음이다.
+@duel style:killer
+@goto .Result
+# StGuard
+받고, 흘리고, 기다린다. 조급한 쪽이 먼저 빈틈을 보인다.
+@duel style:guard
+@goto .Result
+# StCurse
+가슴의 문양이 차갑게 타오른다. 세상이 반 박자 느려지고, 상대의 빈틈만이 밝게 보인다.
+@duel style:curse
+@goto .Result
+# Result
+@goto .Win if:duelwin>0
+판단보다 몸이 반 호흡 늦다. 공력이 얕은 검은 결국 칼질일 뿐이라는 것을, 상대의 검이 가르쳐준다.
+@goto MolakOver.DuelDeath if:hp<=0
+상대는 당신의 목을 거두지 않는다. 서열 없는 자를 베어봐야 서열록에 오를 것이 없기 때문이다.<br>치욕이 당신을 살렸다.
+@return
+# Win
+서걱—승부가 한 호흡에 갈린다.
+강호 서열 <color=#C9A227>{oldrank}위 → {newrank}위</color>.<br>팔백만 무인 가운데, 당신의 자리가 또 한 계단 올랐다.
+@goto .TierUp if:tierup>0
+@return
+# TierUp
+<color=#C9A227>─ {tiername} 진입 ─</color>
+경지가 한 겹 벗겨진다. 세상의 소리가 조금 더 또렷해진다.
+@return
+# Flee
+오늘은 칼을 섞을 날이 아니다. 등 뒤의 수군거림은 공짜다—주워 담지 않는다.
+@return

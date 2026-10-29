@@ -1,0 +1,73 @@
+; ===== 게임 오버 / 회귀 / 깨달음 =====
+# Curse
+@set deathcause="사술 폭주"
+억누르려 했다. 내력을 거두려 했다. 그런데—멈추지 않는다.
+가슴의 문양이 <color=#9A70C4>뜨겁게 타오른다</color>. 손끝이 검게 물들기 시작한다.
+이게 사술인가. 아니면 내가 원한 건가.
+경계가 무너졌다. 마지막으로 남은 생각은.
+…이러려고 살아남은 게 아닌데.
+@goto .Dead
+# Exhaust
+@set deathcause="탈진"
+몸이 앞으로 쏠린다. 다리에 힘이 들어가지 않는다.
+한 걸음. 두 걸음. 더 이상 나아가지 못한다.
+차가운 흙바닥. 하늘이 보인다. 사술이 잠식하는 건지, 아니면 그냥 끝인 건지.
+…여기서 끝인가.
+@goto .Dead
+# Starve
+@set deathcause="아사"
+굶주림은 검보다 느리지만, 더 집요하다.
+@goto .Dead
+# DuelDeath
+@set deathcause="비무 패배"
+검이 스쳤다고 생각했다. 옆구리에서 열기가 느껴진다. 손을 가져다 댔다. 붉다.
+계속 싸우려 했다. 검을 들어올리는데, 팔이 말을 듣지 않는다. 무릎이 꺾인다.
+이상하다. 통증은 별로 없는데. 시야가 좁아진다. 소리가 멀어진다.
+복수도 못 하고.
+@goto .Dead
+# Dead
+\[ GAME OVER \]
+당신의 이야기는 여기서 끝났습니다.<br>마지막 저장 지점으로 돌아갑니다.
+@regress
+@goto .FirstDeath if:g_runs==1
+@goto .Regress
+# FirstDeath
+시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
+'네가 가장 절망할 때, 술법의 진정한 의미를 깨닫겠지.'
+노인의 목소리가 뼛속에서 울린다. 가슴의 문양이—사술이—당신을 되감은 것이다.
+@goto .Shop
+# Regress
+시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
+눈을 뜨면, 그날 아침이다.
+@goto .Shop
+# Shop
+@shopinfo
+죽음은 스승이다. 수업료가 목숨일 뿐.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회
+@choice "검흔(劍痕) — 시작 검술 +2 \[{cost_sword}\]" if:max_sword<1&&g_pts>=cost_sword goto:.BuySword
+@choice "단련된 육신 — 시작 체력 +2 \[{cost_body}\]" if:max_body<1&&g_pts>=cost_body goto:.BuyBody
+@choice "잔류 진기 — 시작 내공 +3 \[{cost_core}\]" if:max_core<1&&g_pts>=cost_core goto:.BuyCore
+@choice "묻어둔 은자 — 시작 은자 +5 \[{cost_coin}\]" if:max_coin<1&&g_pts>=cost_coin goto:.BuyCoin
+@choice "봉인 문양 — 저주 성장 둔화 \[{cost_seal}\]" if:max_seal<1&&g_pts>=cost_seal goto:.BuySeal
+@choice "전생의 기억 — 숨은 길이 보인다 \[{cost_mem}\]" if:max_mem<1&&g_pts>=cost_mem goto:.BuyMem
+@choice "다 시 그 날 로" goto:.Restart
+@stop
+# BuySword
+@buyup kind:sword
+@goto .Shop
+# BuyBody
+@buyup kind:body
+@goto .Shop
+# BuyCore
+@buyup kind:core
+@goto .Shop
+# BuyCoin
+@buyup kind:coin
+@goto .Shop
+# BuySeal
+@buyup kind:seal
+@goto .Shop
+# BuyMem
+@buyup kind:mem
+@goto .Shop
+# Restart
+@goto Molak01.RunStart

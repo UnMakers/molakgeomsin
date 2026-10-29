@@ -1,0 +1,476 @@
+; ===== 몰락검신 — 조운현의 나날 (하루 루프) =====
+# DayLoop
+@goto MolakOver.Curse if:curse>=100
+@goto MolakOver.Exhaust if:hp<=0
+; --- 장(章)·비트 ---
+@goto Molak04.Ld0 if:f_wolfdown>0&&rank>0&&rank<=10
+@goto .ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
+@goto .ChSoa if:day>=3&&f_soamet<1&&b_soa<1
+@goto .B5 if:day>=5&&b_hajin<1
+@goto .B8 if:day>=8&&b_wanted<1
+@goto .B11 if:day>=11&&b_jang<1
+@goto .B13 if:day>=13&&f_soamet>0&&b_soatrain<1
+@goto .ChUnju if:day>=15&&f_unjudone<1
+@goto .B20 if:day>=20&&rank>0&&rank<=500000&&b_fame<1
+@goto .ChShr if:day>=22&&f_shrseen<1
+@goto .ChBilok if:day>=24&&f_bilok>0&&b_bilok<1
+@goto .ChHm if:day>=26&&b_hm<1
+@goto .ChAmhyang if:day>=30&&b_amhyang<1
+@goto .B32 if:day>=32&&rank>0&&rank<=1000&&b_depart<1
+@goto .ChOld if:day>=36&&b_old<1
+; --- 아침 풍경 ---
+@set mrand=random(1,4)
+@goto .M2 if:mrand==2
+@goto .M3 if:mrand==3
+@goto .M4 if:mrand==4
+운락객잔의 아침. 장작 냄새와 어제 비 냄새가 마당에 남아 있다.
+@goto .Daytime
+# M2
+국밥 끓는 냄새에 눈을 뜬다. 허기가—당신이 살아 있다는 증거처럼 군다.
+@goto .Daytime
+# M3
+하진무가 주판알을 튕기다 말고, 당신의 안색부터 살핀다. 일 년을 간호한 사람의 버릇이다.
+@goto .Daytime
+# M4
+멀리 북쪽 하늘이 유난히 검다. 혈마곡이 있는 방향이다.
+@goto .Daytime
+
+# Daytime
+@pickevent chance:60
+@gosub .RunEvent if:nextevent!="none"
+@goto .Night
+
+# AfterChapter
+@goto .Night
+
+; --- 밤: 반시진의 선택 ---
+# Night
+해가 저문다. 온전히 당신의 것인 반시진이 남았다.
+@choice "마당에서 검을 간다" goto:.NSw
+@choice "가부좌를 틀고 운기조식한다" goto:.NQi
+@choice "저자로 나간다 — 날품과 가게들" goto:.NightTown
+@choice "비무판을 찾아간다" if:day>=4 goto:.NDuel
+@choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:.NWolf
+@choice "몸을 쉰다" goto:.NRest
+@stop
+# NSw
+@set r=random(1,3)
+@goto .NSwB if:f_bilokhalf>0||f_biloklearn>0
+달빛 아래 천 번의 횡소(橫掃). 손바닥이 터지고, 감각이 쌓인다.
+@fx sw:1 hp:-1
+@goto .NightEnd
+# NSwB
+「운검비록」의 구결이 손끝을 이끈다. 어제의 반 치, 오늘의 반 치—그것이 쌓여 벽이 된다.
+@fx sw:2 hp:-1
+@goto .NightEnd
+# NQi
+@goto .NQiB if:f_breath>0
+조식(調息), 취기(聚氣), 운기(運氣)… 토탁(吐濁)에서 막힌다. 뱉어야 할 탁기를, 가슴의 <color=#9A70C4>문양이 먼저 삼킨다</color>.
+@fx ng:2 hp:1 curse:3
+@goto .NightEnd
+# NQiB
+들숨 여섯, 날숨 아홉. 거지 중의 구결대로 숨을 바꾸자, 탁기가 덜 쌓인다.
+@fx ng:2 hp:1 curse:2
+@goto .NightEnd
+# NightTown
+저녁 저자. 등불이 하나둘 켜진다.
+@choice "날품을 판다 — 물지게와 장작" goto:.NWork
+@choice "상점가를 둘러본다" goto:.Town1
+@choice "그냥 돌아간다" goto:.NightEnd
+@stop
+# NWork
+물지게 마흔 번. 어깨에 밧줄 자국. 삯은 정직하고, 정직한 것들은 대개 아프다.
+@set r=random(2,3)
+@fx mn:{r} hp:-1
+@goto .NightEnd
+# NDuel
+저잣거리 공터—비무판. 서열을 건 칼들이 밤마다 부딪치는 곳이다.
+@set dkind="any"
+@gosub MolakDuel.Run
+@goto .NightEnd
+# NWolf
+@goto Molak04.Wf1
+# NRest
+침상에 눕는다. 아무 일도 없는 밤—지금의 당신에게는 그것이 사치다.
+@fx hp:3
+@goto .NightEnd
+
+# NightEnd
+@daytick
+@goto MolakOver.Starve if:hp<=0&&starved>0
+@goto MolakOver.Exhaust if:hp<=0
+@goto MolakOver.Curse if:curse>=100
+@goto .D10 if:day==10
+@goto .D18 if:day==18
+@goto .Evening
+# D10
+가슴의 문양이, 아무것도 하지 않은 날에도 <color=#9A70C4>조금 자라 있다</color>. 사술은 뿌리를 내렸다. 이제 시간은 당신의 편이 아니다.
+@goto .Evening
+# D18
+가슴의 문양이 <color=#9A70C4>익어간다</color>. 자라는 속도가 눈에 띄게 빨라졌다. 노인의 말이 떠오른다. '다 익으면'—그 다음은, 듣지 못했다.
+@goto .Evening
+# Evening
+@pickevent chance:30
+@gosub .RunEvent if:nextevent!="none"
+@goto .DayLoop
+
+# RunEvent
+@gosub MolakEvents.E_Yong if:nextevent=="E_Yong"
+@gosub MolakEvents.E_Herb if:nextevent=="E_Herb"
+@gosub MolakEvents.E_Thugs if:nextevent=="E_Thugs"
+@gosub MolakEvents.E_Beggar if:nextevent=="E_Beggar"
+@gosub MolakEvents.E_Monk if:nextevent=="E_Monk"
+@gosub MolakEvents.E_Notice if:nextevent=="E_Notice"
+@gosub MolakEvents.E_Duelist if:nextevent=="E_Duelist"
+@gosub MolakEvents.E_Rain if:nextevent=="E_Rain"
+@gosub MolakEvents.E_Spy if:nextevent=="E_Spy"
+@gosub MolakEvents.E_Peddler if:nextevent=="E_Peddler"
+@gosub MolakEvents.E_Gamble if:nextevent=="E_Gamble"
+@gosub MolakEvents.E_Spar if:nextevent=="E_Spar"
+@gosub MolakEvents.E_Storyteller if:nextevent=="E_Storyteller"
+@gosub MolakEvents.E_Funeral if:nextevent=="E_Funeral"
+@gosub MolakEvents.E_Guard if:nextevent=="E_Guard"
+@gosub MolakEvents.E_Coldspring if:nextevent=="E_Coldspring"
+@gosub MolakEvents.E_Acup if:nextevent=="E_Acup"
+@gosub MolakEvents.E_Talisman if:nextevent=="E_Talisman"
+@gosub MolakEvents.E_Sutra if:nextevent=="E_Sutra"
+@gosub MolakEvents.E_Cultists if:nextevent=="E_Cultists"
+@gosub MolakEvents.E_Hunter if:nextevent=="E_Hunter"
+@gosub MolakEvents.E_DokRevenge if:nextevent=="E_DokRevenge"
+@gosub MolakEvents.E_Simma if:nextevent=="E_Simma"
+@gosub MolakEvents.E_Dream if:nextevent=="E_Dream"
+@gosub MolakEvents.E_Soa2 if:nextevent=="E_Soa2"
+@gosub MolakEvents.E_VillageNews if:nextevent=="E_VillageNews"
+@gosub MolakEvents.E_Pilgrim if:nextevent=="E_Pilgrim"
+@gosub MolakEvents.E_Swordgrave if:nextevent=="E_Swordgrave"
+@gosub MolakEvents.E_Teaseller if:nextevent=="E_Teaseller"
+@gosub MolakEvents.E_Nightmarket if:nextevent=="E_Nightmarket"
+@gosub MolakEvents.E_Childplay if:nextevent=="E_Childplay"
+@gosub MolakEvents.E_Bloodtax if:nextevent=="E_Bloodtax"
+@gosub MolakEvents.E_Lostblade if:nextevent=="E_Lostblade"
+@gosub MolakEvents.E_Ferry if:nextevent=="E_Ferry"
+@gosub MolakEvents.E_Rival if:nextevent=="E_Rival"
+@gosub MolakEvents.E_Echoes if:nextevent=="E_Echoes"
+@return
+
+; --- 비트 진입 블록 ---
+# ChSoa
+@set b_soa=1
+@goto Molak03.Soa1
+# B5
+@set b_hajin=1
+@gosub .S_Hajin
+@goto .Daytime
+# B8
+@set b_wanted=1
+@gosub .S_Wanted
+@goto .Daytime
+# B11
+@set b_jang=1
+@gosub .S_Jang
+@goto .Daytime
+# B13
+@set b_soatrain=1
+@gosub .S_Soatrain
+@goto .Daytime
+# B20
+@set b_fame=1
+@gosub .S_Fame
+@goto .Daytime
+# B32
+@set b_depart=1
+@gosub .S_Depart
+@goto .Daytime
+# ChUnju
+@set f_unjudone=1
+@goto Molak03.Unju0
+# ChShr
+@set f_shrseen=1
+@goto Molak03.Shr1
+# ChBilok
+@set b_bilok=1
+@gosub MolakEvents.E_Bilok
+@goto .Night
+# ChHm
+@set b_hm=1
+@goto Molak03.Hm1
+# ChAmhyang
+@set b_amhyang=1
+@gosub MolakEvents.E_Amhyang
+@goto .Night
+# ChOld
+@set b_old=1
+@gosub MolakEvents.E_Oldvision
+@goto .Night
+# ChWolf
+@set f_wolfinvite=1
+객잔 문틈에 서찰 한 장이 꽂혀 있다. 밀랍 대신—녹슨 사슬 고리 하나로 봉해져 있다.
+「서열 백위 안에 든 것을 축하하오. 혈쇄문(血鎖門)이 그대의 사슬을 준비해 두었소.」
+혈마교가 보낸 시험이다. 피할 수 있는 종류의 것이 아니다—다만, 언제 갈지는 당신이 정한다.
+밤의 선택지에 '혈쇄문의 초대'가 열렸다. 준비가 되면 가라.
+@goto .Daytime
+
+
+# Town1
+저자 상점가.
+백초당의 약장 냄새, 단야방의 쇳내, 전당포 뒷문의 눅눅한 그늘.
+은자가 할 수 있는 일이 여기 모여 있다.
+@choice "백초당 — 백초 할멈" goto:.Town1C0
+@choice "단야방 — 무고" goto:.Town1C1
+@choice "전당포 뒷문 — 쥐눈이 장" goto:.Town1C2
+@choice "객잔으로 돌아간다" goto:.Town1C3
+@stop
+# Town1C0
+@goto .TownB
+# Town1C1
+@goto .TownM
+# Town1C2
+@goto .TownJ
+# Town1C3
+@goto .NightEnd
+
+# TownB
+백초당. 약장 냄새가 깊다.
+백초 할멈이 눈을 들지도 않고 묻는다.
+"뭐가 필요해."
+@choice "지혈환 (은자 2) — 상처를 다스린다" if:mn>=2 goto:.TownBC0
+@choice "청혈산 (은자 3) — 피를 맑게 한다" if:mn>=3 goto:.TownBC1
+@choice "정심단 (은자 6) — 저주의 뿌리를 누른다" if:mn>=6&&curse>=20 goto:.TownBC2
+@choice "돌아선다" goto:.TownBC3
+@stop
+# TownBC0
+@fx mn:-2 hp:4
+@goto .TownB
+# TownBC1
+@fx mn:-3 curse:-4
+@goto .TownB
+# TownBC2
+@gosub MolakEvents.H_Jsd
+@goto .TownB
+# TownBC3
+@goto .Town1
+
+# TownM
+단야방. 화로가 낮게 운다.
+무고가 망치질을 멈추지 않은 채 턱으로 묻는다. 무슨 일이냐는 뜻이다.
+@choice "맡겨진 검을 받아간다 (은자 20)" if:mn>=20&&f_cheonggang<1 goto:.TownMC0
+@choice "검을 손질한다 (은자 2)" if:mn>=2 goto:.TownMC1
+@choice "돌아선다" goto:.TownMC2
+@stop
+# TownMC0
+@fx mn:-20 sw:2
+@set f_cheonggang=1
+청강검. 복면의 백발 노인이 맡기고 간, 청운검파 장문인의 검이다. 날이 물처럼 운다.
+@goto .Town1
+# TownMC1
+@fx mn:-2 sw:1
+@goto .TownM
+# TownMC2
+@goto .Town1
+
+# TownJ
+전당포 뒷문. 쥐눈이 장이 그늘에서 손가락을 비빈다.
+"돈이 되는 이야기, 돈이 드는 이야기. 어느 쪽이오."
+@choice "혈마곡의 길과 진(陣) (은자 10)" if:mn>=10&&f_janginfo<1 goto:.TownJC0
+@choice "혈쇄문주의 사슬 버릇 (은자 10)" if:mn>=10&&rank>=1&&f_chaininfo<1 goto:.TownJC1
+@choice "독아단 본단의 소문 (은자 6)" if:mn>=6&&f_dokinfo<1 goto:.TownJC2
+@choice "잡소문 (은자 2)" if:mn>=2 goto:.TownJC3
+@choice "돌아선다" goto:.TownJC4
+@stop
+# TownJC0
+@fx mn:-10
+@set f_janginfo=1
+혈마곡은 북쪽 닷새. 입구의 혈천진은 보법 세 걸음이 전부라고, 장이 모래 위에 그림을 그려 보인다. 결전의 날, 이 지식이 칼 반 자루 몫은 할 것이다.
+@goto .Town1
+# TownJC1
+@fx mn:-10
+@set f_chaininfo=1
+"사슬이 왼쪽 어깨를 돌 때, 그자의 오른 무릎이 반 호흡 늦게 따라온다오." 장의 정보는 비싸고, 비싼 값을 한다.
+@goto .Town1
+# TownJC2
+@fx mn:-6
+@set f_dokinfo=1
+독아단의 위에는 단주 견아(犬牙)가 있다. 사경(四境) 관맥의 고수. 그리고—끌려간 사람들은 북쪽 골짜기로 옮겨진다고 한다. 아장쯤은 버릇까지 들었다.
+@goto .Town1
+# TownJC3
+@fx mn:-2
+암향루의 향이 요즘 관도까지 흘러나온다느니, 운검류의 사당에 향을 피우는 여인이 있다느니. 잡소문이란 대개, 나중에야 값이 매겨진다.
+@goto .Town1
+# TownJC4
+@goto .Town1
+
+# S_Hajin
+닷새째 밤. 하진무가 술상을 들고 올라온다.
+"한 잔 하시겠소."
+청하지 않은 술. 그러나 거절하기엔, 일 년의 빚이 너무 크다.
+두어 순배가 돌고, 하진무가 입을 연다.
+"열두 해 전이오. 역병이 돌 때, 내 여식이 앓아누웠지. 현의 의원들은 다 고개를 저었고."
+그가 잔을 비운다.
+"지나던 청운검파의 장문인께서—하룻밤 내내 아이의 혈을 짚어주셨소. 약값도, 이름도 안 받으시고. 그 아이가 지금은 시집가서 애 둘을 낳았소."
+빚이 어디서 시작됐는지, 이제 안다.
+@choice "\"장문인의 검을, 제가 찾았습니다.\"" if:f_cheonggang>0 goto:.S_HajinC0
+@choice "말없이 잔을 받는다" goto:.S_HajinC1
+@choice "\"그 문파는 이제 없습니다.\"" goto:.S_HajinC2
+@stop
+# S_HajinC0
+@goto .S_HajinB
+# S_HajinC1
+@fx hp:2 curse:-1
+술이 데운 속으로, 빚의 무게가 내려앉는다. 갚을 길은 하나뿐이다—살아서, 끝까지 가는 것.
+@return
+# S_HajinC2
+@goto .S_HajinC
+
+# S_HajinB
+당신은 허리의 청강검을 끌러 탁자에 올린다.
+하진무가 숨을 멈춘다. 떨리는 손이 칼집을 쓸어내린다.
+"…이 검이오. 그날 밤, 머리맡에 세워져 있던."
+그가 고개를 들었을 때, 눈가가 붉다.
+"살아서—꼭 살아서, 이 검의 주인 노릇을 해주시오."
+@fx hp:2 curse:-2 sw:1
+@return
+
+# S_HajinC
+"없어진 건 산장이오."
+하진무가 당신의 잔을 채운다.
+"문파는 사람인데, 사람이 여기 살아 앉아 있잖소."
+반박할 말을 찾지 못한다. 찾기 싫은 것인지도 모른다.
+@fx hp:2 curse:-1
+@return
+
+# S_Wanted
+여드레째 아침. 게시벽 앞이 웅성인다.
+새 방(榜)이 붙었다. 먹이 아직 번들거린다.
+「청운검파 잔당 수배 — 생사불문 — 현상금 은자 삼백」
+그림 속 얼굴. 일 년을 앓기 전의 당신이다.
+"삼백 냥이면 평생 먹고살겠네."<br>"쉿—혈마교 일에 입대지 마."
+구경꾼들의 수군거림 사이에, 소매에 붉은 끈을 감은 자들이 하나둘 늘기 시작했다.
+@set f_wanted=1
+@choice "구경꾼 틈에 섞여 제 수배서를 품평한다" goto:.S_WantedC0
+@choice "밤에 몰래 찢으러 온다" goto:.S_WantedC1
+@choice "고개를 숙이고 지나간다" goto:.S_WantedC2
+@stop
+# S_WantedC0
+@fx sl:1
+"영 못 그렸군. 이러면 삼백 냥 아무도 못 받지." 옆의 노인이 킬킬 웃는다. 심장은 뛰지만—떨지 않는 법을, 이렇게 또 하나 배운다.
+@return
+# S_WantedC1
+@fx sl:1 curse:1
+자정, 젖은 종이가 손안에서 뭉개진다. 내일이면 새로 붙을 것이다. 알지만 했다. 이름이 걸린 종이를 두고 잠들 수는 없었다.
+@return
+# S_WantedC2
+그림과 지금의 당신은 다른 사람이다. 몰락이 변장이다. 그래도 걸음이 평소보다 빨라지는 것은, 어쩔 수 없다.
+@return
+
+# S_Jang
+열하루째 밤. 객잔 뒷문에 쥐눈이 장이 서 있다.
+"지나던 길이오."
+정보상은 지나던 길에 남의 객잔 뒷문에 서지 않는다.
+"…누가 객의 얼굴값을 묻더군. 붉은 끈을 찬 자였소. 은자 서른을 부르기에—"
+장이 쥐눈을 가늘게 뜬다.
+"—안 팔았소. 아직은."
+아직은. 이 바닥의 정직함이란 이런 모양이다.
+@choice "입막음 값을 치른다 (은자 5)" if:mn>=5 goto:.S_JangC0
+@choice "\"다음엔 팔 생각인가.\"" goto:.S_JangC1
+@choice "말없이 문을 닫는다" goto:.S_JangC2
+@stop
+# S_JangC0
+@fx mn:-5
+@set f_jangfriend=1
+"이러면 당분간은 기억이 안 나겠군." 장이 은자를 소매에 넣는다. 떠나기 전, 그가 덧붙인다. "…서른에도 안 판 건, 값 때문만은 아니오. 청운에 진 빚이 나한테도 반 냥쯤 있어서." 뒷말은 바람에 흩어진다.
+@return
+# S_JangC1
+@fx sl:1
+장이 피식 웃는다. "파는 날엔, 먼저 알려드리리다. 그게 내 식의 의리요." 괴상한 의리다. 그러나 이 바닥에서는, 그것도 의리는 의리다.
+@return
+# S_JangC2
+거래도, 위협도 하지 않는다. 장은 잠시 서 있다가 어둠 속으로 사라진다. 어느 쪽으로 기울지는—그의 주판알이 정할 것이다.
+@return
+
+# S_Soatrain
+열사흘째. 객잔 마당에 낯익은 쌍검이 꽂혀 있다.
+"운주까지 이틀."
+소아가 팔짱을 끼고 담에 기대 있다.
+"들판엔 너보다 급 높은 게 절반이야. 그 검으로는 첫 판에 죽어."
+그녀가 턱으로 마당 가운데를 가리킨다.
+"백 합. 봐줄 생각 없으니까, 죽기 싫으면 막아."
+@choice "전력으로 받는다" goto:.S_SoatrainC0
+@choice "수비에만 전념한다" goto:.S_SoatrainC1
+@choice "사양한다" goto:.S_SoatrainC2
+@stop
+# S_SoatrainC0
+@fx sw:2 hp:-2
+@goto .S_SoatrainB
+# S_SoatrainC1
+@fx sw:1 ng:1
+@goto .S_SoatrainC
+# S_SoatrainC2
+@fx sl:1
+"…그래. 죽는 것도 공부지." 소아가 검을 뽑아 들고 떠난다. 등 뒤가 서늘한 것은 가을바람 때문만은 아니다.
+@return
+
+# S_SoatrainB
+백 합을 채우지 못했다. 예순두 합째에 당신의 검이 날아갔다.
+그래도 소아의 왼 소매가 한 치 찢어져 있다.
+"……."
+그녀가 제 소매를 내려다본다. 그러고는—아주 잠깐—웃는다.
+"적운의 수비식(守備式)이야, 방금 그거. 어깨너머로 훔치는 재주는 있네."
+그녀가 검을 거둔다.
+"들판에서 죽지는 않겠다."
+@set f_soatrain=1
+@return
+
+# S_SoatrainC
+받고, 흘리고, 물러선다. 백 합 내내.
+"공격은 안 해?"
+"지금 이기는 게 목적이 아니라서."
+소아가 검을 멈춘다. 외눈이 당신을 빤히 본다.
+"…운검류(雲劍類)네, 그 버릇. 청운도 그렇게 가르치는구나."
+같은 뿌리의 검. 그녀의 목소리에, 처음으로 창날 아닌 것이 섞여 있다.
+@set f_soatrain=1
+"적운은—" 소아가 입을 열다 만다. "…가르칠 사람이 이제 없어." 대화는 거기서 끝났다. 끝나야 했다.
+@return
+
+# S_Fame
+스무날째. 객잔이 수상하다.
+평소보다 손이 많다. 그런데 다들 술은 안 마시고 귀만 열어두고 있다. 낭인, 표사, 정체 모를 자들—서열이 오른 '운객(雲客)'이 묵는 객잔이라는 소문이 돈 것이다.
+하진무가 주판알을 튕기며, 당신에게만 들리게 말한다.
+"…방을 옮기시겠소? 뒷마당 창고 쪽이 눈에 안 띄는데."
+@choice "창고 방으로 옮긴다" goto:.S_FameC0
+@choice "그대로 지낸다 — 보란 듯이" goto:.S_FameC1
+@choice "소문의 출처부터 찾는다" if:sl>=4 goto:.S_FameC2
+@stop
+# S_FameC0
+@fx curse:-1
+창고 방은 좁고, 조용하다. 눈이 줄어드니 잠이 깊다. 유명세란 결국 남의 눈을 머리맡에 들이는 일이다.
+@return
+# S_FameC1
+@fx sl:1
+@set f_wanted=1
+숨는 것도 버릇이 된다. 당신은 평소의 방, 평소의 자리에서 평소의 국밥을 먹는다. 수군거림이 커진다. 커지라지. 어차피 꼭대기까지 갈 이름이다.
+@return
+# S_FameC2
+사흘 밤을 지켜 소문의 입을 찾아낸다. 건넛마을 투전판의 타짜—지난번 그자다. 당신이 탁자에 은자 한 닢을 놓고 눈을 맞추자, 소문은 그날로 방향을 바꾼다. '운객은 벌써 북쪽으로 떠났다더라.'
+@return
+
+# S_Depart
+서른이틀째 밤. 방문 앞에 봇짐이 놓여 있다.
+말린 육포, 기운 버선, 상비약 꾸러미. 하진무의 솜씨다.
+아래층으로 내려가자, 그가 등을 보인 채 잔을 닦고 있다.
+"…혈마곡. 가시는 게지요."
+묻는 말이 아니다.
+@choice "\"다 끝내고 돌아오겠습니다.\"" goto:.S_DepartC0
+@choice "말없이 고개만 끄덕인다" goto:.S_DepartC1
+@choice "\"무슨 말씀인지.\"  — 농으로 넘긴다" goto:.S_DepartC2
+@stop
+# S_DepartC0
+@fx hp:3 curse:-2
+하진무가 돌아선다. 눈가가 붉지만, 웃고 있다. "방은 비워두겠소. 값은—돌아와서 치르시오." 돌아올 이유가 하나 더 생겼다. 그것이 사람을 가장 강하게 만든다는 것을, 당신은 이제 안다.
+@return
+# S_DepartC1
+@fx sl:1
+말은 약속이 되고, 약속은 짐이 된다. 당신은 짐 대신 침묵을 고른다. 하진무도 더 묻지 않는다. 일 년을 간호한 사람은, 침묵도 읽을 줄 안다.
+@return
+# S_DepartC2
+"그럼 그 봇짐은 소풍용이오?" 하진무가 코웃음을 친다. 거짓말은 서로에게 들켰고, 들킨 채로 접어두기로 한다. 어떤 밤은 그게 예의다.
+@return
