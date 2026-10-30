@@ -27,8 +27,9 @@
 복수도 못 하고.
 @goto #Dead
 # Dead
-\[ GAME OVER \]
-당신의 이야기는 여기서 끝났습니다.<br>마지막 저장 지점으로 돌아갑니다.
+@ending
+\[ 末路 · {endhanja} — {endtitle} \]
+당신의 이야기는 여기서 끝났다. 그러나 끝은, 이 몸에겐 쉼표다.
 @regress
 @goto #FirstDeath if:g_runs==1
 @goto #Regress

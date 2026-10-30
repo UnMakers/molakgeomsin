@@ -311,6 +311,8 @@
 눈을 한 번 깜빡인 사이, 노인은 없다. 쥐고 있던 공기가 풀리고, 당신은 그제야 무릎을 꿇으며 숨을 토한다.
 복수는 끝났다.<br>이야기는, 끝나지 않았다.
 \[ 제一부 完 \]
+@set deathcause="등극"
+@ending
 @goto MolakOver#Shop
 # H_Tavernluck
 @set r=random(1,100)
