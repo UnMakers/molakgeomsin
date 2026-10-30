@@ -12,6 +12,9 @@
 @set b_hajin2x=0
 @set b_herb2=0
 @set b_hm=0
+@set b_hunt1=0
+@set b_hunt2=0
+@set b_hunt3x=0
 @set b_jang=0
 @set b_jang2=0
 @set b_ochi=0
@@ -50,6 +53,8 @@
 @set day=0
 @set dice=0
 @set duelwin=0
+@set endhanja=0
+@set endtitle=0
 @set f_amhdeal=0
 @set f_amhyangknown=0
 @set f_bilok=0

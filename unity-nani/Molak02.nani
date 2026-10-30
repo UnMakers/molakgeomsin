@@ -45,6 +45,9 @@
 @goto #BR2 if:day>=17&&f_janginfo>0&&b_r2x<1
 @goto #BR3 if:day>=24&&b_r2x>0&&b_r3x<1
 @goto #BR4 if:day>=32&&b_r3x>0&&b_r4x<1
+@goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
+@goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
+@goto #BH3 if:day>=55&&f_wolfdown<1&&b_hunt3x<1
 ; --- 아침 풍경 ---
 @scene id:day
 @vfx kind:rainoff
@@ -265,6 +268,15 @@
 @gosub MolakEvents#E_Oldvision
 @goto #Night
 
+# BH1
+@set b_hunt1=1
+@goto Molak06#Hunt1
+# BH2
+@set b_hunt2=1
+@goto Molak06#Hunt2
+# BH3
+@set b_hunt3x=1
+@goto Molak06#Hunt3
 # BS1
 @set b_s1=1
 @goto Molak06#SoaN1
