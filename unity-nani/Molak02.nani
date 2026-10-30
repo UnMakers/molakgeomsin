@@ -46,6 +46,8 @@
 @goto #BR3 if:day>=24&&b_r2x>0&&b_r3x<1
 @goto #BR4 if:day>=32&&b_r3x>0&&b_r4x<1
 ; --- 아침 풍경 ---
+@scene id:day
+@vfx kind:rainoff
 @set mrand=random(1,8)
 @goto #M5 if:mrand==5
 @goto #M6 if:mrand==6
@@ -88,6 +90,7 @@
 
 ; --- 밤: 반시진의 선택 ---
 # Night
+@scene id:night
 @set nrand=random(1,4)
 @goto #Nv2 if:nrand==2
 @goto #Nv3 if:nrand==3
@@ -243,6 +246,7 @@
 @set f_unjudone=1
 @goto Molak03#Unju0
 # ChShr
+@scene id:shrine
 @set f_shrseen=1
 @goto Molak03#Shr1
 # ChBilok
