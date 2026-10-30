@@ -166,12 +166,24 @@
 @goto MolakOver#Curse if:curse>=100
 @goto #D10 if:day==10
 @goto #D18 if:day==18
+@goto #D25 if:day==25
+@goto #D35 if:day==35
+@goto #D50 if:day==50
 @goto #Evening
 # D10
 가슴의 문양이, 아무것도 하지 않은 날에도 <color=#9A70C4>조금 자라 있다</color>. 사술은 뿌리를 내렸다. 이제 시간은 당신의 편이 아니다.
 @goto #Evening
 # D18
 가슴의 문양이 <color=#9A70C4>익어간다</color>. 자라는 속도가 눈에 띄게 빨라졌다. 노인의 말이 떠오른다. '다 익으면'—그 다음은, 듣지 못했다.
+@goto #Evening
+# D25
+하진무가 방값 패를 바꿔 단다. "교의 징세가 또 올랐습니다, 객. 내일부터 두 냥입니다." 영감의 셈은 정확하고, 강호의 물가는 무정하다.
+@goto #Evening
+# D35
+한밤중, 가슴이 타는 듯해 눈을 뜬다. 문양이 <color=#9A70C4>스스로 꿈틀거리고 있다</color>. 뿌리가 깊어졌다—이제부터는 하루가 다르게 자랄 것이다. 시간이, 본격적으로 적이 되었다.
+@goto #Evening
+# D50
+문양이 가슴을 넘어 <color=#C03434>쇄골까지 뻗었다</color>. 백초 할멈이 맥을 짚고는 처음으로 말을 아꼈다. 남은 날이—많지 않다.
 @goto #Evening
 # Evening
 @pickevent chance:30
