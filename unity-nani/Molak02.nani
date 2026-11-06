@@ -89,10 +89,12 @@
 @goto #Night
 
 # AfterChapter
+@art char:none
 @goto #Night
 
 ; --- 밤: 반시진의 선택 ---
 # Night
+@art char:none
 @scene id:night
 @set nrand=random(1,4)
 @goto #Nv2 if:nrand==2
@@ -186,6 +188,7 @@
 문양이 가슴을 넘어 <color=#C03434>쇄골까지 뻗었다</color>. 백초 할멈이 맥을 짚고는 처음으로 말을 아꼈다. 남은 날이—많지 않다.
 @goto #Evening
 # Evening
+@art char:none
 @pickevent chance:30
 @gosub #RunEvent if:nextevent!="none"
 @goto #DayLoop
@@ -372,6 +375,7 @@
 @choice "객잔으로 돌아간다" goto:#Town1C3
 @stop
 # Town1C0
+@art char:granny
 @goto #TownB
 # Town1C1
 @goto #TownM

@@ -1,5 +1,6 @@
 ; ===== 공용 비무 =====
 # Run
+@art scene:duel
 @duelinfo kind:{dkind}
 <color=#C03434>{foename}</color> — 강호 서열 {foerank}위 · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
 @choice "정면으로 벤다" goto:#StFront
