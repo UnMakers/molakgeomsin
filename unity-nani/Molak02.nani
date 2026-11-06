@@ -189,7 +189,6 @@
 @goto #Evening
 # Evening
 @art char:none
-@art scene:crossroad
 @pickevent chance:30
 @gosub #RunEvent if:nextevent!="none"
 @goto #DayLoop
