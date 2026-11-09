@@ -166,7 +166,7 @@
 @goto #Daytime
 
 # Daytime
-@pickevent chance:55 slot:day
+@pickevent chance:65 slot:day
 @gosub #RunEvent if:nextevent!="none"
 @goto #Night
 
@@ -427,7 +427,7 @@
 @goto #Evening
 # Evening
 @art char:none
-@pickevent chance:35 slot:night
+@pickevent chance:40 slot:night
 @gosub #RunEvent if:nextevent!="none"
 @goto #DayLoop
 
