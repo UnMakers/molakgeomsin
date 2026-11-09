@@ -81,6 +81,16 @@
 @goto #M26 if:mrand==26
 @goto #M27 if:mrand==27
 @goto #M28 if:mrand==28
+@goto #M29 if:mrand==29
+@goto #M30 if:mrand==30
+@goto #M31 if:mrand==31
+@goto #M32 if:mrand==32
+@goto #M33 if:mrand==33
+@goto #M34 if:mrand==34
+@goto #M35 if:mrand==35
+@goto #M36 if:mrand==36
+@goto #M37 if:mrand==37
+@goto #M38 if:mrand==38
 @goto #M1
 # M1
 운락객잔의 아침. 장작 냄새와 어제 비 냄새가 마당에 남아 있다.
@@ -166,6 +176,36 @@
 # M28
 하진무가 국밥에 고기를 한 점 더 얹는다. 말은 없다. 셈 밝은 영감이 셈을 틀리는 날은—무슨 뜻인지, 서로 안다.
 @goto #Daytime
+# M29
+맞은편 전각 용마루 위에 사람이 서 있다—고 생각한 순간, 비둘기 한 마리뿐이다. 그러나 가슴의 문양이 한 박자 늦게 식는다. 본 것이다. 무언가가 당신을.
+@goto #Daytime
+# M30
+찻집 건너편 자리에 백발의 뒷모습. 돌아보지 않는다. 당신이 잔을 다 비울 때까지—그리고 일어섰을 때, 자리는 비어 있고 찻값만 놓여 있다. 두 잔 값.
+@goto #Daytime
+# M31
+비무판 구경꾼 틈에 복면이 하나 섞여 있다. 아무도 그를 보지 않는다. 그는 당신만 본다. 몇 번째 생인지 세는 눈으로. 당신도 이제는 세지 않는 것을, 그만은 센다.
+@goto #Daytime
+# M32
+새벽 마당. 느티나무 아래 발자국이 하나. 들어온 자국만 있고 나간 자국이 없다. 하진무는 못 본 척 빗자루로 지운다. 영감도 이제는 묻지 않는다.
+@goto #Daytime
+# M33
+세수를 하다 멈춘다. 물에 비친 쇄골 아래—획이 보인다. 어제까지는 열이었다. 오늘부터는 글자다.
+@goto #Daytime
+# M34
+옷을 갈아입다 점소이와 눈이 마주친다. 아이는 황급히 고개를 돌린다. 본 것이다. 보여서는 안 되는 것을.
+@goto #Daytime
+# M35
+아침 운기 대신 가슴에 손을 얹어 본다. 뛰는 것이 둘이다. 하나는 심장. 하나는—박자가 다르다.
+@goto #Daytime
+# M36
+거울을 보지 않아도 안다. 목까지 올라왔다. 하진무가 아침 인사 대신 옷깃을 여며 준다. 손이 떨리는 것을 둘 다 모른 척한다.
+@goto #Daytime
+# M37
+소아가 마당에서 당신을 기다리고 있다. 말없이 제 목도리를 풀어 당신 목에 감는다. "추워 보여서." 거짓말이다. 그녀는 거짓말을 할 때 눈을 피하지 않는다.
+@goto #Daytime
+# M38
+국밥을 뜨다 손이 멎는다. 숟가락이 떨리는 게 아니다. 손가락 끝이 <color=#9A70C4>먹빛</color>이다. 씻어도 지워지지 않는다. 안에서 밴 색이다.
+@goto #Daytime
 
 # Daytime
 @pickevent chance:65 slot:day
@@ -180,6 +220,7 @@
 # Night
 @art char:none
 @scene id:night
+@goto #NvOld if:curse>=80&&curse<88&&f_oldseen>0&&tn_oldvoice<1
 @pickflavor pool:night
 @goto #Nv2 if:nrand==2
 @goto #Nv3 if:nrand==3
@@ -197,6 +238,15 @@
 @goto #Nv1
 # Nv1
 해가 저문다. 온전히 당신의 것인 반시진이 남았다.
+@goto #NightChoice
+# NvOld
+@set tn_oldvoice=1
+해가 저문다. 그런데 마당이 조용하다. 바람조차.
+'거의 다 익었다.'
+뼛속의 못이 운다. 노인의 목소리. 어디에도 그는 없다—있을 필요가 없다. 그는 당신 안에 있다.
+'서두르지 마라. 익는 것은 네가 아니라 열매다.'
+소리가 돌아온다. 술꾼들의 노래, 주판 소리. 반시진이 남았다—전보다 훨씬 짧게 느껴지는 반시진이.
+@fx curse:1
 @goto #NightChoice
 # Nv2
 등불이 하나둘 켜진다. 하루의 셈이 끝나고—이제 당신의 반시진이다.
@@ -241,7 +291,8 @@
 @choice "마당에서 검을 간다" goto:#NSw
 @choice "가부좌를 틀고 운기조식한다" goto:#NQi
 @choice "저자로 나간다 — 날품과 가게들" goto:#NightTown
-@choice "비무판을 찾아간다" if:day>=4 goto:#NDuel
+@choice "비무판을 찾아간다" if:day>=4&&f_ringclosed<1 goto:#NDuel
+@choice "뒷골목 사설 비무판 — 판돈 셋, 눈 없음" if:f_ringclosed>0 goto:#NDuelBack
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
 @choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&day>=38&&b_leave<1 goto:#NLeave
 @choice "몸을 쉰다" goto:#NRest
@@ -371,6 +422,11 @@
 # NDuel
 저잣거리 공터—비무판. 서열을 건 칼들이 밤마다 부딪치는 곳이다.
 @set dkind="any"
+@gosub MolakDuel#Run
+@goto #NightEnd
+# NDuelBack
+폐가 뒷마당. 횃불 둘. 심판도 방(榜)도 없다. 이기면 판돈, 지면—묻는 자가 없다.
+@set dkind="back"
 @gosub MolakDuel#Run
 @goto #NightEnd
 # NWolf
@@ -538,6 +594,10 @@
 @gosub MolakEvents#E_Swordsong if:nextevent=="E_Swordsong"
 @gosub MolakEvents#E_Lastmarket if:nextevent=="E_Lastmarket"
 @gosub MolakEvents#E_Vigil if:nextevent=="E_Vigil"
+@gosub MolakEvents#E_Search if:nextevent=="E_Search"
+@gosub MolakEvents#E_SoaPoster if:nextevent=="E_SoaPoster"
+@gosub MolakEvents#E_HerbTax if:nextevent=="E_HerbTax"
+@gosub MolakEvents#E_RingClosed if:nextevent=="E_RingClosed"
 @return
 
 ; --- 비트 진입 블록 ---

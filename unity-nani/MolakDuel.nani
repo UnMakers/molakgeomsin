@@ -3,10 +3,14 @@
 @art scene:duel
 @duelinfo kind:{dkind}
 <color=#C03434>{foename}</color> — 강호 서열 {foerank}위 · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
+@goto #RunChoices if:memwarn<1
+<color=#9A70C4>지난 생, 이 상대의 검 아래서 죽었다.</color> 전생의 기억이 그 순간을 되감아 보여준다—상대의 첫 수를.
+# RunChoices
 @choice "정면으로 벤다" goto:#StFront
 @choice "살기를 실어 선공한다" if:cansl>0 goto:#StKiller
 @choice "수를 아끼며 받아친다 — 안전하게" goto:#StGuard
-@choice "사술을 끌어낸다 — 저주 +5" if:cancurse>0 goto:#StCurse
+@choice "사술을 끌어낸다 — 저주 +5" if:cancurse>0&&curse<75 goto:#StCurse
+@choice "사술이 먼저 나선다 — 막지 못한다. 저주 +8" if:cancurse>0&&curse>=75 goto:#StCurse2
 @choice "물러선다" goto:#Flee
 @stop
 # StFront
@@ -24,6 +28,11 @@
 # StCurse
 가슴의 문양이 차갑게 타오른다. 세상이 반 박자 느려지고, 상대의 빈틈만이 밝게 보인다.
 @duel style:curse
+@goto #Result
+# StCurse2
+막으려 했다. 손이 먼저 나갔다—당신의 손이 아닌 것처럼.
+문양이 <color=#C03434>스스로</color> 타오른다. 상대의 빈틈이 아니라, 상대의 목숨 줄이 보인다.
+@duel style:curse2
 @goto #Result
 # Result
 @goto #Win if:duelwin>0

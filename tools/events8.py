@@ -1260,3 +1260,6 @@ NEW_EVENTS += u'''
 아무도 가지 말라고 하지 않는다. 아무도 잘 다녀오라고 하지 않는다. 다만 서 있다. 당신이 국밥을 다 먹을 때까지. 그것이 이 현의 배웅이다. 당신은 처음으로—돌아올 곳이 있는 사람처럼 숟가락을 놓는다.
 @return
 '''
+
+from events11 import NEW_EVENTS11
+NEW_EVENTS = NEW_EVENTS + NEW_EVENTS11

@@ -184,7 +184,8 @@ u'''# BuyMem
 
 # 비방/외상을 한 번 얻으면 회귀해도 기억 (전역 플래그)
 mev = sub1(mev, u'@set f_tea=1\n', u'@set f_tea=1\n@set g_know_tea=1\n', 'tea know')
-mev = sub1(mev, u'@set f_hajinfree=1\n', u'@set f_hajinfree=1\n@set g_know_lodge=1\n', 'lodge know')
+mev = re.sub(u'@set f_hajinfree=1\n(?!@set g_know_lodge=1)', u'@set f_hajinfree=1\n@set g_know_lodge=1\n', mev)
+assert mev.count(u'@set g_know_lodge=1') >= 2, 'lodge know'
 
 W('out_Molak04.nani', m04); W('out_MolakOver.nani', mov); W('out_MolakEvents.nani', mev)
 
