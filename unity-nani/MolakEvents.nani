@@ -1995,6 +1995,7 @@
 # E_Teaseller2C0
 @fx mn:-3 curse:-2
 @set f_tea=1
+@set g_know_tea=1
 그날부터 새벽마다 차를 끓인다. 쓴맛이 혀에 남고, 가슴의 열이 아침마다 반 김 식는다. 매일 하는 일이 하나 늘었다. 매일 하는 일이 사람을 살린다—노파는 그렇게 말하지 않았지만, 그런 뜻이었다.
 @return
 # E_Teaseller2C1
@@ -2143,6 +2144,7 @@
 # E_Hajin3C1
 @fx mn:2
 @set f_hajinfree=1
+@set g_know_lodge=1
 "알겠소." 하진무가 고개를 끄덕인다. 그날부터 방값이 안 나간다. 전낭이 조금 무거워지고, 마음은 그만큼 가벼워지지 않는다. 빚은 갚는 쪽보다 받는 쪽이 더 오래 기억한다.
 @return
 # E_Hajin3C2

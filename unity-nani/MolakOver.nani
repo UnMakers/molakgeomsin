@@ -65,6 +65,9 @@
 @choice "묻어둔 은자 — 시작 은자 +5 \[{cost_coin}\]" if:max_coin<1&&g_pts>=cost_coin goto:#BuyCoin
 @choice "봉인 문양 — 저주 성장 둔화 \[{cost_seal}\]" if:max_seal<1&&g_pts>=cost_seal goto:#BuySeal
 @choice "전생의 기억 — 숨은 길이 보인다 \[{cost_mem}\]" if:max_mem<1&&g_pts>=cost_mem goto:#BuyMem
+@choice "청심차 비방 — 처음부터 매일 저주 −0.15 \[{cost_tea}\]" if:g_know_tea>0&&max_tea<1&&g_pts>=cost_tea goto:#BuyTea
+@choice "빈칸 방값 — 하진무의 외상 \[{cost_lodge}\]" if:g_know_lodge>0&&max_lodge<1&&g_pts>=cost_lodge goto:#BuyLodge
+@choice "구르고 또 구른 몸 — 시작 체력 +1 ({lv_vigor}/10) \[{cost_vigor}\]" if:max_vigor<1&&g_pts>=cost_vigor goto:#BuyVigor
 @choice "다 시 그 날 로" goto:#Restart
 @stop
 # BuySword
@@ -84,6 +87,15 @@
 @goto #Shop
 # BuyMem
 @buyup kind:mem
+@goto #Shop
+# BuyTea
+@buyup kind:tea
+@goto #Shop
+# BuyLodge
+@buyup kind:lodge
+@goto #Shop
+# BuyVigor
+@buyup kind:vigor
 @goto #Shop
 # Restart
 @goto Molak01#RunStart
