@@ -54,7 +54,7 @@ public static class MolakDuel
     }
 
     /// <summary>비무판에서 만날 수 있는 최고 서열: 백위 안은 교의 사람들(혈쇄문주를 꺾기 전엔 101위까지), 그 뒤엔 십위권(교주 직속) 바로 밑까지.</summary>
-    public static int FloorRank () { return MolakStats.Get("f_wolfdown") > 0 ? 11 : 101; }
+    public static int FloorRank () { return MolakStats.Get("f_wolfdown") > 0 ? 10 : 100; }
 
     public static float MyPower ()
     {
@@ -117,6 +117,11 @@ public class DuelCommand : Command
         if (kind == "lord" && MolakStats.Get("f_lordedge") > 0) bonus += 1f;
         if (kind == "wolf" && MolakStats.Get("f_chaininfo") > 0) bonus += 1.5f;
         if (kind == "wolf" && MolakStats.Get("f_wolfedge") > 0) bonus += 1.5f;
+        if (kind == "wolf" && MolakStats.Get("f_wolfseal") > 0) bonus += 1f;
+        if (kind == "wolf" && MolakStats.Get("f_wolfally") > 0) bonus += 2f;
+        if (kind == "lord" && MolakStats.Get("f_northstep") > 0) bonus += 1.5f;
+        if (kind == "lord" && MolakStats.Get("f_lordseal") > 0) bonus += 0.5f;
+        if (kind == "lord" && MolakStats.Get("f_cheonggang") > 0) bonus += 0.5f;
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
         float odds = MolakDuel.Odds(foe, bonus);
         bool win = Random.Range(1, 101) <= odds;

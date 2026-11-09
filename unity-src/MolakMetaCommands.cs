@@ -13,15 +13,17 @@ public class InitRunCommand : Command
     {
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         // 전역 기본값 보장
-        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem"})
+        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         // 전역(g_)이 아닌 변수 전부 제거 수준으로 0 초기화
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)
             vars.SetVariableValue(n, ty == CustomVariableValueType.String ? new CustomVariableValue("none") : new CustomVariableValue(0f));
         float up (string k) => MolakStats.Get("g_up_" + k);
-        MolakStats.Set("hpmax", 10 + 2 * up("body"));
-        MolakStats.Set("hp", 10 + 2 * up("body"));
+        MolakStats.Set("hpmax", 10 + 2 * up("body") + up("vigor"));
+        MolakStats.Set("hp", 10 + 2 * up("body") + up("vigor"));
+        if (up("tea") > 0) MolakStats.Set("f_tea", 1f);      // 회귀 상점: 청심차 비방
+        if (up("lodge") > 0) MolakStats.Set("f_hajinfree", 1f); // 회귀 상점: 빈칸 방값
         MolakStats.Set("ng", up("core") * 3);
         MolakStats.Set("sw", 2 + up("sword") * 2);
         MolakStats.Set("sl", 0);
@@ -93,7 +95,8 @@ public class ClearRunCommand : Command
 public class ShopInfoCommand : Command
 {
     public static readonly (string key, int baseCost, int step, int max)[] Ups = {
-        ("sword", 3, 2, 5), ("body", 3, 2, 5), ("core", 4, 2, 5), ("coin", 2, 1, 4), ("seal", 5, 3, 4), ("mem", 6, 4, 3)
+        ("sword", 3, 2, 5), ("body", 3, 2, 5), ("core", 4, 2, 5), ("coin", 2, 1, 4), ("seal", 5, 3, 4), ("mem", 6, 4, 3),
+        ("tea", 10, 0, 1), ("lodge", 8, 0, 1), ("vigor", 6, 2, 10)
     };
 
 #pragma warning disable CS1998
