@@ -15,6 +15,7 @@ public class InitRunCommand : Command
         // 전역 기본값 보장
         foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
+        if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         // 전역(g_)이 아닌 변수 전부 제거 수준으로 0 초기화
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)
@@ -51,6 +52,7 @@ public class DayTickCommand : Command
         float root = (0.7f + 0.03f * day) * accel * MolakStats.CurseFactor();
         if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - 0.15f); // 청심차 비방: 매일 반 김
         MolakStats.Add("curse", root);
+        if (MolakStats.Get("f_ringclosed") > 0) MolakStats.Add("f_ringclosed", -1f); // 비무판 폐쇄 일수
         float lodg = day >= 25f ? 2f : 1f;
         if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f; // 하진무가 방값을 안 받기로 함
         if (MolakStats.Get("mn") >= lodg) { MolakStats.Add("mn", -lodg); MolakStats.Set("starved", 0f); }

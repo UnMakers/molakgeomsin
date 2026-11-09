@@ -38,6 +38,11 @@ public static class MolakDuel
             case "hunt2": return new Foe { Name = "혈랑대 정예", Rank = 2500, P = 56 + Random.Range(0, 4) };
             case "hunt3": return new Foe { Name = "집법전주", Rank = 40, P = 66 + Random.Range(0, 5), Boss = "hunt3" };
             case "cheolsan": return new Foe { Name = "철산도", Rank = 5213, P = 40 + Random.Range(0, 4) };
+            case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
+            {
+                int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.22f + Random.value * 0.18f))) : Random.Range(5500000, 7000001);
+                return new Foe { Name = BackNames[Random.Range(0, BackNames.Length)], Rank = t, P = Mathf.Round(7 + Mathf.Log10(8000001f / t) * 11f + Random.Range(0, 4)) };
+            }
             case "wolf": return new Foe { Name = "혈쇄문주", Rank = 77, P = 53 + Random.Range(0, 5), Boss = "wolf" };
             case "lord": return new Foe { Name = "혈마교주 혈천마", Rank = 1, P = 81 + Random.Range(0, 5), Boss = "lord" };
             case "rival":
@@ -55,6 +60,8 @@ public static class MolakDuel
 
     /// <summary>비무판에서 만날 수 있는 최고 서열: 백위 안은 교의 사람들(혈쇄문주를 꺾기 전엔 101위까지), 그 뒤엔 십위권(교주 직속) 바로 밑까지.</summary>
     public static int FloorRank () { return MolakStats.Get("f_wolfdown") > 0 ? 10 : 100; }
+
+    static readonly string[] BackNames = { "얼굴 없는 도객", "복면의 창잡이", "외팔이 낭인", "이 빠진 칼의 사내", "말 없는 쌍부(雙斧)" };
 
     public static float MyPower ()
     {
@@ -83,6 +90,9 @@ public class DuelInfoCommand : Command
         MolakDuel.Pending = foe;
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         vars.SetVariableValue("duelkind", new CustomVariableValue(kind));
+        // 전생의 기억(상점 강화) + 이 상대에게 죽은 적이 있으면 경고
+        bool bossKind = kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival";
+        MolakStats.Set("memwarn", bossKind && MolakStats.Get("g_up_mem") > 0 && vars.VariableExists("g_died_" + kind) && vars.GetVariableValue("g_died_" + kind).Number > 0 ? 1f : 0f);
         vars.SetVariableValue("foename", new CustomVariableValue(foe.Name));
         vars.SetVariableValue("foerank", new CustomVariableValue(string.Format("{0:N0}", foe.Rank)));
         vars.SetVariableValue("foetier", new CustomVariableValue(MolakDuel.TierName(foe.Rank)));
@@ -113,6 +123,9 @@ public class DuelCommand : Command
         if (style == "killer") { bonus = 2f + sl * 0.3f; hpRisk = 5f; }
         if (style == "guard") { bonus = -1f; hpRisk = 2f; }
         if (style == "curse") { bonus = 3f + curse * 0.06f; hpRisk = 2f; MolakStats.Add("curse", 5f); }
+        if (style == "curse2") { bonus = 5f + curse * 0.08f; hpRisk = 2f; MolakStats.Add("curse", 8f); } // 75 이상: 사술이 먼저 나선다
+        if (MolakStats.Get("memwarn") > 0) bonus += 1f; // 전생의 기억: 상대의 첫 수를 안다
+        if (kind == "back") hpRisk += 2f;
         if (kind == "lord" && MolakStats.Get("f_janginfo") > 0) bonus += 1.5f;
         if (kind == "lord" && MolakStats.Get("f_lordedge") > 0) bonus += 1f;
         if (kind == "wolf" && MolakStats.Get("f_chaininfo") > 0) bonus += 1.5f;
@@ -131,12 +144,12 @@ public class DuelCommand : Command
             float newRank = oldRank > 0 ? Mathf.Min(oldRank, foe.Rank) : foe.Rank;
             bool tierUp = MolakDuel.TierName(oldRank) != MolakDuel.TierName(newRank);
             float dmg = Random.Range(0, Mathf.Max(1, (int)hpRisk - 1));
-            float reward = kind == "unju" ? 3f : kind == "hochi" ? 8f : kind == "cheolsan" ? 100f : 1f;
+            float reward = kind == "unju" ? 3f : kind == "hochi" ? 8f : kind == "cheolsan" ? 100f : kind == "back" ? 3f : 1f;
             MolakStats.Set("rank", newRank);
             MolakStats.Add("hp", -dmg);
             MolakStats.Add("sw", 1f);
             MolakStats.Add("mn", reward);
-            if (style == "killer" || style == "curse") MolakStats.Add("sl", 1f);
+            if (style == "killer" || style == "curse" || style == "curse2") MolakStats.Add("sl", 1f);
             MolakStats.Set("duelwin", 1f); MolakArt.EndDuel();
             MolakStats.Set("tierup", tierUp ? 1f : 0f);
             vars.SetVariableValue("oldrank", new CustomVariableValue(oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명"));

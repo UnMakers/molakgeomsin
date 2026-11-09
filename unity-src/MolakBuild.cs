@@ -1,0 +1,66 @@
+using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
+
+/// <summary>
+/// 몰락검신 안드로이드 빌드 — 나니노벨 BuildProcessor.Building 플래그를 켠 상태로 전처리/빌드/정리.
+/// (플래그 없이 PreprocessBuild만 부르면 임시 복사본 스크립트 경로가 TEMP_NANINOVEL/... 로 깨져 기기에서 타이틀 복귀 현상)
+/// </summary>
+public static class MolakBuild
+{
+    public const string Apk = @"C:\Users\sjf1t\RuinedSword\Build\Android\molakgeomsin.apk";
+    public const string ResultFile = @"C:\Users\sjf1t\RuinedSword\Build\android_build_result.txt";
+    /// <summary>Google Drive 데스크톱 동기화 폴더(내 드라이브/작업중(Ings)/시현/전생검신/Build_Apk). 빌드 성공 시 버전명 붙여 복사.</summary>
+    public const string DriveDir = @"G:\내 드라이브\작업중(Ings)\시현\전생검신\Build_Apk";
+
+    public static string CopyToDrive (string version)
+    {
+        try
+        {
+            if (!Directory.Exists(DriveDir)) return " | drive: 폴더 없음";
+            var dst = Path.Combine(DriveDir, "몰락검신_v" + version + ".apk");
+            File.Copy(Apk, dst, true);
+            return " | drive: " + Path.GetFileName(dst);
+        }
+        catch (System.Exception ex) { return " | driveEXC " + ex.Message; }
+    }
+
+    public static string Android (string version, int code)
+    {
+        if (File.Exists(ResultFile)) File.Delete(ResultFile);
+        // 보조: .nani 전부 재임포트(커맨드 컴파일 이후 상태 보장)
+        foreach (var f in Directory.GetFiles(Path.Combine(Application.dataPath, "Scenario"), "*.nani"))
+            AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        PlayerSettings.bundleVersion = version;
+        PlayerSettings.Android.bundleVersionCode = code;
+        var opts = new BuildPlayerOptions {
+            scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
+            locationPathName = Apk, target = BuildTarget.Android, options = BuildOptions.None
+        };
+        var building = typeof(Naninovel.BuildProcessor).GetProperty("Building");
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        string res = "";
+        try
+        {
+            building.SetValue(null, true, null);
+            Naninovel.BuildProcessor.PreprocessBuild(opts);
+            // 임시 복사본 스크립트 경로 검증
+            var bad = Directory.GetFiles(Path.Combine(Application.dataPath, "TEMP_NANINOVEL/Resources/Naninovel/Scripts"), "*.nani")
+                .Select(f => AssetDatabase.LoadAssetAtPath<Naninovel.Script>("Assets/TEMP_NANINOVEL/Resources/Naninovel/Scripts/" + Path.GetFileName(f)))
+                .Where(sc => sc == null || sc.Path.Contains("/")).ToList();
+            if (bad.Count > 0) throw new System.Exception("TEMP script path broken: " + string.Join(",", bad.Select(b => b ? b.Path : "null")));
+            var report = BuildPipeline.BuildPlayer(opts);
+            res = "result=" + report.summary.result + " size=" + (report.summary.totalSize / (1024 * 1024)) + "MB errors=" + report.summary.totalErrors + " time=" + (int)sw.Elapsed.TotalSeconds + "s v=" + version;
+            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded) res += CopyToDrive(version);
+        }
+        catch (System.Exception ex) { res = "EXC " + ex.GetType().Name + ": " + ex.Message; }
+        finally
+        {
+            try { Naninovel.BuildProcessor.PostprocessBuild(); } catch (System.Exception ex2) { res += " | cleanupEXC " + ex2.Message; }
+            building.SetValue(null, false, null);
+        }
+        File.WriteAllText(ResultFile, res + "\n");
+        return res;
+    }
+}

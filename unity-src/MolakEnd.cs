@@ -102,11 +102,14 @@ public class MolakEnd : MonoBehaviour
     {
         if (cT < 0f) return;
         cT += Time.deltaTime;
-        float dur = 3.4f;
-        if (cT > dur) { cT = -1f; return; }
+        float dur = 3.4f, tail = 0.8f; // 카드 뒤 먹색 여운
+        if (cT > dur + tail) { cT = -1f; return; }
         float u = MolakTheme.U;
         EnsureStyles(u);
         float w = Screen.width, h = Screen.height;
+        float bgA = cT < 0.4f ? cT/0.4f : (cT > dur ? Mathf.Clamp01((dur + tail - cT)/tail) : 1f);
+        Box(new Rect(0,0,w,h), new Color(0.03f,0.025f,0.02f, 0.86f*bgA));
+        if (cT > dur) return;
         float a = cT < 0.4f ? cT/0.4f : (cT > dur-0.5f ? (dur-cT)/0.5f : 1f);
         var g = GUI.color; GUI.color = new Color(1,1,1,a);
         float cw = Mathf.Min(w*0.86f, 780*u), ch = 340*u;
