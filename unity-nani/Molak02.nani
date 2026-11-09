@@ -51,14 +51,36 @@
 ; --- 아침 풍경 ---
 @scene id:day
 @vfx kind:rainoff
-@set mrand=random(1,8)
+@pickflavor pool:morning
+@goto #M2 if:mrand==2
+@goto #M3 if:mrand==3
+@goto #M4 if:mrand==4
 @goto #M5 if:mrand==5
 @goto #M6 if:mrand==6
 @goto #M7 if:mrand==7
 @goto #M8 if:mrand==8
-@goto #M2 if:mrand==2
-@goto #M3 if:mrand==3
-@goto #M4 if:mrand==4
+@goto #M9 if:mrand==9
+@goto #M10 if:mrand==10
+@goto #M11 if:mrand==11
+@goto #M12 if:mrand==12
+@goto #M13 if:mrand==13
+@goto #M14 if:mrand==14
+@goto #M15 if:mrand==15
+@goto #M16 if:mrand==16
+@goto #M17 if:mrand==17
+@goto #M18 if:mrand==18
+@goto #M19 if:mrand==19
+@goto #M20 if:mrand==20
+@goto #M21 if:mrand==21
+@goto #M22 if:mrand==22
+@goto #M23 if:mrand==23
+@goto #M24 if:mrand==24
+@goto #M25 if:mrand==25
+@goto #M26 if:mrand==26
+@goto #M27 if:mrand==27
+@goto #M28 if:mrand==28
+@goto #M1
+# M1
 운락객잔의 아침. 장작 냄새와 어제 비 냄새가 마당에 남아 있다.
 @goto #Daytime
 # M2
@@ -82,9 +104,69 @@
 # M8
 관도 쪽에서 말발굽 소리. 붉은 끈의 전령이 북쪽으로 달려간다. 교의 소식은 늘 사람보다 빠르다.
 @goto #Daytime
+# M9
+창호지에 빛이 번진다. 일 년을 누워 보던 그 천장이 오늘은 조금 낮아 보인다. 몸이 자란 것이 아니라—마음이 일어선 것이다.
+@goto #Daytime
+# M10
+마당에서 점소이가 닭 모가지를 비튼다. 국밥집의 아침은 늘 작은 죽음으로 시작한다. 당신은 그것을 끝까지 본다.
+@goto #Daytime
+# M11
+객잔 앞 느티나무에 까치가 운다. 좋은 소식이 올 거라고 점소이가 말하지만—이 현에서 좋은 소식은 대개 남의 것이다.
+@goto #Daytime
+# M12
+아침 저자로 나가는 장사치들의 행렬. 그 틈에 붉은 끈 하나가 섞여 걷는다. 세는 사람이, 세어지고 있다.
+@goto #Daytime
+# M13
+가슴의 문양이 아침 햇빛 아래서는 희미하다. 낮에는 잠든 척하는 것이다. 밤이 되면 다시 제 할 일을 할 것이다.
+@goto #Daytime
+# M14
+거울 대신 세숫물에 얼굴을 비춘다. 일 년 전의 얼굴은 거기 없다. 수배서의 그림이 틀린 것이 아니라—당신이 바뀐 것이다.
+@goto #Daytime
+# M15
+아침부터 객잔 앞을 서성이는 낯선 그림자. 하진무가 빗자루로 마당을 쓸며 슬쩍 그자를 밀어낸다. 빗자루질에도 솜씨가 있다.
+@goto #Daytime
+# M16
+시장통 개 짖는 소리가 평소보다 사납다. 밤새 누가 지나갔다는 뜻이다. 사람인지, 사람이 아닌 것인지는 모른다.
+@goto #Daytime
+# M17
+아침 안개가 짙다. 열 걸음 앞이 보이지 않는 날—검을 쥔 손이 먼저 깨어 있다.
+@goto #Daytime
+# M18
+마당의 담 위에 쌍검 자국 같은 흠집이 새로 나 있다. 소아가 다녀갔거나—그녀를 흉내 내는 바람이 지나갔거나.
+@goto #Daytime
+# M19
+점소이가 조심스럽게 묻는다. "객, 북쪽에 정말 가실 겁니까." 대답 대신 국밥을 비운다. 그릇 바닥이 답이다.
+@goto #Daytime
+# M20
+아침부터 가슴이 미지근하다. 문양이 자라는 날은 몸이 먼저 안다. 당신은 그 미지근함을 세어 두는 버릇이 생겼다.
+@goto #Daytime
+# M21
+낯선 무인 하나가 마당 건너편에서 당신의 서열 패를 흘끔거린다. 올라갈수록 등 뒤의 눈이 늘어난다. 그것이 서열의 값이다.
+@goto #Daytime
+# M22
+하진무가 방값 장부를 넘기다 당신 이름 칸에서 손을 멈춘다. 셈이 틀려서가 아니다. 날짜가—너무 많이 쌓여서다.
+@goto #Daytime
+# M23
+아침 바람이 차다. 계절이 바뀌고 있다. 당신에게 남은 계절이 몇 개나 되는지—세어보지 않기로 한다.
+@goto #Daytime
+# M24
+가슴의 문양이 쇄골 쪽으로 손가락 한 마디쯤 기어올랐다. 옷깃을 여민다. 숨기는 것이 아니라—보지 않으려는 것이다.
+@goto #Daytime
+# M25
+마당의 느티나무 잎이 절반쯤 졌다. 떨어진 잎을 세듯 남은 날을 센다. 세는 것을 그만둔 날이 진짜 끝일 것이다.
+@goto #Daytime
+# M26
+새벽에 누가 창에 돌을 던졌다. 창호지에 구멍 하나. 내다보니 아무도 없다. 교의 인사인지, 다른 누구의 것인지.
+@goto #Daytime
+# M27
+눈을 뜨자 손이 검자루를 쥐고 있다. 잠결에 쥔 것이다. 몸이 먼저 전쟁을 시작했다.
+@goto #Daytime
+# M28
+하진무가 국밥에 고기를 한 점 더 얹는다. 말은 없다. 셈 밝은 영감이 셈을 틀리는 날은—무슨 뜻인지, 서로 안다.
+@goto #Daytime
 
 # Daytime
-@pickevent chance:60
+@pickevent chance:55 slot:day
 @gosub #RunEvent if:nextevent!="none"
 @goto #Night
 
@@ -96,10 +178,22 @@
 # Night
 @art char:none
 @scene id:night
-@set nrand=random(1,4)
+@pickflavor pool:night
 @goto #Nv2 if:nrand==2
 @goto #Nv3 if:nrand==3
 @goto #Nv4 if:nrand==4
+@goto #Nv5 if:nrand==5
+@goto #Nv6 if:nrand==6
+@goto #Nv7 if:nrand==7
+@goto #Nv8 if:nrand==8
+@goto #Nv9 if:nrand==9
+@goto #Nv10 if:nrand==10
+@goto #Nv11 if:nrand==11
+@goto #Nv12 if:nrand==12
+@goto #Nv13 if:nrand==13
+@goto #Nv14 if:nrand==14
+@goto #Nv1
+# Nv1
 해가 저문다. 온전히 당신의 것인 반시진이 남았다.
 @goto #NightChoice
 # Nv2
@@ -111,6 +205,36 @@
 # Nv4
 창밖에 달이 올랐다. 그날 밤의 달보다 희다. 남은 반시진을 손에 쥔다.
 @goto #NightChoice
+# Nv5
+아래층에서 술꾼들의 노랫소리. 강호의 밤은 늘 누군가의 잔치고 누군가의 초상이다. 당신의 반시진이 남았다.
+@goto #NightChoice
+# Nv6
+점소이가 등잔 기름을 채워 간다. "객, 오늘도 늦으십니까." 늦는다. 매일 늦는다. 반시진은 그러라고 있는 것이다.
+@goto #NightChoice
+# Nv7
+밤바람에 문풍지가 운다. 가슴의 문양도 같은 박자로 운다. 둘 다 못 들은 척하고—반시진을 어디에 쓸지 정한다.
+@goto #NightChoice
+# Nv8
+하진무가 셈을 끝내고 주판을 덮는 소리. 하루가 닫히는 소리다. 당신의 하루는 아직 반시진 남았다.
+@goto #NightChoice
+# Nv9
+골목 어귀에 등불 하나가 오래 서 있다. 누군가 객잔을 지켜보는 밤. 그래도 반시진은 당신의 것이다.
+@goto #NightChoice
+# Nv10
+밤이 길어졌다. 계절 탓인지, 당신 탓인지. 반시진이 전보다 무겁다.
+@goto #NightChoice
+# Nv11
+달이 붉다. 그날 밤과 같은 색. 당신은 창을 등지고 앉는다. 반시진—등 뒤의 달은 잊기로 한다.
+@goto #NightChoice
+# Nv12
+문양이 밤이면 뜨겁다. 손바닥을 얹으면 심장이 둘인 것 같다. 둘 중 하나의 것인 반시진을, 당신 것으로 쓴다.
+@goto #NightChoice
+# Nv13
+객잔 아래층이 조용하다. 손님이 줄었다. 당신 때문이라는 걸 하진무는 말하지 않는다. 반시진이 남았다.
+@goto #NightChoice
+# Nv14
+밤마다 가슴의 글자를 센다. 오늘도 하나 늘었다. 늘어난 만큼 검을 쥔다. 반시진.
+@goto #NightChoice
 # NightChoice
 @choice "마당에서 검을 간다" goto:#NSw
 @choice "가부좌를 틀고 운기조식한다" goto:#NQi
@@ -120,23 +244,98 @@
 @choice "몸을 쉰다" goto:#NRest
 @stop
 # NSw
-@set r=random(1,3)
+@set tr=random(1,100)
+@goto #NSwT1 if:t_sw1<1&&day>=4&&tr<=30
+@goto #NSwT2 if:t_sw2<1&&day>=9&&tr<=30
 @goto #NSwB if:f_bilokhalf>0||f_biloklearn>0
+@set sv=random(1,4)
+@goto #NSw2 if:sv==2
+@goto #NSw3 if:sv==3
+@goto #NSw4 if:sv==4
 달빛 아래 천 번의 횡소(橫掃). 손바닥이 터지고, 감각이 쌓인다.
 @fx sw:1 hp:-1
 @goto #NightEnd
+# NSw2
+횡소 천 번, 자세는 하나. 사형이 세던 숫자를 당신이 센다. 팔백에서 어깨가 울고, 구백에서 조용해진다.
+@fx sw:1 hp:-1
+@goto #NightEnd
+# NSw3
+마당의 느티나무를 상대로 천 번. 나무는 피하지 않는다. 피하지 않는 상대를 베는 연습은—결국 제 검을 보는 연습이다.
+@fx sw:1 hp:-1
+@goto #NightEnd
+# NSw4
+달이 없는 밤. 보이지 않는 검끝을 손끝으로 더듬는다. 천 번째에—검이 어디 있는지 눈 없이 안다.
+@fx sw:1 hp:-1
+@goto #NightEnd
+# NSwT1
+@set t_sw1=1
+@gosub MolakEvents#T_Sw1
+@goto #NightEnd
+# NSwT2
+@set t_sw2=1
+@gosub MolakEvents#T_Sw2
+@goto #NightEnd
 # NSwB
+@set sv=random(1,3)
+@goto #NSwB2 if:sv==2
+@goto #NSwB3 if:sv==3
 「운검비록」의 구결이 손끝을 이끈다. 어제의 반 치, 오늘의 반 치—그것이 쌓여 벽이 된다.
 @fx sw:2 hp:-1
 @goto #NightEnd
+# NSwB2
+비록의 구결이 몸에 든다. 손목이 아니라 허리, 허리가 아니라 발. 어제 몰랐던 반 치가 오늘 손에 있다.
+@fx sw:2 hp:-1
+@goto #NightEnd
+# NSwB3
+운검비록 제삼결. 획 하나를 천 번 긋는다. 종이가 아니라 공기에. 공기가 베이는 소리를, 당신은 이제 안다.
+@fx sw:2 hp:-1
+@goto #NightEnd
 # NQi
+@set tr=random(1,100)
+@goto #NQiT1 if:t_qi1<1&&day>=5&&tr<=30
+@goto #NQiT2 if:t_qi2<1&&day>=12&&curse>=25&&tr<=30
 @goto #NQiB if:f_breath>0
+@set sv=random(1,4)
+@goto #NQi2 if:sv==2
+@goto #NQi3 if:sv==3
+@goto #NQi4 if:sv==4
 조식(調息), 취기(聚氣), 운기(運氣)… 토탁(吐濁)에서 막힌다. 뱉어야 할 탁기를, 가슴의 <color=#9A70C4>문양이 먼저 삼킨다</color>.
 @fx ng:2 hp:1 curse:3
 @goto #NightEnd
+# NQi2
+운기 한 바퀴. 단전에서 올라온 기가 가슴에서 한 번 멈춘다. 문양이 통행세를 받는 자리다. 내고, 지나간다.
+@fx ng:2 hp:1 curse:3
+@goto #NightEnd
+# NQi3
+들숨, 날숨. 벽 너머 술꾼들의 노래가 박자가 된다. 강호의 밤에 맞춰 숨 쉬는 법—그것도 운기다. 문양은 제 몫을 챙긴다.
+@fx ng:2 hp:1 curse:3
+@goto #NightEnd
+# NQi4
+운기 도중 사형의 목소리가 들린 것 같았다. '막내야, 숨이 급하다.' 숨을 늦춘다. 기가 한 뼘 깊이 내려가고—문양도 한 뼘 따라온다.
+@fx ng:2 hp:1 curse:3
+@goto #NightEnd
+# NQiT1
+@set t_qi1=1
+@gosub MolakEvents#T_Qi1
+@goto #NightEnd
+# NQiT2
+@set t_qi2=1
+@gosub MolakEvents#T_Qi2
+@goto #NightEnd
 # NQiB
+@goto #NQiB3 if:f_breath2>0
+@set sv=random(1,2)
+@goto #NQiB2 if:sv==2
 들숨 여섯, 날숨 아홉. 거지 중의 구결대로 숨을 바꾸자, 탁기가 덜 쌓인다.
 @fx ng:2 hp:1 curse:2
+@goto #NightEnd
+# NQiB2
+여섯, 아홉. 구결대로 숨을 바꾼다. 문양이 삼키는 몫이 손톱만큼 준다. 손톱만큼이 쌓여 목숨이 된다.
+@fx ng:2 hp:1 curse:2
+@goto #NightEnd
+# NQiB3
+여섯, 아홉—그리고 반 호흡의 멈춤. 거지 중의 두 번째 구결. 탁기가 씨앗에 닿기 전에 입에서 나간다. 문양이 굶는다.
+@fx ng:2 hp:1 curse:1
 @goto #NightEnd
 # NightTown
 저녁 저자. 등불이 하나둘 켜진다.
@@ -145,9 +344,26 @@
 @choice "그냥 돌아간다" goto:#NightEnd
 @stop
 # NWork
-물지게 마흔 번. 어깨에 밧줄 자국. 삯은 정직하고, 정직한 것들은 대개 아프다.
+@set tr=random(1,100)
+@goto #NWorkT1 if:t_wk1<1&&day>=6&&tr<=30
 @set r=random(2,3)
+@set sv=random(1,3)
+@goto #NWork2 if:sv==2
+@goto #NWork3 if:sv==3
+물지게 마흔 번. 어깨에 밧줄 자국. 삯은 정직하고, 정직한 것들은 대개 아프다.
 @fx mn:{r} hp:-1
+@goto #NightEnd
+# NWork2
+장작 패기 이백 개. 도끼질에도 검법이 있다—라고 생각하면 덜 지겹다. 삯은 정직하고, 어깨는 아프다.
+@fx mn:{r} hp:-1
+@goto #NightEnd
+# NWork3
+저자 창고에서 가마니를 나른다. 창고지기가 당신 손바닥의 굳은살을 보고 품삯을 반 닢 얹어 준다. 손이 이력서다.
+@fx mn:{r} hp:-1
+@goto #NightEnd
+# NWorkT1
+@set t_wk1=1
+@gosub MolakEvents#T_Wk1
 @goto #NightEnd
 # NDuel
 저잣거리 공터—비무판. 서열을 건 칼들이 밤마다 부딪치는 곳이다.
@@ -157,8 +373,30 @@
 # NWolf
 @goto Molak04#Wf1
 # NRest
+@set tr=random(1,100)
+@goto #NRestT1 if:t_rest1<1&&day>=5&&tr<=30
+@set sv=random(1,4)
+@goto #NRest2 if:sv==2
+@goto #NRest3 if:sv==3
+@goto #NRest4 if:sv==4
 침상에 눕는다. 아무 일도 없는 밤—지금의 당신에게는 그것이 사치다.
 @fx hp:3
+@goto #NightEnd
+# NRest2
+일찍 눕는다. 천장의 얼룩을 센다. 일 년 동안 센 얼룩이다. 오늘은 하나가 더 늘어 보인다. 착각일 것이다.
+@fx hp:3
+@goto #NightEnd
+# NRest3
+잠이 오지 않아 창을 연다. 달이 마당의 느티나무에 걸려 있다. 아무 일도 없는 밤. 그것이 사치라는 것을 몸이 안다.
+@fx hp:3
+@goto #NightEnd
+# NRest4
+점소이가 두고 간 식은 국밥을 마저 먹고 눕는다. 배부른 것도 수련이다—라고 사형이 말했었다. 믿기로 한다.
+@fx hp:3
+@goto #NightEnd
+# NRestT1
+@set t_rest1=1
+@gosub MolakEvents#T_Rest1
 @goto #NightEnd
 
 # NightEnd
@@ -189,47 +427,111 @@
 @goto #Evening
 # Evening
 @art char:none
-@pickevent chance:30
+@pickevent chance:35 slot:night
 @gosub #RunEvent if:nextevent!="none"
 @goto #DayLoop
 
 # RunEvent
 @gosub MolakEvents#E_Yong if:nextevent=="E_Yong"
-@gosub MolakEvents#E_Herb if:nextevent=="E_Herb"
 @gosub MolakEvents#E_Thugs if:nextevent=="E_Thugs"
-@gosub MolakEvents#E_Beggar if:nextevent=="E_Beggar"
-@gosub MolakEvents#E_Monk if:nextevent=="E_Monk"
-@gosub MolakEvents#E_Notice if:nextevent=="E_Notice"
-@gosub MolakEvents#E_Duelist if:nextevent=="E_Duelist"
-@gosub MolakEvents#E_Rain if:nextevent=="E_Rain"
-@gosub MolakEvents#E_Spy if:nextevent=="E_Spy"
-@gosub MolakEvents#E_Peddler if:nextevent=="E_Peddler"
-@gosub MolakEvents#E_Gamble if:nextevent=="E_Gamble"
-@gosub MolakEvents#E_Spar if:nextevent=="E_Spar"
-@gosub MolakEvents#E_Storyteller if:nextevent=="E_Storyteller"
+@gosub MolakEvents#E_Pilgrim if:nextevent=="E_Pilgrim"
 @gosub MolakEvents#E_Funeral if:nextevent=="E_Funeral"
-@gosub MolakEvents#E_Guard if:nextevent=="E_Guard"
-@gosub MolakEvents#E_Coldspring if:nextevent=="E_Coldspring"
-@gosub MolakEvents#E_Acup if:nextevent=="E_Acup"
-@gosub MolakEvents#E_Talisman if:nextevent=="E_Talisman"
-@gosub MolakEvents#E_Sutra if:nextevent=="E_Sutra"
+@gosub MolakEvents#E_Lostblade if:nextevent=="E_Lostblade"
+@gosub MolakEvents#E_Rain if:nextevent=="E_Rain"
+@gosub MolakEvents#E_Swordgrave if:nextevent=="E_Swordgrave"
 @gosub MolakEvents#E_Cultists if:nextevent=="E_Cultists"
+@gosub MolakEvents#E_Bloodtax if:nextevent=="E_Bloodtax"
 @gosub MolakEvents#E_Hunter if:nextevent=="E_Hunter"
 @gosub MolakEvents#E_DokRevenge if:nextevent=="E_DokRevenge"
-@gosub MolakEvents#E_Simma if:nextevent=="E_Simma"
-@gosub MolakEvents#E_Dream if:nextevent=="E_Dream"
+@gosub MolakEvents#E_Rival if:nextevent=="E_Rival"
 @gosub MolakEvents#E_Soa2 if:nextevent=="E_Soa2"
 @gosub MolakEvents#E_VillageNews if:nextevent=="E_VillageNews"
-@gosub MolakEvents#E_Pilgrim if:nextevent=="E_Pilgrim"
-@gosub MolakEvents#E_Swordgrave if:nextevent=="E_Swordgrave"
-@gosub MolakEvents#E_Teaseller if:nextevent=="E_Teaseller"
-@gosub MolakEvents#E_Nightmarket if:nextevent=="E_Nightmarket"
-@gosub MolakEvents#E_Childplay if:nextevent=="E_Childplay"
-@gosub MolakEvents#E_Bloodtax if:nextevent=="E_Bloodtax"
-@gosub MolakEvents#E_Lostblade if:nextevent=="E_Lostblade"
-@gosub MolakEvents#E_Ferry if:nextevent=="E_Ferry"
-@gosub MolakEvents#E_Rival if:nextevent=="E_Rival"
+@gosub MolakEvents#E_Simma if:nextevent=="E_Simma"
+@gosub MolakEvents#E_Dream if:nextevent=="E_Dream"
 @gosub MolakEvents#E_Echoes if:nextevent=="E_Echoes"
+@gosub MolakEvents#E_Herb if:nextevent=="E_Herb"
+@gosub MolakEvents#E_Herb2x if:nextevent=="E_Herb2x"
+@gosub MolakEvents#E_Herb4 if:nextevent=="E_Herb4"
+@gosub MolakEvents#E_Herb5 if:nextevent=="E_Herb5"
+@gosub MolakEvents#E_Peddler if:nextevent=="E_Peddler"
+@gosub MolakEvents#E_Peddler3 if:nextevent=="E_Peddler3"
+@gosub MolakEvents#E_Peddler4 if:nextevent=="E_Peddler4"
+@gosub MolakEvents#E_Duelist if:nextevent=="E_Duelist"
+@gosub MolakEvents#E_Duelist2 if:nextevent=="E_Duelist2"
+@gosub MolakEvents#E_Duelist3 if:nextevent=="E_Duelist3"
+@gosub MolakEvents#E_Spar if:nextevent=="E_Spar"
+@gosub MolakEvents#E_Spar2 if:nextevent=="E_Spar2"
+@gosub MolakEvents#E_Spar3 if:nextevent=="E_Spar3"
+@gosub MolakEvents#E_Guard if:nextevent=="E_Guard"
+@gosub MolakEvents#E_Guard2 if:nextevent=="E_Guard2"
+@gosub MolakEvents#E_Guard3 if:nextevent=="E_Guard3"
+@gosub MolakEvents#E_Gamble if:nextevent=="E_Gamble"
+@gosub MolakEvents#E_Gamble3 if:nextevent=="E_Gamble3"
+@gosub MolakEvents#E_Gamble4 if:nextevent=="E_Gamble4"
+@gosub MolakEvents#E_Nightmarket if:nextevent=="E_Nightmarket"
+@gosub MolakEvents#E_Nightmarket2 if:nextevent=="E_Nightmarket2"
+@gosub MolakEvents#E_Nightmarket3 if:nextevent=="E_Nightmarket3"
+@gosub MolakEvents#E_Acup if:nextevent=="E_Acup"
+@gosub MolakEvents#E_Acup3 if:nextevent=="E_Acup3"
+@gosub MolakEvents#E_Acup4 if:nextevent=="E_Acup4"
+@gosub MolakEvents#E_Talisman if:nextevent=="E_Talisman"
+@gosub MolakEvents#E_Talisman2 if:nextevent=="E_Talisman2"
+@gosub MolakEvents#E_Sutra if:nextevent=="E_Sutra"
+@gosub MolakEvents#E_Sutra2 if:nextevent=="E_Sutra2"
+@gosub MolakEvents#E_Sutra3 if:nextevent=="E_Sutra3"
+@gosub MolakEvents#E_Cultists2 if:nextevent=="E_Cultists2"
+@gosub MolakEvents#E_Cultists3 if:nextevent=="E_Cultists3"
+@gosub MolakEvents#E_Hunter2 if:nextevent=="E_Hunter2"
+@gosub MolakEvents#E_Hunter3 if:nextevent=="E_Hunter3"
+@gosub MolakEvents#E_Simma2 if:nextevent=="E_Simma2"
+@gosub MolakEvents#E_Simma3 if:nextevent=="E_Simma3"
+@gosub MolakEvents#E_Dream2 if:nextevent=="E_Dream2"
+@gosub MolakEvents#E_Dream3 if:nextevent=="E_Dream3"
+@gosub MolakEvents#E_Yong3 if:nextevent=="E_Yong3"
+@gosub MolakEvents#E_YongK2 if:nextevent=="E_YongK2"
+@gosub MolakEvents#E_Storyteller if:nextevent=="E_Storyteller"
+@gosub MolakEvents#E_Storyteller2 if:nextevent=="E_Storyteller2"
+@gosub MolakEvents#E_Monk if:nextevent=="E_Monk"
+@gosub MolakEvents#E_Monk3 if:nextevent=="E_Monk3"
+@gosub MolakEvents#E_Monk4 if:nextevent=="E_Monk4"
+@gosub MolakEvents#E_Beggar if:nextevent=="E_Beggar"
+@gosub MolakEvents#E_Beggar3 if:nextevent=="E_Beggar3"
+@gosub MolakEvents#E_Beggar4 if:nextevent=="E_Beggar4"
+@gosub MolakEvents#E_Spy if:nextevent=="E_Spy"
+@gosub MolakEvents#E_Spy3 if:nextevent=="E_Spy3"
+@gosub MolakEvents#E_Spy4 if:nextevent=="E_Spy4"
+@gosub MolakEvents#E_Notice if:nextevent=="E_Notice"
+@gosub MolakEvents#E_Notice2 if:nextevent=="E_Notice2"
+@gosub MolakEvents#E_Notice3 if:nextevent=="E_Notice3"
+@gosub MolakEvents#E_Rain2 if:nextevent=="E_Rain2"
+@gosub MolakEvents#E_Rain3 if:nextevent=="E_Rain3"
+@gosub MolakEvents#E_Ferry if:nextevent=="E_Ferry"
+@gosub MolakEvents#E_Ferry2 if:nextevent=="E_Ferry2"
+@gosub MolakEvents#E_Ferry3 if:nextevent=="E_Ferry3"
+@gosub MolakEvents#E_Teaseller if:nextevent=="E_Teaseller"
+@gosub MolakEvents#E_Teaseller2 if:nextevent=="E_Teaseller2"
+@gosub MolakEvents#E_Swordgrave2 if:nextevent=="E_Swordgrave2"
+@gosub MolakEvents#E_Childplay if:nextevent=="E_Childplay"
+@gosub MolakEvents#E_Childplay2 if:nextevent=="E_Childplay2"
+@gosub MolakEvents#E_Childplay3 if:nextevent=="E_Childplay3"
+@gosub MolakEvents#E_Bloodtax2 if:nextevent=="E_Bloodtax2"
+@gosub MolakEvents#E_Echoes2 if:nextevent=="E_Echoes2"
+@gosub MolakEvents#E_Coldspring if:nextevent=="E_Coldspring"
+@gosub MolakEvents#E_Coldspring2 if:nextevent=="E_Coldspring2"
+@gosub MolakEvents#E_Hajin1 if:nextevent=="E_Hajin1"
+@gosub MolakEvents#E_Hajin3 if:nextevent=="E_Hajin3"
+@gosub MolakEvents#E_Eclipse if:nextevent=="E_Eclipse"
+@gosub MolakEvents#E_Caravan if:nextevent=="E_Caravan"
+@gosub MolakEvents#E_Wine if:nextevent=="E_Wine"
+@gosub MolakEvents#E_Frost if:nextevent=="E_Frost"
+@gosub MolakEvents#E_Lantern if:nextevent=="E_Lantern"
+@gosub MolakEvents#E_Wolfhowl if:nextevent=="E_Wolfhowl"
+@gosub MolakEvents#E_Emptytown if:nextevent=="E_Emptytown"
+@gosub MolakEvents#E_Lastletter if:nextevent=="E_Lastletter"
+@gosub MolakEvents#E_Mirror if:nextevent=="E_Mirror"
+@gosub MolakEvents#E_Swordsong if:nextevent=="E_Swordsong"
+@gosub MolakEvents#E_Lastmarket if:nextevent=="E_Lastmarket"
+@gosub MolakEvents#E_Vigil if:nextevent=="E_Vigil"
 @return
 
 ; --- 비트 진입 블록 ---
