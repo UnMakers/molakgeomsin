@@ -44,7 +44,21 @@
 @goto #Shop
 # Shop
 @shopinfo
+@goto #ShopWin if:deathcause=="등극"
+@goto #ShopRipe if:deathcause=="성사"
+@goto #ShopSungeom if:deathcause=="순검"
 죽음은 스승이다. 수업료가 목숨일 뿐.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회
+@goto #ShopList
+# ShopWin
+깃발은 내렸다. 문양은 아직 익지 않았다—이야기도.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회 · 등극 {g_clears}회
+@goto #ShopList
+# ShopRipe
+열매는 따였고, 나무는 남았다. 노인은 같은 자리에 다시 심는다.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회
+@goto #ShopList
+# ShopSungeom
+베었다. 쓰러졌다. 손은 베는 법을 기억한다.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회 · 등극 {g_clears}회
+@goto #ShopList
+# ShopList
 @choice "검흔(劍痕) — 시작 검술 +2 \[{cost_sword}\]" if:max_sword<1&&g_pts>=cost_sword goto:#BuySword
 @choice "단련된 육신 — 시작 체력 +2 \[{cost_body}\]" if:max_body<1&&g_pts>=cost_body goto:#BuyBody
 @choice "잔류 진기 — 시작 내공 +3 \[{cost_core}\]" if:max_core<1&&g_pts>=cost_core goto:#BuyCore
@@ -73,3 +87,26 @@
 @goto #Shop
 # Restart
 @goto Molak01#RunStart
+
+# RipeAfter
+눈을 뜨면, 그날 아침이다.
+노인의 검로가 손에 남아 있다. 떨쳐지지 않는다—떨칠 생각이 없다는 것을, 손이 먼저 안다.
+가슴의 문양이 낮게 열을 낸다. 처음 보는 열이 아니다. 다만 이번엔, 열 쪽에서 당신을 안다.
+@goto #Shop
+# IpmaAfter
+…그런데.
+눈을 뜨면, 그날 아침이다.
+뜯겨 나갔을 자리에서 노인의 목소리가 울린다.
+'썩은 열매에게 익은 열매를 맡길 수는 없지.'
+문양이 있다. 처음부터 그 자리에 있었다는 듯.
+@goto #Shop
+# LeaveAfter
+눈을 뜨면, 그날 아침이다.
+강가의 달도, 옆자리의 온기도 없다. 운락객잔의 천장.
+문양이 낮게 열을 낸다. '멀리 가도 소용없다는 것을, 이제 알겠지.'
+@goto #Shop
+# SungeomAfter
+눈을 뜨면, 그날 아침이다.
+교주는 죽지 않았다. 당신이 아직 베지 않았으니까.
+그러나 손이—베는 법을 기억한다. 그것은 되감기지 않는다.
+@goto #Shop

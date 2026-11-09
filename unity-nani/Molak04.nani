@@ -275,8 +275,26 @@
 "나도 한때 그자의 바둑돌이었다. 몇 번이고 죽고, 몇 번이고 돌아왔지. …너는, 몇 번이냐."
 당신은 대답하지 않는다. 세는 것을 그만둔 지 오래다.
 \[ 終 \] — 혈마교의 깃발이 내려간다.
+@goto #VictoryCurse if:curse>=80
 @clearrun
 @goto #Epilogue
+# VictoryCurse
+@vfx kind:curse
+일어서려 한다. 일어서지지 않는다.
+교주의 피가 아니다. 당신의 가슴에서—문양이 <color=#C03434>터져 나오고 있다</color>. 베는 데 전부 썼다. 저주를 누를 힘까지.
+대전 밖, 불타는 깃발을 등지고 노인이 걸어 들어온다. 서두르지 않는다.
+"베긴 베었구나."
+그가 무릎 꿇은 교주의 시신을 지나, 쓰러진 당신 앞에 선다.
+"익기 전에 다 써버렸어. 아깝다."
+아깝다. 그 한마디가 당신의 일 년에 대한 전부다.
+"다시."
+\[ 終 \] — 베고, 쓰러지다.
+@set deathcause="순검"
+@art char:none
+@clearrun
+@ending
+@regress
+@goto MolakOver#SungeomAfter
 # Epilogue
 대전 밖. 혈마교의 깃발이 타고 있다.
 그 불길을 등지고—노인이 서 있다.
@@ -291,6 +309,7 @@
 "교주도 한때 내 돌이었다. 다 익기 전에 썩었지만."
 @goto #EpiSoaBond if:f_soabond>0
 @goto #EpiJinTruth if:f_jinbaektruth>0
+@goto #EpiJinDead if:f_jinbaekdead>0
 @goto #EpiOchi if:f_ochisaved>0
 @goto #EpiTail
 # EpiOchi
@@ -305,6 +324,11 @@
 # EpiJinTruth
 막판, 혈천진의 눈이 뒤집히던 순간—북두를 거꾸로 밟았다. 교주 뒤의 일곱 걸음. 대사형의 마지막 가르침이 당신을 살렸다.
 어딘가에서 그가 이 소식을 들었을 것이다. 용서는 없다. 다만 셈은—셈은 끝났다.
+@goto #EpiTail
+# EpiJinDead
+사당의 먼지 위에 그은 먹줄이 떠오른다. 대사형은 고맙다고 했다. 이제 안다—그가 고마워한 것은 죽음이 아니라, 당신이 산문 안쪽의 진실을 묻지 않은 것이었다는 걸.
+노인이 그것을 안다는 듯 당신을 본다. "열지 않은 문 뒤에 무엇이 있었는지, 궁금하지 않으냐."
+궁금하다. 그래서 더, 묻지 않는다.
 @goto #EpiTail
 # EpiTail
 회귀 {g_runs}회. 마지막 생 {day}일. 그 전부가—이 하루를 위해 있었다.

@@ -4,6 +4,8 @@
 @goto MolakOver#Exhaust if:hp<=0
 ; --- 장(章)·비트 ---
 @goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10
+@goto Molak06#Ripe1 if:curse>=88&&f_oldseen>0&&b_ripe<1
+@goto Molak06#Capture if:day>=60&&b_capture<1
 @goto #ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
 @goto #ChSoa if:day>=3&&f_soamet<1&&b_soa<1
 @goto #B5 if:day>=5&&b_hajin<1
@@ -241,6 +243,7 @@
 @choice "저자로 나간다 — 날품과 가게들" goto:#NightTown
 @choice "비무판을 찾아간다" if:day>=4 goto:#NDuel
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
+@choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&day>=38&&b_leave<1 goto:#NLeave
 @choice "몸을 쉰다" goto:#NRest
 @stop
 # NSw
@@ -372,6 +375,9 @@
 @goto #NightEnd
 # NWolf
 @goto Molak04#Wf1
+# NLeave
+@set b_leave=1
+@goto Molak06#Leave1
 # NRest
 @set tr=random(1,100)
 @goto #NRestT1 if:tn_rest1<1&&day>=5&&tr<=30

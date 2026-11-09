@@ -5,6 +5,7 @@
 @set b_amh2=0
 @set b_amhyang=0
 @set b_bilok=0
+@set b_capture=0
 @set b_chain=0
 @set b_depart=0
 @set b_fame=0
@@ -15,8 +16,10 @@
 @set b_hunt1=0
 @set b_hunt2=0
 @set b_hunt3x=0
+@set b_ipma=0
 @set b_jang=0
 @set b_jang2=0
+@set b_leave=0
 @set b_ochi=0
 @set b_old=0
 @set b_old2x=0
@@ -29,6 +32,7 @@
 @set b_r4=0
 @set b_r4x=0
 @set b_r5x=0
+@set b_ripe=0
 @set b_rival2=0
 @set b_s1=0
 @set b_s2=0
@@ -88,15 +92,18 @@
 @set f_hmleft=0
 @set f_hmsaved=0
 @set f_inkcord=0
+@set f_ipmafight=0
 @set f_jangfriend=0
 @set f_janginfo=0
 @set f_jinbaek=0
 @set f_jinbaekdead=0
 @set f_jinbaektruth=0
 @set f_kyonadown=0
+@set f_leftwithsoa=0
 @set f_letter=0
 @set f_lordedge=0
 @set f_lordintro=0
+@set f_lordlore=0
 @set f_mirror=0
 @set f_monklore=0
 @set f_newrobe=0
@@ -109,6 +116,8 @@
 @set f_openname=0
 @set f_relicinfo=0
 @set f_relicpae=0
+@set f_ripe=0
+@set f_ripedenied=0
 @set f_rivalfriend=0
 @set f_roadblock=0
 @set f_roadinfo=0
