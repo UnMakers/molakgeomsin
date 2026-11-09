@@ -245,8 +245,8 @@
 @stop
 # NSw
 @set tr=random(1,100)
-@goto #NSwT1 if:t_sw1<1&&day>=4&&tr<=30
-@goto #NSwT2 if:t_sw2<1&&day>=9&&tr<=30
+@goto #NSwT1 if:tn_sw1<1&&day>=4&&tr<=30
+@goto #NSwT2 if:tn_sw2<1&&day>=9&&tr<=30
 @goto #NSwB if:f_bilokhalf>0||f_biloklearn>0
 @set sv=random(1,4)
 @goto #NSw2 if:sv==2
@@ -268,11 +268,11 @@
 @fx sw:1 hp:-1
 @goto #NightEnd
 # NSwT1
-@set t_sw1=1
+@set tn_sw1=1
 @gosub MolakEvents#T_Sw1
 @goto #NightEnd
 # NSwT2
-@set t_sw2=1
+@set tn_sw2=1
 @gosub MolakEvents#T_Sw2
 @goto #NightEnd
 # NSwB
@@ -292,8 +292,8 @@
 @goto #NightEnd
 # NQi
 @set tr=random(1,100)
-@goto #NQiT1 if:t_qi1<1&&day>=5&&tr<=30
-@goto #NQiT2 if:t_qi2<1&&day>=12&&curse>=25&&tr<=30
+@goto #NQiT1 if:tn_qi1<1&&day>=5&&tr<=30
+@goto #NQiT2 if:tn_qi2<1&&day>=12&&curse>=25&&tr<=30
 @goto #NQiB if:f_breath>0
 @set sv=random(1,4)
 @goto #NQi2 if:sv==2
@@ -315,11 +315,11 @@
 @fx ng:2 hp:1 curse:3
 @goto #NightEnd
 # NQiT1
-@set t_qi1=1
+@set tn_qi1=1
 @gosub MolakEvents#T_Qi1
 @goto #NightEnd
 # NQiT2
-@set t_qi2=1
+@set tn_qi2=1
 @gosub MolakEvents#T_Qi2
 @goto #NightEnd
 # NQiB
@@ -345,7 +345,7 @@
 @stop
 # NWork
 @set tr=random(1,100)
-@goto #NWorkT1 if:t_wk1<1&&day>=6&&tr<=30
+@goto #NWorkT1 if:tn_wk1<1&&day>=6&&tr<=30
 @set r=random(2,3)
 @set sv=random(1,3)
 @goto #NWork2 if:sv==2
@@ -362,7 +362,7 @@
 @fx mn:{r} hp:-1
 @goto #NightEnd
 # NWorkT1
-@set t_wk1=1
+@set tn_wk1=1
 @gosub MolakEvents#T_Wk1
 @goto #NightEnd
 # NDuel
@@ -374,7 +374,7 @@
 @goto Molak04#Wf1
 # NRest
 @set tr=random(1,100)
-@goto #NRestT1 if:t_rest1<1&&day>=5&&tr<=30
+@goto #NRestT1 if:tn_rest1<1&&day>=5&&tr<=30
 @set sv=random(1,4)
 @goto #NRest2 if:sv==2
 @goto #NRest3 if:sv==3
@@ -395,7 +395,7 @@
 @fx hp:3
 @goto #NightEnd
 # NRestT1
-@set t_rest1=1
+@set tn_rest1=1
 @gosub MolakEvents#T_Rest1
 @goto #NightEnd
 
