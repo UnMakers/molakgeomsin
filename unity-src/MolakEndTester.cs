@@ -65,6 +65,60 @@ public class MolakEndTester : MonoBehaviour
         return ok.Length > 0 ? ok[Random.Range(0, ok.Length)] : Random.Range(0, labels.Length);
     }
 
+    // ---- 지정 경로 주행: picks 순서대로 선택지 부분일치 선택, 없으면 정책. 상점(MolakOver 대기)에서 종료 ----
+    public static string[] Picks = new string[0]; public static int PickIdx;
+    public static void Drive (string[] picks)
+    {
+        if (I == null) { var go = new GameObject("MolakEndTester"); DontDestroyOnLoad(go); I = go.AddComponent<MolakEndTester>(); }
+        Picks = picks; PickIdx = 0; I.god = false; I.maxLives = 1; I.lives = 0; I.done = false; I.inOver = false; Log.Length = 0; Lives.Length = 0; Status = "driving"; I.StopAllCoroutines(); I.StartCoroutine(I.DriveLoop());
+    }
+    IEnumerator DriveLoop ()
+    {
+        var sp = Engine.GetServiceOrErr<IScriptPlayer>();
+        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
+        sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.time; lastScript = "";
+        while (!done)
+        {
+            yield return new WaitForSeconds(0.15f);
+            var tr = sp.MainTrack;
+            float day = MolakStats.Get("day");
+            string path = tr.PlayedScript != null ? tr.PlayedScript.Path : "-";
+            if (path != lastScript) { Log.AppendLine("d" + day + " -> script " + path); lastScript = path; }
+            if (tr.PlayedIndex != lastIdx) { lastProgress = Time.time; lastIdx = tr.PlayedIndex; }
+            string dc = "";
+            try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
+            sp.SetAutoPlay(true); sp.SetSkip(true);
+            if (tr.Playing) continue;
+            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+            if (btns.Length > 0)
+            {
+                var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
+                if (path == "MolakOver" && labels.Any(l => l.Contains("다 시 그 날 로"))) { Log.AppendLine("SHOP reached cause=" + dc + " labels=" + string.Join(" | ", labels)); Status = "shop:" + dc; done = true; yield break; }
+                int k = -1;
+                bool matched = false;
+                if (PickIdx < Picks.Length) { k = Find(labels, Picks[PickIdx]); matched = k >= 0; }
+                if (k < 0) k = Policy(labels);
+                k = Mathf.Clamp(k, 0, btns.Length - 1);
+                Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] choice: " + labels[k] + "   (of " + btns.Length + ")");
+                btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+                float t0 = Time.time;
+                while (!tr.Playing && Time.time - t0 < 2f) yield return null;
+                if (tr.Playing && matched) PickIdx++;
+                if (tr.Playing)
+                    foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                        if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
+                sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.time;
+            }
+            if (Time.time - lastProgress > 15f)
+            {
+                var cmd = tr.PlayedCommand;
+                Log.AppendLine("STALL at [" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day + " cause=" + dc);
+                Status = "stall"; done = true; yield break;
+            }
+        }
+    }
+
     IEnumerator Loop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
