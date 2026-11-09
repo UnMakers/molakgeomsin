@@ -87,6 +87,7 @@
 @set f_hmfailed=0
 @set f_hmleft=0
 @set f_hmsaved=0
+@set f_inkcord=0
 @set f_jangfriend=0
 @set f_janginfo=0
 @set f_jinbaek=0
@@ -98,6 +99,7 @@
 @set f_lordintro=0
 @set f_mirror=0
 @set f_monklore=0
+@set f_newrobe=0
 @set f_nightmarketgone=0
 @set f_ochisaved=0
 @set f_old2=0
@@ -106,6 +108,7 @@
 @set f_oldseen=0
 @set f_openname=0
 @set f_relicinfo=0
+@set f_relicpae=0
 @set f_rivalfriend=0
 @set f_roadblock=0
 @set f_roadinfo=0
@@ -126,6 +129,8 @@
 @set f_springrumor=0
 @set f_spyinfo=0
 @set f_sutraknow=0
+@set f_sutrashard=0
+@set f_talisman2=0
 @set f_taverndone=0
 @set f_taverninfo=0
 @set f_taxhelp=0
