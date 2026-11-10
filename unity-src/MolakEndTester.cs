@@ -127,9 +127,14 @@ public class MolakEndTester : MonoBehaviour
                     if (hp < hpm * 0.6f) return rest;
                     if (curse < 50f && med >= 0 && ng <= sw) return med;
                     return train;
-                case 7:   // 진엔딩을 노리는 자: 오래 살아남고(혈랑대의 밤 42일+), 소아 곁에 남는다
-                    if (wolf >= 0 && hp >= hpm * 0.9f && EstOdds() >= 80f) return wolf;
-                    if (duel >= 0 && hp >= hpm * 0.75f && EstOdds() >= 70f) return duel;
+                case 7:   // 진엔딩을 노리는 자: 적운의 구결(42일+ 혈랑대의 밤)까지는 오래 살아남고,
+                          //   구결·검보를 쥔 생부터는 서열을 올려 혈쇄문을 꺾는다(교주전은 혈쇄문 + 서열 10위 안)
+                {
+                    bool push = MolakStats.Get("g_redverse") > 0 || MolakStats.Get("f_hapbyeok") > 0;
+                    if (wolf >= 0 && hp >= hpm * (push ? 0.7f : 0.9f) && EstOdds() >= (push ? 58f : 80f)) return wolf;
+                    if (backRing >= 0 && push && hp >= hpm * 0.6f && EstOdds() >= 62f) return backRing;
+                    if (duel >= 0 && hp >= hpm * (push ? 0.55f : 0.75f) && EstOdds() >= (push ? 55f : 70f)) return duel;
+                }
                     if (hp < hpm * 0.65f) return rest;
                     if (curse >= 45f && med >= 0) return med;
                     if (med >= 0 && ng + 3 < sw) return med;
