@@ -18,7 +18,7 @@ public class InitRunCommand : Command
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
         foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
-                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_know_yong","g_know_gwak","g_gwakwifedied","g_herbdied","g_know_ripe","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
+                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_know_yong","g_know_gwak","g_gwakwifedied","g_herbdied","g_know_ripe","g_next_bond","g_next_item","g_redo","g_lasttheme","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
                                  "g_know_hunt1","g_know_hunt2","g_know_hunt3","g_know_cheolsan","g_know_rival","g_know_chainmob"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         foreach (var e in MolakEnd.All)
@@ -55,6 +55,17 @@ public class InitRunCommand : Command
             MolakStats.Set("g_lasttheme", th);
             MolakStats.Set("raidday", th == 4 ? 38f : 42f);
             MolakStats.Set("thday", 3f);
+        }
+        // 이번 생의 채비: 상점에서 골라 둔 인연·물건을 첫 아침에 쥐여 주고 비운다
+        {
+            int b = Mathf.RoundToInt(MolakStats.Get("g_next_bond")), it = Mathf.RoundToInt(MolakStats.Get("g_next_item"));
+            if (b == 1) { MolakStats.Set("f_herbfriend", 1f); MolakStats.Set("f_herbpulse", 1f); }
+            if (b == 2) { MolakStats.Set("f_alms", 1f); MolakStats.Set("f_gaekid", 1f); MolakStats.Set("rep_gae", 1f); }
+            if (b == 3) { MolakStats.Set("f_jangfriend", 1f); }
+            if (it == 1) MolakStats.Set("f_hat", 1f);
+            if (it == 2) MolakStats.Set("f_salve", 1f);
+            if (it == 3) { MolakStats.Set("f_incense", 1f); MolakStats.Add("curse", -2f); }
+            MolakStats.Set("g_next_bond", 0f); MolakStats.Set("g_next_item", 0f);
         }
         MolakStats.Set("rank", 0);
         MolakStats.Set("seallv", up("seal"));
@@ -147,6 +158,11 @@ public class ShopInfoCommand : Command
             MolakStats.Set("cost_" + u.key, u.baseCost + lv * u.step);
             MolakStats.Set("max_" + u.key, lv >= u.max ? 1f : 0f);
         }
+        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
+        string[] bonds = { "없음", "백초 할멈의 단골", "거지 아이", "쥐눈이 장" };
+        string[] items = { "없음", "죽립", "금창약", "안식향" };
+        vars.SetVariableValue("prepbond", new CustomVariableValue(bonds[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_bond")), 0, 3)]));
+        vars.SetVariableValue("prepitem", new CustomVariableValue(items[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_item")), 0, 3)]));
     }
 }
 
@@ -158,6 +174,19 @@ public class BuyUpCommand : Command
 
     public override async Awaitable Execute (ExecutionContext ctx)
     {
+        // 이번 생의 채비(한 생에 하나씩) · 되묻기(한 번)
+        string k = Kind.Value;
+        if (k.StartsWith("bond") || k.StartsWith("item") || k == "redo")
+        {
+            int pcost = k.StartsWith("bond") ? 3 : k.StartsWith("item") ? 2 : 12;
+            string slot = k.StartsWith("bond") ? "g_next_bond" : k.StartsWith("item") ? "g_next_item" : "g_redo";
+            if (MolakStats.Get(slot) > 0 || MolakStats.Get("g_pts") < pcost) { MolakStats.Set("buyok", 0f); return; }
+            MolakStats.Add("g_pts", -pcost);
+            MolakStats.Set(slot, k == "redo" ? 1f : float.Parse(k.Substring(4)));
+            MolakStats.Set("buyok", 1f);
+            await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
+            return;
+        }
         var u = ShopInfoCommand.Ups.FirstOrDefault(x => x.key == Kind.Value);
         if (u.key == null) { MolakStats.Set("buyok", 0f); return; }
         float lv = MolakStats.Get("g_up_" + u.key);

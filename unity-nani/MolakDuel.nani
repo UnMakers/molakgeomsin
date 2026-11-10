@@ -169,6 +169,10 @@
 @goto #LoseTail
 # LoseTail
 @goto #LoseDeath if:hp<=0||dsit==7
+@goto #LtFirst if:g_runs>0||lostonce>0
+@set lostonce=1
+<color=#9A70C4>목은 붙어 있다.</color> 비무판의 칼은 대개 목까지 오지 않는다. 대신 몸이 사흘을 앓고, 진 자리를 기억한다. 목을 거두는 판은 따로 있다. 생사결, 원수, 그리고 이야기의 끝에 선 자들.
+# LtFirst
 @goto #LtA if:dloot<1
 발이 미끄러진다. 몸이 다리 아래 물살로 떨어진다. 기어 나와 보니 전낭 끈이 끊겨 있다. 은자 {dloot}냥이 떠내려갔다.
 # LtA

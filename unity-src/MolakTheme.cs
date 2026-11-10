@@ -309,6 +309,7 @@ public class MolakTheme : MonoBehaviour
                 string wantText = string.IsNullOrEmpty(meta.Hint) ? rawLabel : rawLabel + "\n<size=62%><color=" + hintCol + ">" + meta.Hint + "</color></size>";
                 if (lblTx.text != wantText) lblTx.text = wantText;
             }
+            if (meta.Kind != MolakChoiceMeta.Normal && MolakStats.Get("g_sealhelp") < 1f) { MolakStats.Set("g_sealhelp", 1f); MolakMenu.ShowLegend(); }
             var sealCol = MolakChoiceMeta.SealColor(meta.Kind, Night);
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;

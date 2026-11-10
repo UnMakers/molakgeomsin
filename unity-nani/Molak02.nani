@@ -24,7 +24,7 @@
 @goto #ChBilok if:day>=24&&f_bilok>0&&b_bilok<1
 @goto #ChHm if:day>=26&&b_hm<1
 @goto #ChAmhyang if:day>=30&&b_amhyang<1
-@goto #B32 if:day>=32&&rank>0&&rank<=1000&&b_depart<1
+@goto #B32 if:day>=32&&rank>0&&rank<=1000&&b_depart<1&&f_hajindead<1
 @goto #ChOld if:day>=36&&b_old<1
 @goto #A12 if:day>=12&&f_yongspared>0&&b_yong2<1
 @goto #A17 if:day>=17&&b_hajin2x<1&&f_hajindead<1
@@ -626,6 +626,9 @@
 @goto #NSwT1 if:tn_sw1<1&&day>=4&&tr<=30
 @goto #NSwT2 if:tn_sw2<1&&day>=9&&tr<=30
 @goto #NSwB if:f_bilokhalf>0||f_biloklearn>0
+@set tr=random(1,100)
+@goto #NSwX1 if:tr<=10&&f_soamet>0&&f_soadead<1
+@goto #NSwX2 if:tr<=17
 @set sv=random(1,4)
 @goto #NSw2 if:sv==2
 @goto #NSw3 if:sv==3
@@ -644,6 +647,19 @@
 # NSw4
 달 없는 밤. 보이지 않는 검끝을 손끝으로 더듬는다. 천 번째에는 눈 없이도 검이 어디 있는지 안다.
 @fx sw:1 hp:-1
+@goto #NightEnd
+# NSwX1
+삼백 번째쯤에서 담 위에 그림자가 앉는다. 소아다. 말없이 본다. 오백 번째에 입을 연다.
+"왼손이 반 박자 늦다. 사형이 그렇게 가르쳤나."
+"……사형은 그게 내 버릇이라 했다."
+"버릇은 죽을 자리를 알려 준다. 고쳐라." 그러고는 담 너머로 사라진다.
+@fx sw:2 hp:-1
+@set aff=aff+1
+@goto #NightEnd
+# NSwX2
+칠백 번째. 쨍 소리와 함께 손이 가벼워진다. 날 끝이 이가 빠졌다. 녹을 벗긴 지 얼마 안 된 날이다.
+단야방에 맡기면 이틀, 은자 둘.
+@fx mn:-2 hp:-1
 @goto #NightEnd
 # NSwT1
 @set tn_sw1=1
@@ -673,6 +689,9 @@
 @goto #NQiT1 if:tn_qi1<1&&day>=5&&tr<=30
 @goto #NQiT2 if:tn_qi2<1&&day>=12&&curse>=25&&tr<=30
 @goto #NQiB if:f_breath>0
+@set tr=random(1,100)
+@goto #NQiX1 if:tr<=8&&curse>=30
+@goto #NQiX2 if:tr<=15
 @set sv=random(1,4)
 @goto #NQi2 if:sv==2
 @goto #NQi3 if:sv==3
@@ -691,6 +710,16 @@
 # NQi4
 운기 도중 사형의 목소리가 들린 것 같다. '막내야, 숨이 급하다.' 숨을 늦춘다. 기가 한 뼘 깊이 내려가고, 문양도 한 뼘 따라온다.
 @fx ng:2 hp:1 curse:3
+@goto #NightEnd
+# NQiX1
+운기 셋째 바퀴. 기가 가슴에서 멈추지 않고 거꾸로 돈다. 문양 쪽으로 빨려 든다. 입 안에 쇳내가 고인다.
+주화입마(走火入魔)의 문턱이다. 억지로 숨을 끊는다. 피를 한 모금 뱉는다.
+@fx hp:-2 curse:5
+@goto #NightEnd
+# NQiX2
+운기 도중 숨 하나가 길어진다. 아주 길게. 단전 밑바닥에 무언가 닿는다. 문양이 따라오지 못한 깊이다.
+눈을 뜨니 새벽이다. 밤 하나가 숨 한 번이었다.
+@fx ng:3 curse:-1
 @goto #NightEnd
 # NQiT1
 @set tn_qi1=1
@@ -762,6 +791,10 @@
 @set tr=random(1,100)
 @goto #NWorkT1 if:tn_wk1<1&&day>=6&&tr<=30
 @set r=random(2,3)
+@set tr=random(1,100)
+@goto #NWorkX1 if:tr<=10
+@goto #NWorkX2 if:tr<=19&&f_taxknow<1&&day>=14
+@goto #NWorkX3 if:tr<=26
 @set sv=random(1,3)
 @goto #NWork2 if:sv==2
 @goto #NWork3 if:sv==3
@@ -775,6 +808,26 @@
 # NWork3
 저자 창고에서 가마니를 나른다. 창고지기가 손바닥의 굳은살을 보더니 품삯에 반 닢을 얹어 준다.
 @fx mn:{r} hp:-1
+@goto #NightEnd
+# NWorkX1
+물지게 마흔 번. 삯을 받으러 가니 십장이 바뀌어 있다. 새 십장은 어제 일은 모른다고 한다. 뒤에 선 왈패 둘이 웃는다.
+@fx hp:-1
+@set tr=random(1,100)
+@goto #NightEnd if:sl<4
+십장의 장부를 손등으로 덮는다. 왈패 둘이 웃음을 거둔다. 삯이 나온다. 이자까지.
+@fx mn:{r} sl:1
+@goto #NightEnd
+# NWorkX2
+창고에서 가마니를 나른다. 창고지기가 장부를 덮으며 혼잣말을 한다.
+"징세조는 해가 중천에 오르기 전에 온다네. 붉은 끈 다섯. 우두머리는 칼을 뽑을 때 왼 무릎부터 굽히지. 삼십 년 창고지기 하면 그런 것만 보여."
+@fx mn:{r} hp:-1
+@set f_taxknow=1
+@goto #NightEnd
+# NWorkX3
+가마니 더미가 무너진다. 아래 있던 아이를 밀쳐 내고 대신 어깨로 받는다. 뼈는 무사하다. 어깨가 며칠은 안 올라가겠다.
+아이 어미가 삯 대신 떡 한 보자기를 쥐여 준다.
+@fx hp:-2
+@set injury=injury+2
 @goto #NightEnd
 # NWorkT1
 @set tn_wk1=1
@@ -798,6 +851,9 @@
 # NRest
 @set tr=random(1,100)
 @goto #NRestT1 if:tn_rest1<1&&day>=5&&tr<=30
+@set tr=random(1,100)
+@goto #NRestX1 if:tr<=10&&g_runs>0
+@goto #NRestX2 if:tr<=18&&f_hajindead<1
 @set sv=random(1,4)
 @goto #NRest2 if:sv==2
 @goto #NRest3 if:sv==3
@@ -816,6 +872,15 @@
 # NRest4
 점소이가 두고 간 식은 국밥을 마저 먹고 눕는다. 배부른 것도 수련이라고 사형이 말했었다. 믿기로 한다.
 @fx hp:3
+@goto #NightEnd
+# NRestX1
+꿈에서 죽는다. 지난 생의 그 자리, 그 칼, 그 냄새. 깨어 보니 이불이 땀에 젖었다.
+몸은 쉬었는데 마음은 한 번 더 죽었다. 대신 그 칼이 오던 각도가 조금 더 또렷하다.
+@fx hp:2 curse:1 sw:1
+@goto #NightEnd
+# NRestX2
+문 두드리는 소리. 하진무가 국밥 한 그릇을 들고 서 있다. "남았소. 버리기 아까워서." 김이 아직 오른다. 남은 국밥이 아니다.
+@fx hp:5
 @goto #NightEnd
 # NRestT1
 @set tn_rest1=1
@@ -1529,7 +1594,17 @@
 
 # S_Jang
 @page
+@set tr=random(1,3)
+@goto #S_Jang_v2 if:tr==2
+@goto #S_Jang_v3 if:tr==3
 열하루째 밤. 객잔 뒷문에 쥐눈이 장이 서 있다.
+@goto #S_Jang_vm
+# S_Jang_v2
+열하루째 밤. 객잔 뒷문 빗장 틈으로 접힌 종이가 들어온다. 펴 보니 아무것도 적혀 있지 않다. 문을 열자 쥐눈이 장이 서 있다.
+@goto #S_Jang_vm
+# S_Jang_v3
+열하루째 밤. 부엌 아궁이 앞에서 쥐눈이 장이 손을 쬐고 있다. 하진무가 들인 모양이다. 하진무는 보이지 않는다.
+# S_Jang_vm
 "지나던 길이오."
 소식장수는 지나던 길에 남의 객잔 뒷문에 서지 않는다.
 "…누가 객의 얼굴값을 묻더군. 붉은 끈을 찬 자였소. 은자 서른 냥을 부르기에……"
@@ -1578,7 +1653,20 @@
 
 # S_Soatrain
 @page
+@set tr=random(1,3)
+@goto #S_Soatrain_v2 if:tr==2
+@goto #S_Soatrain_v3 if:tr==3
 열사흘째. 객잔 마당에 낯익은 쌍검이 꽂혀 있다.
+@goto #S_Soatrain_vm
+# S_Soatrain_v2
+열사흘째. 새벽 우물가에서 물 긷는 소리가 둘이다. 하나는 점소이, 하나는 쌍검을 등에 멘 채 두레박을 당기는 소아다.
+@goto #S_Soatrain_vm
+# S_Soatrain_v3
+열사흘째. 기와 한 장이 마당으로 떨어진다. 올려다보니 소아가 용마루에 걸터앉아 국수를 먹고 있다. 다 먹고 그릇째 내려온다.
+# S_Soatrain_vm
+@goto #S_Soatrain_vk if:g_runs<1
+<color=#9A70C4>이 백 합을 안다. 서른일곱째 합에서 왼쪽 검이 먼저 온다.</color>
+# S_Soatrain_vk
 "운주까지 이틀."
 소아가 팔짱을 끼고 담에 기대 있다.
 "들판엔 너보다 급 높은 놈이 절반이다. 그 검으로는 첫 판에 죽는다."
@@ -1623,8 +1711,20 @@
 
 # S_Fame
 @page
+@set tr=random(1,3)
+@goto #S_Fame_v2 if:tr==2
+@goto #S_Fame_v3 if:tr==3
 스무날째. 객잔이 수상하다.
 평소보다 손님이 많다. 그런데 다들 술은 마시지 않고 귀만 열어 두고 있다. 낭인, 표사, 정체 모를 자들. 서열이 오른 '운객(雲客)'이 묵는 객잔이라는 소문이 돈 탓이다.
+@goto #S_Fame_vm
+# S_Fame_v2
+스무날째. 객잔 문턱에 짚신이 스무 켤레다. 점소이가 국밥을 나르다 말고 눈짓한다. 손님들이 다 같은 데를 본다. 당신 방 쪽이다.
+서열이 오른 '운객(雲客)'이 묵는 객잔이라는 소문이 돈 탓이다.
+@goto #S_Fame_vm
+# S_Fame_v3
+스무날째. 아침 국밥에 달걀 하나가 얹혀 있다. 시킨 적 없다. 건너편 탁자의 표사가 잔을 들어 보인다.
+서열이 오른 '운객(雲客)'의 얼굴을 보러 온 자들로 객잔이 붐빈다. 술은 안 마시고 귀만 열어 둔 자들이다.
+# S_Fame_vm
 하진무가 주판알을 튕기며 당신에게만 들리게 말한다.
 "…방을 옮기시겠소? 뒷마당 창고 쪽이 눈에 덜 띄오."
 @choice "창고 방으로 옮긴다" goto:#S_FameC0
@@ -1646,8 +1746,21 @@
 
 # S_Depart
 @page
+@set tr=random(1,3)
+@goto #S_Depart_v2 if:tr==2
+@goto #S_Depart_v3 if:tr==3
 서른이틀째 밤. 방문 앞에 봇짐이 놓여 있다.
 말린 육포, 기운 버선, 상비약 꾸러미. 하진무의 솜씨다.
+@goto #S_Depart_vm
+# S_Depart_v2
+서른이틀째 밤. 마당 빨랫줄에 장포가 걸려 있다. 해진 소매가 기워져 있다. 실 색이 조금 다르다. 방문 앞에는 봇짐 하나. 하진무의 솜씨다.
+@goto #S_Depart_vm
+# S_Depart_v3
+서른이틀째 밤. 방문 앞에 검이 놓여 있다. 날이 새로 섰다. 장사꾼 손이라 각도가 서툴다. 그 옆에 봇짐 하나. 하진무의 솜씨다.
+# S_Depart_vm
+@goto #S_Depart_vk if:g_runs<2
+<color=#9A70C4>이 봇짐을 메고 나간 생이 몇이었는지 센다. 봇짐을 메고 돌아온 생은 없다.</color>
+# S_Depart_vk
 아래층으로 내려가니, 그가 등을 보인 채 잔을 닦고 있다.
 "…혈마곡. 가시는구려."
 묻는 말이 아니다.

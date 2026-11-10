@@ -22,6 +22,13 @@ public class MolakMenu : MonoBehaviour
         if (inst2 != null) { inst2.open = true; inst2.codex = true; }
     }
     float toastT = -1f; string toastMsg = "";
+    float legendT = -1f;
+    /// <summary>처음 색 인장이 뜬 순간 한 번: 인장 색 범례를 화면 위쪽에 잠깐 보여 준다.</summary>
+    public static void ShowLegend ()
+    {
+        if (inst2 == null) inst2 = UnityEngine.Object.FindFirstObjectByType<MolakMenu>();
+        if (inst2 != null) inst2.legendT = 0f;
+    }
 
     void Awake ()
     {
@@ -94,6 +101,26 @@ public class MolakMenu : MonoBehaviour
         float day = 0f;
         try { day = MolakStats.Get("day"); } catch {}
 
+        // 인장 범례 (한 번)
+        if (legendT >= 0f)
+        {
+            legendT += Time.deltaTime;
+            if (legendT > 7f) legendT = -1f;
+            else
+            {
+                float a = legendT < 0.4f ? legendT / 0.4f : legendT > 6.2f ? (7f - legendT) / 0.8f : 1f;
+                var g = GUI.color; GUI.color = new Color(1, 1, 1, a);
+                float lw = Mathf.Min(w * 0.92f, 980*u), lx = (w - lw) / 2f, ly = h * 0.10f, lh = 190*u;
+                Box(new Rect(lx, ly, lw, lh), new Color(0.05f,0.04f,0.035f,0.94f));
+                Box(new Rect(lx, ly, lw, Mathf.Max(1f, 2*u)), MolakTheme.Line);
+                var ls = new GUIStyle(sToast){ alignment = TextAnchor.UpperLeft, wordWrap = true, richText = true, fontSize = Mathf.RoundToInt(27*u) };
+                GUI.Label(new Rect(lx + 28*u, ly + 18*u, lw - 56*u, lh - 30*u),
+                    "선택지 앞 인장의 색은 그 길이 열린 까닭이다.\n" +
+                    "<color=#8E62B8>■</color> 전생의 앎   <color=#4A7398>■</color> 물건·인연   <color=#5A524C>■</color> 능력치   <color=#B08A30>■</color> 은자   <color=#7A2A68>■</color> 사술   <color=#B03A2A>■</color> 그 밖\n" +
+                    "<size=85%>회색 작은 글씨는 그 선택지를 연 조건이다.</size>", ls);
+                GUI.color = g;
+            }
+        }
         // 토스트
         if (toastT >= 0f)
         {
