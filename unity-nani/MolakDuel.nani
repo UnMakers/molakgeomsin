@@ -250,14 +250,14 @@
 @return
 # MMaimG
 피를 흘리며 물러나는 눈이 당신의 얼굴을 한 번 훑는다. 외우는 눈이다.
-@set grudgeday=day+random(4,8) if:grudge<1
+@set grudgeday=day+random(6,10) if:grudge<1
 @set grudge=grudge+1
 @return
 # MKill
 검이 한 번 내려간다. 비무판이 조용해진다.
 전낭이 묵직하다. 구경꾼 하나가 슬그머니 자리를 뜬다. 어디로 가는지는 묻지 않아도 안다.
 @fx sl:2 curse:2 mn:5
-@set grudgeday=day+random(3,6) if:grudge<1
+@set grudgeday=day+random(5,9) if:grudge<1
 @set grudge=grudge+1
 @return
 # MKillS
@@ -265,7 +265,7 @@
 아이는 끝까지 당신 얼굴을 본다. 그 눈이 무엇을 외우는지 안다.
 @fx sl:3 curse:3 mn:5
 @set f_orphan=1
-@set grudgeday=day+random(3,5) if:grudge<1
+@set grudgeday=day+random(4,7) if:grudge<1
 @set grudge=grudge+1
 @return
 

@@ -39,9 +39,9 @@ public static class MolakDuel
             case "hunt3": return new Foe { Name = "집법전주", Rank = 40, P = 66 + Random.Range(0, 5), Boss = "hunt3" };
             case "cheolsan": return new Foe { Name = "철산도", Rank = 5213, P = 40 + Random.Range(0, 4) };
             // 업보의 칼: 내 힘에 맞춰 오는 상대들 — 질 수도, 이길 수도 있는 판
-            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(MyPower() + Random.Range(-1, 4)) };
+            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(MyPower() + Random.Range(-3, 2)) };
             case "debt": return new Foe { Name = "고리대 왕삼의 수하들", Rank = 6200000, P = Mathf.Round(16 + MolakStats.Get("day") * 0.5f + Random.Range(0, 4)) };
-            case "assassin": return new Foe { Name = "교의 자객", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.5f)) : 900000, P = Mathf.Round(MyPower() + Random.Range(1, 5)) };
+            case "assassin": return new Foe { Name = "교의 자객", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.5f)) : 900000, P = Mathf.Round(MyPower() + Random.Range(-1, 3)) };
             case "tax": return new Foe { Name = "징세조 칼잡이들", Rank = 400000, P = 27 + Random.Range(0, 5) };
             case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
             {
