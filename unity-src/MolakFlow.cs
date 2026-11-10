@@ -79,7 +79,7 @@ public class MolakFlow : MonoBehaviour
         // 맥락을 끊는 명령: 장면 전환·선택지 제시·정지·말로 카드
         if (tn.Contains("Ending")) breakNext = true;
         // 맥락 전환 = 본문 초기화: 장면 명령, 사건/서브루틴 진입·복귀, 다른 스크립트로 이동, 하루 허브 라벨로 이동
-        if (tn == "SceneCommand" || tn == "DayTickCommand" || tn == "InitRunCommand") breakNext = true;
+        if (tn == "SceneCommand" || tn == "DayTickCommand" || tn == "InitRunCommand" || tn == "PageCommand") breakNext = true;
         if (cmd is ArtCommand) { var ac = (ArtCommand)cmd; if (Assigned(ac.SceneId)) breakNext = true; }
         if (cmd is Gosub || cmd is Return) breakNext = true;
         if (cmd is Goto)
@@ -146,7 +146,7 @@ public class MolakFlow : MonoBehaviour
             // 흐름을 끊는 명령 = 단락 경계
             if (c is Gosub || c is Return || c is Stop || c is Wait) return false;
             if (c is Goto) { var g = (Goto)c; if (!g.ConditionalExpression.HasValue && !g.InvertedConditionalExpression.HasValue) return false; continue; }
-            if (n == "SceneCommand" || n.Contains("Ending") || n == "DayTickCommand" || n == "InitRunCommand") return false;
+            if (n == "SceneCommand" || n.Contains("Ending") || n == "DayTickCommand" || n == "InitRunCommand" || n == "PageCommand") return false;
             if (n == "ArtCommand")
             {
                 var f = c.GetType().GetField("SceneId"); var v = f != null ? f.GetValue(c) as StringParameter : null;

@@ -125,7 +125,7 @@ public class MolakScroll : MonoBehaviour
         if (Mathf.Abs(topCur - topOff) < 0.5f) topCur = topOff;
 
         // 아래 한계: 선택지가 떠 있으면 선택지 위, 아니면 화면 하단 여백
-        float bottom = 120f;
+        float bottom = 150f;   // 하단 행낭 띠(150u) 위까지
         int choices = MolakTheme.ChoiceCount;
         if (choices > 0)
         {

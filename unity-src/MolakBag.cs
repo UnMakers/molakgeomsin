@@ -11,13 +11,13 @@ public class MolakBag : MonoBehaviour
     public struct Entry { public string Flag, Name, Desc, Effect; public Entry (string f, string n, string d, string e) { Flag = f; Name = n; Desc = d; Effect = e; } }
 
     public static readonly Entry[] Items = {
-        new Entry("f_cheonggang", "청강검(靑鋼劍)", "청운검파 장문인의 검. 손에 맞는다는 것이 문제다.", ""),
+        new Entry("f_cheonggang", "청강검(靑鋼劍)", "청운검파 장문인의 검. 손에 감기듯 맞는다.", ""),
         new Entry("f_guardsword", "표국의 검", "문 닫은 표국의 총표두 염가가 맡긴 검. 뼈대가 좋다.", "받을 때 검술 +1"),
         new Entry("f_bilok", "운검비록(雲劍秘錄)", "청운의 비록. 구결이 손끝을 이끈다.", "밤 검술 수련 효율 상승"),
         new Entry("f_biloklearn", "운검비록 · 익힘", "비록의 구결을 몸에 들였다.", "밤 검술 수련 효율 상승"),
         new Entry("f_bilokhalf", "운검비록 · 반쪽", "반만 읽은 비록. 반 치가 쌓인다.", "밤 검술 수련 효율 상승"),
         new Entry("f_relicpae", "일곱째 사형의 패", "야시에서 되찾은 청운의 패. 가슴 문양 위에 품고 다닌다.", ""),
-        new Entry("f_inkcord", "검은 결끈", "북쪽 짐에서 나온 좋은 검의 끈. 뽑을 때 반 호흡이 준다.", "검술 +1"),
+        new Entry("f_inkcord", "검은 결끈", "북쪽 짐에서 나온 검끈. 뽑는 손이 반 호흡 빨라진다.", "검술 +1"),
         new Entry("f_talisman2", "진짜 부적", "부적 장수가 사과로 건넨, 제 손으로 쓴 부적.", "저주 −4"),
         new Entry("f_acupgone", "금침 한 쌈", "북으로 떠난 금침 노인의 마지막 처방.", "저주 −4, 내공 +1"),
         new Entry("f_blackpill", "흑단환(黑斷丸) · 복용", "독으로 독을 눌렀다. 그릇이 한 치 줄었다.", "저주 −15, 체력 상한 −2"),
@@ -39,14 +39,14 @@ public class MolakBag : MonoBehaviour
         new Entry("f_chaininfo", "혈쇄문의 사슬 길", "사슬이 도는 길을 안다.", "혈쇄문주 비무 보정"),
         new Entry("f_wolfedge", "혈쇄문주의 허점", "", "혈쇄문주 비무 보정"),
         new Entry("f_lordedge", "교주의 허점", "", "혈마교주 비무 보정"),
-        new Entry("f_valleyroute", "북쪽 골짜기 샛길", "소금길—나루 윗길—폐사. 횃불이 받아 가는 길.", ""),
+        new Entry("f_valleyroute", "북쪽 골짜기 샛길", "소금길, 나루 윗길, 폐사. 횃불이 드나드는 길.", ""),
         new Entry("f_roadinfo", "소금길", "교가 막은 관도 대신 장사치들만 아는 길.", ""),
         new Entry("f_taxroute", "징세조의 은자 길", "보름 장날, 소금길 나루 윗길, 호위 둘.", ""),
         new Entry("f_amhwarn", "암향루의 향", "단내 나는 쪽이 독, 쓴내 나는 쪽이 약.", ""),
         new Entry("f_spyinfo", "교 안의 불만", "교주를 원치 않는 자들이 당신을 지켜본다.", ""),
         new Entry("f_relicinfo", "북쪽 짐", "보름에 한 번, 사람 것만 빼고 내려온다.", ""),
         new Entry("f_beggarnet", "거지의 눈", "담 밑을 세는 붉은 끈. 뒷문 담은 낮다.", ""),
-        new Entry("f_deadrumor", "사망 도장", "수배서에 '死'. 며칠은 조용하다.", ""),
+        new Entry("f_deadrumor", "사망 도장", "수배서에 '死' 자가 찍혔다. 며칠은 조용할 것이다.", ""),
     };
     public static readonly Entry[] Bonds = {
         new Entry("f_soabond", "소아 · 약속", "같은 달 아래.", ""),
@@ -57,7 +57,7 @@ public class MolakBag : MonoBehaviour
         new Entry("f_sparfriend", "낭인 마충", "돌아오면 백 합.", ""),
         new Entry("f_guardfriend", "표국 염가", "총표두 자리를 비워 두겠소.", ""),
         new Entry("f_rivalfriend", "곽산", "창을 쓰는 장신의 호적수.", ""),
-        new Entry("f_jangfriend", "쥐눈이 장", "정보상과의 거래 관계.", ""),
+        new Entry("f_jangfriend", "쥐눈이 장", "소식을 사고파는 사이.", ""),
         new Entry("f_ferryfree", "사공의 약속", "삿대질 값은 안 받겠소.", ""),
         new Entry("f_vigil", "마당의 배웅", "아무도 가지 말라고 하지 않았다.", ""),
     };
@@ -104,8 +104,8 @@ public class MolakBag : MonoBehaviour
         sName = mk(32, TextAnchor.UpperLeft);
         sDesc = mk(25, TextAnchor.UpperLeft);
         sEff = mk(23, TextAnchor.UpperRight);
-        sHint = mk(21, TextAnchor.MiddleCenter);
-        sHintName = mk(24, TextAnchor.MiddleCenter);
+        sHint = mk(28, TextAnchor.MiddleCenter);
+        sHintName = mk(40, TextAnchor.MiddleCenter);
     }
 
     Entry? Find (string flag)
@@ -156,17 +156,30 @@ public class MolakBag : MonoBehaviour
         {
             panelTopPx = h;
             if (day < 1f || MolakMenu.IsOpen) return;
-            var hintCol = night ? new Color(0.75f,0.7f,0.62f,0.85f) : new Color(0.33f,0.28f,0.23f,0.85f);
-            Box(new Rect(w/2f - 60*u, h - 22*u, 120*u, 4*u), new Color(hintCol.r, hintCol.g, hintCol.b, 0.5f));
+            // 하단 띠: 손잡이 + '행낭' + 최근 획득 + 개수 — 위로 쓸어 올리면 열림
+            var hintCol = night ? new Color(0.86f,0.82f,0.75f,1f) : new Color(0.20f,0.16f,0.13f,1f);
+            var subCol = night ? "#B8AE9E" : "#5C5046";
             string latest = order.Count > 0 ? order[order.Count - 1] : null;
             var le = latest != null ? Find(latest) : null;
             sHint.normal.textColor = hintCol; sHintName.normal.textColor = hintCol;
+            float bandH = 150*u, by0 = h - bandH;
+            Box(new Rect(0, by0, w, bandH), night ? new Color(0.10f,0.09f,0.085f,0.94f) : new Color(0.93f,0.90f,0.84f,0.94f));
+            Box(new Rect(0, by0, w, Mathf.Max(1f, 2*u)), night ? new Color(0.45f,0.40f,0.35f,0.9f) : new Color(0.55f,0.48f,0.40f,0.7f));
+            Box(new Rect(w/2f - 56*u, by0 + 12*u, 112*u, 7*u), night ? new Color(0.7f,0.65f,0.58f,0.9f) : new Color(0.35f,0.30f,0.25f,0.75f));
+            int nI = 0, nL = 0, nB = 0;
+            foreach (var e0 in Items) if (Get(e0.Flag) > 0f) nI++;
+            foreach (var e0 in Lore) if (Get(e0.Flag) > 0f) nL++;
+            foreach (var e0 in Bonds) if (Get(e0.Flag) > 0f) nB++;
+            string head = "<b>행낭</b>";
+            string body;
             if (le.HasValue)
             {
                 var e = le.Value;
-                GUI.Label(new Rect(0, h - 64*u, w, 36*u), "행낭 ⌃   <size=" + Mathf.RoundToInt(19*u) + ">최근 ·</size> " + e.Name + (string.IsNullOrEmpty(e.Effect) ? "" : "  <color=#C9A227>" + e.Effect + "</color>"), sHintName);
+                body = head + "   <color=" + subCol + ">최근</color>  " + e.Name + (string.IsNullOrEmpty(e.Effect) ? "" : "  <color=#B08A1E>" + e.Effect + "</color>");
             }
-            else GUI.Label(new Rect(0, h - 62*u, w, 32*u), "행낭 ⌃", sHint);
+            else body = head + "   <color=" + subCol + ">비어 있다</color>";
+            GUI.Label(new Rect(0, by0 + 26*u, w, 64*u), body, sHintName);
+            GUI.Label(new Rect(0, by0 + 88*u, w, 44*u), "<color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + "      끌어 올려 펼치기</color>", sHint);
             return;
         }
 
@@ -195,7 +208,7 @@ public class MolakBag : MonoBehaviour
         // ---- 목록 (최근 획득 순) ----
         float cx = Mathf.Max(40*u, (w - Mathf.Min(w*0.9f, 920*u))/2f), cw = w - 2*cx;
         float listY = y + 104*u, listH = panelH - 124*u;
-        var sections = new[] { "물건", "비방 · 정보", "인연" };
+        var sections = new[] { "물건", "비방 · 소식", "인연" };
         var tables = new[] { Items, Lore, Bonds };
         var rows = new List<object>(); float total = 0f; int shown = 0;
         for (int s = 0; s < 3; s++)
@@ -210,7 +223,7 @@ public class MolakBag : MonoBehaviour
         if (shown == 0)
         {
             sDesc.alignment = TextAnchor.MiddleCenter;
-            GUI.Label(new Rect(cx, listY, cw, 120*u), "아직 아무것도 없다.\n빈 행낭이 가장 가볍다—라고 사형은 말했었다.", sDesc);
+            GUI.Label(new Rect(cx, listY, cw, 120*u), "아직 아무것도 없다.\n'빈 행낭이 가장 가볍다.' 사형이 하던 말이다.", sDesc);
             sDesc.alignment = TextAnchor.UpperLeft;
             return;
         }
