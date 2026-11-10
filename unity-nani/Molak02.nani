@@ -333,6 +333,7 @@
 ; ---------- 업보: 원수 ----------
 # KGrudge
 @art char:none
+@goto #KGrWarn if:grudgewarned<1
 @set grudge=grudge-1
 @set grudgewarn=0
 @goto #KGrA if:f_alms>0||f_thiefkid>0||f_beggarnet>0
@@ -341,6 +342,56 @@
 무엇인가 문살을 뚫고 들어와 어깨를 스친다. 소매가 젖는다.
 @fx hp:-3
 @goto #KGrC
+# KGrWarn
+@set grudgewarned=1
+@set grudgeday=day+random(4,7)
+@scene id:night
+@art scene:mourners
+@set tr=random(1,2)
+@goto #KGrWarn2 if:tr==2
+새벽. 객잔 문짝에 흰 삼베 띠가 매여 있다. 상복을 짓고 남은 천이다. 띠 끝에 먹으로 이름 석 자가 적혀 있다.
+비무판에서 목을 친 그 사내의 이름이다. 그날은 묻지도 않았던.
+점소이가 띠를 풀려다가 손을 멈춘다. "객관님, 이건…… 함부로 풀면 안 되는 거라던데요."
+@goto #KGrWarnC
+# KGrWarn2
+밤. 문살을 뚫고 화살 하나가 들어와 베개에 박힌다. 어깨를 스치고 지나간 자리가 뜨겁다.
+화살대에 흰 삼베가 감겨 있다. 풀어 보니 이름 석 자. 비무판에서 목을 친 그 사내다.
+지붕 위에서 기와 밟는 소리가 멀어진다. 쫓아오라는 소리가 아니다. 기다리라는 소리다.
+@fx hp:-2
+# KGrWarnC
+<color=#C03434>상복이 찾아온다.</color> 오늘은 이름만 놓고 갔다. 다음엔 목을 받으러 온다.
+@choice "띠를 풀어 품에 넣는다 — 그 이름을 외운다" goto:#KGrWarnA
+@choice "\"찾아오기 전에 내가 가겠다.\" — 상가(喪家)를 찾아간다" goto:#KGrWarnB
+@choice "은자를 싸서 상가 대문 앞에 둔다 (은자 10)" if:mn>=10 goto:#KGrWarnC2
+@stop
+# KGrWarnA
+띠를 품에 넣는다. 이름 석 자를 입속으로 한 번 굴려 본다. 목을 칠 때는 몰랐던 이름이다.
+그날 밤부터 잠을 얕게 잔다. 기와 소리에 먼저 눈이 떠진다.
+@set grudgewarn=1
+@goto #Daytime
+# KGrWarnB
+상가는 저잣거리 끝 골목에 있다. 대문에 조등(弔燈)이 걸려 있다. 안에서 곡소리가 난다. 늙은 여자 하나, 어린 것 둘.
+대문 앞에 선다. 상복 입은 사내 하나가 나와 당신 얼굴을 본다. 칼은 뽑지 않는다. 여기는 상가다.
+@set tr=random(1,100)
+@goto #KGrWarnB2 if:tr<=40+sl*2
+"…상가에서는 칼을 안 뽑는 법이다. 사흘 뒤에 오마. 그때는 법이 없다."
+사내가 대문을 닫는다. 곡소리가 다시 커진다.
+@set grudgewarn=1
+@goto #Daytime
+# KGrWarnB2
+사내가 한참 당신을 본다. 그러다 대문 안쪽을 돌아본다. 늙은 여자가 상주 자리에서 고개를 젓는다.
+"……어머니가 그만두라신다. 비무판에서 진 놈 목을 친 놈을 찾아다니다 또 하나 죽으면, 곡할 사람이 없다고."
+사내가 이를 악문다. 대문이 닫힌다. 원한은 남았다. 칼만 거두어졌다.
+@set grudge=grudge-1
+@fx curse:-1
+@goto #Daytime
+# KGrWarnC2
+은자 열 냥을 흰 보자기에 싸서 상가 대문 앞에 둔다. 두드리지 않는다.
+이튿날 아침, 보자기는 없다. 문짝의 흰 띠도 없다. 받았다는 뜻인지, 더 기다리겠다는 뜻인지는 모른다.
+@fx mn:-10
+@set tr=random(1,100)
+@set grudge=grudge-1 if:tr<=60
+@goto #Daytime
 # KGrA
 해 질 녘, 골목 아이 하나가 객잔 담 너머로 고개만 내민다.
 "나리, 오늘 밤 지붕 위에 사람이 있소. 셋. 상복을 입었소."
@@ -704,8 +755,8 @@
 @daytick
 @goto MolakOver#Taint if:taint>=6
 @goto MolakOver#Taint if:taint>0&&hp<=0
-@goto MolakOver#Starve if:hp<=0&&starved>0
 @goto #Collapse if:hp<=0&&collapsed<1
+@goto MolakOver#Starve if:hp<=0&&starved>0
 @goto MolakOver#Exhaust if:hp<=0
 @goto MolakOver#Curse if:curse>=100
 @goto #D10 if:day==10

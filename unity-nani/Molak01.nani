@@ -225,6 +225,7 @@
 @set grudge=0
 @set grudgeday=0
 @set grudgewarn=0
+@set grudgewarned=0
 @set hp=0
 @set hpmax=0
 @set injury=0
