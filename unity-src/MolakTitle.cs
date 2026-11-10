@@ -2,26 +2,27 @@ using Naninovel;
 using UnityEngine;
 
 /// <summary>
-/// 타이틀 — 붉은 달 아래 타는 산장(밤) / 진엔딩을 본 뒤엔 아침.
-/// 배경이 아주 느리게 다가오고, 불티(밤)나 꽃잎(아침)이 흐르고, 달빛이 숨 쉬듯 일렁인다.
-/// 제호는 오른쪽 세로쓰기 + 붉은 낙관. 메뉴는 상자 없이 붓글씨 행. 죽을수록 재가 짙어지고, 지난 생의 말로가 한 줄 남는다.
-/// '처음부터'는 먹이 화면을 덮으며 "눈을 뜬다."로 넘어간다.
+/// 타이틀 — 여백 큰 수묵 한 폭: 고요한 수면 위의 검객, 붉은 달, 달을 감싼 원상(圓相).
+/// 원상은 처음 뜰 때 거꾸로 감기며 멈추고(되감기는 시간), 그 뒤로는 아주 천천히 역방향으로 돈다.
+/// 바탕은 늘 같고, 겪은 일에 따라 그림자가 하나씩 더해진다:
+///  회귀할 때마다 수면의 등불 하나 · 소아와 함께한 결말 → 곁의 쌍검(그녀가 죽은 밤을 겪었으면 반투명)
+///  진백의 진실 → 먼 물가의 사형 · 원수 → 물 위의 흰 상복 셋 · 입마 → 물에 꽂힌 검 · 성사 → 등 뒤의 노인
+///  교주를 벤 결말 → 달에 금 · 합벽(진엔딩) → 달이 새벽 해로, 두 사람이 나란히.
 /// </summary>
 public class MolakTitle : MonoBehaviour
 {
     static MolakTitle instance;
-    static Texture2D px, dot, grad;
-    Texture2D night, dawn;
+    static Texture2D px, dot, disk;
+    Texture2D night, enso, silSoa, silJin, silOld, silMourn;
     Font gowun, hanjaFont;
-    GUIStyle sHanja, sKor, sTag, sItem, sItemDim, sFoot, sLast, sSeal, sWake;
+    GUIStyle sHanja, sSub, sItem, sItemDim, sTag, sFoot, sLast, sSeal, sWake;
     float builtU = -1f;
-    float grace;          // 시작 직후 재생 전 틈새 동안 타이틀 재표시 방지
-    float shownAt = -1f;  // 이번에 타이틀이 나타난 시각(페이드 인)
-    float wakeAt = -1f;   // '처음부터'를 누른 시각(먹 덮기)
+    float grace;
+    float shownAt = -1f, wakeAt = -1f;
     bool wakeFired;
     int pressed = -1; float pressedAt;
 
-    struct Mote { public float x, y, v, sway, phase, size, life; }
+    struct Mote { public float x, y, v, sway, phase, size; }
     Mote[] motes;
 
     void Awake ()
@@ -40,55 +41,22 @@ public class MolakTitle : MonoBehaviour
     }
 
     static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
-    /// <summary>부드러운 원(불티·달무리).</summary>
-    static Texture2D Dot
+    static Texture2D MakeRound (int n, bool soft)
     {
-        get
+        var t = new Texture2D(n, n, TextureFormat.RGBA32, false); t.wrapMode = TextureWrapMode.Clamp;
+        for (int y = 0; y < n; y++) for (int x = 0; x < n; x++)
         {
-            if (dot != null) return dot;
-            const int n = 64; dot = new Texture2D(n, n, TextureFormat.RGBA32, false); dot.wrapMode = TextureWrapMode.Clamp;
-            for (int y = 0; y < n; y++) for (int x = 0; x < n; x++)
-            {
-                float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
-                float a = Mathf.Clamp01(1f - Mathf.Sqrt(dx*dx + dy*dy)); a = a * a;
-                dot.SetPixel(x, y, new Color(1, 1, 1, a));
-            }
-            dot.Apply(); return dot;
+            float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f, d = Mathf.Sqrt(dx*dx + dy*dy);
+            float a = soft ? Mathf.Pow(Mathf.Clamp01(1f - d), 2f) : Mathf.Clamp01((1f - d) * n * 0.5f);
+            t.SetPixel(x, y, new Color(1, 1, 1, a));
         }
+        t.Apply(); return t;
     }
-    /// <summary>위는 투명, 아래는 먹색(메뉴 바닥).</summary>
-    static Texture2D Grad
-    {
-        get
-        {
-            if (grad != null) return grad;
-            const int n = 128; grad = new Texture2D(1, n, TextureFormat.RGBA32, false); grad.wrapMode = TextureWrapMode.Clamp;
-            for (int y = 0; y < n; y++) { float t = 1f - y / (n - 1f); grad.SetPixel(0, y, new Color(1, 1, 1, Mathf.SmoothStep(0f, 1f, t))); }
-            grad.Apply(); return grad;
-        }
-    }
-
-    static Texture2D corner;
-    /// <summary>왼쪽 아래가 짙고 오른쪽·위로 갈수록 투명해지는 먹 번짐(메뉴 바탕).</summary>
-    static Texture2D Corner
-    {
-        get
-        {
-            if (corner != null) return corner;
-            const int n = 128; corner = new Texture2D(n, n, TextureFormat.RGBA32, false); corner.wrapMode = TextureWrapMode.Clamp;
-            for (int y = 0; y < n; y++) for (int x = 0; x < n; x++)
-            {
-                float fx = x / (n - 1f), fy = y / (n - 1f);           // fy=0 은 아래쪽
-                float ax = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((fx - 0.15f) / 0.85f));
-                float ay = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((fy - 0.45f) / 0.55f));
-                corner.SetPixel(x, y, new Color(1, 1, 1, ax * ay));
-            }
-            corner.Apply(); return corner;
-        }
-    }
+    static Texture2D Dot { get { if (dot == null) dot = MakeRound(64, true); return dot; } }
+    static Texture2D Disk { get { if (disk == null) disk = MakeRound(256, false); return disk; } }
 
     void Box (Rect r, Color c) { var g = GUI.color; GUI.color = c * new Color(1,1,1,g.a); GUI.DrawTexture(r, Px); GUI.color = g; }
-    void Tex (Rect r, Texture t, Color c) { var g = GUI.color; GUI.color = c * new Color(1,1,1,g.a); GUI.DrawTexture(r, t, ScaleMode.StretchToFill); GUI.color = g; }
+    void Tex (Rect r, Texture t, Color c) { if (t == null) return; var g = GUI.color; GUI.color = c * new Color(1,1,1,g.a); GUI.DrawTexture(r, t, ScaleMode.StretchToFill); GUI.color = g; }
     float U { get { return MolakTheme.U; } }
 
     void EnsureStyles (float u)
@@ -98,23 +66,27 @@ public class MolakTitle : MonoBehaviour
         if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
         if (hanjaFont == null) hanjaFont = Resources.Load<Font>("MolakHanja");
         if (night == null) night = Resources.Load<Texture2D>("MolakTitleNight");
-        if (dawn == null) dawn = Resources.Load<Texture2D>("MolakTitleDawn");
+        if (enso == null) enso = Resources.Load<Texture2D>("MolakTitleEnso");
+        if (silSoa == null) silSoa = Resources.Load<Texture2D>("MolakTitleSil_soa");
+        if (silJin == null) silJin = Resources.Load<Texture2D>("MolakTitleSil_jinbaek");
+        if (silOld == null) silOld = Resources.Load<Texture2D>("MolakTitleSil_lawlord");
+        if (silMourn == null) silMourn = Resources.Load<Texture2D>("MolakTitleSil_hajinmu");
         System.Func<int, Color, TextAnchor, GUIStyle> mk = (size, col, an) =>
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=an,richText=true,wordWrap=false,clipping=TextClipping.Overflow};
             if (gowun != null) s.font = gowun;
             s.normal.textColor = col; return s;
         };
-        sHanja = mk(128, new Color(0.96f,0.93f,0.86f,1f), TextAnchor.MiddleCenter);
-        sKor = mk(32, new Color(0.86f,0.80f,0.70f,1f), TextAnchor.MiddleCenter);
-        sTag = mk(30, new Color(0.88f,0.82f,0.72f,1f), TextAnchor.MiddleLeft);
-        sItem = mk(42, new Color(0.95f,0.91f,0.84f,1f), TextAnchor.MiddleLeft);
-        sItemDim = mk(42, new Color(0.55f,0.50f,0.45f,1f), TextAnchor.MiddleLeft);
-        sFoot = mk(22, new Color(0.62f,0.57f,0.50f,1f), TextAnchor.MiddleLeft);
-        sLast = mk(24, new Color(0.80f,0.32f,0.26f,1f), TextAnchor.MiddleLeft);
-        sSeal = mk(46, new Color(0.98f,0.94f,0.88f,1f), TextAnchor.MiddleCenter);
-        if (hanjaFont != null) { sHanja.font = hanjaFont; sSeal.font = hanjaFont; }
-        sWake = mk(40, new Color(0.88f,0.82f,0.72f,1f), TextAnchor.MiddleCenter);
+        sHanja = mk(104, new Color(0.94f,0.91f,0.85f,1f), TextAnchor.MiddleCenter);
+        sSub = mk(26, new Color(0.80f,0.68f,0.42f,1f), TextAnchor.MiddleCenter);
+        sItem = mk(36, new Color(0.15f,0.12f,0.10f,1f), TextAnchor.MiddleRight);
+        sItemDim = mk(36, new Color(0.42f,0.39f,0.36f,1f), TextAnchor.MiddleRight);
+        sTag = mk(24, new Color(0.30f,0.26f,0.22f,1f), TextAnchor.MiddleRight);
+        sFoot = mk(21, new Color(0.22f,0.20f,0.19f,1f), TextAnchor.MiddleLeft);
+        sLast = mk(22, new Color(0.55f,0.14f,0.11f,1f), TextAnchor.MiddleLeft);
+        sSeal = mk(34, new Color(0.98f,0.94f,0.88f,1f), TextAnchor.MiddleCenter);
+        sWake = mk(36, new Color(0.88f,0.82f,0.72f,1f), TextAnchor.MiddleCenter);
+        if (hanjaFont != null) { sHanja.font = hanjaFont; sSub.font = hanjaFont; sSeal.font = hanjaFont; }
     }
 
     bool AnyUIVisible (IUIManager ui)
@@ -125,43 +97,45 @@ public class MolakTitle : MonoBehaviour
         return (a != null && a.Visible) || (b != null && b.Visible) || (c != null && c.Visible);
     }
 
-    /// <summary>상자 없는 붓글씨 행. 눌리면 먹선이 왼쪽에서 그어진다.</summary>
+    /// <summary>오른쪽 정렬 글자 행. 왼쪽에 금빛 마름모, 누르면 가는 붉은 선이 왼쪽으로 뻗는다.</summary>
     bool Item (int idx, Rect r, string label, bool enabled, float u, float t)
     {
         bool over = enabled && r.Contains(Event.current.mousePosition);
-        // 인장 점
-        float d = 14*u;
-        Tex(new Rect(r.x, r.center.y - d/2f, d, d), Px, enabled ? new Color(0.70f,0.16f,0.12f, over ? 1f : 0.75f) : new Color(0.4f,0.35f,0.3f,0.5f));
-        GUI.Label(new Rect(r.x + 36*u, r.y, r.width - 36*u, r.height), label, enabled ? sItem : sItemDim);
-        // 밑줄: 늘 옅게, 누르면 붉게 그어짐
-        float baseW = (r.width - 36*u) * 0.62f;
-        Box(new Rect(r.x + 36*u, r.yMax - 10*u, baseW, Mathf.Max(1f, 1.5f*u)), new Color(0.9f,0.85f,0.78f, 0.16f));
+        var st = enabled ? sItem : sItemDim;
+        GUI.Label(r, label, st);
+        float tw = st.CalcSize(new GUIContent(label)).x;
+        float mx = r.xMax - tw - 26*u, my = r.center.y;
+        var m = GUI.matrix;
+        GUIUtility.RotateAroundPivot(45f, new Vector2(mx, my));
+        float ds = (over || pressed == idx ? 11f : 8f) * u;
+        Box(new Rect(mx - ds/2, my - ds/2, ds, ds), enabled ? new Color(0.66f,0.52f,0.26f,0.95f) : new Color(0.5f,0.46f,0.4f,0.5f));
+        GUI.matrix = m;
         if (pressed == idx)
         {
-            float k = Mathf.Clamp01((t - pressedAt) / 0.35f);
-            Box(new Rect(r.x + 36*u, r.yMax - 12*u, baseW * Mathf.SmoothStep(0, 1, k), Mathf.Max(2f, 4f*u)), new Color(0.72f,0.15f,0.11f,0.95f));
+            float k = Mathf.SmoothStep(0, 1, Mathf.Clamp01((t - pressedAt) / 0.4f));
+            float len = 140*u * k;
+            Box(new Rect(mx - 16*u - len, my - Mathf.Max(1f, 1f*u), len, Mathf.Max(1.5f, 2f*u)), new Color(0.55f,0.14f,0.11f,0.9f));
         }
-        else if (over) Box(new Rect(r.x + 36*u, r.yMax - 11*u, baseW * 0.35f, Mathf.Max(2f, 3f*u)), new Color(0.72f,0.15f,0.11f,0.8f));
         bool hit = enabled && GUI.Button(r, GUIContent.none, GUIStyle.none);
         if (hit) { pressed = idx; pressedAt = t; }
         return hit;
     }
 
-    void InitMotes (int n, bool dawnMode, float w, float h)
+    static float G (string k) { try { return MolakStats.Get(k); } catch { return 0f; } }
+
+    /// <summary>실루엣(발끝 기준) + 물그림자.</summary>
+    void Sil (Texture2D tex, float fx, float fy, float hgt, Color c, float refl)
     {
-        motes = new Mote[n];
-        for (int i = 0; i < n; i++) motes[i] = NewMote(dawnMode, w, h, true);
-    }
-    Mote NewMote (bool dawnMode, float w, float h, bool anywhere)
-    {
-        var m = new Mote();
-        m.x = Random.value * w;
-        m.y = anywhere ? Random.value * h : (dawnMode ? -20f : h + 20f);
-        m.v = (dawnMode ? 18f : 26f) + Random.value * (dawnMode ? 22f : 60f);
-        m.sway = 8f + Random.value * 26f; m.phase = Random.value * 6.28f;
-        m.size = 2.5f + Random.value * (dawnMode ? 9f : 7f);
-        m.life = Random.value;
-        return m;
+        if (tex == null) return;
+        float wd = hgt * tex.width / (float)tex.height;
+        Tex(new Rect(fx - wd / 2f, fy - hgt, wd, hgt), tex, c);
+        if (refl > 0f)
+        {
+            var m = GUI.matrix;
+            GUIUtility.ScaleAroundPivot(new Vector2(1f, -0.55f), new Vector2(fx, fy));
+            Tex(new Rect(fx - wd / 2f, fy - hgt, wd, hgt), tex, new Color(c.r, c.g, c.b, c.a * refl));
+            GUI.matrix = m;
+        }
     }
 
     void OnGUI ()
@@ -176,147 +150,189 @@ public class MolakTitle : MonoBehaviour
         if (defTitle != null && defTitle.Visible) defTitle.ChangeVisibility(false, 0f);
 
         if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; return; }
-        float day = 0f;
-        try { day = MolakStats.Get("day"); } catch {}
+        float day = G("day");
         bool show = !sp.Playing && day < 1f && !AnyUIVisible(ui);
         if (!show) { shownAt = -1f; return; }
 
         float t = Time.unscaledTime;
         if (shownAt < 0f) { shownAt = t; wakeAt = -1f; wakeFired = false; pressed = -1; motes = null; }
+        float since = t - shownAt;
         float u = U; EnsureStyles(u);
         float w = Screen.width, h = Screen.height;
 
-        int seenEnds = 0, runs = 0, clears = 0; bool trueSeen = false; string lastEnd = "none";
-        try
-        {
-            var cv = Engine.GetService<ICustomVariableManager>();
-            foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) seenEnds++;
-            runs = (int)MolakStats.Get("g_runs"); clears = (int)MolakStats.Get("g_clears");
-            trueSeen = MolakStats.Get("g_hapdone") > 0;
-            if (cv != null && cv.VariableExists("g_lastend")) { var v = cv.GetVariableValue("g_lastend"); if (v.Type == CustomVariableValueType.String) lastEnd = v.String; }
-        } catch {}
-        bool dawnMode = trueSeen && dawn != null;
-        var art = dawnMode ? dawn : night;
+        int runs = (int)G("g_runs"), clears = (int)G("g_clears"), seenEnds = 0;
+        foreach (var e in MolakEnd.All) if (G("g_end_" + e.Id) > 0) seenEnds++;
+        string lastEnd = "none";
+        try { var cv = Engine.GetService<ICustomVariableManager>(); if (cv != null && cv.VariableExists("g_lastend")) { var v = cv.GetVariableValue("g_lastend"); if (v.Type == CustomVariableValueType.String) lastEnd = v.String; } } catch {}
+        bool dawn = G("g_hapdone") > 0;
+        bool soaWith = dawn || G("g_end_donghaeng") > 0 || G("g_end_wonhaeng") > 0;
+        bool soaGhost = !dawn && G("g_soadied") > 0;
+        bool jinShore = G("g_jbtruth") > 0;
+        bool mourners = G("g_end_wonsu") > 0;
+        bool swordInWater = G("g_end_ipma") > 0;
+        bool oldMan = G("g_end_seongsa") > 0;
+        bool moonCut = G("g_end_sicheon") > 0 || G("g_end_sungeom") > 0;
 
-        float fadeIn = Mathf.Clamp01((t - shownAt) / 1.6f);
-        var g0 = GUI.color; GUI.color = new Color(1, 1, 1, 1);
+        float fadeIn = Mathf.Clamp01(since / 1.8f);
+        var g0 = GUI.color; GUI.color = Color.white;
 
-        // ---- 배경: 위에 맞추고, 아주 느리게 다가온다 ----
-        Box(new Rect(0, 0, w, h), new Color(0.035f, 0.03f, 0.028f, 1f));
-        float artH = h;
-        if (art != null)
+        // ---- 바탕: 높이에 맞추되, 물가(그림의 0.879)가 화면 0.88 근처에 오게 ----
+        Box(new Rect(0, 0, w, h), new Color(0.07f, 0.075f, 0.075f, 1f));
+        float aw = w, ah = h, ax = 0, ay = 0;
+        if (night != null)
         {
-            float zoom = 1.06f + 0.035f * Mathf.Sin((t - shownAt) * 0.045f);
-            float aw = Mathf.Max(w, h * 0.80f * art.width / (float)art.height) * zoom;
-            float ah = aw * art.height / (float)art.width;
-            float ax = (w - aw) / 2f + Mathf.Sin(t * 0.03f) * 10f * u, ay = -ah * 0.02f;
-            artH = ay + ah;
-            Tex(new Rect(ax, ay, aw, ah), art, new Color(1, 1, 1, fadeIn));
-            // 달무리(밤): 그림 속 달 자리 근처에서 숨 쉬듯
-            if (!dawnMode)
-            {
-                float mx = ax + aw * 0.485f, my = ay + ah * 0.11f, mr = aw * (0.20f + 0.015f * Mathf.Sin(t * 0.9f));
-                Tex(new Rect(mx - mr, my - mr, mr * 2, mr * 2), Dot, new Color(0.95f, 0.18f, 0.10f, (0.16f + 0.06f * Mathf.Sin(t * 0.7f)) * fadeIn));
-            }
-            else
-            {
-                float mx = ax + aw * 0.55f, my = ay + ah * 0.14f, mr = aw * 0.42f;
-                Tex(new Rect(mx - mr, my - mr, mr * 2, mr * 2), Dot, new Color(1f, 0.92f, 0.70f, (0.18f + 0.05f * Mathf.Sin(t * 0.5f)) * fadeIn));
-            }
+            float breathe = 1.0f + 0.012f * Mathf.Sin(since * 0.06f);
+            ah = h * breathe; aw = ah * night.width / (float)night.height;
+            if (aw < w * breathe) { aw = w * breathe; ah = aw * night.height / (float)night.width; }
+            ax = (w - aw) * 0.5f + Mathf.Sin(t * 0.025f) * 6f * u;
+            ay = Mathf.Clamp(h * 0.88f - ah * 0.879f, h - ah, 0f);
+            Tex(new Rect(ax, ay, aw, ah), night, new Color(1, 1, 1, fadeIn));
         }
-        // 회귀할수록 재가 짙어진다(밤)
-        if (!dawnMode && runs > 0) Box(new Rect(0, 0, w, h), new Color(0.05f, 0.04f, 0.035f, Mathf.Min(0.28f, runs * 0.025f) * fadeIn));
-        // 메뉴 바닥: 그림 아래쪽을 먹으로 녹인다
-        float floorTop = h * 0.78f;
-        Tex(new Rect(0, floorTop, w, h - floorTop), Grad, new Color(0.035f, 0.03f, 0.028f, 0.95f));
-        // 메뉴 자리: 왼쪽 아래를 먹으로 누른다(가운데의 검객은 남긴다).
-        Tex(new Rect(0, h * 0.38f, w * 0.62f, h * 0.62f), Corner, new Color(0.03f, 0.025f, 0.022f, 0.93f * fadeIn));
+        System.Func<float, float> X = ix => ax + ix * aw;
+        System.Func<float, float> Y = iy => ay + iy * ah;
+        if (dawn) Box(new Rect(0, 0, w, h), new Color(1f, 0.78f, 0.45f, 0.13f * fadeIn));
 
-        // ---- 불티(밤) / 꽃잎(아침) ----
-        int want = dawnMode ? 26 : Mathf.Min(110, 46 + runs * 6);
-        if (motes == null || motes.Length != want) InitMotes(want, dawnMode, w, h);
+        // ---- 달 · 원상 ----
+        float mcx = X(0.494f), mcy = Y(0.1213f), mr = aw * 0.0529f;
+        Color moonCol = dawn ? new Color(0.98f, 0.80f, 0.45f, 0.95f) : new Color(0.74f, 0.16f, 0.12f, 0.92f);
+        Tex(new Rect(mcx - mr * 3.2f, mcy - mr * 3.2f, mr * 6.4f, mr * 6.4f), Dot, new Color(moonCol.r, moonCol.g, moonCol.b, (0.20f + 0.05f * Mathf.Sin(t * 0.6f)) * fadeIn));
+        Tex(new Rect(mcx - mr * 1.02f, mcy - mr * 1.02f, mr * 2.04f, mr * 2.04f), Disk, new Color(moonCol.r, moonCol.g, moonCol.b, moonCol.a * fadeIn));
+        if (moonCut && !dawn)
+        {
+            var m = GUI.matrix; GUIUtility.RotateAroundPivot(-28f, new Vector2(mcx, mcy));
+            Box(new Rect(mcx - mr * 1.25f, mcy - Mathf.Max(1f, 1.2f*u), mr * 2.5f, Mathf.Max(1.5f, 2.4f*u)), new Color(0.06f, 0.06f, 0.06f, 0.85f * fadeIn));
+            GUI.matrix = m;
+        }
+        if (enso != null)
+        {
+            // 처음 2.6초: 거꾸로 감기며 멈춘다(되감기). 그 뒤로는 아주 천천히 역방향으로.
+            float k = Mathf.Clamp01(since / 2.6f), ease = 1f - Mathf.Pow(1f - k, 3f);
+            float ang = -540f * (1f - ease) - since * 3f;
+            float er = mr * 2.05f * (1.12f - 0.12f * ease);
+            var m = GUI.matrix; GUIUtility.RotateAroundPivot(ang, new Vector2(mcx, mcy));
+            Color ec = dawn ? new Color(0.62f, 0.48f, 0.22f, 0.85f) : new Color(0.92f, 0.88f, 0.80f, 0.78f);
+            Tex(new Rect(mcx - er, mcy - er, er * 2f, er * 2f), enso, new Color(ec.r, ec.g, ec.b, ec.a * Mathf.Clamp01(since / 1.2f)));
+            GUI.matrix = m;
+        }
+
+        // ---- 겪은 일의 그림자 ----
+        float feet = Y(0.879f), heroH = ah * 0.183f;
+        if (oldMan) Sil(silOld, X(0.16f), feet, heroH * 1.7f, new Color(0.08f, 0.08f, 0.09f, 0.16f * fadeIn), 0f);
+        if (jinShore) Sil(silJin, X(0.68f), Y(0.874f), heroH * 0.30f, new Color(0.10f, 0.10f, 0.11f, 0.55f * fadeIn), 0.35f);
+        if (soaWith || soaGhost) Sil(silSoa, X(0.49f), feet, heroH * 0.94f, new Color(0.05f, 0.05f, 0.06f, (soaWith && !soaGhost ? 0.96f : 0.38f) * fadeIn), 0.28f);
+        if (swordInWater)
+        {
+            float sx = X(0.57f), sy0 = Y(0.905f), sy1 = Y(0.84f);
+            var m = GUI.matrix; GUIUtility.RotateAroundPivot(7f, new Vector2(sx, sy0));
+            Box(new Rect(sx - 1.6f*u, sy1, 3.2f*u, sy0 - sy1), new Color(0.07f, 0.07f, 0.08f, 0.9f * fadeIn));
+            Box(new Rect(sx - 9f*u, sy1 + 10f*u, 18f*u, 3f*u), new Color(0.07f, 0.07f, 0.08f, 0.9f * fadeIn));
+            GUI.matrix = m;
+        }
+        if (mourners)
+            for (int i = 0; i < 3; i++)
+                Sil(silMourn, X(0.70f + i * 0.055f), Y(0.952f - i * 0.006f), heroH * (0.34f - i * 0.02f), new Color(0.93f, 0.92f, 0.89f, 0.85f * fadeIn), 0.3f);
+
+        // ---- 수면의 등불: 지나온 생마다 하나 ----
+        int lamps = Mathf.Min(runs, 14);
+        for (int i = 0; i < lamps; i++)
+        {
+            float hx = Mathf.Repeat(Mathf.Sin(i * 12.9898f + 1f) * 43758.5453f, 1f), hy = Mathf.Repeat(Mathf.Sin(i * 78.233f + 2f) * 12345.678f, 1f);
+            float lx = X(0.06f + hx * 0.88f) + Mathf.Sin(t * 0.3f + i) * 4f * u;
+            float ly = Y(0.905f + hy * 0.075f) + Mathf.Sin(t * 0.8f + i * 1.7f) * 1.5f * u;
+            float ls = (9f + hy * 7f) * u, flick = 0.8f + 0.2f * Mathf.Sin(t * 2.3f + i * 3f);
+            Tex(new Rect(lx - ls * 2.2f, ly - ls * 2.2f, ls * 4.4f, ls * 4.4f), Dot, new Color(1f, 0.66f, 0.30f, 0.30f * flick * fadeIn));
+            Box(new Rect(lx - ls * 0.45f, ly - ls * 0.6f, ls * 0.9f, ls * 0.75f), new Color(0.98f, 0.82f, 0.55f, 0.92f * fadeIn));
+            Box(new Rect(lx - ls * 0.15f, ly + ls * 0.3f, ls * 0.3f, ls * 1.6f), new Color(1f, 0.75f, 0.45f, 0.22f * flick * fadeIn));
+        }
+
+        // ---- 떠다니는 것: 아주 느린 꽃잎(새벽은 금빛 먼지) ----
+        int want = 18;
+        if (motes == null || motes.Length != want)
+        {
+            motes = new Mote[want];
+            for (int i = 0; i < want; i++) motes[i] = new Mote { x = Random.value * w, y = Random.value * h, v = 6f + Random.value * 10f, sway = 10f + Random.value * 20f, phase = Random.value * 6.28f, size = 3f + Random.value * 4f };
+        }
         float dt = Mathf.Min(0.05f, Time.unscaledDeltaTime);
-        if (Event.current.type == EventType.Repaint)
-            for (int i = 0; i < motes.Length; i++)
+        for (int i = 0; i < motes.Length; i++)
+        {
+            var mo = motes[i];
+            if (Event.current.type == EventType.Repaint)
             {
-                var m = motes[i];
-                m.y += (dawnMode ? 1f : -1f) * m.v * u * 2f * dt;
-                m.x += Mathf.Sin(t * 0.8f + m.phase) * m.sway * u * dt;
-                m.life += dt * 0.25f;
-                if (m.y < -30 || m.y > h + 30 || m.x < -30 || m.x > w + 30) m = NewMote(dawnMode, w, h, false);
-                motes[i] = m;
-                float sz = m.size * u * 2f, flick = 0.55f + 0.45f * Mathf.Sin(t * 3.1f + m.phase * 3f);
-                Color c = dawnMode ? new Color(0.98f, 0.78f, 0.82f, 0.55f * fadeIn)
-                                   : new Color(1f, 0.42f + 0.25f * flick, 0.12f, (0.35f + 0.5f * flick) * fadeIn * Mathf.Clamp01(m.y / (h * 0.25f)));
-                Tex(new Rect(m.x - sz / 2, m.y - sz / 2, sz, sz), Dot, c);
+                mo.y += mo.v * u * dt; mo.x += Mathf.Sin(t * 0.5f + mo.phase) * mo.sway * u * dt;
+                if (mo.y > h + 20) { mo.y = -20; mo.x = Random.value * w; }
+                motes[i] = mo;
             }
+            float sz = mo.size * u * 2f;
+            Color pc = dawn ? new Color(1f, 0.86f, 0.55f, 0.55f * fadeIn) : new Color(0.86f, 0.45f, 0.45f, 0.45f * fadeIn);
+            Tex(new Rect(mo.x - sz / 2, mo.y - sz / 2, sz, sz * 0.7f), Dot, pc);
+        }
 
-        // ---- 제호: 오른쪽 세로쓰기 + 낙관 ----
+        // ---- 제호: 오른쪽 세로쓰기 + 금빛 가는 선 + 前生 回歸 + 낙관 ----
+        GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 0.6f) / 1.6f));
         string han = "沒落劍神";
-        float colX = w - 150*u, cy = Mathf.Max(70*u, h * 0.06f), ch = 132*u;
-        GUI.color = new Color(1, 1, 1, Mathf.Clamp01((t - shownAt - 0.4f) / 1.4f));
+        float colX = w - 118*u, cy = Mathf.Max(64*u, h * 0.055f), ch = 118*u;
         for (int i = 0; i < han.Length; i++)
         {
-            var r = new Rect(colX - 70*u, cy + i * ch, 140*u, ch);
-            var sh = new GUIStyle(sHanja); sh.normal.textColor = new Color(0, 0, 0, 0.55f);
-            GUI.Label(new Rect(r.x + 4*u, r.y + 5*u, r.width, r.height), han[i].ToString(), sh);
+            var r = new Rect(colX - 60*u, cy + i * ch, 120*u, ch);
+            var sh = new GUIStyle(sHanja); sh.normal.textColor = new Color(0, 0, 0, 0.45f);
+            GUI.Label(new Rect(r.x + 2*u, r.y + 3*u, r.width, r.height), han[i].ToString(), sh);
             GUI.Label(r, han[i].ToString(), sHanja);
         }
-        string kor = "몰락검신";
-        for (int i = 0; i < kor.Length; i++)
-            GUI.Label(new Rect(colX - 150*u, cy + 40*u + i * 52*u, 50*u, 52*u), kor[i].ToString(), sKor);
-        float sealY = cy + han.Length * ch + 18*u, sealS = 78*u;
-        Box(new Rect(colX - sealS / 2f, sealY, sealS, sealS), new Color(0.68f, 0.13f, 0.10f, 0.92f));
-        Box(new Rect(colX - sealS / 2f + 5*u, sealY + 5*u, sealS - 10*u, sealS - 10*u), new Color(0.75f, 0.17f, 0.13f, 0.92f));
+        float lineX = colX - 74*u;
+        Box(new Rect(lineX, cy + 18*u, Mathf.Max(1f, 1.2f*u), han.Length * ch - 36*u), new Color(0.80f, 0.68f, 0.42f, 0.75f));
+        string sub = "前生回歸";
+        for (int i = 0; i < sub.Length; i++)
+            GUI.Label(new Rect(lineX - 44*u, cy + 40*u + i * 44*u, 40*u, 44*u), sub[i].ToString(), sSub);
+        float sealY = cy + han.Length * ch + 14*u, sealS = 54*u;
+        Box(new Rect(colX - sealS / 2f, sealY, sealS, sealS), new Color(0.62f, 0.13f, 0.10f, 0.9f));
         GUI.Label(new Rect(colX - sealS / 2f, sealY, sealS, sealS), "回", sSeal);
 
-        // ---- 메뉴 ----
-        GUI.color = new Color(1, 1, 1, Mathf.Clamp01((t - shownAt - 0.9f) / 1.0f));
-        bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable;
-        float ih = 88*u, mx0 = 56*u, mw = Mathf.Min(w * 0.42f, 460*u);
-        int n = 5;
-        float my0 = h - 170*u - n * ih;
-        float tagY = my0 - 78*u;
-        string tag = dawnMode ? "베이고, 돌아가고, 마침내 아침." : "베이고, 돌아가고, 다시 벤다.";
-        GUI.Label(new Rect(mx0, tagY, w - mx0 * 2, 50*u), tag, sTag);
-        Box(new Rect(mx0, tagY + 54*u, 120*u, Mathf.Max(1f, 2f*u)), new Color(0.72f, 0.15f, 0.11f, 0.85f));
-
+        // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
+        GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
+        float ih = 74*u, n = 5;
+        float my0 = Mathf.Min(h * 0.58f, h - 230*u - n * ih);
+        float rx = w - 64*u, mw = Mathf.Min(w * 0.5f, 520*u);
+        Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.35f : 0.5f));
+        string tag = dawn ? "베이고, 돌아가고, 마침내 아침." : "베이고, 돌아가고, 다시 벤다.";
+        GUI.Label(new Rect(rx - mw, my0 - 52*u, mw, 40*u), tag, sTag);
+        Box(new Rect(rx - 90*u, my0 - 8*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
-        if (Item(0, new Rect(mx0, my0, mw, ih), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t) && !busy)
-            wakeAt = t;
-        if (Item(1, new Rect(mx0, my0 + ih, mw, ih), "이어하기", canContinue && !busy, u, t))
+        bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable;
+        if (Item(0, new Rect(rx - mw, my0, mw, ih), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t) && !busy) wakeAt = t;
+        if (Item(1, new Rect(rx - mw, my0 + ih, mw, ih), "이어하기", canContinue && !busy, u, t))
         {
             var sl = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
             if (sl != null) sl.ChangeVisibility(true, 0.15f);
         }
-        string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(24*u) + "><color=#9A8A78>末路 " + seenEnds + " / " + MolakEnd.All.Length + "</color></size>" : "말로록";
-        if (Item(2, new Rect(mx0, my0 + 2 * ih, mw, ih), codexLabel, !busy, u, t)) MolakMenu.OpenCodex();
-        if (Item(3, new Rect(mx0, my0 + 3 * ih, mw, ih), "환경 설정", !busy, u, t))
+        string codexLabel = seenEnds > 0 ? "<size=" + Mathf.RoundToInt(22*u) + "><color=#7A6A55>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>  말로록" : "말로록";
+        if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, ih), codexLabel, !busy, u, t)) MolakMenu.OpenCodex();
+        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, ih), "환경 설정", !busy, u, t))
         {
-            var st = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
-            if (st != null) st.ChangeVisibility(true, 0.15f);
+            var stg = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
+            if (stg != null) stg.ChangeVisibility(true, 0.15f);
         }
-        if (Item(4, new Rect(mx0, my0 + 4 * ih, mw, ih), "나가기", !busy, u, t)) Application.Quit();
+        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, ih), "나가기", !busy, u, t)) Application.Quit();
 
-        // ---- 발치: 회귀 기록 · 지난 생의 말로 ----
-        float fy = h - 96*u;
-        if (runs > 0 && lastEnd != "none" && !string.IsNullOrEmpty(lastEnd))
+        // ---- 발치: 지난 생의 말로 · 회귀 기록 ----
+        // 검객의 물그림자를 피해 오른쪽 아래, 메뉴 바로 밑 안개 자락에 둔다
+        float fy = my0 + n * ih + 18*u;
+        var sLastR = new GUIStyle(sLast){ alignment = TextAnchor.MiddleRight };
+        var sFootR = new GUIStyle(sFoot){ alignment = TextAnchor.MiddleRight };
+        if (runs > 0 && !string.IsNullOrEmpty(lastEnd) && lastEnd != "none")
         {
             var le = MolakEnd.Find(lastEnd);
-            if (!string.IsNullOrEmpty(le.Hanja))
-                GUI.Label(new Rect(mx0, fy - 6*u, w - mx0 * 2, 34*u), "지난 생 · 末路 " + le.Hanja + " — " + le.Title, sLast);
+            if (!string.IsNullOrEmpty(le.Hanja)) GUI.Label(new Rect(rx - mw * 1.4f, fy, mw * 1.4f, 30*u), "지난 생 · 末路 " + le.Hanja + " — " + le.Title, sLastR);
         }
         string foot = "제1부 · 운락객잔" + (runs > 0 ? "  ·  회귀 " + runs + "회" : "") + (clears > 0 ? "  ·  등극 " + clears + "회" : "");
-        GUI.Label(new Rect(mx0, fy + 34*u, w - mx0 * 2, 30*u), foot, sFoot);
+        GUI.Label(new Rect(rx - mw * 1.4f, fy + 32*u, mw * 1.4f, 28*u), foot, sFootR);
 
         // ---- 먹이 덮는다 → "눈을 뜬다." ----
-        GUI.color = new Color(1, 1, 1, 1);
+        GUI.color = Color.white;
         if (wakeAt > 0f)
         {
             float k = Mathf.Clamp01((t - wakeAt) / 1.1f);
             Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, Mathf.SmoothStep(0, 1, k)));
-            float kt = Mathf.Clamp01((t - wakeAt - 0.6f) / 0.6f);
-            var ws = new GUIStyle(sWake); ws.normal.textColor = new Color(0.88f, 0.82f, 0.72f, kt);
+            var ws = new GUIStyle(sWake); ws.normal.textColor = new Color(0.88f, 0.82f, 0.72f, Mathf.Clamp01((t - wakeAt - 0.6f) / 0.6f));
             GUI.Label(new Rect(0, h * 0.45f, w, 60*u), "눈을 뜬다.", ws);
             if (!wakeFired && t - wakeAt > 1.7f)
             {
@@ -325,7 +341,6 @@ public class MolakTitle : MonoBehaviour
                 state.ResetState(new string[0], () => Naninovel.ScriptTrackExtensions.LoadAndPlay(player.MainTrack, "Entry"));
             }
         }
-        // 화면 전체 페이드 인
         if (fadeIn < 1f) Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, 1f - fadeIn));
         GUI.color = g0;
     }
