@@ -214,7 +214,8 @@ public class DuelCommand : Command
             {
                 // 목은 붙어 있다. 대신 몸과 전낭과 체면이 값을 치른다.
                 float hp0 = MolakStats.Get("hp");
-                if (hp0 - dmg < 1f) dmg = Mathf.Max(0f, hp0 - 1f);
+                float floor = Mathf.Max(2f, Mathf.Ceil(MolakStats.Get("hpmax") * 0.2f));   // 목숨을 남겨 두는 판: 바닥까지는 베지 않는다
+                if (hp0 - dmg < floor) dmg = Mathf.Max(0f, hp0 - floor);
                 bool wasHurt = MolakStats.Get("injury") > 0;
                 MolakStats.Set("injury", Mathf.Max(MolakStats.Get("injury"), 3f));
                 MolakStats.Set("dinj", 1f);

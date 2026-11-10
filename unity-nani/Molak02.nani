@@ -649,6 +649,8 @@
 
 # NightEnd
 @daytick
+@goto MolakOver#Taint if:taint>=6
+@goto MolakOver#Taint if:taint>0&&hp<=0
 @goto MolakOver#Starve if:hp<=0&&starved>0
 @goto MolakOver#Exhaust if:hp<=0
 @goto MolakOver#Curse if:curse>=100
