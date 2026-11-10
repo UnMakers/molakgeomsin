@@ -3,6 +3,7 @@
 @goto MolakOver#Curse if:curse>=100
 @goto MolakOver#Taint if:taint>=6
 @goto MolakOver#Taint if:taint>0&&hp<=0
+@goto #Collapse if:hp<=0&&collapsed<1
 @goto MolakOver#Exhaust if:hp<=0
 ; --- 장(章)·비트 ---
 @goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10
@@ -237,6 +238,30 @@
 @art char:none
 @goto #Night
 
+;
+; ---------- 쓰러짐: 한 생에 한 번, 하진무가 업어 온다 ----------
+# Collapse
+@set collapsed=1
+@page
+@set tr=random(1,3)
+@goto #Collapse2 if:tr==2
+@goto #Collapse3 if:tr==3
+눈을 뜬다. 운락객잔의 그 방. 일 년을 누워 있던 그 천장이다.
+"객이 저자 골목에 엎어져 있더이다. 점소이가 업어 왔소." 하진무가 미음 그릇을 내려놓는다. "이틀을 잤소. 또 일 년은 안 되오."
+@goto #CollapseT
+# Collapse2
+누군가 등에 업혀 있다. 흔들린다. 늙은 등이다. 주판 냄새가 난다.
+"내려놓지 않으리다. 한 번 업어 본 몸이라, 무게는 아오."
+다음에 눈을 뜨니 이틀이 지나 있다.
+@goto #CollapseT
+# Collapse3
+백초 할멈의 약연 소리에 눈을 뜬다. 쓴 탕약 냄새.
+"죽으려거든 내 약값부터 치르고 죽거라." 할멈이 사발을 입에 들이민다. "이틀이다. 다음엔 안 깨어날 게다."
+# CollapseT
+<color=#C03434>다음에 또 쓰러지면, 업어 올 사람이 없다.</color>
+@set hp=hpmax/2
+@fx day:2 mn:-3
+@goto #DayLoop
 ;
 ; ---------- 업보: 빚 ----------
 # KDebt
@@ -659,6 +684,7 @@
 @goto MolakOver#Taint if:taint>=6
 @goto MolakOver#Taint if:taint>0&&hp<=0
 @goto MolakOver#Starve if:hp<=0&&starved>0
+@goto #Collapse if:hp<=0&&collapsed<1
 @goto MolakOver#Exhaust if:hp<=0
 @goto MolakOver#Curse if:curse>=100
 @goto #D10 if:day==10
@@ -1058,9 +1084,18 @@
 "지나던 청운검파 장문인께서 하룻밤 내내 아이의 혈을 짚어 주셨소. 약값도, 이름도 받지 않으시고. 그 아이가 지금은 시집가서 애를 둘 낳았소."
 빚이 어디서 시작됐는지 이제 안다.
 @choice "\"장문인의 검을 내가 찾았소.\"" if:f_cheonggang>0 goto:#S_HajinC0
+@choice "\"따님은 그 뒤에 아이를 둘 낳았지요.\"" if:g_runs>=1 goto:#S_HajinK
 @choice "말없이 잔을 받는다" goto:#S_HajinC1
 @choice "\"그 문파는 이제 없소.\"" goto:#S_HajinC2
 @stop
+# S_HajinK
+하진무의 잔이 입술 앞에서 멎는다. 아직 하지 않은 말이다.
+"……객이 그걸 어찌 아시오."
+"들은 적이 있소. 오래전에."
+노인이 한참 당신을 본다. 그러다 잔을 비운다. 묻지 않는 것이 이 노인의 셈법이다.
+"장문인께서도 그런 눈을 하셨소. 아직 오지 않은 일을 보는 눈."
+@fx curse:-1
+@return
 # S_HajinC0
 @goto #S_HajinB
 # S_HajinC1
@@ -1093,7 +1128,17 @@
 새 방(榜)이 붙었다. 먹이 아직 번들거린다.
 「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
 그림 속 얼굴. 일 년을 앓기 전의 당신이다.
+@set tr=random(1,3)
+@goto #S_Wv2 if:tr==2
+@goto #S_Wv3 if:tr==3
 "삼백 냥이면 평생 먹고살겠구먼."<br>"쉿, 혈마교 일에 입 대지 말게."
+@goto #S_WM
+# S_Wv2
+어물전 아낙이 그림을 손가락으로 짚는다. "눈매가 순하네. 이런 얼굴이 잔당이래." 옆의 사내가 그 손가락을 슬쩍 내려 준다.
+@goto #S_WM
+# S_Wv3
+아이 둘이 방 앞에서 그림 흉내를 내며 칼싸움을 한다. 하나가 "청운 잔당이다!" 하고 쓰러진다. 어미가 달려와 두 아이의 입을 틀어막는다.
+# S_WM
 구경꾼들 틈으로 소매에 붉은 끈을 감은 자들이 하나둘 늘어난다.
 @set f_wanted=1
 @choice "구경꾼 틈에 섞여 제 수배서를 흉본다" goto:#S_WantedC0

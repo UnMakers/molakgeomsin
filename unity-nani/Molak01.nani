@@ -54,6 +54,7 @@
 @set canflee=0
 @set cansense=0
 @set cansl=0
+@set collapsed=0
 @set cost_body=0
 @set cost_coin=0
 @set cost_core=0

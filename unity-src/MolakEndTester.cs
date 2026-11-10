@@ -17,6 +17,7 @@ public class MolakEndTester : MonoBehaviour
     public static System.Text.StringBuilder Lives = new System.Text.StringBuilder();
     public static string Status = "idle";
     public static string ResultPath = @"C:\Users\sjf1t\RuinedSword\Build\soak_results.csv";
+    public static string DeathPath = @"C:\Users\sjf1t\RuinedSword\Build\soak_deaths.txt";
     public static HashSet<string> ChoiceSeen = new HashSet<string>();
     public static HashSet<string> DeathChoices = new HashSet<string>();
     string lastEventChoice = "";
@@ -205,6 +206,13 @@ public class MolakEndTester : MonoBehaviour
                 string dk = ""; try { var kv = vars.GetVariableValue("dkind"); dk = kv.Type == CustomVariableValueType.String ? kv.String : ""; } catch { }
                 var row = LifeRow(clear ? "END" : "DEAD", dc == "비무 패배" ? dc + "(" + dk + ")" : dc);
                 Lives.AppendLine(row); WriteResult(row);
+                try
+                {
+                    // 사인 추적: 죽기 직전 선택 열두 줄
+                    var ll = Log.ToString().Split('\n'); int from = Mathf.Max(0, ll.Length - 13);
+                    System.IO.File.AppendAllText(DeathPath, "== " + row + "\n" + string.Join("\n", ll, from, ll.Length - from) + "\n", new System.Text.UTF8Encoding(false));
+                }
+                catch { }
                 if (lives >= maxLives || (clear && tag == "run")) { Status = (clear ? "ending:" : "death:") + dc; done = true; yield break; }
                 ResetLifeCounters();
             }
@@ -235,7 +243,7 @@ public class MolakEndTester : MonoBehaviour
                 if (path != "MolakDuel" && path != "MolakOver" && Find(labels, "몸을 쉰다") < 0) lastEventChoice = path + "|" + labels[k];
                 if (Find(labels, "정면으로 벤다") >= 0) lastDuelWin = 0f;
                 choicesThisLife++;
-                Log.AppendLine("d" + day + " [" + path + "#" + at + "] " + labels[k] + (tries > 1 ? "  (x" + tries + ")" : ""));
+                Log.AppendLine("d" + day + " hp" + MolakStats.Get("hp").ToString("0") + "/" + MolakStats.Get("hpmax").ToString("0") + (MolakStats.Get("taint") > 0 ? " T" + MolakStats.Get("taint") : "") + (MolakStats.Get("injury") > 0 ? " I" : "") + " [" + path + "#" + at + "] " + labels[k]);
                 if (Log.Length > 200000) Log.Remove(0, 100000);
                 if (tr.Playing)
                     foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
