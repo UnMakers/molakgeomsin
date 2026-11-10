@@ -126,7 +126,10 @@ public class DuelInfoCommand : Command
         vars.SetVariableValue("duelkind", new CustomVariableValue(kind));
         // 전생의 기억(상점 강화) + 이 상대에게 죽은 적이 있으면 경고
         bool bossKind = kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival";
-        MolakStats.Set("memwarn", bossKind && MolakStats.Get("g_up_mem") > 0 && vars.VariableExists("g_died_" + kind) && vars.GetVariableValue("g_died_" + kind).Number > 0 ? 1f : 0f);
+        // 지난 생에 이 상대에게 진 적이 있으면(살았든 죽었든) 첫 수를 안다. 상점의 '전생의 기억'은 죽은 기억까지 또렷하게 한다.
+        bool diedTo = vars.VariableExists("g_died_" + kind) && vars.GetVariableValue("g_died_" + kind).Number > 0;
+        bool lostTo = MolakStats.Get("g_know_" + kind) > 0;
+        MolakStats.Set("memwarn", bossKind && (lostTo || (MolakStats.Get("g_up_mem") > 0 && diedTo)) ? 1f : 0f);
         vars.SetVariableValue("foename", new CustomVariableValue(foe.Name));
         vars.SetVariableValue("foerank", new CustomVariableValue(string.Format("{0:N0}", foe.Rank)));
         vars.SetVariableValue("foetier", new CustomVariableValue(MolakDuel.TierName(foe.Rank)));
@@ -146,6 +149,10 @@ public class DuelInfoCommand : Command
 [Alias("duel")]
 public class DuelCommand : Command
 {
+    public static bool IsBossKind (string kind)
+    {
+        return kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival" || kind == "chainmob" || kind == "hunt1" || kind == "hunt2";
+    }
     public StringParameter Style;
 
 #pragma warning disable CS1998
@@ -163,7 +170,7 @@ public class DuelCommand : Command
         if (style == "curse") { bonus = 3f + curse * 0.06f; hpRisk = 2f; MolakStats.Add("curse", 5f); }
         if (style == "curse2") { bonus = 5f + curse * 0.08f; hpRisk = 2f; MolakStats.Add("curse", 8f); } // 75 이상: 사술이 먼저 나선다
         if (style == "sense") { bonus = 2f; hpRisk = 2f; }   // 독 바른 칼을 먼저 읽는다
-        if (MolakStats.Get("memwarn") > 0) bonus += 1f; // 전생의 기억: 상대의 첫 수를 안다
+        if (MolakStats.Get("memwarn") > 0) bonus += 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f); // 전생의 앎: 상대의 첫 수를 안다
         float sit = MolakStats.Get("dsit");
         if (sit == 1) bonus += style == "guard" ? 2f : (style == "front" || style == "killer" ? -1.5f : 0f); // 빗속: 디딤이 미끄럽다
         if (sit == 2) bonus += style == "killer" ? 1f : (style == "guard" ? -1f : 0f);                    // 외나무다리: 물러설 데가 없다
@@ -232,6 +239,7 @@ public class DuelCommand : Command
                 if (sit == 3) MolakStats.Add("sl", -1f);
             }
             MolakStats.Add("hp", -dmg);
+            if (IsBossKind(kind)) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다
             MolakStats.Set("duelwin", 0f); MolakArt.EndDuel();
             MolakVfx.Blood();
             MolakStats.Set("tierup", 0f);

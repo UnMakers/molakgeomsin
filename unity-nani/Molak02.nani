@@ -293,6 +293,7 @@
 @set debtext=1
 @goto #Night
 # KDebtFinger
+@set g_know_wangsam=1
 사내가 단도를 꺼낸다. 하진무가 고개를 돌린다.
 소리는 생각보다 작다. 검 쥐는 손이 아니라서 다행이라고, 그렇게 여기기로 한다.
 사내가 손가락을 무명에 싸서 품에 넣는다. "장부와 맞춰 보아야 해서."
@@ -597,6 +598,7 @@
 @choice "날품을 판다 — 물지게와 장작" goto:#NWork
 @choice "상점가를 둘러본다" goto:#Town1
 @choice "전당포 뒷방 — 고리대 왕삼에게 은자를 빌린다" if:debt<1&&mn<8 goto:#NLoan
+@choice "왕삼의 장부를 훔치러 전당포 뒷방에 든다" if:debt>0&&g_know_wangsam>0 goto:#NLedger
 @choice "객잔으로 돌아간다" goto:#NightEnd
 @stop
 # NLoan
@@ -608,6 +610,24 @@
 @choice "빌린다 — 은자 15, 이레 뒤 25" goto:#NLoanY
 @choice "\"됐소.\" — 일어선다" goto:#NightEnd
 @stop
+# NLedger
+<color=#9A70C4>지난 생, 저 장부가 어느 궤짝 셋째 칸에 드는지 보았다.</color> 피 묻은 손가락으로 이름에 줄을 긋던 그 장부다.
+삼경. 전당포 뒷담은 낮다. 기름 먹은 등잔이 꺼져 있다.
+@set tr=random(1,100)
+@goto #NLedgerOk if:tr<=55+sl*3
+궤짝 뚜껑을 여는 순간 뒤에서 등잔이 켜진다. 왕삼이 잠옷 바람으로 서 있다. 뒤에 수하 둘.
+"장부를 훔치는 손님은 처음이 아니오. 그 손님들 손가락이 지금 어디 있는지 아시오?"
+@set debtday=day
+@goto #NightEnd
+# NLedgerOk
+궤짝 셋째 칸. 쥐 꼬리 같은 글씨의 장부가 거기 있다. 당신 이름이 적힌 장을 찢는다. 그 앞뒤 장에 적힌 이름들도 같이 찢는다. 저잣거리 사람들 이름이다.
+아궁이에 넣는다. 종이가 오그라들며 이름들이 하나씩 탄다.
+이튿날 저잣거리 몇 집의 아침이 조금 늦게 시작된다. 아무도 이유를 묻지 않는다.
+@set debt=0
+@set debtext=0
+@set f_wangsam=1
+@fx sl:1
+@goto #NightEnd
 # NLoanY
 왕삼이 은자를 세어 밀어 준다. 장부에 이름이 적힌다. 붓끝이 이름 위에서 한 번 멈춘다.
 "청운 쪽 이름이로군. 잘 갚으시오. 그쪽 이름은 값이 잘 나가니."

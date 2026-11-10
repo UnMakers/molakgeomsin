@@ -372,7 +372,8 @@
 @scene id:night
 @art scene:raid
 @art char:soa
-@goto #SoaN8Re if:g_soadied>0
+@goto #SoaN8Re if:g_soadied>0||g_know_raid>0
+@set g_know_raid=1
 삼경(三更). 기와 위로 발소리가 지나간다. 하나가 아니다.
 소아가 먼저 깬다. 문을 열기도 전에 쌍검을 쥐고 복도에 서 있다.
 "혈랑대다. 열둘. 아니, 열넷."
@@ -383,7 +384,13 @@
 삼경. 눈을 뜬다. 소리가 나기도 전에.
 이 밤을 안다. 기와를 밟는 열넷의 발소리, 창호지에 번지는 횃불, 아래층에서 점소이를 부엌으로 미는 하진무의 손.
 그리고 복도 끝, 쌍검을 쥐고 서 있을 사람.
+@goto #SoaN8ReB if:g_soadied<1
 <color=#9A70C4>지난 생, 이 밤에 그녀가 죽었다.</color>
+@goto #SoaN8ReC
+# SoaN8ReB
+<color=#9A70C4>지난 생에도 이 밤이 있었다.</color> 그때는 발소리를 듣고서야 깼다.
+# SoaN8ReC
+@set g_know_raid=1
 아직 발소리는 없다. 반각쯤 남았다.
 @choice "계단에 등잔 기름을 붓고, 하진무와 점소이를 아궁이 뒤에 숨긴다" goto:#SoaN8P1
 @choice "소아의 방문을 두드린다 — 이번엔 먼저 말한다" goto:#SoaN8P2

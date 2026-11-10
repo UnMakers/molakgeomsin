@@ -230,6 +230,7 @@
 @set injury=0
 @set jsdeff=0
 @set jsdn=0
+@set knownewc=0
 @set lrand=0
 @set luck=0
 @set lv_vigor=0
@@ -281,6 +282,8 @@
 @set foename="none"
 @set foerank="none"
 @set foetier="none"
+@set knownew="none"
+@set knowsnap="none"
 @set newrank="none"
 @set nextevent="none"
 @set oldrank="none"

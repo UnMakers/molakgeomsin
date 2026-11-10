@@ -17,12 +17,12 @@
 <color=#C03434>{foename}</color> — 강호 서열 {foerank}위 · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
 @goto #HeadInj if:injury>0||taint>0
 @goto #RunChoices if:memwarn<1
-<color=#9A70C4>지난 생, 이 상대의 검 아래서 죽었다.</color> 그 순간이 되감기며 상대의 첫 수가 보인다.
+<color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 몸이 먼저 기억한다. 상대의 첫 수가 반 박자 일찍 보인다.
 @goto #RunChoices
 # HeadInj
 <color=#C03434>옆구리가 당긴다.</color> 성한 몸이 아니다. 성한 몸으로 쥐던 승산이 아니다.
 @goto #RunChoices if:memwarn<1
-<color=#9A70C4>지난 생, 이 상대의 검 아래서 죽었다.</color> 그 순간이 되감기며 상대의 첫 수가 보인다.
+<color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 몸이 먼저 기억한다. 상대의 첫 수가 반 박자 일찍 보인다.
 # RunChoices
 @choice "정면으로 벤다" goto:#StFront
 @choice "살기를 실어 선공한다" if:cansl>0 goto:#StKiller

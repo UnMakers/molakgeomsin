@@ -17,7 +17,9 @@ public class InitRunCommand : Command
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
-        foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed"})
+        foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
+                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
+                                 "g_know_hunt1","g_know_hunt2","g_know_hunt3","g_know_cheolsan","g_know_rival","g_know_chainmob"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         foreach (var e in MolakEnd.All)
             if (!vars.VariableExists("g_end_" + e.Id)) vars.SetVariableValue("g_end_" + e.Id, new CustomVariableValue(0f));
@@ -38,6 +40,7 @@ public class InitRunCommand : Command
         MolakStats.Set("day", 1);
         MolakStats.Set("rank", 0);
         MolakStats.Set("seallv", up("seal"));
+        MolakKnow.Snapshot();   // 이번 생이 시작될 때 이미 아는 것 — 죽을 때 "되감기지 않는 것"을 가려낸다
         MolakStats.Set("runs", MolakStats.Get("g_runs"));
     }
 }

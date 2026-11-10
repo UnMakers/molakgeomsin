@@ -46,6 +46,7 @@
 @goto #Dead
 # DebtDeath
 @set deathcause="빚"
+@set g_know_wangsam=1
 왕삼의 수하가 장부를 펼친 채 피 묻은 손가락으로 이름 위에 줄을 긋는다.
 "셈은 끝났소. 이자는 객잔에서 받겠소."
 하진무의 주판 소리가 들리지 않는다. 마당의 흙이 차다. 열닷 냥이었다. 처음엔.
@@ -57,6 +58,7 @@
 @goto #Dead
 # TaxDeath
 @set deathcause="협"
+@set g_know_taxday=1
 붉은 끈 다섯이 당신을 내려다본다. 하나가 침을 뱉는다. "객잔 늙은이 손목 하나 값으로 목을 바꾸다니."
 하진무가 무릎으로 기어 온다. 그 손목은 무사하다. 그거면 됐다고, 말이 나오지 않는다.
 @goto #Dead
@@ -83,12 +85,18 @@
 \[ 末路 · {endhanja} — {endtitle} \]
 당신의 이야기는 여기서 끝났다. 그러나 이 몸에게는 끝이 끝이 아니다.
 @regress
+@knownew
+@goto #DeadK0 if:knownewc<1
+<color=#9A70C4>되감기지 않는 것</color> — {knownew}
+# DeadK0
 @goto #FirstDeath if:g_runs==1
 @goto #Regress
 # FirstDeath
 시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
 '네가 가장 절망하는 날, 이 술(術)의 참뜻을 알게 되리라.'
 노인의 목소리가 뼛속에서 울린다. 가슴의 문양이, 사술이 당신을 되감았다.
+@goto #Shop if:deathcause!="소아의 검"
+'대답을 기다려 주는 칼은 없느니라. 다음엔 입을 열거라.' 노인의 목소리가 한 마디를 더 얹는다.
 @goto #Shop
 # Regress
 시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.

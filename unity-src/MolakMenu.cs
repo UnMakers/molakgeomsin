@@ -132,13 +132,14 @@ public class MolakMenu : MonoBehaviour
         Box(new Rect(0,0,w,h), new Color(0f,0f,0f,0.72f));
         if (ledger) { DrawLedger(w, h, u); return; }
         if (codex) { DrawCodex(w, h, u); return; }
+        if (knowTab) { DrawKnow(w, h, u); return; }
         var sp = Engine.GetService<IScriptPlayer>();
         var state = Engine.GetService<IStateManager>();
         var ui = Engine.GetService<IUIManager>();
 
         float bw = Mathf.Min(w*0.84f, 860*u), bh = 104*u, gap = 18*u;
         float bx = (w-bw)/2f;
-        string[] labels = { "지난 기록", "원수 장부", "말로록", "빠른 저장", "저장 / 불러오기", "환경 설정" };
+        string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "빠른 저장", "저장 / 불러오기", "환경 설정" };
         float totalH = 100*u + 3*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
         float by = Mathf.Max(60*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
@@ -181,15 +182,16 @@ public class MolakMenu : MonoBehaviour
                 }
                 case 1: ledger = true; break;
                 case 2: codex = true; break;
-                case 3: if (state != null) { state.QuickSave(); Toast("빠르게 저장했다."); } break;
-                case 4:
+                case 3: knowTab = true; break;
+                case 4: if (state != null) { state.QuickSave(); Toast("빠르게 저장했다."); } break;
+                case 5:
                 {
                     open = false; SetProcessInput(true);
                     var sl = ui != null ? ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI : null;
                     if (sl != null) sl.ChangeVisibility(true, 0.15f);
                     break;
                 }
-                case 5:
+                case 6:
                 {
                     open = false; SetProcessInput(true);
                     var st = ui != null ? ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI : null;
@@ -250,6 +252,51 @@ public class MolakMenu : MonoBehaviour
         if (Btn(back, "돌아간다", false, u)) ledger = false;
         if (Event.current.type == EventType.MouseDown) ledger = false;
         g0 = 0f;
+    }
+
+    bool knowTab;
+    UnityEngine.Vector2 knowScroll;
+    void DrawKnow (float w, float h, float u)
+    {
+        float bw = Mathf.Min(w*0.88f, 900*u);
+        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.08f);
+        int got = MolakKnow.Count();
+        GUI.Label(new Rect(bx, by, bw, 56*u), "— 전생의 앎 · " + got + " / " + MolakKnow.All.Length + " —", sHead);
+        by += 76*u;
+        float rh = 150*u, gap = 14*u;
+        float listH = h - by - 150*u;
+        var view = new Rect(bx, by, bw, listH);
+        var content = new Rect(0, 0, bw-24*u, MolakKnow.All.Length*(rh+gap));
+        knowScroll = GUI.BeginScrollView(view, knowScroll, content);
+        var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=true};
+        var descS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
+        descS.normal.textColor = MolakTheme.Ink3;
+        var whereS = new GUIStyle(sBtn){alignment=TextAnchor.UpperRight, fontSize=Mathf.RoundToInt(23*u)};
+        whereS.normal.textColor = MolakTheme.Night ? new Color(0.62f,0.50f,0.78f,1f) : new Color(0.42f,0.27f,0.58f,1f);
+        for (int i = 0; i < MolakKnow.All.Length; i++)
+        {
+            var e = MolakKnow.All[i];
+            bool has = MolakKnow.Known(e);
+            var r = new Rect(0, i*(rh+gap), bw-24*u, rh);
+            Box(r, MolakTheme.Raise);
+            Box(new Rect(r.x,r.y,Mathf.Max(2f,5*u),r.height), has ? MolakChoiceMeta.SealColor(MolakChoiceMeta.Know, MolakTheme.Night) : MolakTheme.Line);
+            if (has)
+            {
+                GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), e.Name, nameS);
+                GUI.Label(new Rect(r.x+r.width*0.45f, r.y+18*u, r.width*0.55f-24*u, 40*u), e.Where, whereS);
+                GUI.Label(new Rect(r.x+28*u, r.y+64*u, r.width-56*u, r.height-70*u), e.Desc, descS);
+            }
+            else
+            {
+                var ghost = new GUIStyle(nameS); ghost.normal.textColor = new Color(0.42f,0.37f,0.32f,1f);
+                var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
+                GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), sb.ToString(), ghost);
+                GUI.Label(new Rect(r.x+28*u, r.y+64*u, r.width-56*u, r.height-70*u), "아직 모른다. 어딘가에서 한 번은 겪어 봐야 안다.", descS);
+            }
+        }
+        GUI.EndScrollView();
+        var back = new Rect(bx, by + listH + 16*u, bw, 100*u);
+        if (Btn(back, "돌아간다", false, u)) knowTab = false;
     }
 
     UnityEngine.Vector2 codexScroll;
