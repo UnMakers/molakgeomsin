@@ -168,7 +168,7 @@ public class MolakMenu : MonoBehaviour
         float bw = Mathf.Min(w*0.84f, 860*u), bh = 104*u, gap = 18*u;
         float bx = (w-bw)/2f;
         string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정" };
-        float totalH = 100*u + 3*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
+        float totalH = 100*u + 4*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
         float by = Mathf.Max(60*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
         // ✕ 닫기
@@ -193,6 +193,17 @@ public class MolakMenu : MonoBehaviour
             var mid = new GUIStyle(sBtn){ alignment = TextAnchor.MiddleCenter, richText = true };
             GUI.Label(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), "글자 크기  <b>" + Mathf.RoundToInt(MolakTheme.FontScale*100f) + "%</b>", mid);
             if (Btn(new Rect(bx+bw-sw2, by, sw2, bh), "＋", false, u) && fs < MolakTheme.FontMax) MolakTheme.FontStep = fs + 1;
+        }
+        by += bh + gap;
+        // 배경음: [ − ]  배경음 50%  [ + ]  (0%~100%, 10% 단위 · 나니노벨 BGM 음량과 같은 값)
+        {
+            float sw2 = 150*u;
+            int bv = Mathf.RoundToInt(MolakBgm.Volume * 10f);
+            if (Btn(new Rect(bx, by, sw2, bh), "－", false, u) && bv > 0) MolakBgm.Volume = (bv - 1) / 10f;
+            Box(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), MolakTheme.Raise);
+            var mid = new GUIStyle(sBtn){ alignment = TextAnchor.MiddleCenter, richText = true };
+            GUI.Label(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), "배경음  <b>" + (bv == 0 ? "끔" : (bv * 10) + "%") + "</b>", mid);
+            if (Btn(new Rect(bx+bw-sw2, by, sw2, bh), "＋", false, u) && bv < 10) MolakBgm.Volume = (bv + 1) / 10f;
         }
         by += bh + gap;
         for (int i = 0; i < labels.Length; i++)
