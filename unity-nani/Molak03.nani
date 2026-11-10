@@ -27,12 +27,21 @@
 젓가락 끝이 목젖 앞에 멎어 있다. 언제 뻗었는지 보지도 못했다.
 "…마지막이다. 내력을 대라."
 @choice "\"처, 청운검파요.\"" goto:#Soa2C0
-@choice "그래도 버틴다" goto:#Soa2C1
+@choice "젓가락 끝을 마주 본 채 입을 다문다" goto:#Soa2C1
+@choice "\"열 번째 산문, 검을 뽑지 않던 노인을 아시오.\"" if:f_storylore>0 goto:#Soa2X
 @stop
 # Soa2C0
 @goto #Soa2a
 # Soa2C1
 @goto #H_Soastub
+# Soa2X
+젓가락 끝이 한 치 물러난다.
+"설서인 잡소리를 어디서 주워들었지."
+"잡소리가 아니오. 그분은 그런 사람이었소. 그 산문이 내 집이었고."
+외눈이 당신 얼굴에 오래 머문다. 젓가락이 탁자에 내려진다.
+@set aff=aff+1
+@fx curse:-1
+@goto #Soa2a
 
 # Soa2a
 @art char:soa
@@ -44,12 +53,21 @@
 적운검파. 청운과 한 뿌리—운검류(雲劍類)에서 갈라진 또 하나의 검파. 그쪽에도 살아남은 이가 있는 줄은 몰랐다.
 "운주 들판. 보름째 되는 날, 무인들이 모인다. 서열에 이름 올릴 작정이면 오거라."
 @set f_soamet=1
-@choice "국밥값이나 내고 가라 한다" goto:#Soa2aC0
-@choice "고개만 끄덕인다" goto:#Soa2aC1
+@choice "\"국밥값은 내고 가시오.\"" goto:#Soa2aC0
+@choice "대꾸 없이 고개만 한 번 끄덕인다" goto:#Soa2aC1
+@choice "\"여기 한 그릇 더 내오게.\" (은자 1)" if:mn>=1 goto:#Soa2aX
 @stop
 # Soa2aC0
 @goto #Soa2c
 # Soa2aC1
+@goto Molak02#AfterChapter
+# Soa2aX
+일어서던 여자가 김이 오르는 새 그릇을 내려다본다.
+"…국밥 한 그릇에 넘어갈 계집으로 보이느냐."
+도로 앉는다. 이번에는 남의 것이 아닌 제 그릇을 바닥까지 비운다. 수저를 놓고 나서야 일어선다.
+"보름째다. 늦지 마라."
+@set aff=aff+1
+@fx mn:-1
 @goto Molak02#AfterChapter
 
 # Soa2b
@@ -97,7 +115,7 @@
 그리고 제단 위에, 먼지 하나 앉지 않은 나무 상자 하나.
 @choice "무릎을 꿇고 예를 올린다" goto:#Shr1C0
 @choice "상자부터 살핀다" goto:#Shr1C1
-@choice "그냥 지나친다" goto:#Shr1C2
+@choice "사당을 등지고 관도로 내려간다" goto:#Shr1C2
 @stop
 # Shr1C0
 @goto #ShrBow
@@ -114,13 +132,22 @@
 가슴으로 <color=#7FA8C9>따뜻한 기운</color>이 흘러든다. 문양의 열이 한 김 식는다.
 예를 마치자, 제단 곁의 나무 상자에 눈이 간다. 손을 뻗으려다 멈춘다. 무엇이 들어 있을지 모른다.
 @fx hp:2 curse:-3
-@choice "열어본다" goto:#ShrBowC0
-@choice "그대로 둔다" goto:#ShrBowC1
+@choice "뚜껑에 손을 얹는다" goto:#ShrBowC0
+@choice "\"죽은 이의 것이오.\" — 손을 거둔다" goto:#ShrBowC1
+@choice "일곱째 사형의 패를 제단에 바친다" if:f_relicpae>0 goto:#ShrBowX
 @stop
 # ShrBowC0
 @goto #ShrOpen
 # ShrBowC1
 @goto #ShrLeave
+# ShrBowX
+품에서 패를 꺼낸다. 뒷면에 긁힌 일곱째 사형의 이름.
+향로 곁에 패를 눕힌다. 사형은 끝내 이 사당을 몰랐을 것이다.
+가슴 위가 허전하다. 패가 누르던 열을, 이번에는 사당의 향내가 대신 누른다.
+딸깍. 손대지 않은 상자의 뚜껑이 저 혼자 한 치 들린다.
+@set f_relicpae=0
+@fx curse:-5 ng:1
+@goto #ShrOpen
 
 # ShrOpen
 숨을 고르고 뚜껑을 연다.
@@ -146,10 +173,24 @@
 @fx hp:-2 ng:-2
 @choice "무릎을 꿇고 예부터 올린다" goto:#ShrGrabC0
 @choice "도망치듯 사당을 나선다" goto:#ShrGrabC1
+@choice "덴 손에 금창약부터 바른다" if:f_salve>0 goto:#ShrGrabX
+@choice "문양의 열로 진을 마주 누른다 — 저주 +5" if:curse>=40&&hp>=5 goto:#ShrGrabY
 @stop
 # ShrGrabC0
 @goto #ShrBow
 # ShrGrabC1
+@goto #ShrAfter
+# ShrGrabX
+백초당 통을 연다. 쓴 약내가 사당의 먼지 냄새를 덮는다.
+부르튼 손바닥에 약을 펴 바르고, 문턱에 앉아 숨이 가라앉기를 기다린다.
+손이 식자 머리도 식는다. 예를 건너뛴 손이 어찌 되는지는 보았다.
+@fx hp:3
+@goto #ShrBow
+# ShrGrabY
+손바닥을 상자 위에 펼친다. 가슴의 문양이 손목을 타고 <color=#9A70C4>검게</color> 흘러내린다.
+진이 마주 민다. 이번에는 손이 아니라 문양을 뿌리친다. 사당 기둥이 우는 소리를 낸다. 제단의 향이 똑 부러진다.
+되튕긴 기운이 단전에 박혀 묵직하게 돈다. 상자는 끝내 열리지 않는다.
+@fx curse:5 hp:-2 ng:2
 @goto #ShrAfter
 
 # ShrPass
@@ -158,8 +199,9 @@
 그렇게 백 걸음.
 걸음이 느려진다. 백스무 걸음에서 멈춘다.
 바람 속에 혼자 앉아 있는 사당이, 꼭 누구 같아서.
-@choice "그래도 간다" goto:#ShrPassC0
+@choice "돌아보지 않고 걷는다" goto:#ShrPassC0
 @choice "…돌아간다" goto:#ShrPassC1
+@choice "길섶 돌 틈에 안식향 한 자루를 꽂는다" if:f_incense>0 goto:#ShrPassX
 @stop
 # ShrPassC0
 @fx sl:1
@@ -167,17 +209,31 @@
 @goto Molak02#AfterChapter
 # ShrPassC1
 @goto #Shr1b
+# ShrPassX
+부싯돌을 친다. 안식향 끝에 붉은 점 하나가 앉는다.
+들어가 절할 낯은 없다. 백스무 걸음 밖에서 고개만 한 번 숙인다.
+연기가 바람을 거슬러, 사당 쪽으로 눕는다.
+@fx curse:-2
+@goto Molak02#AfterChapter
 
 # Shr1b
 돌아와 현판 아래 선다.
 해가 저물기 전에 들렀다 가는 것뿐이라고, 스스로에게 둘러댄다. 아무도 묻지 않았는데.
 @choice "예를 올린다" goto:#Shr1bC0
 @choice "상자부터 살핀다" goto:#Shr1bC1
+@choice "검을 뽑지 않은 채 제단 앞에 선다" if:f_storylore>0 goto:#Shr1bX
 @stop
 # Shr1bC0
 @goto #ShrBow
 # Shr1bC1
 @goto #ShrGrab
+# Shr1bX
+설서인이 부채로 상을 치던 대목이 떠오른다. 열 번째 산문, 검을 뽑지 않고 서 있던 장문인.
+그렇게 선다. 손은 자루에서 멀리. 반 각.
+꽂힌 향이 한 마디 타 내려간다. 바람이 멎는다. 먼지 앉은 제단 위로 장문인의 등이 겹쳐 보인다.
+무릎은 그다음에 저절로 꺾인다.
+@fx sw:1 sl:-1
+@goto #ShrBow
 
 # ShrAfter
 사당이 등 뒤로 멀어진다.
@@ -201,11 +257,19 @@
 숨은 붙어 있으되, 숨을 멈춘 듯한 마을. 그때, 고요를 찢는 경박한 웃음소리.
 @choice "소리를 따라간다" goto:#Hm1C0
 @choice "마을 사람들에게 묻는다" goto:#Hm1C1
+@choice "아이 앞에 쪼그려 앉아 눈높이를 맞춘다" if:f_alms>0||f_thiefkid>0 goto:#Hm1X
 @stop
 # Hm1C0
 @goto #Hm2
 # Hm1C1
 @goto #Hm1b
+# Hm1X
+저잣거리 아이들은 내려다보는 어른 앞에서는 입을 열지 않았다.
+쪼그려 앉는다. 아이가 한참 당신을 보다가, 나뭇가지로 흙바닥을 긋는다.
+줄 둘. 하나는 굵고, 하나에는 꼬리가 달렸다. 꼬리 달린 줄 끝은 지붕 그림 위로 올라가 있다.
+아이가 가지를 버리고 앞장선다. 웃음소리가 나는 쪽이다.
+@fx sl:-1 curse:-1
+@goto #Hm2
 
 # Hm1b
 "저게 무슨 소리요?"
@@ -223,11 +287,29 @@
 곰 가죽이 삐딱하게 돌아본다. 어느새 한 손에 도끼. 여우 가죽은 벌써 자취를 감췄다. 기습을 노리고.
 @choice "\"말로 하세.\"" goto:#Hm2C0
 @choice "검을 뽑는다" goto:#Hm2C1
+@choice "살기를 풀어 골목을 채운다" if:sl>=6 goto:#Hm2X
+@choice "숫돌에 세운 날로 도낏자루를 노린다" if:f_whetstone>0 goto:#Hm2Y
 @stop
 # Hm2C0
 @goto #HmTalk
 # Hm2C1
 @goto #HmFight
+# Hm2X
+검은 칼집에 둔다. 대신 몇 번의 죽음을 건너온 것을 눈에 싣는다.
+곰 가죽의 도끼 끝이 떨린다. 지붕 위에서 기왓장 하나가 미끄러져 깨진다. 숨어 있던 여우 가죽이 발을 헛디뎠다.
+"…형님, 저놈 눈깔 좀 보슈."
+둘이 뒷걸음으로 골목을 빠져나간다. 뼈 장식 소리가 멀어지는 내내, 담 너머 사람들의 숨소리도 멎어 있다.
+@fx sl:1 curse:1
+@set f_dokad=1
+@goto #Hm3
+# Hm2Y
+도끼가 내려오는 길은 하나다. 그 길목에 칼날을 세워 둔다.
+서걱. 청석에 간 날이 도낏자루를 무 베듯 지난다. 쇳덩이 머리가 흙에 박힌다.
+등 뒤에서 덮쳐 온 여우 가죽의 검을 돌아보지도 않고 흘린다. 내력을 한 번에 쏟은 탓에 손목이 저릿하다.
+자루만 쥔 곰 가죽이 제 손을 내려다본다. 둘은 욕지거리를 남기고 달아난다.
+@fx sw:2 ng:-1
+@set f_dokad=1
+@goto #Hm3
 
 # HmTalk
 "개뿔."
@@ -302,8 +384,8 @@
 빈말이 아니다.
 "싸울 수 있는 이가 정녕 하나도 없소?"
 "…없소."
-@choice "싸우기로 한다" goto:#Hm4C0
-@choice "떠나기로 한다" goto:#Hm4C1
+@choice "\"사흘이면 담 하나는 쌓겠소.\" — 남는다" goto:#Hm4C0
+@choice "그날 밤 짐을 꾸린다" goto:#Hm4C1
 @stop
 # Hm4C0
 @goto #HmStay
@@ -389,12 +471,20 @@
 @fx sw:1 sl:1
 @choice "서열전에 나선다" goto:#UnjuMC0
 @choice "오늘은 물러난다" goto:#UnjuMC1
+@choice "창 든 장신의 귀에 백발 이야기를 흘린다" goto:#UnjuMX
 @stop
 # UnjuMC0
 @set dkind="unju"
 @gosub MolakDuel#Run
 @goto Molak02#AfterChapter
 # UnjuMC1
+@goto Molak02#AfterChapter
+# UnjuMX
+"저 백발이 어제 형씨를 두고 창대만 길다 하더이다."
+장신의 턱이 굳는다. 창이 들린다. 이쪽은 공터 바깥, 가장 잘 보이는 자리로 물러선다.
+창끝이 세 번 찌른다. 백발은 세 번 다 반 보만 옮긴다. 네 번째에 손가락 하나가 창대를 톡 친다. 장신이 제 창에 끌려 무릎을 꿇는다.
+그 반 보가 눈에 새겨진다. 백발이 창을 놓아주며 이쪽을 본다. 눈매가 가늘어진다. 판을 붙인 자가 누구인지 다 보았다는 듯.
+@fx sw:2 sl:-1
 @goto Molak02#AfterChapter
 
 # Unju2
@@ -406,6 +496,8 @@
 @fx sw:1
 @choice "서열전에 나선다" goto:#Unju2C0
 @choice "오늘은 보기만 하고 돌아간다" goto:#Unju2C1
+@choice "\"그 쌍검, 한 수 청하겠다.\" — 소아에게" if:aff>=1&&hp>=4 goto:#Unju2X
+@choice "허세꾼의 맞상대에게 판돈을 건다 (은자 5)" if:mn>=5 goto:#Unju2Y
 @stop
 # Unju2C0
 @set dkind="unju"
@@ -413,6 +505,30 @@
 @goto Molak02#AfterChapter
 # Unju2C1
 검을 섞지 않고도 배우는 날이 있다.
+@goto Molak02#AfterChapter
+# Unju2X
+소아가 외눈을 가늘게 뜬다. "서열록에 안 남는 칼질이다. 그래도 하겠느냐."
+공터 귀퉁이. 쌍검 중 하나만 뽑아 든다. 그 하나로도 숨 돌릴 틈이 없다.
+열세 합째에 칼등이 갈비뼈를 친다. 소아가 검을 거둔다.
+"운검류는 받는 검이라더니, 받기만 하는군. 다음엔 한 번은 들어와 봐라."
+@set aff=aff+1
+@fx hp:-2 sw:2
+@goto Molak02#AfterChapter
+# Unju2Y
+@fx mn:-5
+판 가장자리에 내기꾼이 장부를 펴고 있다. 다들 목소리 큰 대도(大刀) 사내에게 건다.
+당신은 그 맞은편, 말없이 칼을 닦는 마른 사내에게 은자 다섯 냥을 놓는다.
+@set tr=random(1,100)
+@goto #Unju2Z if:tr<=55
+대도가 크게 휘두르고, 마른 사내가 그 밑으로 파고든다. 거기까지는 읽은 대로다.
+대도의 왼손에서 비수가 튀어나온다. 허세 속에 진짜가 하나 숨어 있었다.
+내기꾼이 은자를 쓸어 간다.
+@goto Molak02#AfterChapter
+# Unju2Z
+대도가 크게 휘두르고, 마른 사내가 그 밑으로 파고든다. 칼등이 대도의 손목을 친다.
+들판이 술렁인다. 내기꾼이 혀를 차며 은자를 세어 내민다. 열두 냥.
+"형씨, 눈이 무섭구려. 다음 판엔 내 장부 근처에 오지 마시오."
+@fx mn:12
 @goto Molak02#AfterChapter
 
 

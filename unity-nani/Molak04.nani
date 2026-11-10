@@ -65,7 +65,7 @@
 @set f_taverndone=1
 @choice "주막에 들어 소문을 줍는다" goto:#Ld0C0
 @choice "혈마교도의 뒤를 밟는다" goto:#Ld0C1
-@choice "지나쳐 곧장 산으로 든다" goto:#Ld0C2
+@choice "주막 불빛을 등지고 곧장 산으로 든다" goto:#Ld0C2
 @choice "소금길로 돌아 든다 — 교의 눈이 없는 길" if:f_valleyroute>0||f_roadinfo>0 goto:#Ld0C3
 @choice "교 안의 반골들과 선을 댄다" if:f_spyinfo>0 goto:#Ld0C4
 @stop
@@ -126,9 +126,36 @@
 그리고 구석 그늘, 홀로 마시는 사내의 뺨에 길게 그어진 칼자국.
 @fx mn:-5
 @set f_taverninfo=1
-@choice "모르는 척 주막을 나선다" goto:#Ld0bC0
+@choice "칼자국에서 눈을 거두고 주막을 나선다" goto:#Ld0bC0
 @choice "철산도 앞에 선다 — 은자 백 냥" goto:#Ld0bC1
+@choice "\"방에 오른 얼굴끼리 한잔하겠소.\" (은자 2)" if:f_wanted>0&&mn>=2 goto:#Ld0bX
+@choice "취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다" goto:#Ld0bY
 @stop
+# Ld0bX
+술병을 들고 칼자국 사내의 맞은편에 앉는다. 사내의 손이 탁자 밑 칼자루로 간다.
+"방에 오른 얼굴끼리 한잔하겠소."
+사내가 당신 얼굴을 한참 뜯어본다. 칼자루에서 손이 떨어진다.
+"……그 얼굴, 관도 어귀 방에서 봤네. 떼어다 불쏘시개로 썼지."
+잔이 두어 번 오간다. 사내가 산 쪽으로 턱짓한다.
+"어귀 바위 그늘에서 자게. 순찰은 자정에 한 번 지나가고, 새벽까지는 없네."
+그 말대로 잔다. 오랜만에 한 번도 깨지 않는다.
+@fx mn:-2 hp:3
+@goto #Ld1
+# Ld0bY
+취객의 귀에 대고 턱으로 구석을 가리킨다.
+"저 칼자국, 방에 붙은 얼굴 아니오? 백 냥이면 셋이 나눠도 서른 냥이 넘소."
+취객의 눈에서 술기운이 걷힌다. 그가 동무 둘의 옆구리를 친다.
+@set tr=random(1,100)
+@goto #Ld0bZ if:tr<=40
+걸상이 날고 칼이 뽑힌다. 철산도는 셋을 베지 않는다. 탁자를 엎고 뒷문으로 빠진다.
+엎어진 탁자 밑에 전표 한 장이 떨어져 있다. 표국 어음 스무 냥. 소매에 넣는다. 주모의 눈이 그 소매에 오래 머문다.
+@fx mn:20 sl:1
+@goto #Ld1
+# Ld0bZ
+걸상이 날고 칼이 뽑힌다. 철산도는 셋을 지나쳐 곧장 이쪽으로 온다. 누가 귀엣말을 했는지 알고 있다.
+칼등이 어깨를 찍고 지나간다. 사내는 뒷문으로 사라지고, 바닥에는 취객 셋의 신음만 남는다.
+@fx hp:-3 sl:1
+@goto #Ld1
 # Ld0bC0
 @goto #Ld1
 # Ld0bC1
@@ -152,9 +179,29 @@
 「철산도(鐵山盜). 현상금 은 백 냥. 얼굴에 칼자국.」
 그리고 구석 그늘, 홀로 마시는 사내의 뺨에 칼자국.
 @fx hp:1
-@choice "모르는 척 주막을 나선다" goto:#Ld0dC0
+@choice "칼자국에서 눈을 거두고 주막을 나선다" goto:#Ld0dC0
 @choice "철산도 앞에 선다 — 은자 백 냥" goto:#Ld0dC1
+@choice "주모에게 칼자국의 사연을 묻는다 (은자 1)" if:mn>=1 goto:#Ld0dX
+@choice "금창약 한 통을 그의 탁자에 밀어 둔다" if:f_salve>0 goto:#Ld0dY
 @stop
+# Ld0dX
+은자 한 냥을 안주 접시 밑에 밀어 넣는다. 주모가 접시를 거두며 낮게 말한다.
+"저 방은 관부가 아니라 교가 붙인 거요. 교의 소금 수레를 턴 사람이라."
+"……."
+"저이가 이 집에 앉아 있는 동안은 교도들도 술값을 내지요. 그냥 두고 가시구려."
+그냥 둔다. 새벽, 주모가 문간에 보퉁이 하나를 내어 둔다. 주먹밥 넷과 마른 육포.
+@fx mn:-1 hp:2
+@goto #Ld1
+# Ld0dY
+칼자국 사내의 왼 소매가 검게 젖어 있다. 새 상처다. 사흘은 묵은 냄새가 난다.
+그의 탁자에 금창약 통을 내려놓고 돌아선다.
+"……어째서."
+"방에 오른 얼굴이 썩어 죽으면 백 냥도 같이 썩소."
+등 뒤에서 사내가 웃다가 기침을 한다.
+"교도 놈들은 해 질 녘에 바위 그늘로만 물을 길으러 다니네. 같은 보폭으로. 따라가 보게."
+@set f_salve=0
+@set f_taverninfo=1
+@goto #Ld1
 # Ld0dC0
 @goto #Ld1
 # Ld0dC1
@@ -179,7 +226,7 @@
 @set f_lordintro=1
 @choice "진의 궤를 안다 — 세 걸음의 보법" if:f_janginfo>0 goto:#Ld1C0
 @choice "교도들의 발자국을 따른다" if:f_taverninfo>0&&f_janginfo<1 goto:#Ld1C1
-@choice "공력으로 정면을 뚫는다" if:f_janginfo<1 goto:#Ld1C2
+@choice "이를 악물고 공력으로 정면을 뚫는다" if:f_janginfo<1 goto:#Ld1C2
 @choice "반나절, 진의 숨을 더듬는다" if:f_janginfo<1 goto:#Ld1C3
 @choice "봉인법으로 문양을 잠그고 걷는다" if:f_soaseal>0&&f_janginfo<1 goto:#Ld1C4
 @choice "사형의 패를 쥔다 — 청운의 보법으로" if:f_relicpae>0&&f_janginfo<1 goto:#Ld1C5

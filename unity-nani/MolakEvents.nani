@@ -8,7 +8,7 @@
 @choice "산다" if:mn>=4 goto:#E_HerbC0
 @choice "감별 내기를 받는다" if:mn>=2 goto:#E_HerbC1
 @choice "\"저주를 누르는 약은 없소?\"" if:curse>=30 goto:#E_HerbC2
-@choice "지나친다" goto:#E_HerbC3
+@choice "뿌리 냄새만 맡고 지나친다" goto:#E_HerbC3
 @stop
 # E_HerbC0
 @fx mn:-4 ng:3
@@ -27,13 +27,20 @@
 할멈이 궤짝 밑에서 밀랍 먹인 합 하나를 꺼낸다.
 "정심단(定心丹)이다. 뿌리를 뽑지는 못한다. 자라는 걸 보름쯤 늦출 뿐이지. 은자 여섯 냥."
 "비싸거든 안 사면 그만이다. 다만, 그 냄새를 맡고 찾아오는 게 나 같은 늙은이만은 아닐 게다."
-@choice "산다" if:mn>=6 goto:#E_Herb3C0
-@choice "다음을 기약한다" goto:#E_Herb3C1
+@choice "\"사겠소.\" 밀랍 합을 받는다" if:mn>=6 goto:#E_Herb3C0
+@choice "\"반 알만 파시오. 맥이 둘이라 하지 않았소.\" (은자 3)" if:f_herbpulse>0&&f_herbout<1&&mn>=3 goto:#E_Herb3X
+@choice "\"은자가 모이면 다시 오겠소.\"" goto:#E_Herb3C1
 @stop
 # E_Herb3C0
 @gosub MolakEvents#H_Jsd
 @return
 # E_Herb3C1
+@return
+# E_Herb3X
+할멈이 혀를 찬다. "맥 짚은 걸 여태 기억하느냐."
+작두날에 단약을 올려 반으로 가른다. "반 알은 반만 듣느니라. 대신 몸이 약에 덜 길든다."
+반쪽이 혀에서 녹는다. 가슴의 열이 반 김쯤 내려앉는다.
+@fx mn:-3 curse:-3
 @return
 
 # E_Peddler
@@ -44,7 +51,7 @@
 @choice "약재를 산다 (은자 4)" if:mn>=4 goto:#E_PeddlerC0
 @choice "싸구려 꾸러미를 뒤진다 (은자 2)" if:mn>=2 goto:#E_PeddlerC1
 @choice "강호의 소식을 산다 (은자 2)" if:mn>=2 goto:#E_PeddlerC2
-@choice "지나친다" goto:#E_PeddlerC3
+@choice "단내 나는 수레를 지나친다" goto:#E_PeddlerC3
 @stop
 # E_PeddlerC0
 @fx mn:-4 ng:3
@@ -78,6 +85,7 @@
 말이 끝나기도 전에 셋의 칼이 일제히 뽑힌다. 살려 보낼 얼굴이 아니다.
 @choice "검으로 맞선다" if:sw>=8 goto:#E_CultistsC0
 @choice "가슴의 문양으로 사술을 끌어쓴다" goto:#E_CultistsC1
+@choice "죽립 챙을 내린다. \"사람을 잘못 보셨소.\"" if:f_hat>0 goto:#E_CultistsX
 @choice "달아난다" goto:#E_CultistsC2
 @stop
 # E_CultistsC0
@@ -86,6 +94,18 @@
 @goto #E_CultS
 # E_CultistsC2
 @goto #E_CultR
+# E_CultistsX
+챙 그늘 밑에서 길손의 목소리를 낸다. "장사 길이오. 사람을 잘못 보셨소."
+뒤의 교도가 맨 앞 놈의 소매를 끈다. "형님, 청운 놈들은 흰옷이오. 저건 잿빛 장포 아니오."
+@set tr=random(1,100)
+@goto #E_CultistsY if:tr<=55
+맨 앞 놈이 칼끝으로 죽립 챙을 툭 들어 올린다. 눈이 마주친다. "…맞구나."
+@goto #E_CultR
+# E_CultistsY
+맨 앞 놈이 한참을 노려보다 칼을 거둔다. "…재수 없는 낯짝이군. 꺼져라."
+등 뒤에서 놈들이 저희끼리 언성을 높인다. 걸음을 서두르지 않는다.
+@fx sl:-1
+@return
 
 # E_CultF
 셋. 혼자. 정공(正攻)뿐이다.
@@ -96,11 +116,18 @@
 "어, 어떻게… 그날 밤, 분명히…."
 @fx hp:-4 sw:2 sl:1 mn:2
 @choice "\"그날 밤, 무엇을 봤느냐.\"" goto:#E_CultFC0
-@choice "자리를 뜬다" goto:#E_CultFC1
+@choice "금창약을 덜어 놈의 상처에 발라 준다" if:f_salve>0 goto:#E_CultFX
+@choice "피거품 문 입을 두고 돌아선다" goto:#E_CultFC1
 @stop
 # E_CultFC0
 @goto #E_CultQ
 # E_CultFC1
+@return
+# E_CultFX
+금창약 통을 열어 반을 덜어 낸다. 놈의 베인 손목에 처덕처덕 바른다.
+"…어째서."
+대답 대신 통 뚜껑을 닫는다. 교도가 이를 딱딱 부딪치다 겨우 한마디를 짜낸다. "서문 순찰은 해시에 바뀌오. 그 틈에 나가시오."
+@fx sl:-2 curse:-1
 @return
 
 # E_CultQ
@@ -139,7 +166,7 @@
 곰 가죽이 이를 드러낸다.
 "은자 두 냥. 없으면 이빨로 받지."
 문파도 내력도 없이 싸움판에서만 벼린 몸놀림이다. 그러나 지금의 당신에게는 둘도 버겁다.
-@choice "싸운다" goto:#E_ThugsC0
+@choice "맨주먹으로 맞선다" goto:#E_ThugsC0
 @choice "은자 두 냥을 던진다" if:mn>=2 goto:#E_ThugsC1
 @choice "살기를 드러낸다" if:sl>=3 goto:#E_ThugsC2
 @choice "이 골목, 모퉁이의 들창을 기억한다" if:g_up_mem>=1&&g_up_mem>=1 goto:#E_ThugsC3
@@ -161,14 +188,21 @@
 싸우는 대신 들창을 넘는다. 왈패들의 욕설이 벽에 막힌다.
 가게 안, 주인 없는 돈궤 위에 은자 몇 닢이 놓여 있다.
 @fx mn:2
-@choice "가져간다" goto:#E_ThugsMC0
-@choice "두고 나간다" goto:#E_ThugsMC1
+@choice "은자를 소매에 쓸어 담는다" goto:#E_ThugsMC0
+@choice "\"도둑이야!\" 들창 밖으로 외친다" goto:#E_ThugsMX
+@choice "돈궤 뚜껑을 닫고 나간다" goto:#E_ThugsMC1
 @stop
 # E_ThugsMC0
 @fx mn:1 sl:1
 죽어서 얻은 눈으로 남의 돈궤를 턴다. 체면 따위는 두 번째 죽음쯤에서 버렸다. 은자를 소매에 털어 넣는다.
 @return
 # E_ThugsMC1
+@return
+# E_ThugsMX
+목청껏 외친다. 이웃 가게 문짝이 일제히 열리고, 몽둥이와 부지깽이가 쏟아져 나온다.
+들창 앞에서 씩씩대던 왈패 둘이 영락없이 도둑 꼴이 된다. 골목 끝까지 쫓겨 가는 뼈 장식 소리가 요란하다.
+돌아온 가게 주인 노파가 당신 손에 국밥 한 그릇을 쥐여 준다.
+@fx hp:2 sl:-1
 @return
 
 # E_ThugsF
@@ -181,6 +215,7 @@
 @fx hp:-2 sw:2 sl:1 mn:1
 @set f_dokad=1
 @choice "쓰러진 놈들의 전낭을 턴다" goto:#E_ThugsFC0
+@choice "\"통행세 모은 돈은 어디 묻었느냐.\"" if:sl>=3 goto:#E_ThugsFX
 @choice "그대로 떠난다" goto:#E_ThugsFC1
 @stop
 # E_ThugsFC0
@@ -188,6 +223,17 @@
 사형이 봤다면 혀를 찼으리라. 피 묻은 전낭 끈을 끊어 품에 넣는다.
 @return
 # E_ThugsFC1
+@return
+# E_ThugsFX
+여우 가죽의 환도를 발로 밟고 묻는다. 놈이 눈알을 굴리다가 성황당 뒤 돌무더기를 분다.
+@set tr=random(1,100)
+@goto #E_ThugsFY if:tr<=50
+돌무더기를 다 들추고서야 속은 줄 안다. 지렁이 몇 마리와 깨진 사발뿐이다. 돌아가 보니 놈들은 벌써 자취를 감췄다.
+@fx hp:-1 sl:1
+@return
+# E_ThugsFY
+돌 밑에서 기름종이에 싼 꾸러미가 나온다. 독아단이 골목마다 뜯어 간 통행세다.
+@fx mn:5
 @return
 
 # E_ThugsS
@@ -204,13 +250,21 @@
 예닐곱 살. 뼈에 가죽만 붙었다. 구걸하는 법도 모르는지 그저 쳐다본다.
 이 땅의 다리 밑마다 이런 아이가 있다. 혈마교가 천하를 쥔 지 십 년째다.
 @choice "은자 한 닢을 쥐여준다" if:mn>=1 goto:#E_BeggarC0
-@choice "지나친다" goto:#E_BeggarC1
+@choice "\"약재 거리 아이들을 아느냐.\"" if:f_alms>0||f_thiefkid>0 goto:#E_BeggarX
+@choice "아이의 눈길을 외면하고 다리를 건넌다" goto:#E_BeggarC1
 @stop
 # E_BeggarC0
 @fx mn:-1
 @goto #E_Beggar2
 # E_BeggarC1
 아이의 시선이 등에 오래 붙어 따라온다. 다리를 다 건널 때까지 돌아보지 않는다.
+@return
+# E_BeggarX
+아이의 눈이 동그래진다. "…청운산 나리?"
+저잣거리 아이들 사이에 이미 말이 돈 모양이다. 아이가 다리 기둥 뒤에서 불쏘시개 더미를 끌어낸다. 먹물 번진 종이들, 당신 얼굴이 그려진 방이다.
+"빨간 옷 사람들이 붙이면, 우리가 밤마다 떼어다 불 때요."
+아이 손에 주먹밥 반 덩이를 쥐여 준다.
+@fx sl:-1 hp:-1
 @return
 
 # E_Beggar2
@@ -231,7 +285,7 @@
 "들숨 여섯, 날숨 아홉. 그 순서만 바꿔도 탁기가 덜 쌓이지. 시줏돈은 마음 가는 대로."
 @choice "은자를 바가지에 넣는다" if:mn>=2 goto:#E_MonkC0
 @choice "\"스님이 어찌 토납법을 아시오.\"" goto:#E_MonkC1
-@choice "지나친다" goto:#E_MonkC2
+@choice "코 고는 중을 두고 지나친다" goto:#E_MonkC2
 @stop
 # E_MonkC0
 @fx mn:-2
@@ -260,6 +314,7 @@
 그래도 시간문제다.
 @set f_wanted=1
 @choice "방을 찢는다" goto:#E_NoticeC0
+@choice "아이들을 시켜 그림마다 수염을 그린다 (은자 1)" if:mn>=1&&f_alms>0||mn>=1&&f_thiefkid>0 goto:#E_NoticeX
 @choice "고개를 숙이고 지나간다" goto:#E_NoticeC1
 @stop
 # E_NoticeC0
@@ -267,6 +322,12 @@
 젖은 종이가 손안에서 뭉개진다. 내일이면 또 붙을 방이다. 손바닥에 먹물이 번진다.
 @return
 # E_NoticeC1
+@return
+# E_NoticeX
+담 모퉁이에서 휘파람을 불자 낯익은 아이가 고개를 내민다. 동전 한 닢과 숯 토막을 건넨다.
+이튿날, 현 안의 수배 그림마다 팔자수염이 붙어 있다. 담벼락 앞에서 장꾼들이 배를 잡고 웃는다.
+웃음거리가 된 그림 앞에서 걸음을 멈추는 사냥꾼은 없다.
+@fx mn:-1 sl:-1
 @return
 
 # E_Duelist
@@ -276,7 +337,8 @@
 말단 중의 말단이다. 그래도 그자에게는 서열이 있다. 지금의 당신에게는 그마저 없다.
 비무에서 이기면 상대의 서열을 빼앗는다. 혈마교가 세운 법도다.
 @choice "나선다" goto:#E_DuelistC0
-@choice "구경만 한다" goto:#E_DuelistC1
+@choice "\"저기 털보가 형씨보다 아래라 하오.\" 싸움을 붙인다" goto:#E_DuelistX
+@choice "팔짱을 끼고 구경만 한다" goto:#E_DuelistC1
 @stop
 # E_DuelistC0
 @set dkind="street"
@@ -284,6 +346,12 @@
 @return
 # E_DuelistC1
 아무도 상대해 주지 않자 무사는 제풀에 꺾인다. 바닥에 침을 한 번 뱉고 떠난다.
+@return
+# E_DuelistX
+무사가 구석 탁자로 달려든다. 털보도 술병을 깨 쥐고 일어선다. 서열 없는 주먹이 서열 있는 턱을 친다.
+구경꾼 틈에 섞여 두 사람의 발놀림을 끝까지 본다. 덤비는 쪽은 늘 왼발이 먼저 나간다.
+점소이가 깨진 그릇을 쓸어 담으며 이쪽을 흘겨본다.
+@fx sw:1 sl:1
 @return
 
 # E_Rain
@@ -322,6 +390,7 @@
 사내의 품에서 밀서와 은자를 꺼낸다. 밀서는 찢는다.
 @fx mn:3 sl:1
 @choice "기절만 시키고 떠난다" goto:#E_Spy2C0
+@choice "은자를 돌려주고, 남쪽으로 갔다고 고하라 이른다" goto:#E_Spy2X
 @choice "영원히 입을 막는다" goto:#E_Spy2C1
 @stop
 # E_Spy2C0
@@ -331,6 +400,12 @@
 @fx sl:2 curse:2
 골목에는 아무 소리도 나지 않는다. 손바닥에 남은 감촉을 옷자락에 문질러 닦는다.
 @return
+# E_Spy2X
+빼앗은 은자를 사내의 손바닥에 도로 얹는다.
+"네 주인에게는 내가 남쪽 나루로 갔다고 고하라. 거짓이 들통나면, 그때는 네 눈부터 찾으러 온다."
+사내가 고개를 연신 주억거린다. 사흘 뒤, 객잔에 청운 잔당이 남쪽 배를 탔다는 말이 돈다.
+@fx mn:-3 sl:-1
+@return
 
 # E_Hunter
 등 뒤의 기척.
@@ -338,6 +413,7 @@
 수배서의 먹이 마른 지 며칠 되지도 않았다. 발 빠른 놈은 어디에나 있다.
 @choice "길목을 꺾어 따돌린다" goto:#E_HunterC0
 @choice "먼저 친다" if:sw>=6 goto:#E_HunterC1
+@choice "거지 아이가 일러 준 낮은 담으로 뛴다" if:f_alms>0 goto:#E_HunterX
 @choice "수배서와 다른 얼굴을 믿고 태연히 걷는다" goto:#E_HunterC2
 @stop
 # E_HunterC0
@@ -346,6 +422,12 @@
 @goto #E_HunterF
 # E_HunterC2
 @goto #E_HunterBluff
+# E_HunterX
+뒷골목 끝, 동냥 그릇 아이가 말한 그 담이다. 과연 허리춤 높이다.
+훌쩍 넘자 기다렸다는 듯 아이 셋이 사냥꾼 앞을 가로막는다. "나리, 한 푼만! 한 푼만!"
+담 위에서 동전 한 닢을 던져 주고, 사냥꾼이 아이들을 뿌리치는 사이 골목 셋을 벗어난다.
+@fx mn:-1
+@return
 
 # E_HunterRun
 우물 골목. 생선 좌판. 무너진 담.
@@ -422,7 +504,7 @@
 "금침으로 둘레 혈을 묶으면, 번지는 것이 한동안 느려지지. 은자 닷 냥."
 @choice "시술을 받는다 (은자 5)" if:mn>=5 goto:#E_AcupC0
 @choice "\"외상은 안 되겠소?\"" goto:#E_AcupC1
-@choice "돌아선다" goto:#E_AcupC2
+@choice "침통을 흘끗 보고 돌아선다" goto:#E_AcupC2
 @stop
 # E_AcupC0
 @fx mn:-5 curse:-6
@@ -449,6 +531,7 @@
 바위틈에서 솟는 물이 한겨울 얼음장이다. 예부터 무인들이 탁기를 씻으러 오던 자리라고, 나무꾼이 일러주었다.
 옷을 벗고 들어가면, 뼈까지 시리겠지.
 @choice "샘에 몸을 담근다" goto:#E_ColdspringC0
+@choice "얼음물 속에서 운기조식을 한다" if:ng>=10 goto:#E_ColdspringX
 @choice "손발만 씻고 간다" goto:#E_ColdspringC1
 @stop
 # E_ColdspringC0
@@ -459,6 +542,12 @@
 @fx hp:1
 찬물에 얼굴을 씻는다. 머리가 맑아진다.
 @return
+# E_ColdspringX
+목까지 잠긴 채 단전의 기를 돌린다. 냉기가 혈도를 거꾸로 타고 들어와 진기를 얼린다.
+한 바퀴를 돌 때마다 손끝이 감각을 잃는다. 문양의 열이 냉기와 진기 사이에 끼어 숨을 죽인다.
+물 밖으로 기어 나오자 입술이 퍼렇다.
+@fx hp:-3 curse:-7 ng:1
+@return
 
 # E_Talisman
 장터 어귀, 부적 장수.
@@ -467,7 +556,7 @@
 "한 장에 은자 석 냥이오."
 @choice "깊은 먹선의 것을 고른다 (은자 3)" if:mn>=3 goto:#E_TalismanC0
 @choice "기(氣)로 진품을 가려낸다 (은자 3)" if:ng>=12&&mn>=3 goto:#E_TalismanC1
-@choice "지나친다" goto:#E_TalismanC2
+@choice "부적 장수의 외침을 흘려듣는다" goto:#E_TalismanC2
 @stop
 # E_TalismanC0
 @goto #H_Talisman
@@ -504,6 +593,7 @@
 노인이 입을 연다. 소리는 없다. 입 모양만 읽힌다.
 <color=#9A70C4>'깨, 달, 았, 느, 냐.'</color>
 @choice "\"아직이다.\"" goto:#E_DreamC0
+@choice "안식향 냄새를 붙잡고 꿈 밖으로 나온다" if:f_incense>0 goto:#E_DreamX
 @choice "대답하지 않고 돌아선다" goto:#E_DreamC1
 @stop
 # E_DreamC0
@@ -512,6 +602,12 @@
 @return
 # E_DreamC1
 꿈속에서 등을 돌리는 데도 이를 악물어야 한다. 눈을 뜨니 베개가 차다.
+@return
+# E_DreamX
+불 냄새 사이로 다른 냄새 한 가닥이 섞여 든다. 머리맡에 피워 둔 안식향이다.
+그 냄새를 붙잡고 뒷걸음질 친다. 노인의 입 모양이 연기 너머로 흐려진다.
+눈을 뜨니 향이 반 치 남아 있다. 다시 눈을 감고, 아침까지 꿈 없이 잔다.
+@fx hp:2 curse:-1
 @return
 
 # E_Soa2
@@ -547,6 +643,7 @@
 좌중이 웅성인다. 설서인의 눈이 스치듯 당신을 지나간다.
 @choice "끝까지 듣는다" goto:#E_StorytellerC0
 @choice "동전을 던지고 자리를 뜬다" if:mn>=1 goto:#E_StorytellerC1
+@choice "\"장문인이 검을 뽑지 않던 대목도 하시오.\"" if:f_storylore>0 goto:#E_StorytellerX
 @choice "바로 떠난다" goto:#E_StorytellerC2
 @stop
 # E_StorytellerC0
@@ -559,12 +656,19 @@
 @return
 # E_StorytellerC2
 @return
+# E_StorytellerX
+설서인의 부채가 반쯤 펴진 채 멎는다. 좌중이 일제히 이쪽을 돌아본다.
+"…그 대목을 아는 손님이 계셨구려." 설서인이 헛기침을 하고 부채로 상을 딱 친다. "자, 혈천마가 열 번째 산문 앞에서 반 각을 멈추었으니!"
+이번에는 좌중과 함께 웃는다. 장문인이 들었다면 어이없어 수염을 쓸었으리라.
+@fx sl:-2 curse:-1
+@return
 
 # E_Funeral
 상여 행렬이 지나간다.
 곡소리가 낮다. 울어 줄 사람도 몇 남지 않은 집이다. 만장(輓章)을 보니, 서열전에서 패해 죽은 떠돌이 무사라 한다.
 서열록의 팔백만 이름 가운데 하나가 오늘 지워졌다. 아무도 번호를 기억하지 않는다.
 @choice "길을 비켜 고개를 숙인다" goto:#E_FuneralC0
+@choice "비틀대는 상여꾼 대신 상여채를 멘다" goto:#E_FuneralX
 @choice "행렬을 등지고 걷는다" goto:#E_FuneralC1
 @stop
 # E_FuneralC0
@@ -575,6 +679,12 @@
 @fx sl:1
 등 뒤로 요령 소리가 멀어진다. 걸음을 늦추지 않는다.
 @return
+# E_FuneralX
+뒷줄 상여꾼 하나가 무릎을 꺾는다. 늙은이다. 말없이 그 자리에 어깨를 넣는다.
+산자락 묏자리까지 오 리. 상여채가 어깨뼈를 파고든다.
+흙을 덮고 나자 상주 노파가 당신 손을 붙잡는다. "…우리 애도 검을 쥐었더라오. 서열이 다 뭐라고."
+@fx hp:-2 sl:-2
+@return
 
 # E_Spar
 객잔 뒷마당에서 낭인 하나가 목검을 깎고 있다.
@@ -582,13 +692,20 @@
 "합이나 좀 맞춰 보세. 서열은 걸지 말고. 요새 통 검 섞을 일이 없었네."
 눈이 맑다. 칼로 밥은 벌어도, 칼에 잡아먹히지는 않은 부류다.
 @choice "목검을 받아 든다" goto:#E_SparC0
-@choice "사양한다" goto:#E_SparC1
+@choice "\"진검으로 하시오.\" 숫돌에 세운 날을 보인다" if:f_whetstone>0 goto:#E_SparX
+@choice "\"오늘은 손목이 무겁소.\" 사양한다" goto:#E_SparC1
 @stop
 # E_SparC0
 @fx sw:2 hp:-2
 백 합. 승부 없이 서로의 버릇만 주고받는다. 헤어질 때 낭인이 한마디 한다. "자네 검은 명문(名門)의 것이로군." 목검을 돌려주며 웃기만 한다.
 @return
 # E_SparC1
+@return
+# E_SparX
+낭인이 날을 보더니 휘파람을 분다. "잘 갈았군. 그럼 나도 아껴 둔 것을 꺼내야겠네."
+서른 합. 목검이면 백 합을 갔으리라. 날과 날이 스칠 때마다 머리카락이 한 올씩 날린다.
+마지막 합에 서로의 소매가 동시에 갈라진다. 낭인이 껄껄 웃는다. "자네 날이 반 치 빨랐네."
+@fx sw:3 hp:-4
 @return
 
 # E_Gamble
@@ -597,13 +714,20 @@
 "한 자리 끼시오?"
 @choice "은자 두 냥을 건다" if:mn>=2 goto:#E_GambleC0
 @choice "패 도는 손부터 읽는다" if:sl>=4 goto:#E_GambleC1
-@choice "지나친다" goto:#E_GambleC2
+@choice "\"또 뵙는구려, 판주.\"" if:f_gambleshamed>0 goto:#E_GambleX
+@choice "패 소리를 등지고 지나친다" goto:#E_GambleC2
 @stop
 # E_GambleC0
 @goto #H_Gamble
 # E_GambleC1
 @goto #E_Gamble2
 # E_GambleC2
+@return
+# E_GambleX
+패 돌리던 손이 멎는다. 주루 이층에서 소매 속 패를 떨군 그 판주다. 판을 뒷골목으로 옮긴 모양이다.
+판주가 이를 드러내고 웃는다. 웃음이 굳어 있다. "오늘 밤 이 판 뒤에 서 계시면 아무도 패를 못 바꾸지요. 자릿값은 드리리다."
+새벽까지 판주 등 뒤에 팔짱을 끼고 선다. 그날 밤 판에서는 칼이 한 번도 나오지 않는다.
+@fx mn:3 hp:-1 sl:1
 @return
 
 # E_Gamble2
@@ -618,14 +742,27 @@
 표국(鏢局) 앞이 분주하다.
 "반나절 길, 호위 하나 급히 구하오! 삯은 은자 닷 냥!"
 현 경계까지 비단 수레를 호위하는 일이다. 요새 길에 독아단이 설친다.
-@choice "맡는다" goto:#E_GuardC0
-@choice "사양한다" goto:#E_GuardC1
+@choice "\"맡겠소.\"" goto:#E_GuardC0
+@choice "\"독아단 길이면 여덟 냥은 받아야겠소.\"" goto:#E_GuardX
+@choice "고개를 젓고 돌아선다" goto:#E_GuardC1
 @stop
 # E_GuardC0
 @fx mn:5 hp:-2 sw:1
 수레는 무사히 닿는다. 돌아오는 길, 표사가 자꾸 보법을 흘끔거린다. "어느 문파 출신이시오?" "…떠돌이오." 표사는 더 묻지 않는다.
 @return
 # E_GuardC1
+@return
+# E_GuardX
+표두가 이맛살을 찌푸리며 당신의 검집과 손을 번갈아 본다.
+@set tr=random(1,100)
+@goto #E_GuardY if:tr<=50
+"닷 냥에도 올 사람은 많소." 표두가 뒤에 선 다른 낭인을 손짓해 부른다. 수레가 당신 없이 떠난다.
+@return
+# E_GuardY
+"…여덟. 대신 놈들이 나오면 맨 앞이오."
+현 경계 고갯마루에서 정말로 독아단 넷이 튀어나온다. 맨 앞에서 둘을 베어 넘기자 나머지가 달아난다.
+표두가 말없이 은자 여덟 냥을 센다.
+@fx mn:8 hp:-4 sw:1 sl:1
 @return
 
 # E_DokRevenge
@@ -635,6 +772,7 @@
 이번에는 처음부터 칼을 빼 들고 있다.
 @choice "정면으로 부순다" if:sw>=10 goto:#E_DokRevengeC0
 @choice "사술을 끌어쓴다" goto:#E_DokRevengeC1
+@choice "처마 밑의 소매치기 아이와 눈을 맞춘다" if:f_thiefkid>0 goto:#E_DokRevengeX
 @choice "지붕을 타고 따돌린다" goto:#E_DokRevengeC2
 @stop
 # E_DokRevengeC0
@@ -648,6 +786,12 @@
 # E_DokRevengeC2
 @fx hp:-1
 기와 석 장을 깨뜨리고 목숨을 건진다. 지붕 아래서 독아단의 욕설이 한참을 따라온다.
+@return
+# E_DokRevengeX
+놈들 등 뒤 처마 밑에 낯익은 아이가 쪼그려 있다. 첫날 당신 전낭을 채 갔던 그 아이다. 아이가 씩 웃는다.
+아이가 한 놈의 전낭 끈을 끊어 달아나자, 놈이 욕설을 뱉으며 아이를 쫓아간다.
+남은 하나는 혼자다. 세 합 만에 환도가 바닥에 떨어진다. 저녁 무렵, 객잔 문턱에 은자 두 냥이 놓여 있다.
+@fx sw:1 hp:-1 mn:2
 @return
 
 # E_Amhyang
@@ -686,6 +830,7 @@
 피가 자루를 적신다. 미끄럽다. 여기서 멈춰야 한다.
 그런데 지금 이 호흡, 이 감각. 무언가 잡힐 듯하다. 반 치 앞에.
 @choice "피 묻은 손으로 계속한다" goto:#T_Sw1C0
+@choice "금창약을 바르고 손을 자루째 동여맨다" if:f_salve>0 goto:#T_Sw1X
 @choice "오늘은 여기서 멈춘다" goto:#T_Sw1C1
 @stop
 # T_Sw1C0
@@ -696,6 +841,11 @@
 @fx sw:1 hp:-1
 잡힐 듯한 것은 내일도 잡힐 듯하리라. 터진 손바닥을 천으로 감으며 스스로를 달랜다.
 @return
+# T_Sw1X
+금창약을 터진 손바닥에 듬뿍 바르고, 천으로 손과 자루를 한데 감는다. 쓰라림이 반으로 준다.
+백 번을 더 긋자 반 치 앞의 것이 손에 걸린다. 어깨를 떨구고 긋는 감각이다.
+@fx sw:2 hp:-1
+@return
 
 # T_Sw2
 마당 담 너머에서 시선이 느껴진다.
@@ -705,6 +855,7 @@
 "손목을 꺾지 말고 팔꿈치를 떨어뜨려 보게. 반 호흡은 빨라질 걸세."
 말투가 훈수가 아니라 가르침이다.
 @choice "시키는 대로 해 본다" goto:#T_Sw2C0
+@choice "\"훈수 값이오.\" 술병을 담 너머로 건넨다 (은자 2)" if:mn>=2 goto:#T_Sw2X
 @choice "경계하며 검을 거둔다" goto:#T_Sw2C1
 @stop
 # T_Sw2C0
@@ -714,6 +865,12 @@
 # T_Sw2C1
 @fx sl:1
 "…하기야, 요즘 세상에 공짜 가르침이 어디 있겠나." 노인이 껄껄 웃으며 사라진다. 담 너머로 지팡이 소리가 멀어진다.
+@return
+# T_Sw2X
+노인이 술병을 받아 마개를 이로 뽑는다. 한 모금 마시더니 지팡이로 다시 허공을 긋는다.
+"세 번째 다음은 네 번째지. 거기선 발을 반 보 덜 디디게."
+두 가지를 다 고치자 검로가 한 호흡 짧아진다. 고개를 드니 빈 술병만 담장 위에 놓여 있다.
+@fx mn:-2 sw:3 hp:-1
 @return
 
 # T_Qi1
@@ -754,6 +911,7 @@
 혈마교 물자 수레가 반나절째 내버려져 있다. 호송꾼들은 주막에 가 있고, 포장 틈으로 은자 궤짝 모서리가 보인다.
 손만 뻗으면 된다. 교의 돈이다. 어차피 빼앗은 돈.
 @choice "궤짝에 손을 댄다" goto:#T_Wk1C0
+@choice "궤짝 대신 바퀴 쐐기를 뽑아 둔다" goto:#T_Wk1X
 @choice "제 일만 하고 삯을 받는다" goto:#T_Wk1C1
 @stop
 # T_Wk1C0
@@ -763,6 +921,12 @@
 # T_Wk1C1
 @fx mn:2 hp:-1
 수레를 지나쳐 물지게를 진다. 어깨가 쓰리다. 해 질 녘, 손에 쥔 삯이 묵직하다.
+@return
+# T_Wk1X
+쐐기 하나를 뽑아 개울에 던지고, 물지게를 진다.
+해 질 녘, 길을 나선 교의 수레가 나루 비탈에서 모로 눕는다. 터진 쌀가마에 동네 아낙들이 바가지를 들고 몰려든다.
+호송꾼의 고함이 나루를 넘어온다. 손에 쥔 삯은 그대로다.
+@fx mn:2 hp:-1 sl:-1
 @return
 
 # T_Rest1
@@ -962,7 +1126,8 @@
 "내가 교주 할래!"<br>"싫어, 어제 네가 했단 말이야!"
 서로 교주를 하겠다고 다툰다. 대협 노릇을 하겠다는 아이는 없다. 혈마교 천하 십 년이면 아이들 꿈도 이렇게 자란다.
 @choice "목검 쥐는 법을 바로잡아 준다" goto:#E_ChildplayC0
-@choice "지나친다" goto:#E_ChildplayC1
+@choice "목검을 집어 들고 교주 역을 맡는다" goto:#E_ChildplayX
+@choice "목검 소리를 등지고 걷는다" goto:#E_ChildplayC1
 @stop
 # E_ChildplayC0
 @fx sw:1 sl:-1
@@ -971,6 +1136,12 @@
 # E_ChildplayC1
 아이들의 웃음소리가 등 뒤로 멀어진다. 저 아이들이 크기 전에 끝내야 한다. 기한이 하나 늘었다.
 @return
+# E_ChildplayX
+"교주는 내가 하마. 너희는 다 대협이다."
+아이들이 와 몰려든다. 목검 열 자루가 정강이며 등짝에 쏟아진다. 한 대도 막지 않는다.
+교주가 흙바닥에 대자로 눕자 아이들이 만세를 부른다. 정강이에 멍이 셋 든다.
+@fx hp:-1 sl:-2 curse:-1
+@return
 
 # E_Bloodtax
 저자 초입이 소란하다.
@@ -978,7 +1149,7 @@
 "상납이 두 달 밀렸렷다?"
 구경꾼들은 고개를 돌린 채 귀만 세우고 있다.
 @choice "골목으로 유인해 둘 다 눕힌다" if:sw>=12 goto:#E_BloodtaxC0
-@choice "지나간다" goto:#E_BloodtaxC1
+@choice "고개 돌린 구경꾼 틈에 섞여 지나간다" goto:#E_BloodtaxC1
 @choice "몰래 전대 하나를 주인 품에 돌려놓는다" goto:#E_BloodtaxC2
 @stop
 # E_BloodtaxC0
@@ -1002,6 +1173,7 @@
 검 한 자루가 반쯤 흙에 묻혀 있다. 녹슬었지만 뼈대가 좋은 검이다. 칼자루의 매듭은 어느 표국의 양식이다. 주인은 돌아가지 못했으리라.
 @choice "손질해서 저자에 판다" goto:#E_LostbladeC0
 @choice "검총(劍塚)에 묻어 준다" goto:#E_LostbladeC1
+@choice "매듭을 들고 표국 문을 두드린다" goto:#E_LostbladeX
 @stop
 # E_LostbladeC0
 @fx mn:4
@@ -1010,6 +1182,12 @@
 # E_LostbladeC1
 @fx curse:-2 sl:-1
 산자락 검총까지 한나절. 흙을 덮고 돌아서는 걸음이 가볍다. 언젠가 당신의 검도 누가 이렇게 묻어 주기를.
+@return
+# E_LostbladeX
+문지기가 매듭을 보자마자 안으로 뛰어든다. 늙은 표사 하나가 맨발로 나와 검을 받아 든다.
+"작년 가을 북쪽 고개에서 잃은 아이요. 시신도 못 거뒀소."
+표사가 녹슨 날을 소매로 닦고 또 닦는다. 그러다 은자 두 냥을 꺼내 내민다. 손이 떨린다.
+@fx mn:2 curse:-1
 @return
 
 # E_Ferry
@@ -1048,6 +1226,7 @@
 받아 적으면 검이 늘리라.<br>받아 적은 만큼, 저것의 것이 되리라.
 @choice "흘러드는 결을 받아 적는다" goto:#E_EchoesC0
 @choice "호흡으로 밀어낸다" goto:#E_EchoesC1
+@choice "운검비록을 펼쳐 결을 대 본다" if:f_bilok>0 goto:#E_EchoesX
 @stop
 # E_EchoesC0
 @fx sw:2 curse:3
@@ -1056,6 +1235,12 @@
 # E_EchoesC1
 @fx curse:-1 hp:-1
 들숨 여섯, 날숨 아홉. 속삭임이 물러간다. 오늘 밤은. 새벽녘, 이부자리가 식은땀에 젖어 있다.
+@return
+# E_EchoesX
+비록을 무릎에 펼친다. 핏줄을 타고 드는 결과 책장의 검결을 한 획씩 포갠다.
+절반은 겹치고, 절반은 어긋난다. 겹치는 획만 받아 적고, 어긋나는 획은 손톱으로 긁어 지운다.
+책장 귀퉁이의 주석이 등잔불에 붉다. 「사를 모르고서, 어찌 사를 벤다 하는가」.
+@fx sw:1 ng:1 curse:1
 @return
 
 # E_Oldvision
@@ -1080,6 +1265,7 @@
 할멈이 대답도 기다리지 않고 약초 호미를 챙긴다. 늙은이의 청은 대개 명령이다.
 @choice "지게를 진다" goto:#E_Herb2xC0
 @choice "\"오늘은 바쁘오.\"" goto:#E_Herb2xC1
+@choice "\"지게도 할멈도 내가 지겠소.\"" if:hp>=6 goto:#E_Herb2xX
 @stop
 # E_Herb2xC0
 @fx hp:-1 ng:2
@@ -1094,6 +1280,14 @@
 "그렇겠지. 젊은 것들은 늘 바쁘단다."
 할멈이 지게를 제 등에 진다. 굽은 등이 더 굽는다. 그 등을 끝까지 보지 않는다.
 @return
+# E_Herb2xX
+"늙은이를 짐짝 취급하는구나." 투덜대면서도 할멈이 등에 오른다. 마른 장작 한 단만큼도 안 나간다.
+등 위에서 할멈이 손가락으로 길을 짚는다. 왼쪽 비탈에 자하근, 바위틈에 석곡. 짚는 데마다 약초가 나온다.
+돌아오는 길, 할멈이 목덜미에 손끝을 얹고 오래 말이 없다.
+"…등이 뜨겁구나. 네 등 말고, 그 안이."
+@fx hp:-3 ng:1 curse:-2
+@set f_herbbond=1
+@return
 
 # E_Herb4
 @art char:granny
@@ -1106,6 +1300,7 @@
 할멈이 처음으로 당신의 눈을 오래 본다.
 @choice "\"심은 자를 아오.\"" goto:#E_Herb4C0
 @choice "말없이 소매를 내린다" goto:#E_Herb4C1
+@choice "\"맥이 둘이라던 그 하나 말이오.\"" if:f_herbpulse>0 goto:#E_Herb4X
 @stop
 # E_Herb4C0
 @fx curse:-3
@@ -1117,6 +1312,14 @@
 @fx curse:-1
 "말 안 해도 된다. 늙은이는 묻지 않고 짚는 법이니라."
 할멈이 손을 털고 돌아앉는다. 숨길 것이 하나 줄었다. 굳어 있던 어깨가 내려간다.
+@return
+# E_Herb4X
+할멈의 눈썹이 꿈틀한다. "그걸 안 잊었구나."
+할멈이 다시 손목을 잡는다. 이번에는 짚는 자리가 다르다. "들어 보거라. 네 맥 뒤에서 반 박자 늦게 뛰는 놈."
+숨을 죽인다. 들린다. 제 심장 뒤에 숨은, 느리고 늙은 맥.
+"심은 놈의 맥이니라. 박자를 외워 두거라. 그놈 앞에 서면 저 혼자 빨라질 게다."
+@fx ng:2 curse:1
+@set f_seedknow=1
 @return
 
 # E_Herb5
@@ -1182,7 +1385,8 @@
 사내가 피 묻은 손을 들어 당신을 부른다. 아직 숨이 있다.
 @choice "지혈해 준다" goto:#E_Peddler4C0
 @choice "수레의 은자부터 챙긴다" goto:#E_Peddler4C1
-@choice "지나친다" goto:#E_Peddler4C2
+@choice "금창약을 상처에 통째로 붓는다" if:f_salve>0 goto:#E_Peddler4X
+@choice "부르는 손을 못 본 척 걷는다" goto:#E_Peddler4C2
 @stop
 # E_Peddler4C0
 @fx hp:-1 sl:-1
@@ -1198,6 +1402,14 @@
 # E_Peddler4C2
 @fx curse:1
 걸음을 늦추지 않는다. 등 뒤에서 부르는 소리가 두 번. 그리고 멎는다.
+@return
+# E_Peddler4X
+단도를 뽑고 금창약 한 통을 상처에 쏟아붓는다. 사내가 비명을 깨문다. 피가 멎는다.
+반 시진 뒤, 사내가 바퀴를 짚고 일어나 앉는다. 흩어진 꾸러미에서 마른 뿌리 하나를 골라 내민다.
+"약값 대신이오. 그리고 하나 더. 루(樓)의 향은 단내 나는 쪽이 독, 쓴내 나는 쪽이 약이오."
+"…루에 객을 판 것도 나요. 이걸로 셈이 맞을지는 모르겠소."
+@fx ng:1 sl:-1
+@set f_amhwarn=1
 @return
 
 ; ---------- 비무꾼 ----------
@@ -1236,7 +1448,7 @@
 "없으면 만들면 되지요."
 @choice "목검을 받아 든다" goto:#E_Duelist3C0
 @choice "\"선생을 찾아라. 서열이 아니라.\"" goto:#E_Duelist3C1
-@choice "쫓아 보낸다" goto:#E_Duelist3C2
+@choice "살기를 실어 쫓아 보낸다" goto:#E_Duelist3C2
 @stop
 # E_Duelist3C0
 @fx sw:1 sl:-1
@@ -1262,6 +1474,7 @@
 "떠나기 전에 한 합 하세. 이름도 아직 안 댔군. <color=#C03434>마충(馬忠)</color>일세."
 @choice "백 합을 받는다" goto:#E_Spar2C0
 @choice "술로 대신한다" if:mn>=2 goto:#E_Spar2C1
+@choice "북쪽 고개 독아단의 버릇을 일러 준다" if:f_dokinfo>0 goto:#E_Spar2X
 @stop
 # E_Spar2C0
 @fx sw:2 hp:-2
@@ -1276,6 +1489,14 @@
 "검 대신 술이라. 그것도 나쁘지 않군."
 탁주 한 되. 마충은 고향 이야기를 하고, 당신은 듣기만 한다. 헤어질 때 그가 말한다. "돌아오면 그때는 백 합일세." 고개를 끄덕인다.
 @return
+# E_Spar2X
+"뼈 장식이 울리면 이미 늦소. 놈들은 바람을 등지고 나오고, 첫 칼은 늘 말 다리로 가오."
+마충이 봇짐 끈을 매다 말고 듣는다. 웃음기가 가신다.
+"…그놈들한테 당해 본 사람처럼 말하는군." 그가 전낭에서 은자 두 냥을 꺼내 던진다. "귀띔 값일세. 공으로 들은 말은 금세 잊히는 법이네."
+"살아 있으시오." 이번에는 당신이 그 말을 한다.
+@fx mn:2 sl:-1
+@set f_sparfriend=1
+@return
 
 # E_Spar3
 상여 행렬이 지나간다.
@@ -1285,6 +1506,7 @@
 @choice "상여를 따라 걷는다" goto:#E_Spar3C0
 @choice "표국으로 가 사정을 묻는다" goto:#E_Spar3C1
 @choice "등을 돌린다" goto:#E_Spar3C2
+@choice "북쪽 고개로 가 뼈 장식 소리를 찾는다" if:sw>=10 goto:#E_Spar3X
 @stop
 # E_Spar3C0
 @fx sl:-1 curse:-1
@@ -1299,6 +1521,19 @@
 @fx curse:1
 돌아선다. 죽음마다 걸음을 멈추면 영영 못 걷는다. 스스로에게 그렇게 이른다. 그날 밤, 목검을 손에 쥐어 본다. 그가 깎은 것이다. 손에 꼭 맞는다.
 @return
+# E_Spar3X
+고갯마루에 해가 기울 무렵, 바람결에 뼈 장식이 운다. 다섯이 넷으로 줄어 있다. 하나는 마충이 데려갔다.
+@set dkind="any"
+@gosub MolakDuel#Run
+@goto #E_Spar3W if:duelwin>0
+남은 놈들이 피 묻은 이를 드러내며 웃는다. 고개를 내려오는 내내 등 뒤에서 뼈 장식이 짤랑거린다.
+@fx hp:-2 curse:1
+@return
+# E_Spar3W
+넷이 고갯길에 흩어져 달아난다. 쓰러진 놈의 허리춤에서 마충이 깎던 목검 한 자루가 나온다.
+목검을 고갯마루 돌무더기에 꽂아 둔다. 백 합은 거기서 마저 하기로 한다.
+@fx sl:2 mn:4 curse:1
+@return
 
 ; ---------- 표국 ----------
 # E_Guard2
@@ -1306,8 +1541,9 @@
 잠시 후, 수염이 희끗한 사내가 나온다. 총표두 <color=#C03434>염가(廉哥)</color>.
 "북쪽 고개 너머로 가는 약재 수레일세. 독아단한테 두 번 털렸지. 삯은 열둘. 그만한 값을 하는 길이네."
 그의 눈이 허리춤을 훑는다. 지난번 보법 이야기를 전해 들은 눈치다.
-@choice "맡는다" goto:#E_Guard2C0
-@choice "사양한다" goto:#E_Guard2C1
+@choice "\"그 고개, 내가 넘겨 드리겠소.\"" goto:#E_Guard2C0
+@choice "\"갈 길이 따로 있소.\" — 사양한다" goto:#E_Guard2C1
+@choice "\"고개를 버리고 소금길로 도시오.\"" if:f_roadinfo>0||f_valleyroute>0 goto:#E_Guard2X
 @stop
 # E_Guard2C0
 @goto #E_Guard2W if:sw>=10
@@ -1324,6 +1560,14 @@
 # E_Guard2C1
 "그렇겠지. 자네는 더 큰 길을 가는 중이니." 염가는 섭섭한 기색도 없이 돌아선다. 목숨값을 부르는 업이라, 거절에는 익숙하다.
 @return
+# E_Guard2X
+나루 윗길, 폐사, 장사치들만 아는 샛길. 손가락으로 짚어 보이자 염가의 눈이 가늘어진다.
+"이틀을 더 도는군. …독아단은 고갯마루에서 헛기다리고."
+이틀 내내 산길이다. 뼈 장식 소리는 한 번도 듣지 못한다. 수레는 멀쩡히 닿는다.
+염가가 삯 열둘에서 둘을 빼고 내민다. "이틀 늦은 값은 빼겠네. 길값은 따로 빚으로 달아 두지."
+@fx mn:10 hp:-1 sl:-1
+@set f_guardfriend=1
+@return
 
 # E_Guard3
 표국 문에 못이 박혀 있다.
@@ -1335,6 +1579,7 @@
 "자네. 혹 북쪽에 가거든, 거기 사는 것들한테 표국 하나가 문 닫았다고 전해 주게. 그게 다일세."
 @choice "은자 몇 닢을 쥐여 준다" if:mn>=3 goto:#E_Guard3C0
 @choice "\"전하겠소.\"" goto:#E_Guard3C1
+@choice "징세조의 은자 길을 귀띔한다" if:f_taxroute>0 goto:#E_Guard3X
 @stop
 # E_Guard3F
 그가 접은 표기 속에서 검 한 자루를 꺼낸다. 손때 묻은 자루, 뼈대가 좋은 날.
@@ -1351,6 +1596,16 @@
 @fx sl:1
 "전하겠소." 북쪽으로 지고 갈 것이 또 하나 는다. 염가가 무릎 위의 표기를 한 번 쓰다듬는다.
 @return
+# E_Guard3X
+"보름 장날, 소금길 나루 윗길. 호위는 둘이오."
+염가가 고개를 든다. 무릎의 표기가 흘러내린다.
+"……교의 수레를 털라는 겐가."
+"남의 수레를 삼십 년 지킨 눈이면, 털 길목도 보일 것 아니오."
+염가가 대답 대신 표기를 다시 접는다. 이번에는 단단히.
+@page
+보름 뒤, 나루 윗길에서 교의 은자 수레가 사라졌다는 소문이 돈다. 객잔 방 문틈에 은자 꾸러미 하나가 끼워져 있다. 쪽지는 없다.
+@fx mn:6 sl:1 curse:1
+@return
 
 ; ---------- 투전판 ----------
 # E_Gamble3
@@ -1361,7 +1616,8 @@
 "살기 띤 눈 중에 셈이 되는 눈은 객뿐이라."
 @choice "그 귀띔을 산다 (은자 3)" if:mn>=3 goto:#E_Gamble3C0
 @choice "그의 손목을 잡는다" goto:#E_Gamble3C1
-@choice "거절한다" goto:#E_Gamble3C2
+@choice "소매를 뿌리치고 돌아선다" goto:#E_Gamble3C2
+@choice "\"이층 판주 낯을 깎은 게 나요.\"" if:f_gambleshamed>0 goto:#E_Gamble3X
 @stop
 # E_Gamble3C0
 @fx mn:-3
@@ -1377,13 +1633,22 @@
 "교의 돈에는 손 안 대오."
 타짜가 어깨를 으쓱한다. "그럼 다른 눈을 찾아보지." 그 눈이 누구 것이 될지는 알 바 아니다. 골목 끝에서 발소리가 끊긴다.
 @return
+# E_Gamble3X
+타짜의 눈이 둥그레진다. "…그날 판주 손목을 누른 게 객이었소?"
+그가 패 한 장을 손가락 사이로 굴린다. "그 영감이 내 판을 십 년 막았소. 요새 이층 판은 내 차지요."
+"보름 장날, 소금길 나루 윗길. 호위는 둘. 값은 그날 치른 걸로 칩시다."
+골목을 나서는 등 뒤로 한마디가 붙는다. "판주가 객을 찾소. 칼잡이 둘을 샀다더이다."
+@fx sl:1
+@set f_taxroute=1
+@return
 
 # E_Gamble4
 골목 어귀에 사람이 쓰러져 있다.
 타짜다. 오른 손목이—없다. 지혈은 되어 있다. 교도들은 깔끔하다.
 "교의 돈을 속였다고…." 그가 웃으려다 신음한다. "속인 건 맞소. 다만 그놈들은 손목으로 받더군."
 @choice "백초당으로 업고 간다" if:mn>=2 goto:#E_Gamble4C0
-@choice "지나친다" goto:#E_Gamble4C1
+@choice "금창약을 꺼내 그 자리에서 싸맨다" if:f_salve>0 goto:#E_Gamble4X
+@choice "피 웅덩이를 비켜 디딘다" goto:#E_Gamble4C1
 @stop
 # E_Gamble4C0
 @fx mn:-2 hp:-1 sl:-1
@@ -1393,6 +1658,12 @@
 @fx curse:1
 걸음을 늦추지 않는다. 등 뒤에서 그가 뭐라 하지만 귀를 닫는다. 그날 밤, 듣지 않은 말이 돌아와 가슴의 문양을 데운다.
 @return
+# E_Gamble4X
+교도의 지혈은 깔끔하되 거칠다. 묶은 끈을 풀고 금창약을 두껍게 바른 뒤, 옷자락을 찢어 다시 감는다. 타짜가 이를 악문다.
+"손목 친 놈들, 집법전 사람이 아니오. 징세조요. 저희끼리 은자를 빼돌리는 걸 내가 봤소."
+"교의 법으로 친 게 아니면, 교의 법으로 갚을 날도 있겠지요." 그가 왼손 엄지로 허공에 패를 튕긴다.
+@fx sl:-2 curse:-1
+@return
 
 ; ---------- 야시 ----------
 # E_Nightmarket2
@@ -1400,8 +1671,8 @@
 청운(靑雲)의 구름 문양. 사형 중 누군가의 허리에 달려 있던 것이다.
 "이거? 북쪽 골짜기에서 내려온 짐에 섞여 있었소. 은자 다섯."
 북쪽 골짜기. 혈마곡. 사형들의 물건이 거기서 흘러나온다.
-@choice "산다 (은자 5)" if:mn>=5 goto:#E_Nightmarket2C0
-@choice "빼앗는다" goto:#E_Nightmarket2C1
+@choice "값을 치르고 패를 거둔다 (은자 5)" if:mn>=5 goto:#E_Nightmarket2C0
+@choice "말없이 패를 집어 든다" goto:#E_Nightmarket2C1
 @choice "\"그 짐, 언제 또 내려오오.\"" goto:#E_Nightmarket2C2
 @stop
 # E_Nightmarket2C0
@@ -1444,6 +1715,7 @@
 노인이 손을 거둔다. "자네는 밭일세, 젊은이. 누군가의."
 @choice "\"거두지 못하게 하려면.\"" goto:#E_Acup3C0
 @choice "침이나 맞는다 (은자 5)" if:mn>=5 goto:#E_Acup3C1
+@choice "\"산사 경판에서 같은 그림을 봤소.\"" if:f_sutraknow>0 goto:#E_Acup3X
 @stop
 # E_Acup3C0
 @fx curse:1
@@ -1454,6 +1726,14 @@
 # E_Acup3C1
 @fx mn:-5 curse:-5
 "묻지 않겠다는 건가. 그것도 한 방법이지." 금침 아홉 대. 글자의 획 하나하나를 묶듯이 들어간다. 식은땀이 나는데, 춥다.
+@return
+# E_Acup3X
+노인의 손이 멎는다. "심은 자 죽으면 씨 또한 죽는다… 그 경판이 아직 남았던가."
+노인이 침통 밑바닥을 연다. 금침이 아니라 은침 세 대. 끝이 검게 그을렸다.
+"씨가 익는 걸 늦추는 자리가 셋 있네. 경판에는 없는 자리지. 젊어서… 한 번 써 본 적이 있네."
+값은 부르지 않는다. 침이 빠진 자리마다 얼음 같은 저림이 한나절 간다.
+@fx curse:-3 hp:-1
+@set f_seedknow=1
 @return
 
 # E_Acup4
@@ -1472,8 +1752,9 @@
 "객! 지난번엔 물건이 섞였소. 도사가 넘긴 것 중 반이 가짜였지 뭐요."
 그가 품에서 부적 한 장을 꺼낸다. 먹선이 깊다. 아주 깊다.
 "이건 내 손으로 쓴 거요. 사죄의 뜻이오. 값은 없소."
-@choice "받는다" goto:#E_Talisman2C0
+@choice "부적을 받아 품에 넣는다" goto:#E_Talisman2C0
 @choice "\"너도 반은 가짜였겠지.\"" goto:#E_Talisman2C1
+@choice "그 자리에서 태워 재를 물에 탄다" goto:#E_Talisman2X
 @stop
 # E_Talisman2C0
 @fx curse:-4
@@ -1483,6 +1764,12 @@
 # E_Talisman2C1
 @fx sl:1 mn:3
 그가 얼굴을 붉히더니 은자 몇 닢을 꺼내 놓는다. "지난번 값이오. 돌려드리리다." 부적은 두고, 은자만 챙긴다.
+@return
+# E_Talisman2X
+"그, 그걸 태우시오?" 장수가 손을 뻗다 만다.
+부적이 화롯불에 오그라든다. 재를 찬물에 풀어 단숨에 들이켠다. 먹 냄새 끝에 쇠 맛이 남는다.
+가슴의 문양이 물 끼얹은 숯처럼 치익 하고 잦아든다. 대신 밤새 뱃속이 뒤틀린다.
+@fx curse:-6 hp:-2
 @return
 
 ; ---------- 산사 주지 ----------
@@ -1552,13 +1839,15 @@
 @goto #E_Cultists3K if:seen_E_Childplay>0
 붉은 끈을 소매에 감은 손목이 가늘다. 이 현에서는 아이들이 이렇게 자란다.
 @choice "끈을 끊어 준다" goto:#E_Cultists3C0
-@choice "지나친다" goto:#E_Cultists3C1
+@choice "비뚤게 붙는 방을 못 본 척한다" goto:#E_Cultists3C1
+@choice "저잣거리 아이들 패로 데려간다" if:f_alms>0||f_thiefkid>0 goto:#E_Cultists3X
 @stop
 # E_Cultists3K
 낯이 익다. 공터에서 목검으로 교주 놀이를 하던 아이 중 하나다. 서로 교주를 하겠다고 다투던.
 아이가 당신을 알아본다. 눈을 피한다.
 @choice "끈을 끊어 준다" goto:#E_Cultists3C0
-@choice "지나친다" goto:#E_Cultists3C1
+@choice "비뚤게 붙는 방을 못 본 척한다" goto:#E_Cultists3C1
+@choice "서열 패를 풀통 옆에 내려놓는다" if:rank>0&&rank<=2000 goto:#E_Cultists3KX
 @stop
 # E_Cultists3C0
 @fx sl:-1 curse:-1
@@ -1567,6 +1856,19 @@
 # E_Cultists3C1
 @fx curse:1
 지나친다. 방이 비뚤게 붙는다. 아이들이 크기 전에 끝내야 한다고 했다. 등 뒤에서 방을 뗐다가 다시 붙이는 소리가 난다.
+@return
+# E_Cultists3X
+아이의 손목을 잡고 뒷골목으로 든다. 담 낮은 곳, 거적 아래에서 낯익은 얼굴들이 고개를 내민다.
+거지 아이가 붉은 끈을 보고 침을 뱉는다. 그러고는 동냥 그릇에서 식은 떡 반쪽을 떼어 내민다.
+붉은 끈은 담 틈에 처박히고, 방 뭉치는 아궁이로 간다. 거적 밑에 은자 한 냥을 밀어 넣고 돌아선다.
+@fx mn:-1 curse:-2
+@return
+# E_Cultists3KX
+허리의 서열 패를 풀어 풀통 옆에 내려놓는다. 아이가 숫자를 읽다가 입을 벌린다.
+"…아저씨, 교주보다 세요?"
+"아직."
+아이가 패와 제 소매의 붉은 끈을 번갈아 본다. 그러고는 방 뭉치를 안은 채 교당 반대쪽으로 걸어간다. 한 번 돌아본다.
+@fx sl:1 curse:-2
 @return
 
 ; ---------- 현상금 사냥꾼 ----------
@@ -1578,7 +1880,8 @@
 "살아 있는 사람보다는."
 @choice "은자 열을 준다" if:mn>=10 goto:#E_Hunter2C0
 @choice "검을 뽑는다" goto:#E_Hunter2C1
-@choice "거절한다" goto:#E_Hunter2C2
+@choice "칼자루를 짚은 채 고개를 젓는다" goto:#E_Hunter2C2
+@choice "\"도장값은 네가 내라.\"" if:sl>=8 goto:#E_Hunter2X
 @stop
 # E_Hunter2C0
 @fx mn:-10
@@ -1594,6 +1897,15 @@
 "죽은 척은 안 하오."
 사내가 어깨를 으쓱한다. "그럼 다음엔 진짜로 뵙지." 칼자루를 툭 치고 어둠 속으로 물러난다.
 @return
+# E_Hunter2X
+사내의 웃음이 굳는다. 칼자루로 가던 손이 허공에서 멎는다.
+"…형씨, 흥정은 그렇게 하는 게 아니오."
+"흥정이 아니다."
+한참 뒤, 사내가 수배서를 꺼내 붉은 도장을 찍는다. 「死」. 은자는 한 푼도 오가지 않는다.
+"사냥꾼들은 믿을 거요. 형씨가 무서워서라도."
+@fx sl:1 curse:1
+@set f_deadrumor=1
+@return
 
 # E_Hunter3
 정오. 저자 공터. 사냥꾼 넷이 당신을 에워싼다.
@@ -1602,6 +1914,7 @@
 놈들이 서로를 흘끔거린다. 욕심이 발을 묶는다. 그 틈이 보인다.
 @choice "정면으로 뚫는다" goto:#E_Hunter3C0
 @choice "지붕으로 오른다" goto:#E_Hunter3C1
+@choice "\"삼백 냥은 먼저 베는 놈 몫이다.\"" goto:#E_Hunter3X
 @stop
 # E_Hunter3D
 "죽었다더니."
@@ -1609,6 +1922,7 @@
 도장은 며칠 값을 했다. 그거면 됐다. 이제 몸으로 치를 차례다.
 @choice "정면으로 뚫는다" goto:#E_Hunter3C0
 @choice "지붕으로 오른다" goto:#E_Hunter3C1
+@choice "죽립을 내리고 구경꾼 틈으로 스민다" if:f_hat>0 goto:#E_Hunter3DX
 @stop
 # E_Hunter3C0
 @goto #E_Hunter3W if:sw>=14
@@ -1623,6 +1937,24 @@
 @fx hp:-2 curse:1
 기와 넉 장이 발밑에서 깨진다. 사냥꾼들은 지붕을 타지 못한다. 도망치는 날이 또 하루 는다.
 @return
+# E_Hunter3X
+@set tr=random(1,100)
+@goto #E_Hunter3Y if:tr<=40
+넷의 눈이 서로에게 간다. 맨 왼쪽 놈의 칼이 반 치 먼저 나간다. 옆 놈의 칼이 그 손목으로 간다.
+공터가 저희끼리의 칼부림으로 엉킨다. 그 틈으로 걸어 나간다. 뛰지도 않는다.
+@fx sl:1 curse:1
+@return
+# E_Hunter3Y
+넷이 서로를 보더니, 웃는다. "형씨, 우리 넷은 처남 매부 사이요."
+칼 넷이 한꺼번에 들어온다. 공터를 빠져나오는 데 옆구리 한 군데, 허벅지 한 군데를 내준다.
+@fx hp:-5 sl:1
+@return
+# E_Hunter3DX
+구경꾼이 몰려드는 쪽으로 반 보 물러선다. 죽립 챙을 내리고 잿빛 장포 깃을 세운다.
+잿빛 장포는 저자에 백 벌이다. 사냥꾼 넷이 저마다 다른 잿빛 등을 쫓아 흩어진다.
+골목 셋을 꺾어서야 숨을 고른다. 등 뒤에서 누군가 투덜댄다. "죽은 놈이 발도 빠르군."
+@fx sl:-1
+@return
 
 ; ---------- 심마 ----------
 # E_Simma2
@@ -1634,6 +1966,7 @@
 "객. 요새 눈빛이 달라졌소."
 @choice "술상을 청한다" if:mn>=1 goto:#E_Simma2C0
 @choice "\"참견 마시오.\"" goto:#E_Simma2C1
+@choice "검을 끌러 하진무에게 맡긴다" goto:#E_Simma2X
 @stop
 # E_Simma2C0
 @fx mn:-1 sl:-2 hp:1
@@ -1642,6 +1975,14 @@
 # E_Simma2C1
 @fx sl:1 curse:1
 "그러시구려." 하진무가 걸레를 짜며 일어선다. "다만, 그 눈으로 꼭대기에 가면 거기 뭐가 있겠소." 대답하지 않는다. 걸레에서 짜낸 국물이 바닥에 뚝뚝 듣는다.
+@return
+# E_Simma2X
+검을 끌러 탁자에 올린다. 하진무가 걸레를 놓고 그것을 내려다본다.
+"하룻밤이오?"
+"하룻밤."
+하진무가 검을 안고 계산대 뒤로 간다. 밤새 손이 몇 번이고 빈 옆구리를 더듬는다. 가슴의 문양이 굶은 짐승처럼 칭얼댄다.
+아침, 검은 기름을 먹은 채 탁자 위에 돌아와 있다.
+@fx sl:-3 curse:1
 @return
 
 # E_Simma3
@@ -1652,6 +1993,7 @@
 눈을 뜬다. 뽑힌 검이 손에 쥐여 있다. 방 안에 베인 자국이 세 줄.
 @choice "검을 벽에 건다" goto:#E_Simma3C0
 @choice "검을 쥔 채 아침을 기다린다" goto:#E_Simma3C1
+@choice "안식향을 피우고 검을 무릎에 눕힌다" if:f_incense>0 goto:#E_Simma3X
 @stop
 # E_Simma3C0
 @fx sl:-3 sw:-1
@@ -1660,6 +2002,12 @@
 # E_Simma3C1
 @fx sl:1 sw:1 curse:2
 쥔 채로 앉는다. 살기는 가라앉지 않는다. 가라앉힐 생각도 없다. 꼭대기까지 이 손으로 간다. 창호지가 밝아 오도록 손가락 하나 풀지 않는다.
+@return
+# E_Simma3X
+손이 떨려 부싯돌을 세 번 친다. 머리맡에 향 한 줄기가 오른다.
+검을 칼집에 넣지도, 놓지도 않는다. 무릎에 눕혀 두고 연기만 본다. 연기가 벽의 베인 자국 세 줄을 타고 흩어진다.
+새벽녘, 손이 검에서 떨어져 있다. 언제 놓았는지 모른다.
+@fx sl:-2 hp:1 curse:-1
 @return
 
 ; ---------- 꿈 ----------
@@ -1694,6 +2042,7 @@
 노인이 턱으로 북쪽을 가리킨다. 거기 누가 있는지는 묻지 않아도 안다. 꿈이 꺼진다.
 @choice "\"거두기 전에 뽑겠다.\"" goto:#E_Dream3C0
 @choice "아무 말도 하지 않는다" goto:#E_Dream3C1
+@choice "\"장문인은 끝내 검을 뽑지 않았다.\"" if:f_storylore>0 goto:#E_Dream3X
 @stop
 # E_Dream3C0
 @fx curse:-2 sl:1
@@ -1705,6 +2054,12 @@
 침묵. 노인이 고개를 끄덕인다. 침묵도 대답으로 받겠다는 듯이.
 깨어나서도 그 끄덕임이 만족이었는지 연민이었는지 가늠이 서지 않는다. 날이 밝도록 천장만 본다.
 @return
+# E_Dream3X
+@fx ng:1 curse:-1
+노인의 손가락이 무릎 위에서 멎는다. "……설서인의 혀로구나."
+그러나 아니라고 하지 않는다. 재 위로 바람이 한 번 지나가고, 노인이 먼저 눈을 돌린다.
+눈을 뜬다. 숨이 단전까지 막힘없이 내려간다.
+@return
 
 ; ---------- 용개 ----------
 # E_Yong3
@@ -1714,7 +2069,8 @@
 그 줄에 용개가 있다. 눈이 마주치자 못 본 척 고개를 돌린다. 당신을 끌어들이지 않으려고.
 @choice "독아단 둘을 손봐 준다" if:sw>=10 goto:#E_Yong3C0
 @choice "용개를 조용히 빼낸다" goto:#E_Yong3C1
-@choice "지나친다" goto:#E_Yong3C2
+@choice "용개와 눈을 맞추지 않고 지나친다" goto:#E_Yong3C2
+@choice "\"견아 단주도 아는 짐이냐.\"" if:f_dokinfo>0 goto:#E_Yong3X
 @stop
 # E_Yong3C0
 @fx sl:1 hp:-1
@@ -1728,6 +2084,13 @@
 # E_Yong3C2
 @fx curse:1
 지나친다. 용개의 눈길이 등에 와 닿는다. 원망하는 눈은 아니다. 처음부터 당신을 끌어들이지 않으려던 사람이다. 나루를 벗어날 때까지 그 눈길이 떨어지지 않는다.
+@return
+# E_Yong3X
+@fx sl:1 curse:-1
+단주의 이름에 둘의 얼굴이 굳는다. 하나가 짐 꾸러미를 힐끗 본다.
+"……네놈이 뭘 안다고."
+"단주에게 물어보면 알겠지."
+놈들이 침을 뱉고 짐꾼 줄을 풀어 준다. 칼은 끝내 뽑히지 않는다. 용개가 허리 대신 눈으로 인사한다.
 @return
 
 # E_YongK2
@@ -1760,7 +2123,8 @@
 설서인의 눈이 당신을 스친다. 알아보고, 모른 척한다. 입이 무거운 자다.
 @choice "\"낙엽은 아니었소.\"" goto:#E_Storyteller2C0
 @choice "동전을 던져 더 부풀리게 한다" if:mn>=2 goto:#E_Storyteller2C1
-@choice "자리를 뜬다" goto:#E_Storyteller2C2
+@choice "부채 소리를 등지고 자리를 뜬다" goto:#E_Storyteller2C2
+@choice "\"운객 말고, 장문인 대목을 청하오.\"" if:f_storylore>0 goto:#E_Storyteller2X
 @stop
 # E_Storyteller2C0
 @fx sl:-1
@@ -1773,6 +2137,12 @@
 # E_Storyteller2C2
 등 뒤에서 부채 소리가 난다. 이야기는 당신 없이도 자란다. 다만 끝맺음은 설서인의 몫이 아니다. 검 자루를 한 번 쥐었다 놓고, 걸음을 옮긴다.
 @return
+# E_Storyteller2X
+@fx curse:-2
+설서인이 눈을 한 번 깜빡이더니 부채를 접었다 편다. "좋소! 오늘은 옛이야기로 갑시다!"
+열 번째 산문, 검을 뽑지 않고 선 장문인. 좌중이 운객을 잊고 그 대목에 빠져든다.
+사람들 틈을 빠져나오는 동안 아무도 당신 얼굴을 돌아보지 않는다.
+@return
 
 ; ---------- 거지 중 ----------
 # E_Monk3
@@ -1781,7 +2151,8 @@
 열병에도 구결 타령이다. 입술이 갈라 터졌다.
 @choice "백초당에서 약을 사다 준다 (은자 3)" if:mn>=3 goto:#E_Monk3C0
 @choice "물을 떠다 준다" goto:#E_Monk3C1
-@choice "지나친다" goto:#E_Monk3C2
+@choice "숨 세는 소리를 못 들은 척 지나친다" goto:#E_Monk3C2
+@choice "청심차를 달여 먹인다" if:f_tea>0 goto:#E_Monk3X
 @stop
 # E_Monk3C0
 @fx mn:-3
@@ -1797,6 +2168,12 @@
 # E_Monk3C2
 @fx curse:1
 지나친다. 다리 밑에서 숨 세는 소리가 따라온다. 여섯, 아홉. 여섯, 아홉. 다리를 건너는 동안 숨이 저도 모르게 그 박자를 탄다.
+@return
+# E_Monk3X
+@fx ng:1 curse:-1
+쓴 차를 식혀 갈라진 입술에 흘려 넣는다. 반 사발에 땀이 솟고, 한 사발에 헛소리가 멎는다.
+중이 찻잔 바닥을 핥고 웃는다. "연잎에 자하근이라. 찻집 노파 솜씨구려. 쓰기가 내 구결 같소."
+그 곁에서 남은 차를 나눠 마신다. 쓴맛이 혀에서 가실 즈음, 숨이 단전에 고르게 내려앉는다.
 @return
 
 # E_Monk4
@@ -1817,7 +2194,9 @@
 저자 어귀. 누가 소매를 잡는다. 낯익은 거지다.
 "나리. 붉은 끈 셋이 객잔 담 밑을 세고 갔소. 아침, 낮, 해 질 녘. 한 끼 값만 쳐 주시면 더 들은 것도 있소만."
 @choice "한 끼 값을 준다 (은자 1)" if:mn>=1 goto:#E_Beggar3C0
-@choice "뿌리친다" goto:#E_Beggar3C1
+@choice "소매를 털어 뿌리친다" goto:#E_Beggar3C1
+@choice "\"골목 아이들은 뭐라던가.\"" if:f_alms>0||f_thiefkid>0 goto:#E_Beggar3X
+@choice "멱살을 쥐고 공짜로 듣는다" if:sl>=5 goto:#E_Beggar3Y
 @stop
 # E_Beggar3C0
 @fx mn:-1
@@ -1829,6 +2208,19 @@
 @fx sl:1
 뿌리친다. 거지가 흙바닥에 주저앉아 올려다본다. 원망이 없는 눈이 더 거슬린다. 해 질 녘, 객잔 담 밑으로 붉은 끈 셋이 또 지나간다.
 @return
+# E_Beggar3X
+@fx sl:-1
+@set f_beggarnet=1
+거지가 눈을 끔뻑이다 이를 드러낸다. "그 애들이 말하던 나리가 맞구려. 그럼 공으로 드리리다."
+"뒷문 쪽은 안 세고 갔소. 붉은 끈 하나는 쥐눈이 장한테 들렀다 나왔고. 이건 아이들이 먼저 본 거요."
+그날부터 객잔 골목 어귀에 아이 하나가 늘 쭈그려 앉아 있다. 눈이 마주치면 고개를 돌린다.
+@return
+# E_Beggar3Y
+@fx sl:2 curse:1
+멱살을 쥐어 담벼락에 붙인다. 거지의 발끝이 땅에서 뜬다.
+"뒤, 뒷문 쪽은 안 셌소! 그게 다요!"
+놓아주자 거지가 기침을 하며 골목으로 사라진다. 쥐눈이 장 얘기는 끝내 나오지 않는다. 다음 날부터 그 거지는 저자 어귀에 보이지 않는다.
+@return
 
 # E_Beggar4
 저자 뒷골목. 거지가 피투성이로 쓰러져 있다.
@@ -1836,7 +2228,8 @@
 그가 이 하나를 뱉는다. "거지는 모르는 게 많아서 좋소."
 @choice "백초당으로 데려간다 (은자 2)" if:mn>=2 goto:#E_Beggar4C0
 @choice "때린 놈들을 찾아간다" if:sw>=10 goto:#E_Beggar4C1
-@choice "지나친다" goto:#E_Beggar4C2
+@choice "기침 소리를 등지고 지나친다" goto:#E_Beggar4C2
+@choice "금창약을 덜어 그 자리에서 싸맨다" if:f_salve>0 goto:#E_Beggar4X
 @stop
 # E_Beggar4C0
 @fx mn:-2 sl:-1 curse:-1
@@ -1851,6 +2244,13 @@
 @fx curse:2
 지나친다. "나리……." 거지가 부르다 만다. 등 뒤에서 피 섞인 기침 소리가 들린다. 걸음을 늦추지 않는다.
 @return
+# E_Beggar4X
+@fx curse:-1
+@set f_beggarnet=1
+골목 바닥에 무릎을 꿇고 금창약 통을 연다. 거지가 코를 킁킁거린다. "백초당 냄새로구먼. 이 귀한 걸."
+찢긴 눈두덩과 터진 입술에 약을 누른다. 통이 반쯤 빈다.
+거지가 성긴 이 사이로 웃는다. "이 빚은 눈으로 갚겠소. 나리 묵는 데 말고, 나리 찾는 놈들 묵는 데를."
+@return
 
 ; ---------- 세작 ----------
 # E_Spy3
@@ -1861,7 +2261,7 @@
 그가 당신 가슴을 본다. "당신 얘기요."
 @choice "끝까지 듣는다" goto:#E_Spy3C0
 @choice "검을 뽑는다" goto:#E_Spy3C1
-@choice "돌려보낸다" goto:#E_Spy3C2
+@choice "우물만 내려다보며 돌려보낸다" goto:#E_Spy3C2
 @stop
 # E_Spy3C0
 @fx curse:-1 ng:1
@@ -1882,6 +2282,7 @@
 세작이다. 등에 붉은 끈 세 가닥이 꽂혀 있다. 교가 제 사람을 치우는 방식이다. 손에 종이 조각이 쥐여 있다.
 @choice "종이를 편다" goto:#E_Spy4C0
 @choice "못 본 척 지나간다" goto:#E_Spy4C1
+@choice "종이째 그 손을 묻어 준다" goto:#E_Spy4X
 @stop
 # E_Spy4C0
 @goto #E_Spy4K if:f_janginfo>0
@@ -1898,6 +2299,12 @@
 @fx curse:2
 지나친다. 세작의 손에 쥐인 종이가 도랑물에 젖어 간다. 목숨 걸고 가져온 것이 무엇이었는지, 끝내 알 길이 없다. 그날 밤, 가슴의 문양이 유난히 뜨겁다.
 @return
+# E_Spy4X
+@fx curse:-2 hp:-1
+도랑 둑을 맨손으로 판다. 손톱 밑에 흙이 들어찬다. 종이 쥔 손을 펴지 않고 그대로 가슴께에 얹어 묻는다.
+흙을 덮고 돌 하나를 올린다. 해 질 녘, 붉은 끈 둘이 도랑을 훑다가 빈자리를 보고 서로 얼굴을 쳐다본다.
+멀리 다리 위에서 그것을 보고 돌아선다.
+@return
 
 ; ---------- 방(榜) ----------
 # E_Notice2
@@ -1905,9 +2312,10 @@
 「청운 잔당 '운객' — 현상금 은자 오백 — 생포 우선」
 그림이 닮았다. 이번엔 지금의 얼굴이다. 누군가 가까이서 보았다.
 삼백에서 오백. 생사불문에서 생포. 값이 오르고 조건이 바뀌었다. 교가 당신을 '원한다'.
-@choice "뜯는다" goto:#E_Notice2C0
+@choice "방을 뜯어 손안에서 구긴다" goto:#E_Notice2C0
 @choice "그림 옆에 '못 그렸다'고 낙서한다" goto:#E_Notice2C1
-@choice "지나간다" goto:#E_Notice2C2
+@choice "걸음을 늦추지 않고 지나간다" goto:#E_Notice2C2
+@choice "아이들을 시켜 방마다 먹칠한다 (은자 1)" if:mn>=1&&f_alms>0||mn>=1&&f_thiefkid>0 goto:#E_Notice2X
 @stop
 # E_Notice2C0
 @fx sl:1 curse:1
@@ -1920,6 +2328,12 @@
 # E_Notice2C2
 @fx curse:1
 지나간다. 생포 우선. 그 네 글자가 등에 붙어 따라온다. 죽이자는 게 아니다. 산 채로 데려가겠다는 말이다. 무엇을 거두려는지는 묻지 않아도 안다. 가슴께가 화끈 달아오른다.
+@return
+# E_Notice2X
+@fx mn:-1 curse:-1 sl:-1
+골목 어귀에서 아이 하나에게 동전을 쥐여 준다. 아이가 말없이 숯 토막을 받아 든다.
+이튿날 아침, 현 안의 방마다 운객의 얼굴에 먹이 칠해져 있다. 눈도 코도 남지 않았다.
+게시벽 앞에서 교도 하나가 고함을 친다. 저자 아이들은 벌써 다른 골목에 가 있다.
 @return
 
 # E_Notice3
@@ -1937,9 +2351,9 @@
 @art char:hajinmu
 종일 비. 관도가 끊기고, 객잔에 갇힌 하루.
 하진무가 장기판을 들고 온다. "셈은 끝났소. 손이 심심하구려."
-@choice "장기를 둔다" goto:#E_Rain2C0
+@choice "\"한 판 받겠소.\" — 장기를 둔다" goto:#E_Rain2C0
 @choice "검을 손질한다" goto:#E_Rain2C1
-@choice "방에서 운기한다" goto:#E_Rain2C2
+@choice "방에 올라 빗소리에 운기한다" goto:#E_Rain2C2
 @stop
 # E_Rain2C0
 @fx hp:2 curse:-1
@@ -1995,7 +2409,9 @@
 노파가 마른 뿌리 한 줌을 내민다. 자하근이다. 백초 할멈의 것과 같은 뿌리다.
 "새벽마다 한 사발. 뿌리는 못 뽑아도, 굶기는 데는 차가 약보다 낫니라. 재료 값으로 은자 석 냥."
 @choice "재료를 산다 (은자 3)" if:mn>=3 goto:#E_Teaseller2C0
-@choice "사양한다" goto:#E_Teaseller2C1
+@choice "\"날마다는 못 하오.\" — 사양한다" goto:#E_Teaseller2C1
+@choice "자하근 한 줌만 산다 (은자 1)" if:mn>=1 goto:#E_Teaseller2X
+@choice "\"백초 할멈이 내 맥이 둘이라 했소.\"" if:f_herbpulse>0 goto:#E_Teaseller2Y
 @stop
 # E_Teaseller2C0
 @fx mn:-3 curse:-2
@@ -2005,6 +2421,19 @@
 @return
 # E_Teaseller2C1
 "그래, 젊은 것들은 날마다 하는 일을 못 견디지." 노파가 뿌리를 도로 거둔다. 찻집 처마 밑에 매달린 연잎 다발이 바람에 흔들린다.
+@return
+# E_Teaseller2X
+@fx mn:-1 ng:1 curse:-1
+"비방은 공으로 일러 줘도 안 지키는 놈이 있지." 노파가 뿌리만 저울에 단다.
+그날 밤 한 번 달여 마신다. 속이 데워지고 열이 한 김 가라앉는다. 새벽에 끓일 것은 남지 않는다.
+@return
+# E_Teaseller2Y
+@fx curse:-1
+@set f_tea=1
+@set g_know_tea=1
+노파가 부채질하던 손을 멈추고 당신 손목을 잡는다. 맥 짚는 손끝이 백초 할멈보다 가볍다.
+"……그 할망구가 그리 말했으면 그런 게지."
+뿌리 한 줌을 종이에 싸 내민다. 값은 부르지 않는다. "새벽마다 한 사발. 거르는 날엔 낯빛에 다 쓰일 게다."
 @return
 
 ; ---------- 검총 ----------
@@ -2030,8 +2459,9 @@
 교주 역을 다투던 아이들이 이제 당신 역을 다툰다. 그게 반가운지 두려운지 가늠하기도 전에—
 퍽. 한 아이가 목검에 이마를 맞고 쓰러진다. 피가 난다.
 @choice "백초당으로 안고 간다 (은자 2)" if:mn>=2 goto:#E_Childplay2C0
-@choice "상처를 봐 준다" goto:#E_Childplay2C1
-@choice "지나친다" goto:#E_Childplay2C2
+@choice "소매를 찢어 이마를 동여맨다" goto:#E_Childplay2C1
+@choice "아이들 소란을 등지고 지나친다" goto:#E_Childplay2C2
+@choice "금창약을 발라 준다" if:f_salve>0 goto:#E_Childplay2X
 @stop
 # E_Childplay2C0
 @fx mn:-2 sl:-1
@@ -2044,6 +2474,13 @@
 # E_Childplay2C2
 @fx curse:1
 지나친다. 등 뒤에서 아이들이 다친 아이를 둘러업고 뛴다. 운객 놀이도 오늘로 끝일까. 아니, 내일은 더 세게 붙을 것이다. 어린 날의 당신도 그랬다.
+@return
+# E_Childplay2X
+@fx curse:-2
+금창약 통을 열자 아이들이 코를 쥔다. 약을 이마에 꾹 눌러 바른다. 아이가 이를 악물고 울지 않는다.
+"운객은 이런 거 안 바르지요?"
+"바른다. 아껴서."
+아이들이 웃음을 터뜨린다. 흉은 남겠지만 곪지는 않는다. 다친 아이가 목검을 다시 주워 든다.
 @return
 
 # E_Childplay3
@@ -2089,6 +2526,8 @@
 눈앞에 생선 장수. 아이 손을 잡은 아낙. 손이 칼집에서 검을 반 치 뽑는다.
 @choice "냉천으로 달려간다" goto:#E_Echoes2C0
 @choice "속삭임을 받아 적는다" goto:#E_Echoes2C1
+@choice "안식향을 사르고 골목에 주저앉는다" if:f_incense>0 goto:#E_Echoes2X
+@choice "칼집으로 제 손등을 내리친다" goto:#E_Echoes2Y
 @stop
 # E_Echoes2C0
 @fx hp:-2 curse:-4
@@ -2097,6 +2536,18 @@
 # E_Echoes2C1
 @fx sw:2 curse:4
 골목으로 들어가 벽에 손톱으로 긋는다. 검결 한 줄. 두 줄. 다 쓰고 나니 속삭임이 멎는다. 벽에 새긴 것을 읽는다. 읽힌다. 대낮에, 맨정신으로. 손톱 밑에 회벽 가루가 하얗게 끼어 있다.
+@return
+# E_Echoes2X
+@fx curse:-2 ng:-1
+골목 담 밑에 쪼그려 앉아 향에 불을 붙인다. 연기가 코끝을 감자 핏줄 속 검결이 한 자씩 느려진다.
+한 식경. 속삭임이 잦아든다. 대신 단전의 진기도 향연기처럼 흩어져, 일어설 때 다리가 휘청인다.
+지나가던 아낙이 혀를 찬다. 상갓집 다녀온 사내로 아는 모양이다.
+@return
+# E_Echoes2Y
+@fx hp:-1 sl:1 curse:-1
+칼집 끝으로 왼 손등을 내리친다. 뼈가 울린다. 반 치 뽑혔던 검이 그 소리에 도로 들어간다.
+생선 장수가 함지박을 떨어뜨린다. 아낙이 아이를 끌어당겨 치마폭에 감춘다.
+손등이 시퍼렇게 붓는다. 속삭임은 멎었다. 저자 사람들의 눈이 등에 오래 붙어 있다.
 @return
 
 ; ---------- 냉천 ----------
@@ -2139,8 +2590,8 @@
 내려가 물어도 하진무는 주판알만 튕긴다. 세 번째에야 입을 연다.
 "셈이 안 맞는 방은 빈칸으로 두는 법이오."
 @choice "두 배로 낸다 (은자 4)" if:mn>=4 goto:#E_Hajin3C0
-@choice "받아들인다" goto:#E_Hajin3C1
-@choice "일로 갚는다" goto:#E_Hajin3C2
+@choice "\"신세 지겠소.\" — 받아들인다" goto:#E_Hajin3C1
+@choice "빗자루를 들어 일로 갚는다" goto:#E_Hajin3C2
 @stop
 # E_Hajin3C0
 @fx mn:-4 hp:1 curse:-1
@@ -2164,6 +2615,8 @@
 가슴의 문양이 달빛에 답하듯 달아오른다. 저것은 저 달을 안다.
 @choice "마당에 나가 검을 휘두른다" goto:#E_EclipseC0
 @choice "이불을 뒤집어쓰고 잔다" goto:#E_EclipseC1
+@choice "안식향을 사르고 창을 가린다" if:f_incense>0 goto:#E_EclipseX
+@choice "붉은 달을 마주하고 가부좌를 튼다" if:curse>=40 goto:#E_EclipseY
 @stop
 # E_EclipseC0
 @fx sw:1 curse:1
@@ -2173,14 +2626,25 @@
 @fx hp:2
 눈을 감는다. 눈꺼풀 안쪽도 붉다. 그래도 잔다. 이불깃을 머리끝까지 끌어 올린다.
 @return
+# E_EclipseX
+@fx curse:-2 hp:1
+창에 이불을 걸고 향을 사른다. 붉은 빛이 솔기로 새어 들지만 향연기가 그 빛을 흐리게 덮는다.
+문양의 열이 숨을 고른다. 새벽까지 두 번 깬다. 두 번 다 향은 아직 타고 있다.
+@return
+# E_EclipseY
+@fx ng:2 curse:3
+달빛이 문양에 고인다. 막지 않고 받는다. 사술의 열이 핏줄을 타고 단전까지 내려와 진기와 섞인다.
+내력이 차오른다. 제 것이 아닌 온도로. 달이 기울어 눈을 뜨니, 손등 핏줄이 붉게 비친다.
+@return
 
 # E_Caravan
 관도. 사람들이 일제히 엎드린다.
 교주의 사신 행렬이다. 붉은 가마, 붉은 끈 마흔. 가마 안은 보이지 않는다.
 엎드리지 않은 것은 당신뿐이다. 가마가 바로 앞에서 멎는다.
-@choice "엎드린다" goto:#E_CaravanC0
+@choice "무릎을 꿇고 이마를 흙에 댄다" goto:#E_CaravanC0
 @choice "선 채로 버틴다" goto:#E_CaravanC1
 @choice "골목으로 비킨다" goto:#E_CaravanC2
+@choice "죽립 챙을 내리고 한쪽 무릎만 꿇는다" if:f_hat>0 goto:#E_CaravanX
 @stop
 # E_CaravanC0
 @fx curse:2 sl:-1
@@ -2198,12 +2662,19 @@
 # E_CaravanC2
 골목 그늘. 가마가 지나간다. 엎드리지도, 버티고 서지도 않았다. 그늘에 숨었을 뿐. 강호에서 가장 흔한 자리가 몸에 꼭 맞는다. 벽에서 등을 떼며 어금니를 문다.
 @return
+# E_CaravanX
+@fx curse:1
+챙을 끝까지 내린다. 무릎 하나만 흙에 닿는다. 발 안쪽에서 누군가 죽립을 오래 내려다본다. 그 눈길이 챙에 걸려 얼굴까지 내려오지 못한다.
+이윽고 가마가 움직인다. 행렬 꼬리가 모퉁이를 돌고 나서야 챙을 올린다. 무릎 한쪽에만 흙이 묻어 있다.
+@return
 
 # E_Wine
 밤. 손꼽아 센 날이다. 스승의 기일.
 아무도 모른다. 제사 지낼 사람이 당신뿐이다. 탁주 한 병을 사 들고 마당에 선다.
 @choice "술을 땅에 붓는다" goto:#E_WineC0
-@choice "술을 마신다" goto:#E_WineC1
+@choice "스승 몫까지 병째 마신다" goto:#E_WineC1
+@choice "하진무를 불러 한 잔 권한다" goto:#E_WineX
+@choice "일곱째 사형의 패를 술병 옆에 세운다" if:f_relicpae>0 goto:#E_WineY
 @stop
 # E_WineC0
 @fx curse:-2 sl:-1
@@ -2212,6 +2683,17 @@
 # E_WineC1
 @fx hp:1 curse:1
 마신다. 스승은 술을 좋아했다. 당신이 마시는 것을 보면 웃었을 것이다. 아니, 혼냈을 것이다. 혼나고 싶다. 병째 한 모금을 더 넘긴다.
+@return
+# E_WineX
+@fx hp:2 curse:-1
+하진무가 잔 셋을 들고 나온다. 누구의 기일인지 묻지 않는다. 세 잔에 고루 따르고, 한 잔은 마당 끝에 놓는다.
+"객이 혼자 마시면 그 어른이 섭섭하실 게요."
+둘이서 병을 비운다. 마당 끝의 잔만 끝까지 가득하다.
+@return
+# E_WineY
+@fx sw:1 curse:-1
+패를 술병 옆에 세운다. 뒷면에 긁힌 이름을 부르고, 스물셋을 차례로 부른다.
+술은 붓지 않는다. 대신 일곱째 사형이 가르치던 초식을 마당에 한 번 그어 바친다. 패의 찬 기운이 가슴의 열을 누르는 동안, 검로가 흐트러지지 않는다.
 @return
 
 # E_Frost
@@ -2230,6 +2712,8 @@
 등불 아래로 걷는다. 붉은 빛이 가슴의 문양과 같은 색이다.
 @choice "등불 하나를 끈다" goto:#E_LanternC0
 @choice "구경꾼 틈에 섞인다" goto:#E_LanternC1
+@choice "등 줄을 끊어 만수 휘장에 불을 옮긴다" if:sw>=8 goto:#E_LanternX
+@choice "아이들에게 떡을 사 돌린다 (은자 1)" if:mn>=1&&f_alms>0||mn>=1&&f_thiefkid>0 goto:#E_LanternY
 @stop
 # E_LanternC0
 @fx sl:1 curse:-1
@@ -2239,6 +2723,25 @@
 @fx hp:1 curse:1
 떡을 받아먹고, 폭죽 소리에 놀라는 척한다. 사람들 틈에 섞이면 당신도 그저 사람이다. 가슴의 글자만 아니면. 붉은 등불 아래서 그 글자가 조용히 웃는다.
 @return
+# E_LanternX
+@set tr=random(1,100)
+@goto #E_LanternZ if:tr<=35
+@fx sl:1 curse:-2
+검끝으로 등 줄 하나를 끊는다. 떨어진 붉은 등이 만수 휘장에 불을 옮긴다. "불이야!" 사람들이 물동이를 찾아 뛰는 사이 골목으로 빠진다.
+휘장의 글자 절반이 재가 된다. 다음 날 저자에는 하늘이 노했다는 말이 돈다.
+@return
+# E_LanternZ
+@fx sl:2 hp:-2 curse:-1
+등이 떨어지는 찰나, 등불 아래 선 교도 하나와 눈이 마주친다. "저놈이다!"
+불길과 군중 사이를 헤쳐 지붕으로 오른다. 기와 세 장을 밟아 깨고, 쫓아온 칼끝에 어깨를 내준다.
+휘장은 다 탔다. 어깨에서 흐른 피가 소매 끝에서 마른다.
+@return
+# E_LanternY
+@fx mn:-1 curse:-1 sl:-1
+떡 장수의 함지를 통째로 사서 골목 아이들에게 돌린다. 아이들이 떡을 문 채 소매를 잡아끈다.
+"나리, 붉은 끈들이 오늘 밤 객잔 쪽 등을 세 번 셌소."
+돌아가는 길을 아이 하나가 앞서 걷는다. 붉은 끈이 선 골목마다 먼저 돌아 나와 고개를 젓는다.
+@return
 
 # E_Wolfhowl
 밤. 멀리서 늑대 울음.
@@ -2246,6 +2749,8 @@
 아래층에서 하진무가 문빗장을 지르는 소리가 난다. 그도 안다.
 @choice "지붕에 올라 방향을 가늠한다" goto:#E_WolfhowlC0
 @choice "검을 머리맡에 두고 눈을 붙인다" goto:#E_WolfhowlC1
+@choice "아래층에 내려가 영감과 문을 지킨다" goto:#E_WolfhowlX
+@choice "창을 열고 늑대 울음을 되받는다" if:sl>=6 goto:#E_WolfhowlY
 @stop
 # E_WolfhowlC0
 @fx sl:1 curse:1
@@ -2255,6 +2760,18 @@
 # E_WolfhowlC1
 @fx hp:1
 눈을 붙인다. 울음소리가 꿈에 섞인다. 꿈에서 당신도 운다. 늑대처럼. 눈을 뜨니 새벽이다. 오늘은 오지 않았다. 머리맡의 검을 집어 든다.
+@return
+# E_WolfhowlX
+@fx curse:-1 hp:-1
+계단을 내려간다. 하진무가 빗장 앞 걸상에 주판을 무릎에 얹고 앉아 있다. 말없이 걸상 하나를 더 내온다.
+울음이 그칠 때까지 둘이 문을 등지고 앉는다. 울음 한 번에 영감이 주판알 하나를 튕긴다.
+새벽, 주판에 알이 열둘 올라가 있다. 하진무가 그것을 털어 내고 부엌으로 간다.
+@return
+# E_WolfhowlY
+@fx sl:2 hp:-1
+창을 열고 목을 젖힌다. 진기를 실어 길게 운다. 혈랑대가 서로를 부르던 그 높이로.
+북쪽의 울음이 뚝 끊긴다. 한참 뒤, 훨씬 먼 고개 너머에서 다시 운다. 제 무리에 없는 울음을 들었으니 머릿수부터 다시 셀 터다.
+아침까지 목이 갈라져 쇳소리가 난다.
 @return
 
 
@@ -2274,6 +2791,7 @@
 그가 말끝을 흐린다. 셈 밝은 영감이 셈을 못 끝낸다.
 @choice "편지를 쓴다" goto:#E_LastletterC0
 @choice "\"맡길 게 없소.\"" goto:#E_LastletterC1
+@choice "\"외상값부터 장부에 적어 두시오.\"" if:f_hajinfree>0 goto:#E_LastletterX
 @stop
 # E_LastletterC0
 @fx curse:-2 hp:1
@@ -2283,6 +2801,13 @@
 # E_LastletterC1
 @fx sl:1
 "그렇겠구려." 하진무가 붓을 거둔다. 맡길 것이 없으면 두고 갈 것도 없다. 하진무는 섭섭한 내색 없이 계단을 내려간다. 발소리가 여느 때보다 느리다.
+@return
+# E_LastletterX
+@fx hp:2 sl:-1
+하진무의 붓이 멎는다. 그가 품에서 장부를 꺼내 당신 방 빈칸을 편다.
+"얼마로 적으리까."
+"일 년 치. 이자까지."
+영감이 빈칸에 숫자를 적는다. 이번엔 붓이 망설이지 않는다. "돌아와서 갚으시오. 안 갚으면 쫓아가서 받으리다."
 @return
 
 # E_Mirror
@@ -2312,7 +2837,9 @@
 떠나는 장사치들이 물건을 헐값에 턴다. 솥, 이불, 검집, 약재. 사는 사람이 없어 시진마다 값이 떨어진다.
 약재 좌판에 자하근 한 뿌리가 굴러다닌다. 은자 한 냥.
 @choice "자하근을 산다 (은자 1)" if:mn>=1 goto:#E_LastmarketC0
-@choice "구경만 한다" goto:#E_LastmarketC1
+@choice "좌판 사이를 구경만 하고 지난다" goto:#E_LastmarketC1
+@choice "\"남은 걸 다 주시오.\" — 좌판째 산다 (은자 4)" if:mn>=4 goto:#E_LastmarketX
+@choice "떠나는 약재상의 수레를 밀어 준다" goto:#E_LastmarketY
 @stop
 # E_LastmarketC0
 @fx mn:-1 ng:2 curse:-1
@@ -2321,6 +2848,17 @@
 # E_LastmarketC1
 @fx curse:1
 구경만 한다. 해 질 녘 좌판이 걷히고 저자가 빈다. 북쪽에서 돌아오기 전에는 다음 장이 서지 않는다. 빈 거적 한 장이 바람에 굴러간다.
+@return
+# E_LastmarketX
+@fx mn:-4 hp:3 ng:1 curse:-2
+약재상이 눈을 끔뻑이더니 거적째 둘둘 말아 내민다. 자하근, 당귀, 마른 대추 한 되, 좀먹은 솜이불 한 채.
+"북쪽 가시오? 이불은 덤이오. 거기 겨울은 여기보다 한 달 이르오."
+며칠을 두고 달여 먹는다. 솜이불은 객잔 방 바닥에 깐다.
+@return
+# E_LastmarketY
+@fx hp:-1 sl:-1 ng:1
+진창에 바퀴가 빠진 수레 뒤에 어깨를 댄다. 약재상 부부가 앞에서 끈다. 고개 하나를 넘을 때까지.
+고갯마루에서 약재상이 자하근 한 뿌리를 던져 준다. "값은 받은 셈 치오." 수레가 남쪽으로 멀어지는 동안 손바닥의 진흙이 마른다.
 @return
 
 # E_Vigil
@@ -2346,6 +2884,7 @@
 @choice "뒷문으로 빠져 영감에게 맡긴다" goto:#E_SearchC0
 @choice "마당으로 내려선다" goto:#E_SearchC1
 @choice "은자를 던져 준다 (은자 6)" if:mn>=6 goto:#E_SearchC2
+@choice "죽립을 쓰고 손님인 척 국밥을 시킨다 (은자 1)" if:f_hat>0&&mn>=1 goto:#E_SearchX
 @stop
 # E_SearchC0
 @fx sl:-1 curse:1
@@ -2380,6 +2919,14 @@
 하진무가 당신을 본다. 다음 달에도 은자가 있겠느냐는 눈이다. 전낭을 쥐어 본다. 가볍다.
 @set f_searchpaid=1
 @return
+# E_SearchX
+@fx mn:-1 curse:-1
+@set f_searchhid=1
+죽립을 눌러쓰고 대문으로 들어선다. 평상에 앉아 점소이를 부른다. "국밥 한 그릇. 늘 묵던 방으로 올리시오."
+혈랑대 둘이 돌아본다. 챙 밑으로는 턱밖에 보이지 않는다. "네놈 방이냐."
+"약재 장사요. 일 년 치를 미리 치렀소. 들를 때마다 밥상이 올라가는 게 그 값이오."
+하진무가 빈칸에 붓을 댄다. 「약상(藥商). 선금.」 혈랑대가 장부를 덮고 간다. 국밥 값 한 냥을 영감은 끝내 돌려주지 않는다.
+@return
 
 ; ---------- 소아의 수배서 ----------
 # E_SoaPoster
@@ -2393,6 +2940,7 @@
 @choice "수배서를 뜯는다" goto:#E_SoaPosterC0
 @choice "\"떠나라. 운락은 이제 네가 있을 곳이 아니다.\"" goto:#E_SoaPosterC1
 @choice "나란히 서서 같이 읽는다" goto:#E_SoaPosterC2
+@choice "죽립을 벗어 소아에게 씌운다" if:f_hat>0 goto:#E_SoaPosterX
 @stop
 # E_SoaPosterC0
 손이 먼저 나간다. 종이 찢어지는 소리가 저자에 크게 울린다.
@@ -2420,6 +2968,17 @@
 @set aff=aff+1
 @set f_soaposter=1
 @return
+# E_SoaPosterX
+죽립을 벗어 소아 머리에 얹는다. 소아가 손을 들었다가, 쳐내지 않고 챙을 만진다.
+"……이걸로 외눈이 가려지나?"
+"반쯤은."
+"반이면 됐다." 챙이 내려가고, 그늘 아래로 입꼬리만 보인다.
+대신 당신 얼굴이 한낮의 저자에 드러난다. 벽에 붙은 그림과 같은 얼굴이.
+@fx curse:-2
+@set f_hat=0
+@set aff=aff+1
+@set f_soaposter=1
+@return
 
 ; ---------- 백초 할멈의 셈 ----------
 # E_HerbTax
@@ -2433,6 +2992,7 @@
 @choice "약값을 대신 치른다 (은자 8)" if:mn>=8 goto:#E_HerbTaxC0
 @choice "\"이 집은 내 단골이다.\"" goto:#E_HerbTaxC1
 @choice "약궤 밑으로 손을 넣는다" goto:#E_HerbTaxC2
+@choice "\"할멈, 내 맥을 저들에게도 짚어 보이시오.\"" if:f_herbpulse>0 goto:#E_HerbTaxX
 @stop
 # E_HerbTaxC0
 @fx mn:-8 curse:-1
@@ -2454,6 +3014,15 @@
 "자하근은 밑칸에 있다. 차로 끓일 거면."
 @fx curse:-2
 @set f_herbbond=1
+@return
+# E_HerbTaxX
+할멈이 눈을 가늘게 뜨더니 약연에서 손을 떼고 당신 손목을 잡는다. 징세조가 보는 앞에서.
+"맥이 둘이다. 하나는 이놈 것이 아니고." 할멈이 턱을 든다. "교주께서 산 채로 원하신다는 그 밭을 이 늙은이가 달여 먹여 살리는 중이니라. 약궤를 털어 가면 그 값은 누가 치르겠느냐."
+징세조 셋이 서로 얼굴을 본다. 우두머리가 문 앞의 패를 뜯어 들고 간다.
+그들이 간 뒤에도 할멈은 손목을 놓지 않는다. "네 입으로 네 값을 올렸구나, 이놈아."
+@fx curse:2 sl:-1
+@set f_herbfriend=1
+@set f_herbmarked=1
 @return
 
 ; ---------- 비무판 폐쇄 ----------

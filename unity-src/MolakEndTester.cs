@@ -4,119 +4,148 @@ using System.Linq;
 using Naninovel;
 using UnityEngine;
 
-/// <summary>엔딩 도달/밸런스 검증용 자동 플레이.
-/// MolakEndTester.Run(god:true)  — 능력치 보정 + 엔딩 지향 선택, 1회차에서 종료.
-/// MolakEndTester.Run(god:false, lives:N) — 무보정, 합리적 플레이어 정책으로 N회차까지 연속 플레이(상점 구매 포함). 엔딩 도달 시 종료.</summary>
+/// <summary>엔딩 도달/밸런스/경로 검증용 자동 플레이.
+/// Run(god)            — 능력치 보정 + 엔딩 지향, 1회차.
+/// Run(false, N)       — 무보정 '균형' 정책으로 N회차.
+/// Batch(policy, N, tag) — 정책별 N회차 연속 플레이(전역 진척 초기화 후). 결과는 Build/soak_results.csv 에 한 줄씩 기록.
+///   정책: 0 균형 · 1 공격(늘 싸움) · 2 신중(안전 위주) · 3 무작위(경로 탐색) · 4 장사꾼(은자·구매) · 5 사술(저주 이용)
+/// Drive(picks)        — 지정 선택 주행.</summary>
 public class MolakEndTester : MonoBehaviour
 {
     public static MolakEndTester I;
     public static System.Text.StringBuilder Log = new System.Text.StringBuilder();
     public static System.Text.StringBuilder Lives = new System.Text.StringBuilder();
     public static string Status = "idle";
-    public bool god = true; public int maxLives = 1; public int lives = 0;
+    public static string ResultPath = @"C:\Users\sjf1t\RuinedSword\Build\soak_results.csv";
+    public static HashSet<string> ChoiceSeen = new HashSet<string>();
+    public bool god = true; public int maxLives = 1; public int lives = 0; public int policy = 0; public string tag = "";
     public bool done;
     float lastProgress; int lastIdx = -1; float lastDay = -1; string lastScript = ""; bool inOver;
+    int choicesThisLife; int duelsThisLife; int duelWinsThisLife; float lastDuelWin = -1f;
     static readonly string[] PreferGod = { "혈쇄문의 초대", "비무판", "정면으로 벤다", "산으로", "들어간다", "응한다", "벤다", "싸운다", "막는다" };
-    static readonly string[] Avoid = { "물러선다", "처음 화면", "도망", "포기" };
-    static readonly string[] ShopPref = { "봉인 문양", "잔류 진기", "검흔", "단련된 육신", "전생의 기억", "묻어둔 은자", "다 시 그 날 로" };
+    static readonly string[] Avoid = { "처음 화면" };
+    static readonly string[] ShopPref = { "봉인 문양", "잔류 진기", "검흔", "단련된 육신", "청심차", "구르고", "빈칸 방값", "전생의 기억", "묻어둔 은자", "다 시 그 날 로" };
+    static readonly string[] Violent = { "벤다", "검을 뽑", "맞선", "덤빈", "칼", "친다", "꺾는다", "베어", "찌른다", "공터로" };
+    static readonly string[] Careful = { "물러", "지나", "피한", "숨", "돌아", "모른 척", "고개를 숙", "쉰다", "거절", "놓아준다", "기다린다" };
 
     public static void Run (bool godMode) { Run(godMode, 1); }
     public static void Run (bool godMode, int maxLives)
     {
-        if (I == null) { var go = new GameObject("MolakEndTester"); DontDestroyOnLoad(go); I = go.AddComponent<MolakEndTester>(); }
-        I.god = godMode; I.maxLives = maxLives; I.lives = 0; I.done = false; I.inOver = false; Log.Length = 0; Lives.Length = 0; Status = "running"; I.StopAllCoroutines(); I.StartCoroutine(I.Loop());
+        Ensure(); I.god = godMode; I.maxLives = maxLives; I.policy = 0; I.tag = "run"; I.Begin();
     }
+    public static void Batch (int policy, int lives, string tag)
+    {
+        Ensure(); I.god = false; I.maxLives = lives; I.policy = policy; I.tag = tag; I.Begin();
+    }
+    static void Ensure ()
+    {
+        if (I == null) { var go = new GameObject("MolakEndTester"); DontDestroyOnLoad(go); I = go.AddComponent<MolakEndTester>(); }
+    }
+    void Begin ()
+    {
+        lives = 0; done = false; inOver = false; Log.Length = 0; Lives.Length = 0; Status = "running"; ResetLifeCounters();
+        StopAllCoroutines(); StartCoroutine(Loop());
+    }
+    void ResetLifeCounters () { choicesThisLife = 0; duelsThisLife = 0; duelWinsThisLife = 0; }
 
     static int Find (string[] labels, string s) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(s)) return i; return -1; }
+    static int FindAny (string[] labels, string[] keys) { for (int i = 0; i < labels.Length; i++) foreach (var k in keys) if (labels[i].Contains(k)) return i; return -1; }
+    static float EstOdds () { float o = 0; for (int i = 0; i < 3; i++) o += MolakDuel.Odds(MolakDuel.MakeFoe("any"), 0); return o / 3f; }
+    static int Rnd (int n) { return Random.Range(0, n); }
 
-    int Policy (string[] labels)
+    int Choose (string[] labels)
     {
-        // 상점
-        if (labels.Any(l => l.Contains("다 시 그 날 로")))
-        { foreach (var s in ShopPref) { int k = Find(labels, s); if (k >= 0) return k; } }
+        bool shop = labels.Any(l => l.Contains("다 시 그 날 로"));
+        float hp = MolakStats.Get("hp"), hpm = Mathf.Max(1, MolakStats.Get("hpmax")), mn = MolakStats.Get("mn"), curse = MolakStats.Get("curse");
+        float sw = MolakStats.Get("sw"), ng = MolakStats.Get("ng");
+        if (shop)
+        {
+            if (policy == 3) { int k0 = Rnd(labels.Length); return k0; }
+            foreach (var s in ShopPref) { int k = Find(labels, s); if (k >= 0) return k; }
+        }
         // 비무 중 전술
         if (Find(labels, "정면으로 벤다") >= 0)
         {
             float odds = MolakStats.Get("odds10");
-            if (odds <= 2 && Find(labels, "물러선다") >= 0) return Find(labels, "물러선다");
-            if (Find(labels, "살기를 실어") >= 0 && odds <= 5) return Find(labels, "살기를 실어");
-            return Find(labels, "정면으로 벤다");
+            int curseOpt = FindAny(labels, new[] { "사술" });
+            int killer = Find(labels, "살기를 실어");
+            int back = Find(labels, "물러선다");
+            switch (policy)
+            {
+                case 1: if (killer >= 0 && odds <= 6) return killer; return Find(labels, "정면으로 벤다");
+                case 2: if (odds <= 4 && back >= 0) return back; return Find(labels, "정면으로 벤다");
+                case 3: return Rnd(labels.Length);
+                case 5: if (curseOpt >= 0) return curseOpt; return Find(labels, "정면으로 벤다");
+                default:
+                    if (odds <= 2 && back >= 0) return back;
+                    if (killer >= 0 && odds <= 5) return killer;
+                    return Find(labels, "정면으로 벤다");
+            }
         }
         // 밤 행동
         if (Find(labels, "몸을 쉰다") >= 0 && Find(labels, "마당에서 검을 간다") >= 0)
         {
-            float hp = MolakStats.Get("hp"), hpm = Mathf.Max(1, MolakStats.Get("hpmax")), mn = MolakStats.Get("mn"), curse = MolakStats.Get("curse");
-            float sw = MolakStats.Get("sw"), ng = MolakStats.Get("ng");
-            int wolf = Find(labels, "혈쇄문의 초대");
-            if (wolf >= 0 && hp >= hpm * 0.7f) return wolf;
-            if (hp <= hpm * 0.4f) return Find(labels, "몸을 쉰다");
-            if (mn < 5 && Find(labels, "저자로 나간다") >= 0) return Find(labels, "저자로 나간다");
-            int duel = Find(labels, "비무판");
-            if (duel >= 0 && hp >= hpm * 0.55f)
+            int wolf = Find(labels, "혈쇄문의 초대"), duel = Find(labels, "비무판"), backRing = Find(labels, "사설 비무판");
+            int rest = Find(labels, "몸을 쉰다"), town = Find(labels, "저자로 나간다"), med = Find(labels, "가부좌"), train = Find(labels, "마당에서 검을 간다");
+            int leave = Find(labels, "소아와 떠난다");
+            if (policy == 3) return Rnd(labels.Length);
+            if (hp <= hpm * 0.35f) return rest;
+            if (mn < 4 && town >= 0) return town;
+            switch (policy)
             {
-                float o = 0; for (int i = 0; i < 3; i++) o += MolakDuel.Odds(MolakDuel.MakeFoe("any"), 0); o /= 3f;
-                if (o >= 60f) return duel;
+                case 1:
+                    if (wolf >= 0) return wolf;
+                    if (backRing >= 0) return backRing;
+                    if (duel >= 0 && hp >= hpm * 0.45f) return duel;
+                    return train;
+                case 2:
+                    if (wolf >= 0 && hp >= hpm * 0.9f && EstOdds() >= 75f) return wolf;
+                    if (duel >= 0 && hp >= hpm * 0.7f && EstOdds() >= 72f) return duel;
+                    if (hp < hpm * 0.6f) return rest;
+                    if (curse < 50f && med >= 0 && ng <= sw) return med;
+                    return train;
+                case 4:
+                    if (mn < 20 && town >= 0 && Rnd(2) == 0) return town;
+                    if (duel >= 0 && hp >= hpm * 0.6f && EstOdds() >= 60f) return duel;
+                    return train;
+                case 5:
+                    if (wolf >= 0 && hp >= hpm * 0.6f) return wolf;
+                    if (duel >= 0 && hp >= hpm * 0.5f) return duel;
+                    if (med >= 0) return med;
+                    return train;
+                default:
+                    if (leave >= 0 && Rnd(6) == 0) return leave;
+                    if (wolf >= 0 && hp >= hpm * 0.7f) return wolf;
+                    if (duel >= 0 && hp >= hpm * 0.55f && EstOdds() >= 60f) return duel;
+                    if (curse < 60f && med >= 0 && ng <= sw + 4) return med;
+                    return train;
             }
-            if (curse < 60f && ng <= sw + 4) return Find(labels, "가부좌");
-            return Find(labels, "마당에서 검을 간다");
         }
-        if (Find(labels, "날품을 판다") >= 0) return Find(labels, "날품을 판다");
+        if (Find(labels, "날품을 판다") >= 0 && policy != 3 && policy != 4) return Find(labels, "날품을 판다");
+        // 일반 사건
         var ok = Enumerable.Range(0, labels.Length).Where(i => !Avoid.Any(a => labels[i].Contains(a))).ToArray();
-        return ok.Length > 0 ? ok[Random.Range(0, ok.Length)] : Random.Range(0, labels.Length);
+        if (ok.Length == 0) return Rnd(labels.Length);
+        switch (policy)
+        {
+            case 1: { int v = FindAny(labels, Violent); if (v >= 0 && Rnd(4) > 0) return v; break; }
+            case 2: { int c = FindAny(labels, Careful); if (c >= 0 && Rnd(4) > 0) return c; break; }
+            case 4: { var paid = ok.Where(i => labels[i].Contains("(은자")).ToArray(); if (paid.Length > 0 && mn >= 8 && Rnd(3) > 0) return paid[Rnd(paid.Length)]; break; }
+            case 5: { int c = FindAny(labels, new[] { "사술", "문양", "저주" }); if (c >= 0 && Rnd(3) > 0) return c; break; }
+        }
+        return ok[Rnd(ok.Length)];
     }
 
-    // ---- 지정 경로 주행: picks 순서대로 선택지 부분일치 선택, 없으면 정책. 상점(MolakOver 대기)에서 종료 ----
-    public static string[] Picks = new string[0]; public static int PickIdx;
-    public static void Drive (string[] picks)
+    void WriteResult (string line)
     {
-        if (I == null) { var go = new GameObject("MolakEndTester"); DontDestroyOnLoad(go); I = go.AddComponent<MolakEndTester>(); }
-        Picks = picks; PickIdx = 0; I.god = false; I.maxLives = 1; I.lives = 0; I.done = false; I.inOver = false; Log.Length = 0; Lives.Length = 0; Status = "driving"; I.StopAllCoroutines(); I.StartCoroutine(I.DriveLoop());
+        try { System.IO.File.AppendAllText(ResultPath, line + "\n", new System.Text.UTF8Encoding(false)); } catch { }
     }
-    IEnumerator DriveLoop ()
+    string LifeRow (string outcome, string cause)
     {
-        var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.time; lastScript = "";
-        while (!done)
-        {
-            yield return new WaitForSeconds(0.15f);
-            var tr = sp.MainTrack;
-            float day = MolakStats.Get("day");
-            string path = tr.PlayedScript != null ? tr.PlayedScript.Path : "-";
-            if (path != lastScript) { Log.AppendLine("d" + day + " -> script " + path); lastScript = path; }
-            if (tr.PlayedIndex != lastIdx) { lastProgress = Time.time; lastIdx = tr.PlayedIndex; }
-            string dc = "";
-            try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
-            sp.SetAutoPlay(true); sp.SetSkip(true);
-            if (tr.Playing) continue;
-            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
-                .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
-            if (btns.Length > 0)
-            {
-                var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
-                if (path == "MolakOver" && labels.Any(l => l.Contains("다 시 그 날 로"))) { Log.AppendLine("SHOP reached cause=" + dc + " labels=" + string.Join(" | ", labels)); Status = "shop:" + dc; done = true; yield break; }
-                int k = -1;
-                bool matched = false;
-                if (PickIdx < Picks.Length) { k = Find(labels, Picks[PickIdx]); matched = k >= 0; }
-                if (k < 0) k = Policy(labels);
-                k = Mathf.Clamp(k, 0, btns.Length - 1);
-                Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] choice: " + labels[k] + "   (of " + btns.Length + ")");
-                btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
-                float t0 = Time.time;
-                while (!tr.Playing && Time.time - t0 < 2f) yield return null;
-                if (tr.Playing && matched) PickIdx++;
-                if (tr.Playing)
-                    foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                        if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
-                sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.time;
-            }
-            if (Time.time - lastProgress > 15f)
-            {
-                var cmd = tr.PlayedCommand;
-                Log.AppendLine("STALL at [" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day + " cause=" + dc);
-                Status = "stall"; done = true; yield break;
-            }
-        }
+        int seen = 0; try { foreach (var v in Engine.GetService<ICustomVariableManager>().Variables) if (v.Name.StartsWith("seen_") && v.Value.Type == CustomVariableValueType.Numeric && v.Value.Number > 0) seen++; } catch { }
+        return string.Join(",", new[] { tag, policy.ToString(), (lives).ToString(), outcome, cause, MolakStats.Get("day").ToString("0"), MolakStats.Get("rank").ToString("0"),
+            MolakStats.Get("sw").ToString("0"), MolakStats.Get("ng").ToString("0"), MolakStats.Get("hp").ToString("0"), MolakStats.Get("hpmax").ToString("0"),
+            MolakStats.Get("mn").ToString("0"), MolakStats.Get("curse").ToString("0"), MolakStats.Get("sl").ToString("0"), seen.ToString(), choicesThisLife.ToString(),
+            duelsThisLife.ToString(), duelWinsThisLife.ToString(), MolakStats.Get("g_pts").ToString("0") });
     }
 
     IEnumerator Loop ()
@@ -124,15 +153,18 @@ public class MolakEndTester : MonoBehaviour
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         sp.SetAutoPlay(true); sp.SetSkip(true);
-        lastProgress = Time.time;
+        lastProgress = Time.realtimeSinceStartup;
         while (!done)
         {
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSecondsRealtime(0.08f);
             var tr = sp.MainTrack;
             float day = MolakStats.Get("day");
             string path = tr.PlayedScript != null ? tr.PlayedScript.Path : "-";
-            if (path != lastScript) { Log.AppendLine("d" + day + " rank=" + MolakStats.Get("rank") + " -> script " + path); lastScript = path; }
-            if (tr.PlayedIndex != lastIdx || day != lastDay) { lastProgress = Time.time; lastIdx = tr.PlayedIndex; lastDay = day; }
+            if (path != lastScript) { lastScript = path; }
+            if (tr.PlayedIndex != lastIdx || day != lastDay) { lastProgress = Time.realtimeSinceStartup; lastIdx = tr.PlayedIndex; lastDay = day; }
+            // 비무 집계
+            float dw = MolakStats.Get("duelwin");
+            if (path != "MolakDuel" && lastDuelWin >= 0f) { duelsThisLife++; if (dw > 0) duelWinsThisLife++; lastDuelWin = -1f; }
             if (god && day >= 1)
             {
                 MolakStats.Set("hp", Mathf.Max(MolakStats.Get("hp"), MolakStats.Get("hpmax") - 1));
@@ -143,12 +175,14 @@ public class MolakEndTester : MonoBehaviour
             }
             string dc = "";
             try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
-            if (dc == "등극") { Log.AppendLine("ENDING REACHED day=" + day + " rank=" + MolakStats.Get("rank")); Lives.AppendLine("life" + (lives + 1) + ": ENDING day=" + day + " sw=" + MolakStats.Get("sw") + " ng=" + MolakStats.Get("ng")); Status = "ending"; done = true; yield break; }
             if (path == "MolakOver" && day >= 1 && !inOver)
             {
                 inOver = true; lives++;
-                Lives.AppendLine("life" + lives + ": day=" + day + " cause=" + dc + " rank=" + MolakStats.Get("rank") + " sw=" + MolakStats.Get("sw") + " ng=" + MolakStats.Get("ng") + " curse=" + Mathf.Round(MolakStats.Get("curse")) + " pts=" + MolakStats.Get("g_pts"));
-                if (lives >= maxLives) { Status = "death:" + dc; done = true; yield break; }
+                bool clear = dc == "등극" || dc == "성사" || dc == "순검";
+                var row = LifeRow(clear ? "END" : "DEAD", dc);
+                Lives.AppendLine(row); WriteResult(row);
+                if (lives >= maxLives || (clear && tag == "run")) { Status = (clear ? "ending:" : "death:") + dc; done = true; yield break; }
+                ResetLifeCounters();
             }
             if (path != "MolakOver") inOver = false;
             sp.SetAutoPlay(true); sp.SetSkip(true);
@@ -160,23 +194,81 @@ public class MolakEndTester : MonoBehaviour
                 var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
                 int k = -1;
                 if (god) { foreach (var pf in PreferGod) { for (int i = 0; i < btns.Length; i++) if (labels[i].Contains(pf)) { k = i; break; } if (k >= 0) break; } }
-                if (k < 0) k = Policy(labels);
+                if (k < 0) k = Choose(labels);
                 k = Mathf.Clamp(k, 0, btns.Length - 1);
-                var pick = btns[k];
-                Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] choice: " + labels[k]);
-                pick.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
-                float t0 = Time.time;
-                while (!tr.Playing && Time.time - t0 < 2f) yield return null;
+                ChoiceSeen.Add(path + "|" + labels[k]);
+                if (Find(labels, "정면으로 벤다") >= 0) lastDuelWin = 0f;
+                choicesThisLife++;
+                Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] " + labels[k]);
+                if (Log.Length > 200000) Log.Remove(0, 100000);
+                btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+                float t0 = Time.realtimeSinceStartup;
+                while (!tr.Playing && Time.realtimeSinceStartup - t0 < 2f) yield return null;
                 if (tr.Playing)
                     foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
                 sp.SetAutoPlay(true); sp.SetSkip(true);
-                lastProgress = Time.time;
+                lastProgress = Time.realtimeSinceStartup;
             }
-            if (Time.time - lastProgress > 15f)
+            if (Time.realtimeSinceStartup - lastProgress > 15f)
             {
                 var cmd = tr.PlayedCommand;
-                Log.AppendLine("STALL at [" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day);
+                string where = "[" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day;
+                Log.AppendLine("STALL at " + where);
+                WriteResult(tag + "," + policy + "," + lives + ",STALL," + where.Replace(",", ";"));
+                Status = "stall"; done = true; yield break;
+            }
+        }
+    }
+
+    // ---- 지정 경로 주행 ----
+    public static string[] Picks = new string[0]; public static int PickIdx;
+    public static void Drive (string[] picks)
+    {
+        Ensure();
+        Picks = picks; PickIdx = 0; I.god = false; I.maxLives = 1; I.lives = 0; I.done = false; I.inOver = false; Log.Length = 0; Lives.Length = 0; Status = "driving"; I.StopAllCoroutines(); I.StartCoroutine(I.DriveLoop());
+    }
+    IEnumerator DriveLoop ()
+    {
+        var sp = Engine.GetServiceOrErr<IScriptPlayer>();
+        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
+        sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.realtimeSinceStartup; lastScript = "";
+        while (!done)
+        {
+            yield return new WaitForSecondsRealtime(0.1f);
+            var tr = sp.MainTrack;
+            float day = MolakStats.Get("day");
+            string path = tr.PlayedScript != null ? tr.PlayedScript.Path : "-";
+            if (path != lastScript) { Log.AppendLine("d" + day + " -> script " + path); lastScript = path; }
+            if (tr.PlayedIndex != lastIdx) { lastProgress = Time.realtimeSinceStartup; lastIdx = tr.PlayedIndex; }
+            string dc = "";
+            try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
+            sp.SetAutoPlay(true); sp.SetSkip(true);
+            if (tr.Playing) continue;
+            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+            if (btns.Length > 0)
+            {
+                var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
+                if (path == "MolakOver" && labels.Any(l => l.Contains("다 시 그 날 로"))) { Log.AppendLine("SHOP reached cause=" + dc); Status = "shop:" + dc; done = true; yield break; }
+                int k = -1; bool matched = false;
+                if (PickIdx < Picks.Length) { k = Find(labels, Picks[PickIdx]); matched = k >= 0; }
+                if (k < 0) k = Choose(labels);
+                k = Mathf.Clamp(k, 0, btns.Length - 1);
+                Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] choice: " + labels[k] + "   (of " + btns.Length + ")");
+                btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+                float t0 = Time.realtimeSinceStartup;
+                while (!tr.Playing && Time.realtimeSinceStartup - t0 < 2f) yield return null;
+                if (tr.Playing && matched) PickIdx++;
+                if (tr.Playing)
+                    foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                        if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
+                sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.realtimeSinceStartup;
+            }
+            if (Time.realtimeSinceStartup - lastProgress > 15f)
+            {
+                var cmd = tr.PlayedCommand;
+                Log.AppendLine("STALL at [" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day + " cause=" + dc);
                 Status = "stall"; done = true; yield break;
             }
         }
