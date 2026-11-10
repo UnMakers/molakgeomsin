@@ -289,7 +289,7 @@ public class MolakTitle : MonoBehaviour
 
         // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
         GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
-        float ih = 96*u, n = 5;   // 손가락 한 마디(약 9mm) 이상
+        float ih = 96*u, n = 4;   // 손가락 한 마디(약 9mm) 이상 · 나가기는 폰의 뒤로 가기로
         float my0 = Mathf.Min(h * 0.55f, h - 200*u - n * ih);
         float rx = w - 56*u, mw = Mathf.Min(w * 0.62f, 640*u);
         Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.35f : 0.5f));
@@ -311,7 +311,6 @@ public class MolakTitle : MonoBehaviour
             var stg = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
             if (stg != null) stg.ChangeVisibility(true, 0.15f);
         }
-        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, ih), "나가기", !busy, u, t)) Application.Quit();
 
         // ---- 발치: 지난 생의 말로 · 회귀 기록 ----
         // 검객의 물그림자를 피해 오른쪽 아래, 메뉴 바로 밑 안개 자락에 둔다
