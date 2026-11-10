@@ -754,6 +754,7 @@
 @choice "객잔으로 돌아간다" goto:#NightEnd
 @stop
 # NLoan
+@art scene:pawn
 전당포 뒷방. 기름 먹은 등잔 아래 배가 나온 사내가 장부를 넘긴다. 고리대 왕삼이다.
 "열닷 냥. 이레 뒤에 스물닷 냥. 못 갚으면 갚을 만한 것으로 받소. 손가락이든, 객잔 늙은이 셈판이든."
 @goto #NLoanC if:g_end_chae<1
@@ -763,6 +764,7 @@
 @choice "\"됐소.\" — 일어선다" goto:#NightEnd
 @stop
 # NLedger
+@art scene:pawn
 <color=#9A70C4>지난 생, 저 장부가 어느 궤짝 셋째 칸에 드는지 보았다.</color> 피 묻은 손가락으로 이름에 줄을 긋던 그 장부다.
 삼경. 전당포 뒷담은 낮다. 기름 먹은 등잔이 꺼져 있다.
 @set tr=random(1,100)

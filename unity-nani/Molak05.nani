@@ -430,6 +430,7 @@
 @stop
 # Amh2FreeGo
 @page
+@art scene:cellar
 암향루 지하. 향이 짙어서 눈이 맵다. 향고 옆방의 문은 바깥에서만 잠긴다.
 문지기 둘이 반각보다 일찍 돌아온다. 루주가 아는 것이다.
 @set dkind="assassin"

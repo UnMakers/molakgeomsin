@@ -42,11 +42,12 @@ public class MolakArt : MonoBehaviour
         if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetScene(null, ""); return; }
         if (!SceneAlias.TryGetValue(id, out key)) key = id;
         if (inst.sceneId == key) return;
-        if (key == "duel") { prevScene = inst.sceneId; MolakSfx.Draw(); } else prevScene = null;
-        if (key != "duel") MolakFlow.Break();
+        bool isDuel = key.StartsWith("duel");   // duel, duelbridge … 비무 판의 변형
+        if (isDuel) { if (!inst.sceneId.StartsWith("duel")) { prevScene = inst.sceneId; MolakSfx.Draw(); } } else prevScene = null;
+        if (!isDuel) MolakFlow.Break();
         var sp = Load("MolakArt/scene_" + key);
         inst.SetScene(sp, key);
-        MolakBgm.Mood(key == "duel" ? "duel" : (key == "raid" || key == "bloodroof") ? "raid" : "day");
+        MolakBgm.Mood(isDuel ? "duel" : (key == "raid" || key == "bloodroof") ? "raid" : "day");
     }
 
     public static void Char (string id)
@@ -62,7 +63,7 @@ public class MolakArt : MonoBehaviour
     /// <summary>결투 장면 종료 후 직전 장면으로 복귀</summary>
     public static void EndDuel ()
     {
-        if (inst == null || inst.sceneId != "duel") return;
+        if (inst == null || !inst.sceneId.StartsWith("duel")) return;
         if (string.IsNullOrEmpty(prevScene)) inst.SetScene(null, ""); else { var sp = Load("MolakArt/scene_" + prevScene); inst.SetScene(sp, prevScene); }
         MolakBgm.Mood(prevScene == "raid" || prevScene == "bloodroof" ? "raid" : "day");
         prevScene = null;

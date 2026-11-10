@@ -53,10 +53,12 @@ public class MolakEndTester : MonoBehaviour
     }
     void ResetLifeCounters () { choicesThisLife = 0; duelsThisLife = 0; duelWinsThisLife = 0; }
 
+    static readonly string[] TruePath = { "합벽", "석함", "제단", "구결", "검보", "소아", "그녀", "지붕", "장부를 편다", "사당", "적운", "운검", "전생의 기억" };
     static int Find (string[] labels, string s) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(s)) return i; return -1; }
     static int FindAny (string[] labels, string[] keys) { for (int i = 0; i < labels.Length; i++) foreach (var k in keys) if (labels[i].Contains(k)) return i; return -1; }
     static float EstOdds () { float o = 0; for (int i = 0; i < 3; i++) o += MolakDuel.Odds(MolakDuel.MakeFoe("any"), 0); return o / 3f; }
     static int Rnd (int n) { return Random.Range(0, n); }
+    static string G (string n) { try { return MolakStats.Get(n).ToString("0"); } catch { return "-"; } }
 
     string curPath = "";
     int Choose (string[] labels)
@@ -94,7 +96,7 @@ public class MolakEndTester : MonoBehaviour
             switch (policy)
             {
                 case 1: if (killer >= 0 && odds <= 6) return killer; return Find(labels, "정면으로 벤다");
-                case 2: if (odds <= 4 && back >= 0) return back; return Find(labels, "정면으로 벤다");
+                case 2: case 7: if (odds <= 4 && back >= 0) return back; return Find(labels, "정면으로 벤다");
                 case 3: return Rnd(labels.Length);
                 case 5: if (curseOpt >= 0) return curseOpt; return Find(labels, "정면으로 벤다");
                 default:
@@ -125,6 +127,13 @@ public class MolakEndTester : MonoBehaviour
                     if (hp < hpm * 0.6f) return rest;
                     if (curse < 50f && med >= 0 && ng <= sw) return med;
                     return train;
+                case 7:   // 진엔딩을 노리는 자: 오래 살아남고(혈랑대의 밤 42일+), 소아 곁에 남는다
+                    if (wolf >= 0 && hp >= hpm * 0.9f && EstOdds() >= 80f) return wolf;
+                    if (duel >= 0 && hp >= hpm * 0.75f && EstOdds() >= 70f) return duel;
+                    if (hp < hpm * 0.65f) return rest;
+                    if (curse >= 45f && med >= 0) return med;
+                    if (med >= 0 && ng + 3 < sw) return med;
+                    return train;
                 case 4:
                     if (mn < 20 && town >= 0 && Rnd(2) == 0) return town;
                     if (duel >= 0 && hp >= hpm * 0.6f && EstOdds() >= 60f) return duel;
@@ -145,7 +154,15 @@ public class MolakEndTester : MonoBehaviour
         if (Find(labels, "날품을 판다") >= 0 && policy != 3 && policy != 4) return Find(labels, "날품을 판다");
         // 일반 사건
         var ok = Enumerable.Range(0, labels.Length).Where(i => !Avoid.Any(a => labels[i].Contains(a))).ToArray();
-        if (policy == 6) { var ok2 = ok.Where(i => !DeathChoices.Contains(curPath + "|" + labels[i])).ToArray(); if (ok2.Length > 0) ok = ok2; }
+        if (policy == 6 || policy == 7) { var ok2 = ok.Where(i => !DeathChoices.Contains(curPath + "|" + labels[i])).ToArray(); if (ok2.Length > 0) ok = ok2; }
+        if (policy == 7)
+        {
+            // 떠나는 결말(원행·도주)은 피하고, 진엔딩 사슬의 낱말과 전생의 앎으로 열린 선택지를 고른다
+            var stay = ok.Where(i => !labels[i].Contains("소아와 떠난다") && !labels[i].Contains("떠나자")).ToArray(); if (stay.Length > 0) ok = stay;
+            var tp = ok.Where(i => TruePath.Any(k => labels[i].Contains(k))).ToArray();
+            if (tp.Length > 0 && Rnd(6) > 0) return tp[Rnd(tp.Length)];
+            int c7 = FindAny(labels, Careful); if (c7 >= 0 && ok.Contains(c7) && Rnd(3) > 0) return c7;
+        }
         if (ok.Length == 0) return Rnd(labels.Length);
         switch (policy)
         {
@@ -167,7 +184,8 @@ public class MolakEndTester : MonoBehaviour
         return string.Join(",", new[] { tag, policy.ToString(), (lives).ToString(), outcome, cause, MolakStats.Get("day").ToString("0"), MolakStats.Get("rank").ToString("0"),
             MolakStats.Get("sw").ToString("0"), MolakStats.Get("ng").ToString("0"), MolakStats.Get("hp").ToString("0"), MolakStats.Get("hpmax").ToString("0"),
             MolakStats.Get("mn").ToString("0"), MolakStats.Get("curse").ToString("0"), MolakStats.Get("sl").ToString("0"), seen.ToString(), choicesThisLife.ToString(),
-            duelsThisLife.ToString(), duelWinsThisLife.ToString(), MolakStats.Get("g_pts").ToString("0") });
+            duelsThisLife.ToString(), duelWinsThisLife.ToString(), MolakStats.Get("g_pts").ToString("0"),
+            "rv" + G("g_redverse") + "hb" + G("f_hapbyeok") + "hd" + G("g_hapdone") + "sb" + G("f_soabond") });
     }
 
     IEnumerator Loop ()

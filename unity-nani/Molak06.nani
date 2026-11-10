@@ -4,7 +4,7 @@
 
 ; --- S1: 밤의 대작 (6일+) ---
 # SoaN1
-@art char:soa
+@art char:soa_smile
 밤 수련을 마친 마당. 소아가 담 위에 앉아 술병을 흔든다.
 "객잔 술이다. 하진무 영감 몰래 들고 온 건 아니다. 값은 치렀지."
 그녀가 병을 던진다. 받고 보니 벌써 반이 비었다.
@@ -68,7 +68,7 @@
 ; --- S3: 비 오는 밤 (20일+) ---
 # SoaN3
 @art scene:rain
-@art char:soa
+@art char:soa_grief
 @vfx kind:rain
 비가 온다. 처마가 운다.
 복도 끝, 소아의 방문이 반 뼘 열려 있다. 등불도 없이, 그녀가 벽에 등을 대고 앉아 있다.
@@ -116,7 +116,7 @@
 
 ; --- S4: 사슬은 그녀를 노린다 (25일+) ---
 # SoaN4
-@art char:soa
+@art char:soa_fierce
 저자에서 돌아오는 소아를, 골목 셋이 막아선다.
 사슬. 혈쇄문이다. '운검류 수집' 명단에 소아의 이름도 올라 있었다.
 "적운의 마지막 눈이군. 문주께서 찾으신다."
@@ -268,7 +268,7 @@
 
 ; --- S7: 장부의 첫 줄 (30일+, 호감 3 이상) ---
 # SoaN7
-@art char:soa
+@art char:soa_grief
 밤. 방문을 열자 소아가 탁자에 앉아 있다. 탁자 위에 낡은 장부 한 권. 적운의 글씨다.
 첫 장, 첫 줄.
 「청운의 막내. 가슴에 사(邪)가 심겼거든, 익기 전에 네 손으로 베어라. — 사부」
@@ -384,7 +384,7 @@
 # SoaN8
 @scene id:night
 @art scene:raid
-@art char:soa
+@art char:soa_fierce
 @goto #SoaN8Re if:g_soadied>0||g_know_raid>0
 @set g_know_raid=1
 삼경(三更). 기와 위로 발소리가 지나간다. 하나가 아니다.
@@ -1213,7 +1213,7 @@
 @goto #LeaveTail
 # LeaveTail
 @scene id:crossroad
-@art char:soa
+@art char:soa_smile
 남쪽으로 열흘. 스무날. 깃발은 어디에나 있었다. 다만, 작아졌다.
 소아는 길에서 말이 늘었다. 하루에 세 마디. 그중 한 마디는 가끔, 당신 이야기였다.
 @page
