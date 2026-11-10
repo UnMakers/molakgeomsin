@@ -213,26 +213,30 @@ public class MolakEndTester : MonoBehaviour
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
-            if (btns.Length > 0 && btns.Any(b => clickedSets.Contains(b.GetInstanceID()))) { DoubleSkips++; continue; }
             if (btns.Length > 0)
             {
-                if (clickedSets.Count > 20000) clickedSets.Clear();
-                foreach (var b in btns) clickedSets.Add(b.GetInstanceID());
                 var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
                 int k = -1;
                 if (god) { foreach (var pf in PreferGod) { for (int i = 0; i < btns.Length; i++) if (labels[i].Contains(pf)) { k = i; break; } if (k >= 0) break; } }
                 curPath = path;
                 if (k < 0) k = Choose(labels);
                 k = Mathf.Clamp(k, 0, btns.Length - 1);
+                int at = tr.PlayedIndex;
+                // 카드가 막 떠오른 직후의 첫 탭은 오조작 방지로 무시될 수 있다 → 같은 카드를 다시 누른다
+                float t0 = Time.realtimeSinceStartup; int tries = 0;
+                while (!tr.Playing && Time.realtimeSinceStartup - t0 < 3f)
+                {
+                    if (btns[k] == null || !btns[k].isActiveAndEnabled) break;
+                    if (tries == 0 || Time.realtimeSinceStartup - t0 > 0.5f * tries) { btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke(); tries++; }
+                    yield return null;
+                }
+                if (!tr.Playing) { DoubleSkips++; continue; }
                 ChoiceSeen.Add(path + "|" + labels[k]);
                 if (path != "MolakDuel" && path != "MolakOver" && Find(labels, "몸을 쉰다") < 0) lastEventChoice = path + "|" + labels[k];
                 if (Find(labels, "정면으로 벤다") >= 0) lastDuelWin = 0f;
                 choicesThisLife++;
-                Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] " + labels[k]);
+                Log.AppendLine("d" + day + " [" + path + "#" + at + "] " + labels[k] + (tries > 1 ? "  (x" + tries + ")" : ""));
                 if (Log.Length > 200000) Log.Remove(0, 100000);
-                btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
-                float t0 = Time.realtimeSinceStartup;
-                while (!tr.Playing && Time.realtimeSinceStartup - t0 < 2f) yield return null;
                 if (tr.Playing)
                     foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
