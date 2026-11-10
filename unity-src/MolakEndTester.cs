@@ -20,6 +20,8 @@ public class MolakEndTester : MonoBehaviour
     public static HashSet<string> ChoiceSeen = new HashSet<string>();
     public static HashSet<string> DeathChoices = new HashSet<string>();
     string lastEventChoice = "";
+    static readonly HashSet<int> clickedSets = new HashSet<int>();   // 이미 고른 선택지 묶음(버튼 인스턴스) — 같은 묶음을 두 번 누르지 않는다
+    public static int DoubleSkips;
     public bool god = true; public int maxLives = 1; public int lives = 0; public int policy = 0; public string tag = "";
     public bool done;
     float lastProgress; int lastIdx = -1; float lastDay = -1; string lastScript = ""; bool inOver;
@@ -211,8 +213,11 @@ public class MolakEndTester : MonoBehaviour
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+            if (btns.Length > 0 && btns.Any(b => clickedSets.Contains(b.GetInstanceID()))) { DoubleSkips++; continue; }
             if (btns.Length > 0)
             {
+                if (clickedSets.Count > 20000) clickedSets.Clear();
+                foreach (var b in btns) clickedSets.Add(b.GetInstanceID());
                 var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
                 int k = -1;
                 if (god) { foreach (var pf in PreferGod) { for (int i = 0; i < btns.Length; i++) if (labels[i].Contains(pf)) { k = i; break; } if (k >= 0) break; } }
