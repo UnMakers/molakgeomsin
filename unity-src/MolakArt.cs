@@ -4,7 +4,9 @@ using UnityEngine;
 
 /// <summary>
 /// 삽화 시스템 — 종이 카메라(레이어 30) 위에 장면 삽화와 인물 입상을 먹(곱셈 블렌드)으로 얹는다.
-/// 상단 띠(캔버스 900×1600 기준 y 110~430)에 장면, 그 오른쪽에 인물 반신.
+/// 상단 띠(캔버스 900×1600 기준 y 184~484)에 한 번에 그림 하나만: 인물이 나오면 인물만(띠 가운데), 인물이 빠지면 장면이 다시 떠오른다.
+/// 마지막에 부른 쪽이 이긴다 — 새 장면(@art scene:)은 서 있던 인물을 내리고, 새 인물(@art char:)은 장면을 가린다(장면은 기억해 둔다).
+/// 하루가 시작될 때(DayLoop) 인물은 내린다.
 /// </summary>
 public class MolakArt : MonoBehaviour
 {
@@ -23,7 +25,7 @@ public class MolakArt : MonoBehaviour
     SpriteRenderer sceneR, charR;
     SpriteMask mask;
     Sprite sceneCur, charCur;
-    float sceneA, charA, sceneT = 1f, charT = 1f, colT = 1f;
+    float sceneA, charA, sceneT = 1f, charT = 1f, colT = 1f, sceneVis = 1f;
     string sceneId = "", charId = "";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -41,7 +43,7 @@ public class MolakArt : MonoBehaviour
         string key;
         if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetScene(null, ""); return; }
         if (!SceneAlias.TryGetValue(id, out key)) key = id;
-        if (inst.sceneId == key) return;
+        if (inst.sceneId == key) { if (inst.charCur != null) inst.SetChar(null, ""); return; }   // 같은 장면을 다시 부르면 인물을 내리고 장면을 보인다
         bool isDuel = key.StartsWith("duel");   // duel, duelbridge … 비무 판의 변형
         if (isDuel) { if (!inst.sceneId.StartsWith("duel")) { prevScene = inst.sceneId; MolakSfx.Draw(); } } else prevScene = null;
         if (!isDuel) MolakFlow.Break();
@@ -83,7 +85,7 @@ public class MolakArt : MonoBehaviour
         return s;
     }
 
-    void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; }
+    void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; if (s != null && charCur != null) SetChar(null, ""); }
     void SetChar (Sprite s, string id) { charCur = s; charId = id; charT = 0f; }
 
     void Ensure ()
@@ -144,6 +146,9 @@ public class MolakArt : MonoBehaviour
         if (sceneR.sprite != sceneCur && (sceneR.sprite == null || sceneT >= 0.5f || sceneCur == null)) sceneR.sprite = sceneCur;
         if (charR.sprite != charCur && (charR.sprite == null || charT >= 0.5f || charCur == null)) charR.sprite = charCur;
         float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Clamp01(sceneT));
+        // 그림은 한 번에 하나: 인물이 서 있으면 장면은 가린다(인물이 빠지면 다시 떠오른다)
+        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0f : 1f, Time.deltaTime * 2.4f);
+        sA *= sceneVis;
         float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Clamp01(charT));
         if (sceneCur == null && sceneT >= 1f) sceneR.sprite = null;
         if (charCur == null && charT >= 1f) charR.sprite = null;
@@ -170,24 +175,20 @@ public class MolakArt : MonoBehaviour
         mask.transform.position = new Vector3(cx, bandCy, z);
         mask.transform.localScale = new Vector3(bandW/0.04f, bandH/0.04f, 1f);
 
-        bool both = sceneR.sprite != null && charR.sprite != null;
-        float sceneW = both ? bandW*0.62f : bandW;
-        float sceneCx = both ? cx - bandW*0.5f + sceneW*0.5f : cx;
+        float sceneW = bandW, sceneCx = cx;
         if (sceneR.sprite != null)
         {
             var sp = sceneR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
             float k = Mathf.Max(sceneW/sw, bandH/sh);
             sceneR.transform.localScale = new Vector3(k, k, 1f);
             sceneR.transform.position = new Vector3(sceneCx, bandCy, z + 0.1f);
-            // 장면 마스크 폭에 맞춰 잘라내기: 마스크는 띠 전체이므로 좌측 정렬된 장면이 우측 인물 영역을 침범하지 않도록 스케일 보정
-            if (both) { float kk = Mathf.Max(sceneW/sw, bandH/sh); sceneR.transform.localScale = new Vector3(kk, kk, 1f); }
         }
         if (charR.sprite != null)
         {
             var sp = charR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
             float k = (bandH*1.75f)/sh;
             charR.transform.localScale = new Vector3(k, k, 1f);
-            float x = cx + bandW*0.5f - sw*k*0.5f + 30f*unit;
+            float x = cx;   // 홀로 서니 띠 가운데
             float y = bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             charR.transform.position = new Vector3(x, y, z);
         }
