@@ -94,7 +94,7 @@ public class MolakTitle : MonoBehaviour
         var a = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
         var b = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
         var c = ui.GetUI<Naninovel.UI.IConfirmationUI>() as Naninovel.UI.IManagedUI;
-        return (a != null && a.Visible) || (b != null && b.Visible) || (c != null && c.Visible);
+        return (a != null && a.Visible) || (b != null && b.Visible) || (c != null && c.Visible) || MolakSettings.IsOpen;
     }
 
     /// <summary>
@@ -336,8 +336,7 @@ public class MolakTitle : MonoBehaviour
         if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();
         if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "환경 설정", !busy, u, t, false))
         {
-            var stg = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
-            if (stg != null) stg.ChangeVisibility(true, 0.15f);
+            MolakSettings.Open();
         }
 
         // ---- 발치: 지난 생의 말로 · 회귀 기록 ----

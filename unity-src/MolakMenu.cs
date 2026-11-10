@@ -233,9 +233,8 @@ public class MolakMenu : MonoBehaviour
                 }
                 case 7:
                 {
-                    open = false; SetProcessInput(true);
-                    var st = ui != null ? ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI : null;
-                    if (st != null) st.ChangeVisibility(true, 0.15f);
+                    open = false;
+                    MolakSettings.Open();
                     break;
                 }
             }
