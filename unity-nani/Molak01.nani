@@ -24,6 +24,8 @@
 @set b_ldhap=0
 @set b_ldjin=0
 @set b_leave=0
+@set b_nethint=0
+@set b_netk=0
 @set b_ochi=0
 @set b_old=0
 @set b_old2x=0
@@ -48,6 +50,7 @@
 @set b_s7=0
 @set b_s8=0
 @set b_shrfire=0
+@set b_simk=0
 @set b_soa=0
 @set b_soa3=0
 @set b_soa4=0
@@ -104,6 +107,7 @@
 @set f_chaininfo=0
 @set f_cheonggang=0
 @set f_deadrumor=0
+@set f_dojuroute=0
 @set f_dokad=0
 @set f_dokinfo=0
 @set f_dreamvow=0
@@ -152,6 +156,7 @@
 @set f_incense=0
 @set f_inkcord=0
 @set f_ipmafight=0
+@set f_ipmaknow=0
 @set f_jangfinger=0
 @set f_jangfriend=0
 @set f_janginfo=0
@@ -167,6 +172,7 @@
 @set f_jinheld=0
 @set f_jinleft=0
 @set f_kyonadown=0
+@set f_lawdoubt=0
 @set f_leftwithsoa=0
 @set f_letter=0
 @set f_lordedge=0
@@ -184,6 +190,7 @@
 @set f_maengvow=0
 @set f_mirror=0
 @set f_monklore=0
+@set f_mournambush=0
 @set f_namgungdead=0
 @set f_namgungdoor=0
 @set f_namgungspared=0
@@ -212,6 +219,7 @@
 @set f_roadinfo=0
 @set f_roofwatcher=0
 @set f_salve=0
+@set f_sangsaknow=0
 @set f_searchhid=0
 @set f_searchpaid=0
 @set f_seedknow=0
@@ -311,6 +319,7 @@
 @set odds10=0
 @set pw=0
 @set r=0
+@set raidday=0
 @set rank=0
 @set rep_gae=0
 @set rep_heuk=0
@@ -325,6 +334,8 @@
 @set sw=0
 @set taint=0
 @set taintkind=0
+@set thday=0
+@set theme=0
 @set tierup=0
 @set tn_oldvoice=0
 @set tn_qi1=0
@@ -409,6 +420,29 @@
 전부 그대로다. 당신의 기억만 빼고.
 가슴의 문양이 <color=#9A70C4>지난 생들을 기억하며</color> 낮게 열을 낸다.
 @fx mn:30
+@goto #RbTh1 if:theme==1
+@goto #RbTh2 if:theme==2
+@goto #RbTh3 if:theme==3
+@goto #RbTh4 if:theme==4
+@goto #P4
+# RbTh1
+그런데 창밖에 비가 내린다. 지난 생의 이 아침에는 없던 비다. 그칠 비가 아니다.
+<color=#7FA7C9>이번 생은 장마가 길다.</color> 개울이 불고, 디딤이 무르고, 상처가 덧난다.
+@goto #P4
+# RbTh2
+그런데 아래층에서 기침 소리가 난다. 하나가 아니다. 점소이가 입을 무명으로 가리고 올라온다.
+"객관님, 저잣거리에 돌림병이 돈답니다요. 백초당 앞에 줄이 반 리요."
+<color=#9C8A5A>이번 생은 역병이 돈다.</color> 거리가 한산하고, 약값이 오르고, 사람이 죽는다.
+@goto #P4
+# RbTh3
+그런데 전낭이 가볍다. 하진무가 미안한 얼굴로 문간에 선다.
+"징세조가 올해는 객잔 세를 곱으로 매겼소. 객의 몫에서 조금 덜어 냈소. 셈이 맞지 않는 줄은 아오."
+@set mn=mn-10
+<color=#C9A227>이번 생은 징세가 매섭다.</color> 은자가 귀하고, 빚이 무겁고, 붉은 끈이 잦다.
+@goto #P4
+# RbTh4
+그런데 마당에 늑대 가죽 한 장이 던져져 있다. 혈랑대가 벌써 운락에 들었다는 표시다.
+<color=#C03434>이번 생은 늑대가 이르다.</color> 그 밤이 사흘 당겨지고, 수배가 빨리 돈다.
 @goto #P4
 # Prologue
 @art scene:manorfire

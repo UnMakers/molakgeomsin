@@ -109,20 +109,26 @@ public class DuelInfoCommand : Command
     {
         var kind = Assigned(Kind) ? Kind.Value : "any";
         // 판의 형편: 0 없음 1 빗속 2 외나무다리 3 구경꾼 4 독 바른 칼 5 판돈 6 제자를 데려온 상대 7 생사결(뒷골목만)
+        //           8 등불 하나의 밤 9 맹인 검객 10 아이를 업은 여검객 11 술 취한 고수 12 교 감찰관 앞
         int sit = 0;
         if (kind == "any" || kind == "street" || kind == "back")
         {
             int r = Random.Range(0, 100);
             if (kind == "back" && r < 18) sit = 7;
             else if (r < 50) sit = 0;
-            else sit = 1 + Random.Range(0, 6);
+            else { int[] pool = { 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12 }; sit = pool[Random.Range(0, pool.Length)]; }
+            if (sit == 12 && MolakStats.Get("day") < 8) sit = 3;
             if (sit == 1 && MolakStats.Get("day") < 3) sit = 0;
+            if (sit == 0 && Mathf.RoundToInt(MolakStats.Get("theme")) == 1 && MolakStats.Get("day") >= 3 && Random.Range(0, 100) < 35) sit = 1; // 장마
         }
         { float sf = MolakStats.Get("dsitforce"); if (sf > 0) { sit = Mathf.RoundToInt(sf); MolakStats.Set("dsitforce", 0f); } } // 이야기가 정한 판의 형편(독 바른 창 등)
         MolakStats.Set("dsit", sit);
         var foe = MolakDuel.MakeFoe(kind);
         if (sit == 4) foe.P -= 3f;           // 독에 기대는 손은 검이 무르다
         if (sit == 7) foe.P += 2f;
+        if (sit == 9) foe.P += 1f;           // 눈 대신 귀로 싸우는 자
+        float drunkLie = 0f;
+        if (sit == 11) { drunkLie = Random.Range(-35f, 25f); foe.P += Random.Range(-3f, 5f); } // 취한 걸음은 읽히지 않는다
         MolakDuel.Pending = foe;
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         vars.SetVariableValue("duelkind", new CustomVariableValue(kind));
@@ -135,11 +141,11 @@ public class DuelInfoCommand : Command
         vars.SetVariableValue("foename", new CustomVariableValue(foe.Name));
         vars.SetVariableValue("foerank", new CustomVariableValue(string.Format("{0:N0}", foe.Rank)));
         vars.SetVariableValue("foetier", new CustomVariableValue(MolakDuel.TierName(foe.Rank)));
-        MolakStats.Set("odds10", Mathf.Clamp(Mathf.Round(MolakDuel.Odds(foe, 0) / 10f), 1f, 9f));
+        MolakStats.Set("odds10", Mathf.Clamp(Mathf.Round((MolakDuel.Odds(foe, 0) + drunkLie) / 10f), 1f, 9f));
         MolakStats.Set("cansl", MolakStats.Get("sl") >= 3 ? 1f : 0f);
         MolakStats.Set("cancurse", MolakStats.Get("curse") >= 10 ? 1f : 0f);
         MolakStats.Set("dlethal", MolakDuel.Lethal(kind) ? 1f : 0f);
-        MolakStats.Set("canflee", sit == 2 || sit == 7 || kind == "grudge" || kind == "assassin" ? 0f : 1f);
+        MolakStats.Set("canflee", sit == 2 || sit == 7 || sit == 8 || kind == "grudge" || kind == "assassin" ? 0f : 1f);
         MolakStats.Set("cansense", sit == 4 && (MolakStats.Get("f_dokinfo") > 0 || MolakStats.Get("sw") >= 18 || MolakStats.Get("f_herbpulse") > 0) ? 1f : 0f);
         MolakStats.Set("dinj", 0f); MolakStats.Set("dtaint", 0f); MolakStats.Set("dloot", 0f);
         string art = kind == "soa" ? "soa" : kind == "hochi" ? "hochi" : kind == "kyona" ? "kyona" : kind == "jinbaek" ? "jinbaek" : kind == "lord" ? "lord" : kind == "rival" ? "gwaksan" : kind == "hunt3" ? "lawlord" : null;
@@ -179,6 +185,8 @@ public class DuelCommand : Command
         if (sit == 3 && style == "killer" && MolakStats.Get("sl") >= 5) bonus += 1f;                        // 구경꾼: 살기가 판을 누른다
         if (sit == 4 && style == "guard") bonus -= 1f;                                                       // 독: 스치기만 해도 진다
         if (sit == 7) hpRisk += 3f;
+        if (sit == 8) bonus += style == "killer" ? 1.5f : (style == "guard" ? -1f : 0f);                    // 등불 하나: 먼저 찌르는 쪽이 이긴다
+        if (sit == 9) bonus += style == "front" || style == "killer" ? -2f : (style == "guard" ? 2f : 0f); // 맹인: 소리 나는 칼은 읽힌다
         if (kind == "grudge" && MolakStats.Get("grudgewarn") > 0) bonus += 3f;                               // 미리 귀띔을 받았다
         if (kind == "back") hpRisk += 2f;
         if (kind == "lord" && MolakStats.Get("f_janginfo") > 0) bonus += 1.5f;
@@ -202,6 +210,10 @@ public class DuelCommand : Command
         if (kind == "hochi" && MolakStats.Get("f_yongally") > 0) bonus += 1.5f;   // 도끼 들기 전에 왼발을 끈다
         if (kind == "hochi" && MolakStats.Get("f_poisonswap") > 0) bonus += 2f;   // 쇠이 끝의 독이 감초다
         if (kind == "kyona" && MolakStats.Get("f_poisonswap") > 0) bonus += 1.5f;
+        if (kind == "grudge" && MolakStats.Get("f_mournambush") > 0) bonus += 3f;  // 동쪽 처마 밑에서 기다렸다
+        if (sit == 7 && MolakStats.Get("f_sangsaknow") > 0) bonus += 3f;          // 등을 보이는 것은 미끼다
+        if (kind == "hunt3" && MolakStats.Get("f_lawdoubt") > 0) bonus += 2f;     // 법이 법 밖의 것을 들었다
+        if (kind == "lord" && MolakStats.Get("f_ipmaknow") > 0) bonus += 2f;      // 부름의 거짓을 안다
         if (kind == "raid" && MolakStats.Get("f_maengraid") > 0) bonus += 2f;      // 맹의 칼 셋이 지붕에서 뒤를 쳤다
         if (kind == "lord" && MolakStats.Get("f_namgungdoor") > 0) bonus += 1f;    // 남궁이 측문을 비웠다
         if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_gaewarn") > 0) bonus += 1f;   // 담장의 매듭 셋
@@ -232,6 +244,7 @@ public class DuelCommand : Command
             if (foe.Boss == "hochi") MolakStats.Set("f_hmsaved", 1f);
             if (sit == 3) { MolakStats.Add("mn", 3f); MolakStats.Add("sl", 1f); }
             if (sit == 7) MolakStats.Add("mn", 10f);
+            if (sit == 12) { MolakStats.Set("f_wanted", 1f); MolakStats.Add("sl", 1f); }
         }
         else
         {
@@ -249,6 +262,7 @@ public class DuelCommand : Command
                 if (sit == 4 && MolakStats.Get("taint") <= 0) { MolakStats.Set("taint", 1f); MolakStats.Set("taintkind", 1f); MolakStats.Set("dtaint", 1f); }
                 if (sit == 2) { float lost = Mathf.Ceil(MolakStats.Get("mn") / 2f); MolakStats.Add("mn", -lost); MolakStats.Set("dloot", lost); }
                 if (sit == 3) MolakStats.Add("sl", -1f);
+                if (sit == 12) { MolakStats.Add("sl", -1f); if (oldRank > 0) MolakStats.Set("rank", Mathf.Floor(oldRank * 1.15f)); }
             }
             MolakStats.Add("hp", -dmg);
             if (IsBossKind(kind)) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다

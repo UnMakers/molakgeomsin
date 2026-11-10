@@ -350,7 +350,8 @@
 # LdHap
 @set b_ldhap=1
 @goto #LdHapAlone if:f_soadead>0
-@goto #LdHapNone if:f_soabond<1&&aff<5
+@goto #LdHapNone if:f_soabond<1&&aff<5&&g_end_wonhaeng<1
+@goto #LdHapNone if:f_soabond<1&&aff<4
 대전 문간에서 발소리가 난다. 소리 없이 뽑히는 쌍검의 소리. 적운의 검은 소리를 내지 않는다. 그런데도 안다.
 "늦었다. 혈천진에서 세 번 길을 잃었지."
 소아가 당신 옆에 선다. 반 보 뒤가 아니다. 나란히.

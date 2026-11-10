@@ -39,6 +39,9 @@
 @goto #A40 if:day>=40&&f_oldseen>0&&b_old2x<1
 @goto #BShrFire if:day>=28&&f_shrseen>0&&b_shrfire<1
 @goto #BHintShr if:day>=19&&g_redverse>0&&f_shrseen<1&&b_hintshr<1
+@goto #BSimK if:curse>=75&&g_end_simma>0&&b_simk<1
+@goto #BNetHint if:day>=56&&b_nethint<1&&b_capture<1
+@goto #BNetK if:day>=57&&g_end_pobak>0&&b_netk<1&&b_capture<1
 @goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
 @goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
@@ -57,9 +60,9 @@
 @goto #BR2 if:day>=17&&f_janginfo>0&&b_r2x<1
 @goto #BR3 if:day>=24&&b_r2x>0&&b_r3x<1
 @goto #BR4 if:day>=32&&b_r3x>0&&b_r4x<1
-@goto #BKnot if:day>=39&&b_knot<1&&f_gaeknot>0&&f_gaesold<1&&rep_gae>=2
-@goto #BKnotK if:day>=39&&b_knot<1&&g_know_gaeknot>0&&f_gaeknot<1
-@goto #BS8 if:day>=42&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s8<1
+@goto #BKnot if:day>=raidday-3&&b_knot<1&&f_gaeknot>0&&f_gaesold<1&&rep_gae>=2
+@goto #BKnotK if:day>=raidday-3&&b_knot<1&&g_know_gaeknot>0&&f_gaeknot<1
+@goto #BS8 if:day>=raidday&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s8<1
 @goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
 @goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
 @goto #BH3 if:day>=55&&f_wolfdown<1&&b_hunt3x<1
@@ -67,6 +70,7 @@
 @scene id:day
 @vfx kind:rainoff
 @goto #MTaint if:taint>0
+@goto #MTh if:theme>0&&day>=thday
 @pickflavor pool:morning
 @goto #M2 if:mrand==2
 @goto #M3 if:mrand==3
@@ -117,6 +121,42 @@
 # MTaint3
 <color=#C03434>일어나는 데 한참이 걸린다.</color> 손톱 밑이 검다. 하진무가 문간에서 혀를 찬다.
 "객, 오늘은 백초당부터 가시오. 내일은 늦소."
+@goto #Daytime
+# MTh
+@set thday=day+random(4,7)
+@set tr=random(1,2)
+@goto #MTh1b if:theme==1&&tr==2
+@goto #MTh1a if:theme==1
+@goto #MTh2b if:theme==2&&tr==2
+@goto #MTh2a if:theme==2
+@goto #MTh3b if:theme==3&&tr==2
+@goto #MTh3a if:theme==3
+@goto #MTh4b if:tr==2
+# MTh4a
+골목 담장에 늑대 발톱 자국 셋. 밤사이 누가 긁고 갔다. 거지 아이들이 그 앞을 돌아서 다닌다.
+@goto #Daytime
+# MTh4b
+혈랑대 척후 둘이 객잔 앞 국숫집에 앉아 있다. 국수는 손도 대지 않았다. 객잔 이층 창만 본다.
+@set f_wanted=1
+@goto #Daytime
+# MTh1a
+비. 며칠째다. 마당 우물이 넘친다. 개울 쪽에서 누가 아이 이름을 부른다.
+@goto #Daytime
+# MTh1b
+빗속에 검을 간다. 숫돌이 미끄럽다. 오늘 비무판은 디딤이 무를 것이다.
+@goto #Daytime
+# MTh2a
+저잣거리가 한산하다. 문 닫은 가게마다 흰 종이가 붙었다. 백초당 앞에만 줄이 길다.
+@fx hp:-1
+@goto #Daytime
+# MTh2b
+밤새 기침 소리를 들었다. 옆방 손님이 새벽에 실려 나간다. 하진무가 그 방 문을 열어 두고 식초를 뿌린다.
+@goto #Daytime
+# MTh3a
+징세조가 아침부터 어물전을 턴다. 붉은 끈 다섯. 장꾼들이 좌판을 걷는다. 걷지 못한 좌판은 엎어진다.
+@goto #Daytime
+# MTh3b
+하진무가 주판을 오래 튕긴다. 셈이 안 맞는 얼굴이다. 방값 이야기는 꺼내지 않는다. 그래서 더 무겁다.
 @goto #Daytime
 # M1
 운락객잔의 아침. 장작 냄새와 어제 비 냄새가 마당에 남아 있다.
@@ -424,7 +464,12 @@
 @choice "지붕으로 뛰어 달아난다" if:hp>=6 goto:#KGrRun
 @choice "소리쳐 객잔 사람들을 깨운다" goto:#KGrWake
 @choice "그때 살려 보낸 비무꾼이 담 위에 앉아 있다" if:f_sparedally>0 goto:#KGrAlly
+@choice "동쪽 처마 밑 그늘로 먼저 간다 — 상복은 지붕 동쪽으로 내려온다" if:g_end_wonsu>0 goto:#KGrAmb
 @stop
+# KGrAmb
+<color=#9A70C4>지난 생, 셋은 동쪽 처마에서 차례로 뛰어내렸다. 맨 끝의 하나가 늘 반 박자 늦었다.</color>
+처마 밑 그늘에 등을 붙인다. 첫 발이 기와 끝에 닿는 소리. 둘째. 셋째는 아직이다.
+@set f_mournambush=1
 # KGrFight
 @set dkind="grudge"
 @gosub MolakDuel#Run
@@ -1039,6 +1084,38 @@
 @page
 <color=#9A70C4>귀에 그 목소리가 남아 있다.</color> 피 묻은 숨으로 한 번에 건네준 열두 줄. 아직 한 줄도 잊지 않았다.
 관도 서쪽, 운검사태의 사당. 스무이틀째. 스무여드레에는 불이 난다.
+@goto #Daytime
+# BSimK
+@set b_simk=1
+@page
+가슴의 열이 아는 열이다. <color=#9A70C4>지난 생, 이 열에서 마음이 먼저 꺾였다.</color>
+찻집 노파의 청심차. 소아가 아는 적운의 봉인. 다리 밑 거지 중의 들숨 여섯, 날숨 아홉. 지난 생엔 그중 하나도 제때 찾지 못했다.
+@fx curse:-2
+@goto #Daytime
+# BNetHint
+@set b_nethint=1
+@page
+쉰엿새째 아침. 성문 앞 포졸이 둘에서 넷으로 늘었다. 나루에는 관아의 배가 묶였다.
+하진무가 주판을 내려놓고 창밖을 본다. "객. 그물을 칠 때는 바깥부터 조이는 법이오."
+사흘 안에 끝을 내지 못하면, 끝이 먼저 온다.
+@goto #Daytime
+# BNetK
+@set b_netk=1
+@page
+쉰이레째 아침. 이 아침을 안다.
+<color=#9A70C4>지난 생, 예순 날 아침에 거리가 비었다. 쉰여드레에 성문이 닫히고, 쉰아흐레 밤에 객잔 지붕에 사람이 오른다.</color>
+@choice "소금길로 빠진다 — 곽산이 그어 준 산 둘, 물길 하나" if:f_valleyroute>0 goto:#BNetA
+@choice "나루의 밤배를 산다 (은자 15)" if:mn>=15 goto:#BNetB
+@choice "남는다 — 끝을 내러 가든, 끝을 맞든" goto:#BNetC
+@stop
+# BNetA
+@set f_dojuroute=1
+@goto Molak06#Doju
+# BNetB
+@fx mn:-15
+@set f_dojuroute=2
+@goto Molak06#Doju
+# BNetC
 @goto #Daytime
 # BShrFire
 @set b_shrfire=1

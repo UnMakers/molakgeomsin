@@ -18,7 +18,7 @@ public class InitRunCommand : Command
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
         foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
-                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_know_yong","g_know_gwak","g_gwakwifedied","g_herbdied","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
+                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_know_yong","g_know_gwak","g_gwakwifedied","g_herbdied","g_know_ripe","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
                                  "g_know_hunt1","g_know_hunt2","g_know_hunt3","g_know_cheolsan","g_know_rival","g_know_chainmob"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         foreach (var e in MolakEnd.All)
@@ -43,6 +43,19 @@ public class InitRunCommand : Command
         MolakStats.Set("mn", 3 + up("coin") * 5);
         MolakStats.Set("curse", 5);
         MolakStats.Set("day", 1);
+        // 이번 생의 바람(회차 테마): 첫 생은 맑음. 그 뒤로는 다섯에 하나 맑음, 나머지 넷 중 하나 — 지난 생과 겹치지 않게.
+        {
+            int th = 0;
+            if (MolakStats.Get("g_runs") >= 1 && Random.Range(0, 5) > 0)
+            {
+                int last = Mathf.RoundToInt(MolakStats.Get("g_lasttheme"));
+                do { th = Random.Range(1, 5); } while (th == last);
+            }
+            MolakStats.Set("theme", th);
+            MolakStats.Set("g_lasttheme", th);
+            MolakStats.Set("raidday", th == 4 ? 38f : 42f);
+            MolakStats.Set("thday", 3f);
+        }
         MolakStats.Set("rank", 0);
         MolakStats.Set("seallv", up("seal"));
         MolakKnow.Snapshot();   // 이번 생이 시작될 때 이미 아는 것 — 죽을 때 "되감기지 않는 것"을 가려낸다
@@ -204,6 +217,35 @@ public class PickEventCommand : Command
 
     const int DryBoost = 20;
 
+    /// <summary>가중치 × 이번 생의 바람(theme). 정수로 10배해서 쓴다.</summary>
+    static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id))); }
+    public static float ThemeMul (string id)
+    {
+        switch (Mathf.RoundToInt(MolakStats.Get("theme")))
+        {
+            case 1: // 장마
+                if (id == "E_Flood") return 3f;
+                if (id.StartsWith("E_Rain")) return 2.5f;
+                if (id == "E_Ferry" || id == "E_Ferry2" || id == "E_Ferry3") return 1.6f;
+                break;
+            case 2: // 역병
+                if (id.StartsWith("E_Herb")) return 1.8f;
+                if (id == "E_Funeral" || id == "E_Emptytown" || id == "E_Lastletter" || id == "E_Vigil") return 2.5f;
+                if (id.StartsWith("E_Monk") || id.StartsWith("E_Beggar") || id.StartsWith("E_Gaebang")) return 1.6f;
+                if (id.StartsWith("E_Gamble") || id.StartsWith("E_Nightmarket") || id == "E_Caravan" || id.StartsWith("E_Peddler")) return 0.4f;
+                break;
+            case 3: // 징세 강화
+                if (id.StartsWith("E_Bloodtax") || id == "E_Hostage" || id == "E_HerbTax" || id == "E_JangSell") return 2.5f;
+                if (id.StartsWith("E_Guard") || id == "E_HajinNight" || id == "E_HerbBurn") return 1.6f;
+                break;
+            case 4: // 혈랑대 이른 생
+                if (id.StartsWith("E_Hunter") || id == "E_Search" || id == "E_SoaPoster") return 2.5f;
+                if (id.StartsWith("E_Spy") || id.StartsWith("E_Cultists") || id == "E_Cup") return 1.6f;
+                break;
+        }
+        return 1f;
+    }
+
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
@@ -234,10 +276,10 @@ public class PickEventCommand : Command
         int eff = Mathf.Min(100, chance + DryBoost * Mathf.RoundToInt(dry));
         if (Random.Range(1, 101) > eff) { MolakStats.Set("evdry", dry + 1f); SetNext("none"); return; }
 
-        int total = cands.Sum(c => Mathf.Max(1, c.Weight));
+        int total = cands.Sum(c => W(c));
         int r = Random.Range(0, total);
         var pick = cands[cands.Count - 1];
-        foreach (var c in cands) { r -= Mathf.Max(1, c.Weight); if (r < 0) { pick = c; break; } }
+        foreach (var c in cands) { r -= W(c); if (r < 0) { pick = c; break; } }
 
         MolakStats.Set("seen_" + pick.Id, 1f);
         MolakStats.Set("seenday_" + pick.Id, day);

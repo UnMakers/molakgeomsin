@@ -37,6 +37,7 @@ public class MolakEnd : MonoBehaviour
         new Entry("ik",        "溺",   "익",   "물이 먼저 받아 주었다", "불어난 물에 뛰어들었을 때"),
         new Entry("yaseup",    "夜襲", "야습", "계단 셋째 칸",          "혈랑대가 객잔을 덮친 밤"),
         new Entry("hapbyeok",  "合璧", "합벽", "두 검이 하나로",        "그 밤 그녀에게 받은 열두 줄을 들고, 다음 생의 사당으로"),
+        new Entry("doju",      "逃走", "도주", "그물 밖으로",           "예순 날의 그물이 닫히기 전, 운락을 빠져나갔을 때"),
         new Entry("jaegeon",   "再建", "재건", "맹의 깃발 아래",        "무림맹 밀사와 거래하고, 대사형의 목을 벤 뒤에"),
     };
 
@@ -68,6 +69,7 @@ public class MolakEnd : MonoBehaviour
         if (cause == "야습") return "yaseup";
         if (cause == "합벽") return "hapbyeok";
         if (cause == "재건") return "jaegeon";
+        if (cause == "도주") return "doju";
         if (cause == "비무 패배")
         {
             if (kind == "hochi") return "dokni";

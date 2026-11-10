@@ -168,10 +168,23 @@
 그녀가 몸을 일으킨다. 외눈이 똑바로 당신을 본다.
 "다 벤 다음에도 살아 있어야 한다. 그게 내 몫의 빚이다."
 그녀의 손이 가슴의 문양 위에 얹힌다. 저주가 일순 조용해진다. 거짓말처럼.
+@goto #SoaN5L if:g_end_wonhaeng<1
+<color=#9A70C4>지난 생, 이 손을 잡고 남쪽으로 갔다. 서른 날째 강가에서 문양이 목까지 올라왔다. 도망친 길 끝에서도 열매는 익었다.</color>
+@choice "\"이번엔 끝을 내고 가자. 다 벤 다음에, 같이.\"" goto:#SoaN5W
+# SoaN5L
 @choice "\"약속하지.\"" goto:#SoaN5A
 @choice "말없이 그 손 위에 손을 얹는다" goto:#SoaN5B
 @choice "칼등을 맞대어 약조한다" goto:#SoaN5X
 @stop
+# SoaN5W
+소아가 오래 본다. 외눈이 당신 얼굴 위에서 무언가를 맞춰 본다.
+"……너는 가끔 미친 소리를 한다. 그런데 그 미친 소리가 틀린 적이 없다."
+그녀가 쌍검 하나를 반 치 뽑아 칼등을 당신 칼등에 댄다. 쨍.
+"다 벤 다음에. 같이."
+@fx curse:-4 sw:1
+@set aff=aff+1
+@set f_soabond=1
+@goto Molak02#AfterChapter
 # SoaN5X
 대답 대신 검을 반 치 뽑는다. 가슴 위의 손이 떨어진다.
 소아도 쌍검 하나를 반 치 뽑아, 칼등을 당신 칼등에 댄다. 쨍. 짧은 소리.
@@ -390,6 +403,9 @@
 # SoaN8ReB
 <color=#9A70C4>지난 생에도 이 밤이 있었다.</color> 그때는 발소리를 듣고서야 깼다.
 # SoaN8ReC
+@goto #SoaN8ReT if:theme!=4
+<color=#9A70C4>마흔이틀이 아니다. 사흘 이르다.</color> 이번 생은 늑대가 이르다. 그래도 발소리는 같다.
+# SoaN8ReT
 @set g_know_raid=1
 아직 발소리는 없다. 반각쯤 남았다.
 @choice "계단에 등잔 기름을 붓고, 하진무와 점소이를 아궁이 뒤에 숨긴다" goto:#SoaN8P1
@@ -942,6 +958,7 @@
 @choice "검을 뽑는다 — 이것이 대답이다" goto:#Hunt3F
 @choice "무릎을 꿇는 척 틈을 본다" goto:#Hunt3K
 @choice "\"…가지. 교주에게.\" — 부름에 응한다" goto:#Hunt3Y
+@choice "\"교주는 끊어 주지 않소. 뜯어 가지. 그리고 첫 소임은 운락의 객잔이오.\"" if:g_end_ipma>0 goto:#Hunt3L
 @stop
 # Hunt3F
 @set dkind="hunt3"
@@ -966,6 +983,15 @@
 이제 정말로, 시간이 없다.
 @fx curse:6 sl:-1
 @goto Molak02#AfterChapter
+# Hunt3L
+집법전주의 소매가 걷히다 만다.
+"……무슨 소리냐."
+"무릎 꿇은 자의 첫 소임 말이오. 서열각은 숫자를 받고 집법전은 무릎을 받는다 했소. 교주는 뿌리를 받소. 그건 법이 아니오."
+노인의 눈이 처음으로 흔들린다. 걸어 다니는 교의 법이, 법 밖의 것을 들은 얼굴이다.
+"……집법은 무릎을 받는 곳이지, 뿌리를 뜯는 곳이 아니다."
+그가 다시 소매를 걷는다. 이번엔 손끝이 반 치 무겁다.
+@set f_lawdoubt=1
+@goto #Hunt3F
 # Hunt3Y
 @goto #Ipma1
 
@@ -990,6 +1016,8 @@
 @choice "손을 잡는다 — 사(邪)의 검을 받는다" goto:#RipeA
 @choice "검을 뽑는다 — 익은 것은 베어 떨어뜨린다" goto:#RipeB
 @choice "문양을 손톱으로 파낸다 — 차라리 썩겠다" goto:#RipeC
+@choice "\"거절한 청운의 아이가 누구였소.\"" if:g_end_seongsa>0&&g_know_ripe<1 goto:#RipeK
+@choice "검을 뽑지 않고 선다 — 장문인이 그랬듯이" if:g_know_ripe>0 goto:#RipeD
 @stop
 # RipeA
 @vfx kind:curse
@@ -1013,6 +1041,26 @@
 "아직 덜 익었구나."
 문양이 <color=#C03434>터진다</color>.
 @goto MolakOver#Curse
+# RipeK
+노인의 빈 손바닥이 아주 조금 오므라든다.
+"……네 장문인이었느니라. 열매가 다 익은 밤, 노부 앞에서 검을 뽑지 않고 서 있었지. 반 각을."
+설서인의 지어낸 대목이 떠오른다. 혈천마가 반 각을 멈췄다던 열 번째 산문.
+"베지도, 받지도 않았다. 익은 채로 서 있었다. 그러니 따지도 못했느니라. 아까운 아이였다."
+손이 다시 펴진다. "너는 어찌하겠느냐."
+@set g_know_ripe=1
+@choice "손을 잡는다 — 사(邪)의 검을 받는다" goto:#RipeA
+@choice "검을 뽑는다 — 익은 것은 베어 떨어뜨린다" goto:#RipeB
+@choice "검을 뽑지 않고 선다 — 장문인이 그랬듯이" goto:#RipeD
+@stop
+# RipeD
+검자루에서 손을 뗀다. 두 손을 아래로 내린다. 서 있는다.
+노인이 기다린다. 반 각.
+바람이 돌아온다. 느티나무 잎이 한 장 떨어진다. 노인의 손바닥이 천천히 닫힌다.
+"……또 그 얼굴이로구나. 아깝다."
+눈을 깜빡인 사이, 마당에 아무도 없다. 가슴의 열이 한 겹 내려앉는다. 익은 것이 사라진 게 아니라, 따이지 않은 채 남았다.
+@fx curse:-10
+@set f_ripedenied=1
+@goto Molak02#AfterChapter
 # RipeC
 손톱이 살을 판다. 피가 난다. 문양은 파이지 않는다. 피부 아래가 아니라, 더 깊은 곳에 있다.
 노인이 그 꼴을 본다. 웃지도, 화내지도 않는다.
@@ -1042,6 +1090,7 @@
 @choice "무릎을 꿇는다 — \"끊어 주십시오.\"" goto:#IpmaA
 @choice "검을 뽑는다 — 여기까지 온 김에" goto:#IpmaB
 @choice "\"삼십 년 전, 왜 열매를 버리셨소.\"" goto:#IpmaC
+@choice "\"첫 소임은 운락의 객잔이겠지요. 교의 세작이 드나든다는.\"" if:g_end_ipma>0 goto:#IpmaK
 @stop
 # IpmaA
 @vfx kind:curse
@@ -1059,6 +1108,13 @@
 @ending
 @regress
 @goto MolakOver#IpmaAfter
+# IpmaK
+교주의 손이 옷깃에서 멎는다. 지겨운 눈에 처음으로 다른 것이 섞인다.
+"……그 늙은이가 너에게 거기까지 보여 주었더냐."
+"늙은이가 아니오. 내가 무릎을 꿇고 보았소. 존명이라 대답하고."
+대전이 조용하다. 교주가 손을 거둔다. 일어선다. 손님을 맞는 자리가 아니라, 비무를 받는 자리에서.
+@set f_ipmaknow=1
+@goto #IpmaB
 # IpmaB
 @set f_ipmafight=1
 검을 뽑는다. 대전의 공기가 한 겹 무거워진다.
@@ -1198,3 +1254,28 @@
 @set f_maenglate=0
 @set g_maenglate=1
 @return
+
+; ---------- 도주(逃走): 예순 날의 그물 밖으로 ----------
+# Doju
+@page
+@scene id:crossroad
+@art char:none
+@goto #DojuB if:f_dojuroute==2
+산 둘, 물길 하나. 소금 짐꾼들이 다니던 길이다. 교의 깃발이 없다. 사람도 없다.
+@goto #DojuM
+# DojuB
+밤배의 사공이 삯을 세지 않는다. "열흘 강 아래요. 그 너머는 나도 모르오."
+# DojuM
+성문이 닫히는 소리를 등 뒤로 듣는다. 예순 날의 그물이 빈 객잔 위로 내려앉을 것이다.
+하진무에게는 서찰 한 장을 남겼다. 방값은 베개 밑에.
+@page
+남쪽. 깃발 없는 마을에서 장작을 팬다. 마당을 쓴다. 청운에서 삼 년 하던 일이다.
+한 해. 두 해. 아무도 쫓아오지 않는다. 서열록에서 이름이 지워졌다는 소문이 남쪽까지 흘러온다.
+가슴만 쫓아온다. 문양이 해마다 한 치씩 오른다.
+셋째 해 겨울. 마당을 쓸다가 빗자루를 놓친다. 손끝이 검다.
+교주는 아직 서열록 일위에 있다. 노인은 아직 어딘가에서 밭을 돌본다. 당신만 그물 밖에 있다.
+\[ 終 \] — 그물 밖으로.
+@set deathcause="도주"
+@ending
+@regress
+@goto MolakOver#DojuAfter
