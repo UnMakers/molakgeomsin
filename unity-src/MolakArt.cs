@@ -42,10 +42,11 @@ public class MolakArt : MonoBehaviour
         if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetScene(null, ""); return; }
         if (!SceneAlias.TryGetValue(id, out key)) key = id;
         if (inst.sceneId == key) return;
-        if (key == "duel") prevScene = inst.sceneId; else prevScene = null;
+        if (key == "duel") { prevScene = inst.sceneId; MolakSfx.Draw(); } else prevScene = null;
         if (key != "duel") MolakFlow.Break();
         var sp = Load("MolakArt/scene_" + key);
         inst.SetScene(sp, key);
+        MolakBgm.Mood(key == "duel" ? "duel" : (key == "raid" || key == "bloodroof") ? "raid" : "day");
     }
 
     public static void Char (string id)
@@ -63,6 +64,7 @@ public class MolakArt : MonoBehaviour
     {
         if (inst == null || inst.sceneId != "duel") return;
         if (string.IsNullOrEmpty(prevScene)) inst.SetScene(null, ""); else { var sp = Load("MolakArt/scene_" + prevScene); inst.SetScene(sp, prevScene); }
+        MolakBgm.Mood(prevScene == "raid" || prevScene == "bloodroof" ? "raid" : "day");
         prevScene = null;
     }
 

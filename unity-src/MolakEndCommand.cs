@@ -11,6 +11,7 @@ public class EndingCommand : Command
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         var id = MolakEnd.Resolve();
         var e = MolakEnd.Find(id);
+        MolakBgm.Mood("end");
         bool isNew = false;
         var key = "g_end_" + id;
         if (!vars.VariableExists(key) || vars.GetVariableValue(key).Number < 1f)

@@ -56,4 +56,7 @@ public class MolakSfx : MonoBehaviour
     public static void Hit ()     { Play("hit_drum", 1f, Random.Range(0.95f, 1.05f)); Vibrate(); }
     public static void Bell ()    { Play("bell_rise", 0.8f); }
     public static void Death ()   { Play("death_drum", 1f); Vibrate(); }
+    public static void Draw ()     { Play("sword_draw", 0.75f, Random.Range(0.97f, 1.03f)); }
+    public static void Rewind ()   { Play("wind_rewind", 0.8f); }
+    public static void TrueBell () { Play("true_bell", 1f); }
 }

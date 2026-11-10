@@ -101,7 +101,14 @@ public class MolakEnd : MonoBehaviour
         instance = go.AddComponent<MolakEnd>();
     }
 
-    public static void Show (string hanja, string kor, string title, bool isNew) { cHanja = hanja; cKor = kor; cTitle = title; cNew = isNew; cT = 0f; MolakSfx.Death(); }
+    public static void Show (string hanja, string kor, string title, bool isNew)
+    {
+        cHanja = hanja; cKor = kor; cTitle = title; cNew = isNew; cT = 0f;
+        cTrue = hanja == "合璧";
+        if (cTrue) MolakSfx.TrueBell(); else MolakSfx.Death();
+    }
+    static bool cTrue;
+    static Texture2D dawnTex, ensoTex, diskTex; static Font hanjaFont;
 
     static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
     void Box (Rect r, Color c) { var g = GUI.color; GUI.color = c; GUI.DrawTexture(r, Px); GUI.color = g; }
@@ -125,6 +132,7 @@ public class MolakEnd : MonoBehaviour
     void OnGUI ()
     {
         if (cT < 0f) return;
+        if (cTrue) { DrawTrue(); return; }
         cT += Time.deltaTime;
         float dur = 3.4f, tail = 0.8f; // 카드 뒤 먹색 여운
         if (cT > dur + tail) { cT = -1f; return; }
@@ -145,6 +153,98 @@ public class MolakEnd : MonoBehaviour
         GUI.Label(new Rect(cx,cy+80*u,cw,150*u), cHanja, sHanja);
         GUI.Label(new Rect(cx,cy+232*u,cw,50*u), cTitle, sTitle);
         if (cNew) GUI.Label(new Rect(cx,cy+282*u,cw,42*u), "처음 보는 말로 — 말로록에 새겨졌다", sNew);
+        GUI.color = g;
+    }
+    /// <summary>
+    /// 진(眞) 말로 · 합벽 전용 카드 — 핏빛 테두리 대신 새벽: 먹빛에서 새벽빛으로 번지는 하늘, 떠오르는 해,
+    /// 타이틀의 원상이 금빛으로 감기며 멈추고, 그 안에 合璧. 종소리(true_bell)와 함께 7초.
+    /// </summary>
+    void DrawTrue ()
+    {
+        if (Event.current.type == EventType.Repaint) cT += Time.deltaTime;   // OnGUI는 한 프레임에 여러 번 불린다
+        float dur = 7.2f, tail = 1.4f;
+        if (cT > dur + tail) { cT = -1f; cTrue = false; return; }
+        float u = MolakTheme.U; EnsureStyles(u);
+        float w = Screen.width, h = Screen.height;
+        if (dawnTex == null)
+        {
+            dawnTex = new Texture2D(1, 128, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            for (int i = 0; i < 128; i++)
+            {
+                float k = i / 127f;   // 0 = 아래, 1 = 위
+                var c = Color.Lerp(new Color(0.78f, 0.52f, 0.30f), new Color(0.10f, 0.11f, 0.15f), Mathf.SmoothStep(0f, 1f, k));
+                dawnTex.SetPixel(0, i, c);
+            }
+            dawnTex.Apply();
+            int n = 128; diskTex = new Texture2D(n, n, TextureFormat.RGBA32, false);
+            for (int y = 0; y < n; y++) for (int x = 0; x < n; x++)
+            {
+                float d = Vector2.Distance(new Vector2(x + .5f, y + .5f), new Vector2(n / 2f, n / 2f)) / (n / 2f);
+                diskTex.SetPixel(x, y, new Color(1, 1, 1, Mathf.Clamp01(1f - d) * Mathf.Clamp01(1f - d)));
+            }
+            diskTex.Apply();
+        }
+        if (ensoTex == null) ensoTex = Resources.Load<Texture2D>("MolakTitleEnso");
+        if (hanjaFont == null) hanjaFont = Resources.Load<Font>("MolakHanja");
+
+        float out0 = cT > dur ? Mathf.Clamp01((dur + tail - cT) / tail) : 1f;
+        var g = GUI.color;
+        // 먹빛 → 새벽
+        GUI.color = new Color(0.03f, 0.025f, 0.02f, Mathf.Clamp01(cT / 0.4f) * out0);
+        GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
+        float dawn = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((cT - 0.6f) / 2.4f)) * out0;
+        GUI.color = new Color(1, 1, 1, dawn * 0.92f);
+        GUI.DrawTexture(new Rect(0, 0, w, h), dawnTex);
+        // 떠오르는 해(아래에서)
+        float rise = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((cT - 0.8f) / 4.5f));
+        float sr = Mathf.Min(w, h) * 0.55f;
+        float sy = Mathf.Lerp(h * 1.02f, h * 0.80f, rise);
+        GUI.color = new Color(1f, 0.80f, 0.45f, 0.55f * dawn);
+        GUI.DrawTexture(new Rect(w / 2f - sr, sy - sr, sr * 2f, sr * 2f), diskTex);
+        if (cT > dur + 0.01f) { GUI.color = g; return; }
+
+        float a = cT < 0.8f ? 0f : (cT > dur - 0.7f ? (dur - cT) / 0.7f : Mathf.Clamp01((cT - 0.8f) / 0.8f));
+        float cy = h * 0.40f, er = Mathf.Min(w * 0.78f, 760 * u);
+        // 금빛 원상: 감기며 멈춘다
+        if (ensoTex != null)
+        {
+            float k = Mathf.Clamp01((cT - 0.6f) / 2.4f);
+            float ease = 1f - Mathf.Pow(1f - k, 3f);
+            float ang = -540f * (1f - ease) - cT * 1.5f;
+            var m = GUI.matrix;
+            GUIUtility.RotateAroundPivot(ang, new Vector2(w / 2f, cy));
+            GUI.color = new Color(0.86f, 0.70f, 0.32f, 0.9f * Mathf.Clamp01((cT - 0.6f) / 0.6f) * (cT > dur - 0.7f ? (dur - cT) / 0.7f : 1f));
+            GUI.DrawTexture(new Rect(w / 2f - er / 2f, cy - er / 2f, er, er), ensoTex);
+            GUI.matrix = m;
+        }
+        GUI.color = new Color(1, 1, 1, a);
+        var sH = new GUIStyle(sHanja) { fontSize = Mathf.RoundToInt(150 * u) };
+        if (hanjaFont != null) sH.font = hanjaFont;
+        sH.normal.textColor = new Color(0.95f, 0.84f, 0.55f, 1f);
+        var sT = new GUIStyle(sTitle); sT.normal.textColor = new Color(0.93f, 0.88f, 0.78f, 1f);
+        Shadowed(new Rect(0, cy - er / 2f - 90 * u, w, 60 * u), "— 진(眞) 말로 · " + cKor + " —", sT, u, a);
+        Shadowed(new Rect(0, cy - 110 * u, w, 220 * u), cHanja, sH, u, a);
+        Shadowed(new Rect(0, cy + er / 2f + 30 * u, w, 56 * u), cTitle, sT, u, a);
+        float b = Mathf.Clamp01((cT - 2.6f) / 1.0f) * (cT > dur - 0.7f ? (dur - cT) / 0.7f : 1f);
+        GUI.color = new Color(1, 1, 1, b);
+        var sE = new GUIStyle(sTitle) { fontSize = Mathf.RoundToInt(28 * u) };
+        sE.normal.textColor = new Color(0.98f, 0.94f, 0.86f, 0.95f);
+        Shadowed(new Rect(w * 0.06f, cy + er / 2f + 100 * u, w * 0.88f, 50 * u), "죽음이 스승이었다. 이번에는 살아남은 것이 가르친다.", sE, u, b);
+        if (cNew)
+        {
+            var sN = new GUIStyle(sNew); sN.normal.textColor = new Color(0.98f, 0.90f, 0.66f, 1f);
+            Shadowed(new Rect(0, cy + er / 2f + 160 * u, w, 42 * u), "처음 보는 말로 — 말로록 맨 끝 칸이 채워졌다", sN, u, b);
+        }
+        GUI.color = g;
+    }
+
+    static void Shadowed (Rect r, string text, GUIStyle st, float u, float alpha)
+    {
+        var keep = st.normal.textColor;
+        var sh = new GUIStyle(st); sh.normal.textColor = new Color(0.05f, 0.03f, 0.02f, 0.55f);
+        var g = GUI.color; GUI.color = new Color(1, 1, 1, alpha);
+        GUI.Label(new Rect(r.x + 2f * u, r.y + 3f * u, r.width, r.height), text, sh);
+        GUI.Label(r, text, st);
         GUI.color = g;
     }
 }
