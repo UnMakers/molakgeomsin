@@ -20,12 +20,14 @@
 @set b_ipma=0
 @set b_jang=0
 @set b_jang2=0
+@set b_knot=0
 @set b_ldhap=0
 @set b_ldjin=0
 @set b_leave=0
 @set b_ochi=0
 @set b_old=0
 @set b_old2x=0
+@set b_plate=0
 @set b_r1=0
 @set b_r1x=0
 @set b_r2=0
@@ -90,6 +92,7 @@
 @set f_amhtalk=0
 @set f_amhwarn=0
 @set f_amhyangknown=0
+@set f_baekridead=0
 @set f_beggarnet=0
 @set f_bilok=0
 @set f_bilokhalf=0
@@ -108,6 +111,11 @@
 @set f_floodchild=0
 @set f_freedmen=0
 @set f_frost=0
+@set f_gaekid=0
+@set f_gaeknot=0
+@set f_gaerice=0
+@set f_gaesold=0
+@set f_gaewarn=0
 @set f_gambleshamed=0
 @set f_graveflower=0
 @set f_guardfriend=0
@@ -120,6 +128,8 @@
 @set f_hajinfree=0
 @set f_hajinhurt=0
 @set f_halfhap=0
+@set f_haodone=0
+@set f_haoowe=0
 @set f_hapbyeok=0
 @set f_hat=0
 @set f_herbbond=0
@@ -130,11 +140,16 @@
 @set f_hmfailed=0
 @set f_hmleft=0
 @set f_hmsaved=0
+@set f_huntdodge=0
 @set f_incense=0
 @set f_inkcord=0
 @set f_ipmafight=0
+@set f_jangfinger=0
 @set f_jangfriend=0
 @set f_janginfo=0
+@set f_jangsaved=0
+@set f_jangsold=0
+@set f_jangtaken=0
 @set f_jbsister=0
 @set f_jbsisterhate=0
 @set f_jinally=0
@@ -150,10 +165,23 @@
 @set f_lordintro=0
 @set f_lordlore=0
 @set f_lordseal=0
+@set f_maengcontact=0
+@set f_maengcost=0
+@set f_maengdeal=0
+@set f_maenglate=0
+@set f_maenglord=0
+@set f_maengnamgung=0
+@set f_maengraid=0
+@set f_maengsold=0
+@set f_maengvow=0
 @set f_mirror=0
 @set f_monklore=0
+@set f_namgungdead=0
+@set f_namgungdoor=0
+@set f_namgungspared=0
 @set f_newrobe=0
 @set f_nightmarketgone=0
+@set f_noplate=0
 @set f_northstep=0
 @set f_ochisaved=0
 @set f_old2=0
@@ -162,7 +190,9 @@
 @set f_oldseen=0
 @set f_openname=0
 @set f_orphan=0
+@set f_platefake=0
 @set f_raidprep=0
+@set f_rankplate=0
 @set f_relicinfo=0
 @set f_relicpae=0
 @set f_ringclosed=0
@@ -266,6 +296,9 @@
 @set pw=0
 @set r=0
 @set rank=0
+@set rep_gae=0
+@set rep_heuk=0
+@set rep_maeng=0
 @set seen_E_Childplay=0
 @set seen_E_Rival=0
 @set sl=0
@@ -490,6 +523,7 @@
 아이가 모퉁이에서 한 번 돌아본다. 쫓아오지 않는 어른은 처음 보는 얼굴이다.
 그 아이의 얼굴을 기억해 둔다. 저잣거리 아이들은 저잣거리의 눈이다.
 @set f_thiefkid=1
+@set f_gaekid=1
 @goto #MkAlleyIn
 # MkAlleyIn
 장터 골목. 처마가 낮고 길이 좁다.
@@ -528,7 +562,7 @@
 # MkHerb
 약재 거리. 처마마다 말린 약초가 주렁주렁 걸렸다.
 '백초당(百草堂)' 현판 아래 허리 굽은 노파가 약연을 돌린다. 건너편 향 가게에서 연기가 가늘게 피어오른다.
-담벼락 밑에는 거적을 쓴 거지 아이 하나가 동냥 그릇을 내밀고 있다.
+담벼락 밑에는 거적을 쓴 거지 아이 하나가 동냥 그릇을 내밀고 있다. 그릇 귀에 새끼 매듭 하나가 묶여 있다.
 @choice "백초당 — 금창약(金瘡藥) 한 통 (은자 5)" if:mn>=5&&f_salve<1 goto:#MkSalve
 @choice "향 가게 — 안식향(安息香) (은자 4)" if:mn>=4&&f_incense<1 goto:#MkIncense
 @choice "거지 아이에게 은자 한 냥을 던진다 (은자 1)" if:mn>=1&&f_alms<1 goto:#MkAlms
@@ -539,6 +573,7 @@
 노파가 묻지도 않고 당신의 손을 잡아 뒤집는다. 손목 맥을 짚더니 이맛살을 찌푸린다.
 "……맥이 둘이구나. 하나는 네 것이 아니고."
 금창약 통을 내밀며 노파가 덧붙인다. "그건 약으로 못 고친다. 상처나 고치거라."
+노파가 당신 손끝에 코를 댄다. "쇳독이 올랐구나. 칼 쥔 손은 하루 세 번 씻거라." 약재상의 코가 아니다. 독을 다뤄 본 코다.
 @fx mn:-5 hp:2
 @set f_salve=1
 @set f_herbpulse=1
@@ -546,6 +581,7 @@
 # MkIncense
 향 가게 주인은 말이 많다. 송진, 침향, 안식향. 잠 못 드는 자에게는 안식향이라고 한다.
 "밤마다 가슴이 뜨거운 분들이 많이들 찾소. 요새 세상이 그렇지."
+값을 치르는 동안 주인이 장부에 무언가 적는다. 안식향 칸이다. 사 간 사람의 키와 옷차림까지 적는다.
 그날 밤부터 머리맡에 향을 피운다. 가슴의 열이 조금 낮게 끓는다.
 @fx mn:-4 curse:-2
 @set f_incense=1
@@ -555,8 +591,11 @@
 "……나리, 청운산 쪽 사람이오?"
 대답하지 않는다. 아이가 고개를 끄덕인다. 대답을 들은 얼굴이다.
 "뒷골목 담은 낮소. 혹시 쫓기면 그리로 뛰시오."
+아이가 그릇 귀의 매듭을 풀었다가 다시 묶는다. 이번엔 둘이다. 누구에게 하는 말인지, 담벼락 건너 다른 아이가 고개를 끄덕인다.
 @fx mn:-1
 @set f_alms=1
+@set f_gaekid=1
+@set rep_gae=rep_gae+1
 @goto #MkHerb
 
 ; ---------- 주루와 투전판 ----------
@@ -605,7 +644,9 @@
 설서인이 부채로 상을 딱 친다.
 "혈마교 교주 혈천마가 산문 아홉을 하룻밤에 넘었다! 그런데 말이오, 열 번째 산문 청운산장에서 혈천마가 반 각을 멈췄더란 말씀이야!"
 "멈춘 까닭인즉— 장문인이 검을 뽑지 않고 서 있었기 때문이라!"
-청중이 웃는다. 설서인의 지어낸 대목이다. 그래도 당신은 웃지 않는다. 장문인은 그런 사람이었다.
+청중이 웃는다. 설서인의 지어낸 대목이다. 그래도 당신은 웃지 않는다. 장문인은 그런 사람이었다. 검은 늦게 뽑고 빨리 거두라던 사람.
+설서인이 부채를 접으며 한 마디를 얹는다. "무림맹은 그 밤 어디 있었느냐고? 허허, 맹은 짐을 싸고 있었지! 남의 짐을!"
+이번에는 아무도 웃지 않는다.
 @set f_storylore=1
 @fx curse:-1
 @goto #MkTavern
@@ -617,6 +658,9 @@
 "혈천마(血天魔). 경지를 입에 올리는 것조차 결례인 괴물이오."
 장이 당신의 얼굴을 빤히 본다. 쥐눈이 가늘어진다.
 "…그런데 객(客), 어디서 뵌 낯이오만. …아니, 됐소. 이 바닥에서 얼굴 기억은 명줄만 줄이니."
+장이 귓불을 긁는다. 왼 귓불에 바늘구멍만 한 구멍 하나가 비어 있다.
+"소식은 한 번만 파오. 이 바닥의 법이오. 그러니 비싸지."
+@set g_fac_hao=1
 @fx mn:-10
 @set f_janginfo=1
 @goto #MkTavern

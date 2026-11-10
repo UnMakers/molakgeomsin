@@ -133,13 +133,14 @@ public class MolakMenu : MonoBehaviour
         if (ledger) { DrawLedger(w, h, u); return; }
         if (codex) { DrawCodex(w, h, u); return; }
         if (knowTab) { DrawKnow(w, h, u); return; }
+        if (facTab) { DrawFaction(w, h, u); return; }
         var sp = Engine.GetService<IScriptPlayer>();
         var state = Engine.GetService<IStateManager>();
         var ui = Engine.GetService<IUIManager>();
 
         float bw = Mathf.Min(w*0.84f, 860*u), bh = 104*u, gap = 18*u;
         float bx = (w-bw)/2f;
-        string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "빠른 저장", "저장 / 불러오기", "환경 설정" };
+        string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정" };
         float totalH = 100*u + 3*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
         float by = Mathf.Max(60*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
@@ -183,15 +184,16 @@ public class MolakMenu : MonoBehaviour
                 case 1: ledger = true; break;
                 case 2: codex = true; break;
                 case 3: knowTab = true; break;
-                case 4: if (state != null) { state.QuickSave(); Toast("빠르게 저장했다."); } break;
-                case 5:
+                case 4: facTab = true; break;
+                case 5: if (state != null) { state.QuickSave(); Toast("빠르게 저장했다."); } break;
+                case 6:
                 {
                     open = false; SetProcessInput(true);
                     var sl = ui != null ? ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI : null;
                     if (sl != null) sl.ChangeVisibility(true, 0.15f);
                     break;
                 }
-                case 6:
+                case 7:
                 {
                     open = false; SetProcessInput(true);
                     var st = ui != null ? ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI : null;
@@ -252,6 +254,78 @@ public class MolakMenu : MonoBehaviour
         if (Btn(back, "돌아간다", false, u)) ledger = false;
         if (Event.current.type == EventType.MouseDown) ledger = false;
         g0 = 0f;
+    }
+
+    bool facTab;
+    UnityEngine.Vector2 facScroll;
+    void DrawFaction (float w, float h, float u)
+    {
+        float bw = Mathf.Min(w*0.88f, 900*u);
+        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.08f);
+        GUI.Label(new Rect(bx, by, bw, 56*u), "— 강호록 · " + MolakFaction.Count() + " / " + MolakFaction.All.Length + " —", sHead);
+        by += 76*u;
+        float gap = 14*u, lineH = 74*u;
+        float listH = h - by - 150*u;
+        float cw = bw-24*u;
+        var heights = new float[MolakFaction.All.Length];
+        float total = 0;
+        for (int i = 0; i < heights.Length; i++)
+        {
+            var e = MolakFaction.All[i];
+            float hh = 112*u;
+            if (MolakFaction.Met(e))
+            {
+                hh = 150*u;
+                foreach (var l in e.Lines) if (MolakFaction.LineOn(l)) hh += lineH;
+                if (MolakFaction.RepText(e) != null) hh += 44*u;
+            }
+            heights[i] = hh; total += hh + gap;
+        }
+        var view = new Rect(bx, by, bw, listH);
+        facScroll = GUI.BeginScrollView(view, facScroll, new Rect(0, 0, cw, total));
+        var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=false, richText=true};
+        var mottoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(26*u), wordWrap=true, fontStyle=FontStyle.Italic};
+        mottoS.normal.textColor = MolakTheme.Ink3;
+        var lineS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true, richText=true};
+        var whoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperRight, fontSize=Mathf.RoundToInt(21*u)};
+        whoS.normal.textColor = MolakTheme.Ink3;
+        var repS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(24*u)};
+        repS.normal.textColor = MolakTheme.Night ? new Color(0.28f,0.44f,0.60f,1f) : new Color(0.20f,0.33f,0.47f,1f);
+        float y = 0;
+        for (int i = 0; i < MolakFaction.All.Length; i++)
+        {
+            var e = MolakFaction.All[i];
+            bool met = MolakFaction.Met(e);
+            var r = new Rect(0, y, cw, heights[i]);
+            Box(r, MolakTheme.Raise);
+            Box(new Rect(r.x, r.y, Mathf.Max(2f,5*u), r.height), met ? MolakChoiceMeta.SealColor(MolakChoiceMeta.Item, MolakTheme.Night) : MolakTheme.Line);
+            float x0 = r.x + 28*u, iw = r.width - 56*u;
+            if (!met)
+            {
+                var ghost = new GUIStyle(nameS); ghost.normal.textColor = new Color(0.42f,0.37f,0.32f,1f);
+                var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
+                GUI.Label(new Rect(x0, r.y+14*u, iw, 48*u), sb.ToString(), ghost);
+                GUI.Label(new Rect(x0, r.y+62*u, iw, 40*u), "아직 만나지 못했다 · " + e.Where, mottoS);
+            }
+            else
+            {
+                GUI.Label(new Rect(x0, r.y+14*u, iw, 48*u), e.Name + "  <size=70%>" + e.Hanja + "</size>", nameS);
+                GUI.Label(new Rect(x0, r.y+66*u, iw, 70*u), "“" + e.Motto + "”", mottoS);
+                float ly = r.y + 150*u;
+                var rep = MolakFaction.RepText(e);
+                if (rep != null) { GUI.Label(new Rect(x0, ly - 12*u, iw, 40*u), rep, repS); ly += 44*u; }
+                foreach (var l in e.Lines)
+                {
+                    if (!MolakFaction.LineOn(l)) continue;
+                    GUI.Label(new Rect(x0, ly, iw, lineH-24*u), "\"" + l.Text + "\"", lineS);
+                    GUI.Label(new Rect(x0, ly + lineH - 30*u, iw, 28*u), "— " + l.Who, whoS);
+                    ly += lineH;
+                }
+            }
+            y += heights[i] + gap;
+        }
+        GUI.EndScrollView();
+        if (Btn(new Rect(bx, by + listH + 16*u, bw, 100*u), "돌아간다", false, u)) facTab = false;
     }
 
     bool knowTab;

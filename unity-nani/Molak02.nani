@@ -14,6 +14,7 @@
 @goto #ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
 @goto #ChSoa if:day>=3&&f_soamet<1&&b_soa<1
 @goto #B5 if:day>=5&&b_hajin<1
+@goto #B7 if:day>=7&&b_plate<1
 @goto #B8 if:day>=8&&b_wanted<1
 @goto #B11 if:day>=11&&b_jang<1
 @goto #B13 if:day>=13&&f_soamet>0&&f_soadead<1&&b_soatrain<1
@@ -56,6 +57,8 @@
 @goto #BR2 if:day>=17&&f_janginfo>0&&b_r2x<1
 @goto #BR3 if:day>=24&&b_r2x>0&&b_r3x<1
 @goto #BR4 if:day>=32&&b_r3x>0&&b_r4x<1
+@goto #BKnot if:day>=39&&b_knot<1&&f_gaeknot>0&&f_gaesold<1&&rep_gae>=2
+@goto #BKnotK if:day>=39&&b_knot<1&&g_know_gaeknot>0&&f_gaeknot<1
 @goto #BS8 if:day>=42&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s8<1
 @goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
 @goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
@@ -275,6 +278,8 @@
 @art char:none
 해 질 녘, 객잔 마당에 낯선 사내 셋이 들어선다. 맨 앞의 사내가 장부를 펼친다.
 "고리대 왕삼 어른 댁에서 왔소. {debt}냥. 오늘이오."
+사내의 허리에 녹슨 쇠고리 하나가 매달려 있다. "왕삼 어른 댁 빚은 끝에 가서 고리로 셈하오. 고리 하나에 열 냥. 혈쇄문 폐철장에서."
+@set g_fac_swe=1
 하진무가 주판을 내려놓는다. 점소이가 부엌으로 숨는다.
 @goto #KDebtC if:debtext<1
 사내가 장부를 손등으로 친다. "사흘 전에도 이 얼굴이었지. 오늘은 사흘이 없소."
@@ -815,6 +820,15 @@
 @gosub MolakEvents#E_Cup if:nextevent=="E_Cup"
 @gosub MolakEvents#E_Hostage if:nextevent=="E_Hostage"
 @gosub MolakEvents#E_Flood if:nextevent=="E_Flood"
+@gosub MolakEvents#E_Maeng1 if:nextevent=="E_Maeng1"
+@gosub MolakEvents#E_Maeng2 if:nextevent=="E_Maeng2"
+@gosub MolakEvents#E_Maeng3 if:nextevent=="E_Maeng3"
+@gosub MolakEvents#E_Namgung if:nextevent=="E_Namgung"
+@gosub MolakEvents#E_Gaebang1 if:nextevent=="E_Gaebang1"
+@gosub MolakEvents#E_Gaebang2 if:nextevent=="E_Gaebang2"
+@gosub MolakEvents#E_Hao if:nextevent=="E_Hao"
+@gosub MolakEvents#E_JangSell if:nextevent=="E_JangSell"
+@gosub MolakEvents#E_JangTaken if:nextevent=="E_JangTaken"
 @gosub MolakEvents#E_Thugs if:nextevent=="E_Thugs"
 @gosub MolakEvents#E_Pilgrim if:nextevent=="E_Pilgrim"
 @gosub MolakEvents#E_Funeral if:nextevent=="E_Funeral"
@@ -927,6 +941,18 @@
 # B5
 @set b_hajin=1
 @gosub #S_Hajin
+@goto #Daytime
+# B7
+@set b_plate=1
+@gosub #S_Plate
+@goto #Daytime
+# BKnot
+@set b_knot=1
+@gosub #S_Knot
+@goto #Daytime
+# BKnotK
+@set b_knot=1
+@gosub #S_KnotK
 @goto #Daytime
 # B8
 @set b_wanted=1
@@ -1106,6 +1132,12 @@
 @goto #TownB
 # TownBCT
 할멈이 상처를 보자마자 혀를 찬다. 칼끝으로 살을 째고 검은 피를 짜낸다. 비명은 삼킨다.
+@goto #TownBCT2 if:taintkind==2
+할멈이 검은 피를 손가락에 묻혀 냄새를 맡는다. 눈이 가늘어진다.
+"……당가 수법이로구나. 이 독은 내가 처음 배운 독이다. 그러니 내가 제일 잘 푼다."
+손이 빠르다. 약방 할멈의 손이 아니다.
+@set g_fac_dang=1
+# TownBCT2
 "사흘만 늦었으면 내가 아니라 장의사를 찾았을 게다."
 @fx mn:-8 hp:-1
 @set taint=0
@@ -1174,12 +1206,16 @@
 @goto #TJR3 if:f_wolfdown>0
 @goto #TJR4 if:f_soabond>0&&f_soadead<1
 @goto #TJR5 if:curse>=70
-@set tr=random(1,6)
+@goto #TJR11 if:f_maengcontact>0&&f_maengvow<1&&f_maengsold<1&&day>=26
+@goto #TJR12 if:f_gaeknot<1&&f_gaekid>0&&day>=20
+@set tr=random(1,8)
 @goto #TJR6 if:tr==1
 @goto #TJR7 if:tr==2
 @goto #TJR8 if:tr==3
 @goto #TJR9 if:tr==4
 @goto #TJR10 if:tr==5
+@goto #TJR13 if:tr==6
+@goto #TJR14 if:tr==7
 암향루의 향이 요새 관도까지 흘러나온다느니, 운검류의 사당에 향을 피우는 여인이 있다느니. 두 냥어치 잡소문이다.
 @goto #Town1
 # TJR1
@@ -1214,6 +1250,19 @@
 @goto #Town1
 # TJR10
 "교주가 혈천마가 되기 전에 말이오, 어떤 백발 노인한테 '심겨' 있었다는 얘기가 있소. 산사 주지가 술 취하면 하는 소리요. 밭이니 열매니."
+@goto #Town1
+# TJR11
+"맹 쪽 서생 말이오? 그 사람, 일 년 전 그 밤 산 아래에 있었다는 소문이 있소. 무엇을 지키느라 못 올라갔는지 물어보시오. 대답 대신 장부를 떨어뜨릴 거요."
+장이 쥐눈을 가늘게 뜬다. "성 서쪽 폐사찰에 별 단 사람들이 모인다는 말도 있고."
+@goto #Town1
+# TJR12
+"약재 거리 거지 아이들한테 밥 먹었냐고 물어보시오. 아직이라고 하면 같이 앉으시오. 걔들이 담장에 매는 새끼 매듭, 그게 이 동네에서 제일 빠른 소식이오. 나보다 빠르지."
+@goto #Town1
+# TJR13
+"남궁 소가주가 운주에서 심판을 선다오. 그 사람, 패를 엄지로 문지르는 버릇이 있다지. 던지고 싶은 손이라고들 하오. 교주전 측문을 지키는 게 남궁이고."
+@goto #Town1
+# TJR14
+"주루 다락에 하오문 노파가 산다오. 교에 소식을 판 문도는 손가락을 하나씩 놓고 간다지. 요새 다락에 손가락이 늘었소."
 @goto #Town1
 # TownJC4
 @goto #Town1
@@ -1276,6 +1325,74 @@
 @fx hp:2 curse:-1
 @return
 
+# S_Plate
+@page
+이레째 아침. 게시벽 앞에 탁자 하나가 놓였다.
+@set tr=random(1,3)
+@goto #S_PlV2 if:tr==2
+@goto #S_PlV3 if:tr==3
+탁자 뒤에 검은 관복의 사내가 앉아 있다. 소매에 붉은 실로 숫자를 수놓았다. 서열각(序列閣)의 감찰사다. 그 앞으로 무인들이 줄을 섰다. 낭인, 표사, 칼 찬 장꾼.
+@goto #S_PlM
+# S_PlV2
+비가 그친 아침. 감찰사의 탁자 위에 쇠패가 젖은 채 쌓여 있다. 줄 선 무인들의 어깨에서 김이 오른다. 아무도 비를 탓하지 않는다.
+@goto #S_PlM
+# S_PlV3
+줄 맨 앞의 늙은 표사가 쇠패를 받아 들고 숫자를 오래 본다. 지난해보다 이만이 밀렸다. 감찰사는 고개도 들지 않는다. "다음."
+# S_PlM
+@set g_fac_gyo=1
+감찰사가 붓을 들고 앞사람을 본다.
+"이름은 적지 않소. 숫자만 적소. 숫자는 거짓말을 안 하니까."
+쇠패 하나가 탁자 위를 미끄러진다. 숫자 자리가 비어 있다. 무명(無名)의 패다.
+"패를 찬 자는 패를 찬 자에게 비무를 청할 수 있소. 청을 받은 자는 물리지 못하오. 이긴 자가 진 자의 숫자를 가져가오. 교법이오."
+옆줄의 낭인이 중얼거린다. "피는 위로 흐른다더니. 위로 흐르다 다 말라 버리겠소."
+감찰사의 붓이 멎는다. 낭인이 입을 다문다. 붓이 다시 움직인다.
+@choice "패를 받는다 — 죽립 그늘 그대로" goto:#S_PlA
+@choice "주루 계단 밑으로 간다 — 남의 이름으로 받는 길이 있다 (은자 4)" if:mn>=4 goto:#S_PlB
+@choice "줄에서 빠진다 — 숫자로 불리지 않겠다" goto:#S_PlC
+@stop
+# S_PlA
+감찰사가 당신을 오래 본다. 죽립 그늘 밑을 보려는 눈이다.
+"……어디서 본 얼굴 같소. 개의치 않소. 숫자는 얼굴을 묻지 않으니."
+쇠패가 허리에서 차갑다. 무명. 아직은.
+@set f_rankplate=1
+@fx sl:1
+@return
+# S_PlB
+주루 계단 밑. 쥐눈이 장이 은자를 세지도 않고 소매에 넣는다.
+"남의 이름이라. 마침 하나 있소. 지난달 강에 떠오른 표사요. 패는 서열각에 돌아갔는데, 장부의 얼굴 칸은 아직 안 지워졌소."
+"하오문은 한 소식을 한 번만 파니까. 그러니 비싼 거요."
+이튿날, 무명의 쇠패가 허리에 걸린다. 서열각 장부의 얼굴 칸에는 죽은 표사의 이름이 적혔다. 패 끈의 매듭이 낯설다. 별 모양으로 맺었다.
+@fx mn:-4
+@set f_rankplate=1
+@set f_platefake=1
+@set g_fac_hao=1
+@set rep_heuk=rep_heuk+1
+@return
+# S_PlC
+줄에서 빠진다. 감찰사가 고개를 들지 않은 채 말한다.
+"패 없는 칼은 들개요. 들개는 아무나 잡아도 교법에 걸리지 않소."
+담벼락 밑에서 거지 아이 하나가 그 말을 듣고 있다. 아이가 동냥 그릇을 엎는다. 그러고는 다시 바로 세운다.
+@set f_noplate=1
+@set f_gaekid=1
+@set rep_gae=rep_gae+1
+@fx curse:-1
+@return
+
+# S_Knot
+@page
+서른아흐레째 아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다. 밤사이 누가 맸다.
+골목 끝에서 꼬지가 손을 흔든다. 손가락 셋을 펴 보이고, 늑대 귀 흉내를 낸다. 그리고 사라진다.
+셋은 늑대. 사흘 안에 이 골목으로 온다.
+@set f_raidprep=1
+@set f_gaewarn=1
+@return
+# S_KnotK
+@page
+서른아흐레째 아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다.
+이번 생에 꼬지는 당신을 모른다. 그래도 매듭은 같은 말을 한다. 셋은 늑대. 지난 생에 배운 말이다.
+@set f_gaewarn=1
+@return
+
 # S_Wanted
 @page
 여드레째 아침. 게시벽 앞이 웅성거린다.
@@ -1294,7 +1411,9 @@
 아이 둘이 방 앞에서 그림 흉내를 내며 칼싸움을 한다. 하나가 "청운 잔당이다!" 하고 쓰러진다. 어미가 달려와 두 아이의 입을 틀어막는다.
 # S_WM
 구경꾼들 틈으로 소매에 붉은 끈을 감은 자들이 하나둘 늘어난다.
+관아 대문은 닫혀 있다. 방을 붙인 것은 포졸이 아니라 붉은 끈들이다. 현령의 도장이 교의 글씨 밑에 작게 찍혀 있다.
 @set f_wanted=1
+@set g_fac_gwan=1
 @choice "구경꾼 틈에 섞여 제 수배서를 흉본다" goto:#S_WantedC0
 @choice "밤에 몰래 찢으러 온다" goto:#S_WantedC1
 @choice "고개를 숙이고 지나간다" goto:#S_WantedC2
@@ -1323,6 +1442,8 @@
 @choice "입막음 값을 치른다 (은자 5)" if:mn>=5 goto:#S_JangC0
 @choice "\"다음엔 팔 생각인가.\"" goto:#S_JangC1
 @choice "말없이 문을 닫는다" goto:#S_JangC2
+@choice "\"며칠 뒤 이 방을 팔 거요. 왜 파는지만 말하시오.\"" if:g_know_jangsell>0&&g_know_hao<1 goto:#S_JangK
+@choice "\"딸의 이름은 아직 징세 명부에 있소?\"" if:g_know_hao>0 goto:#S_JangK2
 @stop
 # S_JangC0
 @fx mn:-5
@@ -1332,6 +1453,27 @@
 # S_JangC1
 @fx sl:1
 장이 피식 웃는다. "파는 날엔 먼저 알려 드리리다. 그게 내 식의 의리요." 괴상한 의리다.
+@return
+# S_JangK
+장의 쥐눈이 한 번 깜빡인다. 두 번은 깜빡이지 않는다. 이 바닥에서 오래 산 눈이다.
+"……객은 아직 오지 않은 소식을 파시는구려. 그건 하오문에도 없는 물건이오."
+한참 만에 장이 귓불을 긁는다.
+"딸이오. 열 살. 징세조 장부의 담보 칸에 올랐소. 서른 냥이면 지워 준다 했소. 교가."
+"교는 장부의 이름을 지우지 않소."
+"……알고 있소. 그래도 파는 거요. 아비니까."
+@set g_know_hao=1
+@set f_jangfriend=1
+@fx curse:-1
+@return
+# S_JangK2
+장의 손이 소매 속 은자 주머니를 꽉 쥔다.
+"……누구한테 들었소. 아니, 됐소. 묻는 순간 셈이 끝나 버리니."
+"그 서른 냥, 받지 마시오. 교는 줄을 하나 더 그을 뿐이오."
+장이 오래 서 있다. 그러다 주머니를 꺼내 문지방에 내려놓는다. 붉은 끈이 맨 주머니다.
+"내일 돌려주리다. 붉은 끈한테. 내 손가락 하나쯤 같이 갈 거요."
+@set f_jangfriend=1
+@set f_jangsaved=1
+@set rep_heuk=rep_heuk+1
 @return
 # S_JangC2
 거래도, 위협도 하지 않는다. 장은 잠시 서 있다가 어둠 속으로 사라진다. 어느 쪽으로 기울지는 그의 주판알이 정할 것이다.

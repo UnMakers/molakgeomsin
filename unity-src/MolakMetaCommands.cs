@@ -18,7 +18,7 @@ public class InitRunCommand : Command
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
         foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
-                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
+                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
                                  "g_know_hunt1","g_know_hunt2","g_know_hunt3","g_know_cheolsan","g_know_rival","g_know_chainmob"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         foreach (var e in MolakEnd.All)

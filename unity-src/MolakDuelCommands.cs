@@ -45,6 +45,7 @@ public static class MolakDuel
             case "soa": return new Foe { Name = "적운검파 소아", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.8f)) : 600000, P = Mathf.Round(MyPower() + Random.Range(0, 4)), Boss = "soa" };
             case "raid": return new Foe { Name = "혈랑대 야습조", Rank = 2500, P = Mathf.Round(MyPower() + Random.Range(-2, 3)) };
             case "tax": return new Foe { Name = "징세조 칼잡이들", Rank = 400000, P = 27 + Random.Range(0, 5) };
+            case "namgung": return new Foe { Name = "남궁세가 소가주 남궁현", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.Min(2140, Mathf.FloorToInt(baseRank * 0.6f))) : 2140, P = Mathf.Round(MyPower() + Random.Range(-1, 3)), Boss = "namgung" };
             case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
             {
                 int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.22f + Random.value * 0.18f))) : Random.Range(5500000, 7000001);
@@ -151,7 +152,7 @@ public class DuelCommand : Command
 {
     public static bool IsBossKind (string kind)
     {
-        return kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival" || kind == "chainmob" || kind == "hunt1" || kind == "hunt2";
+        return kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival" || kind == "chainmob" || kind == "hunt1" || kind == "hunt2" || kind == "namgung";
     }
     public StringParameter Style;
 
@@ -195,6 +196,10 @@ public class DuelCommand : Command
         if (kind == "raid" && MolakStats.Get("f_hajinbond") > 0 && MolakStats.Get("f_hajindead") < 1) bonus += 2f; // 하진무가 혈랑대에게 계단 셋째 칸을 속였다
         if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 반쪽의 합벽: 그녀의 검이 빈자리를 막는다
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
+        if (kind == "raid" && MolakStats.Get("f_maengraid") > 0) bonus += 2f;      // 맹의 칼 셋이 지붕에서 뒤를 쳤다
+        if (kind == "lord" && MolakStats.Get("f_namgungdoor") > 0) bonus += 1f;    // 남궁이 측문을 비웠다
+        if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_gaewarn") > 0) bonus += 1f;   // 담장의 매듭 셋
+        if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_huntdodge") > 0) bonus += 2f; // 빈방을 부수게 했다
         float odds = MolakDuel.Odds(foe, bonus);
         bool win = Random.Range(1, 101) <= odds;
         float oldRank = MolakStats.Get("rank");

@@ -70,6 +70,8 @@ public static class MolakChoiceMeta
             if (v == "g_runs") return "회귀한 자";
             if (v == "g_up_mem") return "전생의 기억";
             if (v == "g_clears") return "등극을 겪은 자";
+            foreach (var ke in MolakKnow.All)
+                foreach (var kk in ke.Keys.Split('|')) if (kk == v) return "전생의 기억 · " + ke.Name;
             return "전생의 기억";
         }
         // 능력치·자원
@@ -85,6 +87,9 @@ public static class MolakChoiceMeta
             case "rank": if (!upperBound || n <= 0) return null; kind = Stat; return "서열 " + n.ToString("N0") + "위 이내";
             case "f_wanted": if (!positive) return null; kind = Item; return "수배된 몸";
             case "f_soamet": return null;
+            case "rep_maeng": if (!positive) return null; kind = Item; return "무림맹의 신의 " + n.ToString("0");
+            case "rep_gae": if (!positive) return null; kind = Item; return "개방의 신의 " + n.ToString("0");
+            case "rep_heuk": if (!positive) return null; kind = Item; return "흑도의 신의 " + n.ToString("0");
         }
         // 물건·비방·인연 (행낭 이름 그대로)
         if (v.StartsWith("f_") && positive)

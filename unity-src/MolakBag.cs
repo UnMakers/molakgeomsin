@@ -11,6 +11,7 @@ public class MolakBag : MonoBehaviour
     public struct Entry { public string Flag, Name, Desc, Effect; public Entry (string f, string n, string d, string e) { Flag = f; Name = n; Desc = d; Effect = e; } }
 
     public static readonly Entry[] Items = {
+        new Entry("f_rankplate", "무명의 쇠패", "서열각 감찰사가 내준 쇠패. 숫자 자리가 비어 있다. 패를 찬 자는 서열각의 것이다.", "교도가 함부로 못 벤다"),
         new Entry("f_hat", "죽립과 잿빛 장포", "첫날 옷전에서 산 것. 챙을 내리면 이마에서 콧날까지 그늘이 진다.", "얼굴을 가린다"),
         new Entry("f_whetstone", "청석 숫돌", "눈먼 숫돌 장수의 청석. 일 년 녹이 반 시진 만에 벗겨졌다.", "검술 +1"),
         new Entry("f_salve", "백초당 금창약", "할멈이 '상처나 고치거라' 하며 내준 한 통.", "상처를 싸맨다"),
@@ -54,11 +55,19 @@ public class MolakBag : MonoBehaviour
         new Entry("f_beggarnet", "거지의 눈", "담 밑을 세는 붉은 끈. 뒷문 담은 낮다.", ""),
         new Entry("f_deadrumor", "사망 도장", "수배서에 '死' 자가 찍혔다. 며칠은 조용할 것이다.", ""),
         new Entry("g_redverse", "적운의 구결 · 전생", "우물 속에서 백 번 들은 말. 죽어서도 잃어버리지 말라 했다.", "되감기지 않는다"),
+        new Entry("f_gaeknot", "꼬지의 매듭", "하나는 낯선 칼, 둘은 관아, 셋은 늑대. 엎어 둔 그릇은 이 길로 다니지 말라는 뜻.", ""),
+        new Entry("f_maengdeal", "맹의 거래", "진백의 목과 청운의 현판. 백리휘의 장부에 적혔다.", ""),
+        new Entry("f_platefake", "별 매듭의 패 끈", "강에 떠오른 표사의 패 끈. 서열각 장부의 얼굴 칸은 남의 이름이다.", ""),
         new Entry("f_hapbyeok", "운검합벽(雲劍合璧)", "두 사람이 하나의 초식을 나누어 쓰는 검. 등을 맡긴 검이 곁에 있어야 한다.", ""),
         new Entry("f_finger", "잘린 새끼손가락", "왕삼의 장부에서 이름 한 줄이 지워진 값.", "검술 −3"),
         new Entry("f_wangsam", "왕삼의 장부", "빚쟁이들을 마당에 눕혔다. 장부는 아직 어딘가에 있다.", ""),
     };
     public static readonly Entry[] Bonds = {
+        new Entry("f_maengvow", "백리휘의 약조", "'이번엔 늦지 않겠소. 내 이름으로.'", "야습에 원군"),
+        new Entry("f_maenglord", "맹의 칼 셋", "혈천진의 세 눈에 하나씩 들겠다고 했다.", "혈천진"),
+        new Entry("f_namgungdoor", "남궁현의 측문", "'그날 내가 문 앞에 서 있다면, 그건 그대를 막으려는 게 아니오.'", "교주전 +1"),
+        new Entry("f_haoowe", "다락의 빚", "'하오문은 빚을 장부에 안 적소. 머리에 적지.'", ""),
+        new Entry("f_gaerice", "다리 밑의 솥", "밥 먹었소? 아직이오. 그럼 앉으시오.", ""),
         new Entry("f_alms", "저잣거리 거지 아이", "은자 한 냥. '뒷골목 담은 낮소.'", ""),
         new Entry("f_thiefkid", "소매치기 아이", "쫓아오지 않은 어른을 아이는 기억한다.", ""),
         new Entry("f_soabond", "소아 · 약속", "같은 달 아래.", ""),
