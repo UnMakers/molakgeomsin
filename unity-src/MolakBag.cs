@@ -11,6 +11,10 @@ public class MolakBag : MonoBehaviour
     public struct Entry { public string Flag, Name, Desc, Effect; public Entry (string f, string n, string d, string e) { Flag = f; Name = n; Desc = d; Effect = e; } }
 
     public static readonly Entry[] Items = {
+        new Entry("f_hat", "죽립과 잿빛 장포", "첫날 옷전에서 산 것. 챙을 내리면 이마에서 콧날까지 그늘이 진다.", "얼굴을 가린다"),
+        new Entry("f_whetstone", "청석 숫돌", "눈먼 숫돌 장수의 청석. 일 년 녹이 반 시진 만에 벗겨졌다.", "검술 +1"),
+        new Entry("f_salve", "백초당 금창약", "할멈이 '상처나 고치거라' 하며 내준 한 통.", "상처를 싸맨다"),
+        new Entry("f_incense", "안식향", "머리맡에 피우면 가슴의 열이 조금 낮게 끓는다.", "저주 −2"),
         new Entry("f_cheonggang", "청강검(靑鋼劍)", "청운검파 장문인의 검. 손에 감기듯 맞는다.", ""),
         new Entry("f_guardsword", "표국의 검", "문 닫은 표국의 총표두 염가가 맡긴 검. 뼈대가 좋다.", "받을 때 검술 +1"),
         new Entry("f_bilok", "운검비록(雲劍秘錄)", "청운의 비록. 구결이 손끝을 이끈다.", "밤 검술 수련 효율 상승"),
@@ -28,6 +32,8 @@ public class MolakBag : MonoBehaviour
         new Entry("f_janginfo", "혈천진 보법 서찰", "혈마곡 입구 진법의 틈. 왼, 왼, 오른.", "혈마교주 비무 보정"),
     };
     public static readonly Entry[] Lore = {
+        new Entry("f_storylore", "설서인의 강담", "열 번째 산문, 청운산장에서 장문인은 검을 뽑지 않고 서 있었다고 한다.", ""),
+        new Entry("f_herbpulse", "두 개의 맥", "백초 할멈이 짚었다. 하나는 네 것이 아니라고.", ""),
         new Entry("f_breath", "토탁(吐濁) 구결", "거지 중의 숨법. 들숨 여섯, 날숨 아홉.", "운기 시 저주 증가 감소"),
         new Entry("f_breath2", "토탁 · 두 번째 구결", "날숨 아홉 끝의 반 호흡.", "운기 시 저주 증가 더 감소"),
         new Entry("f_tea", "청심차 비방", "연잎 석 냥, 감초 한 냥, 자하근. 매일 새벽 한 사발.", "매일 저주 성장 −0.15"),
@@ -47,8 +53,12 @@ public class MolakBag : MonoBehaviour
         new Entry("f_relicinfo", "북쪽 짐", "보름에 한 번, 사람 것만 빼고 내려온다.", ""),
         new Entry("f_beggarnet", "거지의 눈", "담 밑을 세는 붉은 끈. 뒷문 담은 낮다.", ""),
         new Entry("f_deadrumor", "사망 도장", "수배서에 '死' 자가 찍혔다. 며칠은 조용할 것이다.", ""),
+        new Entry("f_finger", "잘린 새끼손가락", "왕삼의 장부에서 이름 한 줄이 지워진 값.", "검술 −3"),
+        new Entry("f_wangsam", "왕삼의 장부", "빚쟁이들을 마당에 눕혔다. 장부는 아직 어딘가에 있다.", ""),
     };
     public static readonly Entry[] Bonds = {
+        new Entry("f_alms", "저잣거리 거지 아이", "은자 한 냥. '뒷골목 담은 낮소.'", ""),
+        new Entry("f_thiefkid", "소매치기 아이", "쫓아오지 않은 어른을 아이는 기억한다.", ""),
         new Entry("f_soabond", "소아 · 약속", "같은 달 아래.", ""),
         new Entry("f_soaseal", "소아의 봉인법", "쌍검의 문파가 쓰는 봉인.", "저주 성장 −15%"),
         new Entry("f_herbbond", "백초 할멈 · 지게", "산허리까지 반나절. 청운 사람들이 내 약을 많이 사갔지.", ""),
@@ -60,6 +70,8 @@ public class MolakBag : MonoBehaviour
         new Entry("f_jangfriend", "쥐눈이 장", "소식을 사고파는 사이.", ""),
         new Entry("f_ferryfree", "사공의 약속", "삿대질 값은 안 받겠소.", ""),
         new Entry("f_vigil", "마당의 배웅", "아무도 가지 말라고 하지 않았다.", ""),
+        new Entry("f_sparedally", "살려 보낸 비무꾼", "'살려 준 목숨, 한 번은 갚겠소.'", "위기에 한 번"),
+        new Entry("f_hajinhurt", "하진무 · 무명 감은 손목", "그는 아무 말도 하지 않는다.", ""),
     };
 
     static MolakBag inst;

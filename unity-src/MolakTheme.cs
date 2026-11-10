@@ -185,6 +185,14 @@ public class MolakTheme : MonoBehaviour
         cardSprite = cardSpriteDay;
     }
 
+    /// <summary>선택지 카드 폭: 배경 종이의 테두리 선(화면 폭의 약 4.5%) 안쪽에 들어오도록 화면 비율에 맞춰 계산</summary>
+    static float CardWidth (Component c)
+    {
+        float cw = 900f;
+        var cv = c.GetComponentInParent<Canvas>(); if (cv != null && cv.rootCanvas != null) cw = ((RectTransform)cv.rootCanvas.transform).rect.width;
+        return Mathf.Min(840f, cw * 0.84f);
+    }
+
     static TMPro.TMP_Text dlgText;
     static bool BandFits (int choices)
     {
@@ -315,10 +323,10 @@ public class MolakTheme : MonoBehaviour
                 ub.colors = cb;
             }
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
-            var brt = (RectTransform)btn.transform; if (Mathf.Abs(brt.rect.width - 820f) > 1f && brt.anchorMin.x == brt.anchorMax.x) brt.sizeDelta = new Vector2(820f, brt.sizeDelta.y);
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
             float wantH = choiceCount >= 4 ? 122f : 148f;
-            if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - 820f) > 0.5f) { le.minHeight = wantH; le.minWidth = 820f; }
+            float cardW = CardWidth(btn);
+            if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = InkText;
             if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); }); }
             foreach (var tx in btn.GetComponentsInChildren<TMPro.TMP_Text>(true))

@@ -8,7 +8,7 @@ using UnityEngine;
 /// Run(god)            — 능력치 보정 + 엔딩 지향, 1회차.
 /// Run(false, N)       — 무보정 '균형' 정책으로 N회차.
 /// Batch(policy, N, tag) — 정책별 N회차 연속 플레이(전역 진척 초기화 후). 결과는 Build/soak_results.csv 에 한 줄씩 기록.
-///   정책: 0 균형 · 1 공격(늘 싸움) · 2 신중(안전 위주) · 3 무작위(경로 탐색) · 4 장사꾼(은자·구매) · 5 사술(저주 이용)
+///   정책: 0 균형 · 1 공격(늘 싸움) · 2 신중(안전 위주) · 3 무작위(경로 탐색) · 4 장사꾼(은자·구매) · 5 사술(저주 이용) · 6 학습(균형 + 죽음을 부른 선택은 다음 회차부터 피함)
 /// Drive(picks)        — 지정 선택 주행.</summary>
 public class MolakEndTester : MonoBehaviour
 {
@@ -18,6 +18,8 @@ public class MolakEndTester : MonoBehaviour
     public static string Status = "idle";
     public static string ResultPath = @"C:\Users\sjf1t\RuinedSword\Build\soak_results.csv";
     public static HashSet<string> ChoiceSeen = new HashSet<string>();
+    public static HashSet<string> DeathChoices = new HashSet<string>();
+    string lastEventChoice = "";
     public bool god = true; public int maxLives = 1; public int lives = 0; public int policy = 0; public string tag = "";
     public bool done;
     float lastProgress; int lastIdx = -1; float lastDay = -1; string lastScript = ""; bool inOver;
@@ -35,7 +37,7 @@ public class MolakEndTester : MonoBehaviour
     }
     public static void Batch (int policy, int lives, string tag)
     {
-        Ensure(); I.god = false; I.maxLives = lives; I.policy = policy; I.tag = tag; I.Begin();
+        Ensure(); DeathChoices.Clear(); I.god = false; I.maxLives = lives; I.policy = policy; I.tag = tag; I.Begin();
     }
     static void Ensure ()
     {
@@ -53,6 +55,7 @@ public class MolakEndTester : MonoBehaviour
     static float EstOdds () { float o = 0; for (int i = 0; i < 3; i++) o += MolakDuel.Odds(MolakDuel.MakeFoe("any"), 0); return o / 3f; }
     static int Rnd (int n) { return Random.Range(0, n); }
 
+    string curPath = "";
     int Choose (string[] labels)
     {
         bool shop = labels.Any(l => l.Contains("다 시 그 날 로"));
@@ -62,6 +65,21 @@ public class MolakEndTester : MonoBehaviour
         {
             if (policy == 3) { int k0 = Rnd(labels.Length); return k0; }
             foreach (var s in ShopPref) { int k = Find(labels, s); if (k >= 0) return k; }
+        }
+        // 업보 관리: 독·곪은 상처는 고치고, 갚을 수 있는 빚은 갚는다 (무작위 제외)
+        if (policy != 3)
+        {
+            if (MolakStats.Get("taint") > 0 && policy != 1 && policy != 5)
+            {
+                int cure = FindAny(labels, new[] { "해독탕", "상처를 내민다", "금창약을 덜어 덧난" });
+                if (cure >= 0) return cure;
+                if (mn >= 8 || MolakStats.Get("f_herbbond") > 0 || MolakStats.Get("f_herbfriend") > 0)
+                {
+                    int go = FindAny(labels, new[] { "저자로 나간다", "상점가를 둘러본다", "백초당 — 백초 할멈" });
+                    if (go >= 0) return go;
+                }
+            }
+            int pay = Find(labels, "빚을 갚는다"); if (pay >= 0) return pay;
         }
         // 비무 중 전술
         if (Find(labels, "정면으로 벤다") >= 0)
@@ -124,6 +142,7 @@ public class MolakEndTester : MonoBehaviour
         if (Find(labels, "날품을 판다") >= 0 && policy != 3 && policy != 4) return Find(labels, "날품을 판다");
         // 일반 사건
         var ok = Enumerable.Range(0, labels.Length).Where(i => !Avoid.Any(a => labels[i].Contains(a))).ToArray();
+        if (policy == 6) { var ok2 = ok.Where(i => !DeathChoices.Contains(curPath + "|" + labels[i])).ToArray(); if (ok2.Length > 0) ok = ok2; }
         if (ok.Length == 0) return Rnd(labels.Length);
         switch (policy)
         {
@@ -179,7 +198,10 @@ public class MolakEndTester : MonoBehaviour
             {
                 inOver = true; lives++;
                 bool clear = dc == "등극" || dc == "성사" || dc == "순검";
-                var row = LifeRow(clear ? "END" : "DEAD", dc);
+                if (!clear && dc != "비무 패배" && dc != "포박" && dc != "사술 폭주" && dc != "독" && dc != "곪은 상처" && lastEventChoice != "") DeathChoices.Add(lastEventChoice);
+                lastEventChoice = "";
+                string dk = ""; try { var kv = vars.GetVariableValue("dkind"); dk = kv.Type == CustomVariableValueType.String ? kv.String : ""; } catch { }
+                var row = LifeRow(clear ? "END" : "DEAD", dc == "비무 패배" ? dc + "(" + dk + ")" : dc);
                 Lives.AppendLine(row); WriteResult(row);
                 if (lives >= maxLives || (clear && tag == "run")) { Status = (clear ? "ending:" : "death:") + dc; done = true; yield break; }
                 ResetLifeCounters();
@@ -194,9 +216,11 @@ public class MolakEndTester : MonoBehaviour
                 var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
                 int k = -1;
                 if (god) { foreach (var pf in PreferGod) { for (int i = 0; i < btns.Length; i++) if (labels[i].Contains(pf)) { k = i; break; } if (k >= 0) break; } }
+                curPath = path;
                 if (k < 0) k = Choose(labels);
                 k = Mathf.Clamp(k, 0, btns.Length - 1);
                 ChoiceSeen.Add(path + "|" + labels[k]);
+                if (path != "MolakDuel" && path != "MolakOver" && Find(labels, "몸을 쉰다") < 0) lastEventChoice = path + "|" + labels[k];
                 if (Find(labels, "정면으로 벤다") >= 0) lastDuelWin = 0f;
                 choicesThisLife++;
                 Log.AppendLine("d" + day + " [" + path + "#" + tr.PlayedIndex + "] " + labels[k]);

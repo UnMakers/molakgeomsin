@@ -38,6 +38,11 @@ public static class MolakDuel
             case "hunt2": return new Foe { Name = "혈랑대 정예", Rank = 2500, P = 56 + Random.Range(0, 4) };
             case "hunt3": return new Foe { Name = "집법전주", Rank = 40, P = 66 + Random.Range(0, 5), Boss = "hunt3" };
             case "cheolsan": return new Foe { Name = "철산도", Rank = 5213, P = 40 + Random.Range(0, 4) };
+            // 업보의 칼: 내 힘에 맞춰 오는 상대들 — 질 수도, 이길 수도 있는 판
+            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(MyPower() + Random.Range(-1, 4)) };
+            case "debt": return new Foe { Name = "고리대 왕삼의 수하들", Rank = 6200000, P = Mathf.Round(16 + MolakStats.Get("day") * 0.5f + Random.Range(0, 4)) };
+            case "assassin": return new Foe { Name = "교의 자객", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.5f)) : 900000, P = Mathf.Round(MyPower() + Random.Range(1, 5)) };
+            case "tax": return new Foe { Name = "징세조 칼잡이들", Rank = 400000, P = 27 + Random.Range(0, 5) };
             case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
             {
                 int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.22f + Random.value * 0.18f))) : Random.Range(5500000, 7000001);
@@ -61,12 +66,26 @@ public static class MolakDuel
     /// <summary>비무판에서 만날 수 있는 최고 서열: 백위 안은 교의 사람들(혈쇄문주를 꺾기 전엔 101위까지), 그 뒤엔 십위권(교주 직속) 바로 밑까지.</summary>
     public static int FloorRank () { return MolakStats.Get("f_wolfdown") > 0 ? 10 : 100; }
 
+    static readonly string[] GrudgeNames = { "죽은 자의 의형제", "죽은 자의 사부", "상복 입은 쌍도객", "원수를 갚으러 온 사내" };
+
+    /// <summary>지면 목숨을 잃는 판: 이야기의 결전, 업보의 칼, 생사결. 그 밖의 비무는 지더라도 목은 붙어 있다.</summary>
+    public static bool Lethal (string kind)
+    {
+        switch (kind)
+        {
+            case "hochi": case "kyona": case "jinbaek": case "chainmob": case "hunt1": case "hunt2": case "hunt3":
+            case "wolf": case "lord": case "cheolsan": case "grudge": case "debt": case "assassin": case "tax": return true;
+        }
+        return MolakStats.Get("dsit") == 7;
+    }
+
     static readonly string[] BackNames = { "얼굴 없는 도객", "복면의 창잡이", "외팔이 낭인", "이 빠진 칼의 사내", "말 없는 쌍부(雙斧)" };
 
     public static float MyPower ()
     {
         float hp = MolakStats.Get("hp"), hpm = Mathf.Max(1, MolakStats.Get("hpmax"));
-        return MolakStats.Get("sw") * 1.1f + MolakStats.Get("ng") * 1.3f + (hp / hpm) * 3f + (MolakStats.Get("sl") >= 5 ? 2f : 0f);
+        return MolakStats.Get("sw") * 1.1f + MolakStats.Get("ng") * 1.3f + (hp / hpm) * 3f + (MolakStats.Get("sl") >= 5 ? 2f : 0f)
+            - (MolakStats.Get("injury") > 0 ? 4f : 0f) - (MolakStats.Get("taint") > 0 ? 2f : 0f);
     }
 
     public static float Odds (Foe foe, float bonus)
@@ -86,7 +105,20 @@ public class DuelInfoCommand : Command
 #pragma warning restore CS1998
     {
         var kind = Assigned(Kind) ? Kind.Value : "any";
+        // 판의 형편: 0 없음 1 빗속 2 외나무다리 3 구경꾼 4 독 바른 칼 5 판돈 6 제자를 데려온 상대 7 생사결(뒷골목만)
+        int sit = 0;
+        if (kind == "any" || kind == "street" || kind == "back")
+        {
+            int r = Random.Range(0, 100);
+            if (kind == "back" && r < 18) sit = 7;
+            else if (r < 50) sit = 0;
+            else sit = 1 + Random.Range(0, 6);
+            if (sit == 1 && MolakStats.Get("day") < 3) sit = 0;
+        }
+        MolakStats.Set("dsit", sit);
         var foe = MolakDuel.MakeFoe(kind);
+        if (sit == 4) foe.P -= 3f;           // 독에 기대는 손은 검이 무르다
+        if (sit == 7) foe.P += 2f;
         MolakDuel.Pending = foe;
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         vars.SetVariableValue("duelkind", new CustomVariableValue(kind));
@@ -99,6 +131,10 @@ public class DuelInfoCommand : Command
         MolakStats.Set("odds10", Mathf.Clamp(Mathf.Round(MolakDuel.Odds(foe, 0) / 10f), 1f, 9f));
         MolakStats.Set("cansl", MolakStats.Get("sl") >= 3 ? 1f : 0f);
         MolakStats.Set("cancurse", MolakStats.Get("curse") >= 10 ? 1f : 0f);
+        MolakStats.Set("dlethal", MolakDuel.Lethal(kind) ? 1f : 0f);
+        MolakStats.Set("canflee", sit == 2 || sit == 7 || kind == "grudge" || kind == "assassin" ? 0f : 1f);
+        MolakStats.Set("cansense", sit == 4 && (MolakStats.Get("f_dokinfo") > 0 || MolakStats.Get("sw") >= 18 || MolakStats.Get("f_herbpulse") > 0) ? 1f : 0f);
+        MolakStats.Set("dinj", 0f); MolakStats.Set("dtaint", 0f); MolakStats.Set("dloot", 0f);
         string art = kind == "hochi" ? "hochi" : kind == "kyona" ? "kyona" : kind == "jinbaek" ? "jinbaek" : kind == "lord" ? "lord" : kind == "rival" ? "gwaksan" : kind == "hunt3" ? "lawlord" : null;
         if (art != null) MolakArt.Char(art);
     }
@@ -124,7 +160,15 @@ public class DuelCommand : Command
         if (style == "guard") { bonus = -1f; hpRisk = 2f; }
         if (style == "curse") { bonus = 3f + curse * 0.06f; hpRisk = 2f; MolakStats.Add("curse", 5f); }
         if (style == "curse2") { bonus = 5f + curse * 0.08f; hpRisk = 2f; MolakStats.Add("curse", 8f); } // 75 이상: 사술이 먼저 나선다
+        if (style == "sense") { bonus = 2f; hpRisk = 2f; }   // 독 바른 칼을 먼저 읽는다
         if (MolakStats.Get("memwarn") > 0) bonus += 1f; // 전생의 기억: 상대의 첫 수를 안다
+        float sit = MolakStats.Get("dsit");
+        if (sit == 1) bonus += style == "guard" ? 2f : (style == "front" || style == "killer" ? -1.5f : 0f); // 빗속: 디딤이 미끄럽다
+        if (sit == 2) bonus += style == "killer" ? 1f : (style == "guard" ? -1f : 0f);                    // 외나무다리: 물러설 데가 없다
+        if (sit == 3 && style == "killer" && MolakStats.Get("sl") >= 5) bonus += 1f;                        // 구경꾼: 살기가 판을 누른다
+        if (sit == 4 && style == "guard") bonus -= 1f;                                                       // 독: 스치기만 해도 진다
+        if (sit == 7) hpRisk += 3f;
+        if (kind == "grudge" && MolakStats.Get("grudgewarn") > 0) bonus += 3f;                               // 미리 귀띔을 받았다
         if (kind == "back") hpRisk += 2f;
         if (kind == "lord" && MolakStats.Get("f_janginfo") > 0) bonus += 1.5f;
         if (kind == "lord" && MolakStats.Get("f_lordedge") > 0) bonus += 1f;
@@ -160,15 +204,30 @@ public class DuelCommand : Command
             MolakDuelCard.Show(true, foe.Name, "서열 " + (oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명") + " → " + string.Format("{0:N0}", newRank) + "위", tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");
             if (foe.Boss == "wolf") MolakStats.Set("f_wolfdown", 1f);
             if (foe.Boss == "hochi") MolakStats.Set("f_hmsaved", 1f);
+            if (sit == 3) { MolakStats.Add("mn", 3f); MolakStats.Add("sl", 1f); }
+            if (sit == 7) MolakStats.Add("mn", 10f);
         }
         else
         {
             float dmg = Random.Range((int)hpRisk, (int)hpRisk + 4) + (string.IsNullOrEmpty(foe.Boss) ? 0f : 3f) + Mathf.Floor(foe.P / 9f);
+            if (!MolakDuel.Lethal(kind))
+            {
+                // 목은 붙어 있다. 대신 몸과 전낭과 체면이 값을 치른다.
+                float hp0 = MolakStats.Get("hp");
+                if (hp0 - dmg < 1f) dmg = Mathf.Max(0f, hp0 - 1f);
+                bool wasHurt = MolakStats.Get("injury") > 0;
+                MolakStats.Set("injury", Mathf.Max(MolakStats.Get("injury"), 3f));
+                MolakStats.Set("dinj", 1f);
+                if (wasHurt && MolakStats.Get("taint") <= 0) { MolakStats.Set("taint", 1f); MolakStats.Set("taintkind", 2f); MolakStats.Set("dtaint", 1f); }
+                if (sit == 4 && MolakStats.Get("taint") <= 0) { MolakStats.Set("taint", 1f); MolakStats.Set("taintkind", 1f); MolakStats.Set("dtaint", 1f); }
+                if (sit == 2) { float lost = Mathf.Ceil(MolakStats.Get("mn") / 2f); MolakStats.Add("mn", -lost); MolakStats.Set("dloot", lost); }
+                if (sit == 3) MolakStats.Add("sl", -1f);
+            }
             MolakStats.Add("hp", -dmg);
             MolakStats.Set("duelwin", 0f); MolakArt.EndDuel();
             MolakVfx.Blood();
             MolakStats.Set("tierup", 0f);
-            MolakDuelCard.Show(false, foe.Name, "서열 변동 없음 · 체력 −" + Mathf.RoundToInt(dmg), "");
+            MolakDuelCard.Show(false, foe.Name, "서열 변동 없음 · 체력 −" + Mathf.RoundToInt(dmg), MolakStats.Get("dtaint") > 0 ? (MolakStats.Get("taintkind") == 1 ? "독이 들었다" : "상처가 덧났다") : (MolakStats.Get("dinj") > 0 ? "부상 — 사흘" : ""));
         }
         MolakStats.GrowBody();
         MolakStats.ClampAll();

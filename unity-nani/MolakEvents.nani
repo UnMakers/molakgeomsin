@@ -3149,3 +3149,150 @@
 @choice "살려 준다" goto:#E_YongSp2
 @choice "죽인다" goto:#E_YongK
 @stop
+
+; ===== 업보 사건 (0.3.3) =====
+# E_Spared
+@set spared=spared-1
+@set tr=random(1,100)
+@goto #E_SparedB if:tr<=25
+아침, 객잔 문간에 보따리 하나가 놓여 있다. 말린 고기와 은자 다섯 냥, 쪽지 한 장.
+"살려 준 목숨, 한 번은 갚겠소. — 비무판의 그 사내"
+점소이가 보따리를 받아 들며 눈을 끔뻑인다. "객관님, 원수가 아니라 은인도 생기십니까요."
+@fx mn:5
+@set f_sparedally=1
+@return
+# E_SparedB
+저잣거리에서 낯익은 얼굴을 본다. 비무판에서 살려 보낸 사내다. 붉은 끈을 맨 교도와 머리를 맞대고 있다가, 이쪽을 손가락으로 가리킨다.
+눈이 마주친다. 사내가 고개를 돌린다.
+살려 준 목숨이 제 목숨값을 셈했다. 그 셈에 당신 이름이 들었다.
+@set f_wanted=1
+@return
+
+# E_Cup
+주막 구석. 낯선 사내가 술 두 잔을 들고 맞은편에 앉는다.
+"서열록에서 소협 이름을 보았소. 한잔 받으시오. 강호의 예법이 그렇지 않소."
+잔에서 매화 향이 난다. 이 철에 매화는 없다.
+@choice "잔을 비운다 — 예법은 예법이다" goto:#E_CupA
+@choice "\"그쪽 잔과 바꿉시다.\"" goto:#E_CupB
+@choice "잔을 바닥에 쏟고 사내의 눈을 본다" if:sl>=5 goto:#E_CupC
+@choice "\"단내 나는 쪽이 독이라 들었소.\"" if:f_amhwarn>0||f_herbpulse>0 goto:#E_CupD
+@stop
+# E_CupA
+술이 달다. 너무 달다. 사내가 잔을 내려놓고 일어선다. 제 잔에는 입도 대지 않았다.
+"좋은 밤 되시오."
+문을 나서는 등이 가볍다. 혀끝이 저려 온다.
+@set taint=1
+@set taintkind=1
+@return
+# E_CupB
+사내의 웃음이 굳는다. 소매에서 칼이 나온다. 잔 두 개가 탁자에서 굴러떨어진다.
+@set dkind="assassin"
+@gosub MolakDuel#Run
+@goto #E_CupBW if:duelwin>0
+사내는 칼을 거두고 창으로 빠져나간다. 서두르지 않는다. 다음에 또 온다는 뜻이다.
+@set f_wanted=1
+@return
+# E_CupBW
+사내가 탁자에 엎어진다. 품에서 붉은 끈과 서열록 한 장이 나온다. 당신 이름 옆에 먹점 하나가 찍혀 있다.
+@fx mn:6
+@set f_wanted=1
+@return
+# E_CupC
+술이 바닥에서 거품을 문다. 사내가 의자째 물러난다. 살기에 눌린 손이 칼자루를 찾다가 만다.
+"…잘못 보았소." 사내가 문을 빠져나간다.
+주모가 걸레를 들고 오다가 바닥을 보고 멈춘다. 걸레를 버리고 재를 가져온다.
+@set f_wanted=1
+@return
+# E_CupD
+사내의 잔과 당신의 잔에 차례로 코를 댄다. 당신 잔에서만 단내가 난다.
+"한 잔은 약, 한 잔은 독. 어느 쪽을 마시겠소."
+사내가 두 잔을 내려다보다 은자 한 줌을 탁자에 놓고 일어선다. 목숨값으로는 싸다.
+@fx mn:6
+@return
+
+# E_Hostage
+징세조 다섯이 객잔 마당에 들어선다. 붉은 끈. 우두머리가 하진무의 멱살을 쥔다.
+"객잔 세가 석 달 밀렸다. 은자 스무 냥. 아니면 이 늙은이 손목 하나."
+하진무가 당신 쪽을 보지 않는다. 일부러 보지 않는다.
+@choice "은자 스무 냥을 대신 낸다 (은자 20)" if:mn>=20 goto:#E_HostageA
+@choice "가진 만큼 내민다 — 반은 은자로" if:mn>=8&&mn<20 goto:#E_HostageB
+@choice "검을 뽑는다" goto:#E_HostageC
+@choice "못 본 척 방으로 올라간다" goto:#E_HostageD
+@stop
+# E_HostageA
+은자 스무 냥이 우두머리 손바닥에 떨어진다. 멱살이 풀린다.
+그날 밤, 하진무가 방값 패를 떼어 아궁이에 넣는다. "셈이 안 맞는 방은 빈칸으로 두는 법이오."
+@fx mn:-20
+@set f_hajinfree=1
+@return
+# E_HostageB
+우두머리가 전낭을 털어 본다. 혀를 찬다.
+"반은 은자로 받았으니, 반은 손가락으로 받지."
+하진무의 비명은 짧다. 노인은 그 손으로 다음 날도 주판을 놓는다. 한 알씩 느리게.
+@set mn=0
+@set f_hajinhurt=1
+@return
+# E_HostageC
+"이 늙은이 손목이 네놈들 목보다 비싸다."
+우두머리가 하진무를 밀쳐 내고 칼을 뽑는다. 다섯이 마당에 반달로 선다.
+@set dkind="tax"
+@gosub MolakDuel#Run
+@goto #E_HostageCW if:duelwin>0
+다섯은 피 묻은 칼을 닦으며 물러간다. 하진무의 손목은 무사하다. 대신 당신 옆구리가 열려 있다.
+"다음 징세 날엔 교의 칼잡이가 온다."
+@set f_wanted=1
+@return
+# E_HostageCW
+둘이 쓰러지고 셋이 달아난다. 붉은 끈 하나가 마당에 떨어져 있다.
+하진무가 그 끈을 오래 내려다본다. "…교가 이 객잔 이름을 외우겠구려."
+@fx sl:2
+@set f_wanted=1
+@set f_hajinfree=1
+@return
+# E_HostageD
+계단을 오르는 등 뒤로 뼈 꺾이는 소리가 들린다. 비명은 들리지 않는다. 노인이 삼킨 것이다.
+다음 날, 하진무의 손목에 무명이 두껍게 감겨 있다. 방값 패가 바뀌어 있다. 그는 아무 말도 하지 않는다.
+@set f_hajinhurt=1
+@set f_hajincold=1
+@set f_hajinfree=0
+@return
+
+# E_Flood
+장마 끝, 불어난 개울이 누런 소리를 낸다. 다리 아래로 무엇인가 떠내려간다. 아이다. 팔이 한 번 물 밖으로 나왔다가 잠긴다.
+둑 위의 어른들은 소리만 지른다. 물살이 사람 둘은 삼킬 기세다.
+@choice "옷도 벗지 않고 물에 뛰어든다" goto:#E_FloodA
+@choice "둑의 버드나무 가지를 꺾어 내민다" if:sw>=12 goto:#E_FloodB
+@choice "하류의 여울목으로 먼저 달려간다" if:ng>=12 goto:#E_FloodC
+@choice "눈을 돌린다 — 내 목숨도 내 것이 아니다" goto:#E_FloodD
+@stop
+# E_FloodA
+@set tr=random(1,100)
+@goto #E_FloodAD if:hp<7&&tr<=55
+@goto #E_FloodAD if:hp>=7&&tr<=12
+물이 차다. 물살이 다리를 잡아챈다. 아이의 머리채를 쥐고 둑까지 헤엄친다. 무슨 수로 닿았는지 모른다.
+아이 어미가 둑에 엎드려 운다. 당신은 물을 토한다.
+@fx hp:-4 sl:-1
+@set f_floodchild=1
+@return
+# E_FloodAD
+@set deathcause="익사"
+물살이 아이와 당신을 한꺼번에 삼킨다. 아이를 위로 밀어 올린다. 그다음은 아래뿐이다.
+둑 위의 누군가가 아이를 건져 올리는 소리가 멀어진다. 그거면 됐다고 생각할 틈도 없이, 물이 들어온다.
+@goto MolakOver#Dead
+# E_FloodB
+버드나무 가지를 칼로 쳐서 물살 위로 길게 눕힌다. 아이의 손이 가지 끝을 문다.
+검으로 나무를 베는 것은 처음이다. 사형이 보았으면 혀를 찼을 것이다.
+@fx hp:-1
+@set f_floodchild=1
+@return
+# E_FloodC
+경공으로 둑길을 달려 여울목에 먼저 닿는다. 물이 얕아지는 자리. 떠내려오는 아이를 그물처럼 받아 낸다.
+숨이 턱까지 차오른다. 아이가 기침을 하며 운다. 우는 것은 살았다는 뜻이다.
+@fx hp:-2
+@set f_floodchild=1
+@return
+# E_FloodD
+누런 물이 아이를 데려간다. 둑 위의 소리가 잦아든다.
+그날 밤, 운기조식을 하는데 단전이 차다. 가슴의 문양만 따뜻하다.
+@fx curse:3 sl:1
+@return

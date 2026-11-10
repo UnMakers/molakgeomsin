@@ -27,6 +27,14 @@ public class MolakEnd : MonoBehaviour
         new Entry("wonhaeng",  "遠行", "원행", "복수보다 먼 길",       "약속한 사람과 강호를 등졌을 때"),
         new Entry("sungeom",   "殉劍", "순검", "베고, 쓰러지다",       "저주를 안은 채 하늘을 베었을 때"),
         new Entry("pobak",     "縛",   "포박", "사슬에 끌려가다",      "예순 날이 지나도록 끝을 내지 못했을 때"),
+        new Entry("wonsu",     "怨讐", "원수", "벤 칼이 돌아오다",     "목을 친 자의 사람들이 찾아왔을 때"),
+        new Entry("chae",      "債",   "채",   "빚은 목으로 갚는다",   "갚지 못할 빚을 졌을 때"),
+        new Entry("jungdok",   "中毒", "중독", "피가 검게 식다",       "독을 품은 채 날을 보냈을 때"),
+        new Entry("pasang",    "破傷", "파상", "상처가 먼저 죽었다",   "덧난 상처를 버려두었을 때"),
+        new Entry("jagaek",    "刺客", "자객", "술잔 너머의 칼",       "교의 눈에 오래 띄었을 때"),
+        new Entry("sagyeol",   "死決", "사결", "둘 중 하나만 걸어 나간다", "생사결에 응했을 때"),
+        new Entry("hyeop",     "俠",   "협",   "남의 일에 칼을 뽑다",  "남을 위해 칼을 뽑았을 때"),
+        new Entry("ik",        "溺",   "익",   "물이 먼저 받아 주었다", "불어난 물에 뛰어들었을 때"),
     };
 
     public static string Resolve ()
@@ -46,6 +54,14 @@ public class MolakEnd : MonoBehaviour
         if (cause == "소아의 오인" || cause == "소아의 검") return "ohin";
         if (cause == "미숙한 초식") return "jahae";
         if (cause == "미인계") return "amhyang";
+        if (cause == "원수") return "wonsu";
+        if (cause == "빚") return "chae";
+        if (cause == "독") return "jungdok";
+        if (cause == "곪은 상처") return "pasang";
+        if (cause == "자객") return "jagaek";
+        if (cause == "생사결") return "sagyeol";
+        if (cause == "협") return "hyeop";
+        if (cause == "익사") return "ik";
         if (cause == "비무 패배")
         {
             if (kind == "hochi") return "dokni";

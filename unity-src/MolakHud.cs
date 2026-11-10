@@ -7,7 +7,7 @@ public class MolakHud : MonoBehaviour
     static MolakHud instance;
     static Texture2D px;
     Font gowun;
-    GUIStyle sDay, sStat, sRank, sBig, sGold, sTierC, sCurse;
+    GUIStyle sDay, sStat, sRank, sBig, sGold, sTierC, sCurse, sWarn;
     float builtU = -1f;
 
     static float rsFrom, rsTo; static bool rsTierUp; static string rsTier = ""; static float rsT = -1f;
@@ -81,9 +81,24 @@ public class MolakHud : MonoBehaviour
         sStat = mk(31, InkD, TextAnchor.MiddleCenter);
         sRank = mk(28, InkM, TextAnchor.MiddleRight);
         sCurse = mk(26, new Color(0.46f,0.32f,0.60f,1f), TextAnchor.MiddleRight);
+        sWarn = mk(26, MolakTheme.Night ? new Color(0.88f,0.42f,0.35f,1f) : new Color(0.62f,0.18f,0.13f,1f), TextAnchor.MiddleLeft);
         sBig = mk(72, MolakTheme.Ink, TextAnchor.MiddleCenter);
         sGold = mk(30, MolakTheme.Gold, TextAnchor.MiddleCenter);
         sTierC = mk(23, MolakTheme.Ink3, TextAnchor.MiddleCenter);
+    }
+
+    static string Warn ()
+    {
+        var parts = new System.Collections.Generic.List<string>();
+        float inj = MolakStats.Get("injury"), taint = MolakStats.Get("taint"), debt = MolakStats.Get("debt");
+        if (taint > 0) parts.Add((MolakStats.Get("taintkind") == 1 ? "독 " : "곪은 상처 ") + taint.ToString("0") + "일째");
+        if (inj > 0) parts.Add("부상 " + inj.ToString("0") + "일");
+        if (debt > 0)
+        {
+            float left = MolakStats.Get("debtday") - MolakStats.Get("day");
+            parts.Add("빚 " + debt.ToString("0") + "냥 · " + (left > 0 ? left.ToString("0") + "일 남음" : "오늘 독촉"));
+        }
+        return string.Join("   ", parts.ToArray());
     }
 
     string TierOf (float r)
@@ -121,6 +136,10 @@ public class MolakHud : MonoBehaviour
         Box(new Rect(0,0,w*Mathf.Clamp01(curse/100f),sh), cc);
         if (curse >= 50f)
             GUI.Label(new Rect(X0+W-200*u, sh+4*u, 180*u, 30*u), "저주 "+curse.ToString("0")+"%", sCurse);
+
+        // 몸에 남은 업보: 부상 · 독 · 곪은 상처 · 빚 — 맨 윗줄, 저주 표시 왼편
+        string warn = Warn();
+        if (warn.Length > 0) GUI.Label(new Rect(X0 + 124*u, sh+6*u, W - 124*u - 220*u, 36*u), warn, sWarn);
 
         // 한 줄 상태: 일수 · 체력 · 내공 · 살기 + 아랫줄 검술 · 은자 · 서열 (상시)
         float pad = X0 + 84*u;

@@ -1,11 +1,15 @@
 ; ===== 몰락검신 — 조운현의 나날 (하루 루프) =====
 # DayLoop
 @goto MolakOver#Curse if:curse>=100
+@goto MolakOver#Taint if:taint>=6
+@goto MolakOver#Taint if:taint>0&&hp<=0
 @goto MolakOver#Exhaust if:hp<=0
 ; --- 장(章)·비트 ---
 @goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10
 @goto Molak06#Ripe1 if:curse>=88&&f_oldseen>0&&b_ripe<1
 @goto Molak06#Capture if:day>=60&&b_capture<1
+@goto #KDebt if:debt>0&&day>=debtday
+@goto #KGrudge if:grudge>0&&day>=grudgeday
 @goto #ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
 @goto #ChSoa if:day>=3&&f_soamet<1&&b_soa<1
 @goto #B5 if:day>=5&&b_hajin<1
@@ -53,6 +57,7 @@
 ; --- 아침 풍경 ---
 @scene id:day
 @vfx kind:rainoff
+@goto #MTaint if:taint>0
 @pickflavor pool:morning
 @goto #M2 if:mrand==2
 @goto #M3 if:mrand==3
@@ -92,6 +97,18 @@
 @goto #M37 if:mrand==37
 @goto #M38 if:mrand==38
 @goto #M1
+# MTaint
+@goto #MTaint3 if:taint>=4
+@goto #MTaintR if:taintkind==2
+세숫물에 비친 입술이 푸르스름하다. 손끝이 저리다. 독이 아직 피 속에 있다.
+@goto #Daytime
+# MTaintR
+옆구리 상처를 싸맨 무명이 누렇게 젖었다. 열이 난다. 상처가 아물 생각을 하지 않는다.
+@goto #Daytime
+# MTaint3
+<color=#C03434>일어나는 데 한참이 걸린다.</color> 손톱 밑이 검다. 하진무가 문간에서 혀를 찬다.
+"객, 오늘은 백초당부터 가시오. 내일은 늦소."
+@goto #Daytime
 # M1
 운락객잔의 아침. 장작 냄새와 어제 비 냄새가 마당에 남아 있다.
 @goto #Daytime
@@ -216,6 +233,152 @@
 @art char:none
 @goto #Night
 
+;
+; ---------- 업보: 빚 ----------
+# KDebt
+@art char:none
+해 질 녘, 객잔 마당에 낯선 사내 셋이 들어선다. 맨 앞의 사내가 장부를 펼친다.
+"고리대 왕삼 어른 댁에서 왔소. {debt}냥. 오늘이오."
+하진무가 주판을 내려놓는다. 점소이가 부엌으로 숨는다.
+@goto #KDebtC if:debtext<1
+사내가 장부를 손등으로 친다. "사흘 전에도 이 얼굴이었지. 오늘은 사흘이 없소."
+# KDebtC
+@choice "전낭을 던진다 — 빚을 갚는다 (은자 {debt})" if:mn>=debt goto:#KDebtPay
+@choice ""사흘만 주시오." — 이자 열 냥이 붙는다" if:debtext<1 goto:#KDebtExt
+@choice "왼손 새끼손가락을 탁자에 올린다" if:f_finger<1 goto:#KDebtFinger
+@choice "그때 살려 보낸 비무꾼이 사내들 뒤에 서 있다" if:f_sparedally>0 goto:#KDebtAlly
+@choice "검을 뽑는다" goto:#KDebtFight
+@stop
+# KDebtPay
+전낭이 장부 위에 떨어진다. 사내가 은자를 세고, 이름 위에 줄을 긋는다.
+"셈이 바른 분이로군. 또 뵙지 맙시다."
+@set mn=mn-debt
+@set debt=0
+@set debtext=0
+@goto #Night
+# KDebtExt
+사내가 장부에 줄 하나를 더 긋는다. "사흘. 이자 열 냥. 다음엔 손가락이오."
+문을 나서며 사내가 하진무의 주판을 한 번 툭 친다. 주판알이 바닥에 흩어진다.
+@set debt=debt+10
+@set debtday=day+3
+@set debtext=1
+@goto #Night
+# KDebtFinger
+사내가 단도를 꺼낸다. 하진무가 고개를 돌린다.
+소리는 생각보다 작다. 검 쥐는 손이 아니라서 다행이라고, 그렇게 여기기로 한다.
+사내가 손가락을 무명에 싸서 품에 넣는다. "장부와 맞춰 보아야 해서."
+@fx sw:-3 hp:-2
+@set f_finger=1
+@set debt=0
+@set debtext=0
+@goto #Night
+# KDebtAlly
+비무판에서 살려 보낸 사내가 맨 뒤의 수하 어깨에 손을 얹는다. 수하가 돌아보고, 얼굴이 굳는다.
+"이분 장부는 내가 왕삼 어른과 따로 셈하겠네. 오늘은 돌아가게."
+셋이 장부를 덮는다. 사내는 당신 쪽을 보지 않고 나간다. 빚 하나가 다른 빚을 지웠다.
+@set f_sparedally=0
+@set debt=0
+@set debtext=0
+@goto #Night
+# KDebtFight
+@set dkind="debt"
+@gosub MolakDuel#Run
+@goto #KDebtW if:duelwin>0
+셋은 피를 보고 물러간다. 장부는 그대로 들고.
+"이틀. 그다음엔 칼잡이를 더 데려오겠소."
+@set debtday=day+2
+@set debtext=1
+@goto #NightEnd
+# KDebtW
+둘이 마당에 눕는다. 남은 하나가 장부를 버리고 달아난다.
+장부를 주워 불에 넣는다. 다른 이름들도 같이 탄다. 왕삼이 이 일을 잊을 리 없다.
+@fx sl:2
+@set debt=0
+@set debtext=0
+@set f_wangsam=1
+@set grudgeday=day+random(4,7) if:grudge<1
+@set grudge=grudge+1
+@goto #NightEnd
+
+; ---------- 업보: 원수 ----------
+# KGrudge
+@art char:none
+@set grudge=grudge-1
+@set grudgewarn=0
+@goto #KGrA if:f_alms>0||f_thiefkid>0||f_beggarnet>0
+@scene id:night
+밤. 등잔을 끄려는데 창호지에 그림자가 셋 비친다.
+무엇인가 문살을 뚫고 들어와 어깨를 스친다. 소매가 젖는다.
+@fx hp:-3
+@goto #KGrC
+# KGrA
+해 질 녘, 골목 아이 하나가 객잔 담 너머로 고개만 내민다.
+"나리, 오늘 밤 지붕 위에 사람이 있소. 셋. 상복을 입었소."
+아이는 대답도 듣지 않고 사라진다. 밤이 되자 정말로 기와가 운다.
+@set grudgewarn=1
+@scene id:night
+# KGrC
+@goto #KGrO if:f_orphan>0
+마당에 흰 상복 셋이 선다. 맨 앞의 사내가 칼을 뽑는다.
+"비무판에서 네가 벤 사람의 이름을 아느냐."
+@goto #KGrCh
+# KGrO
+마당에 흰 상복 셋이 선다. 그 뒤에 열두어 살 먹은 아이가 검집을 안고 있다. 그날의 그 아이다.
+"사부의 신발을 들고 우리를 찾아왔다. 피가 아직 다 안 말랐더군."
+# KGrCh
+@choice ""모르오. 알 까닭도 없었소." — 검을 뽑는다" goto:#KGrFight
+@choice "지붕으로 뛰어 달아난다" if:hp>=6 goto:#KGrRun
+@choice "소리쳐 객잔 사람들을 깨운다" goto:#KGrWake
+@choice "그때 살려 보낸 비무꾼이 담 위에 앉아 있다" if:f_sparedally>0 goto:#KGrAlly
+@stop
+# KGrFight
+@set dkind="grudge"
+@gosub MolakDuel#Run
+@goto #KGrW if:duelwin>0
+목숨만 건졌다. 셋은 피를 보고 물러난다. 오늘은 그것으로 족하다는 듯이.
+"그믐 전에 다시 온다. 그때는 넷이다."
+@set grudgeday=day+random(3,6) if:grudge<1
+@set grudge=grudge+1
+@goto #NightEnd
+# KGrW
+셋이 마당에 눕는다. 피는 새벽까지 마르지 않는다. 하진무가 아무 말 없이 우물물을 길어 온다.
+@fx sl:1
+@set tr=random(1,100)
+@goto #NightEnd if:tr>30
+죽은 자의 품에서 쪽지가 나온다. 이름이 넷 적혀 있다. 셋은 마당에 누웠다.
+@set grudgeday=day+random(6,10) if:grudge<1
+@set grudge=grudge+1
+@goto #NightEnd
+# KGrRun
+기와를 밟고 지붕 셋을 건넌다. 상처가 벌어진다.
+@fx hp:-2
+@set tr=random(1,100)
+@goto #KGrRunF if:tr<=45
+새벽에 돌아오니 방이 엉망이다. 이불이 칼에 갈가리 찢겼다. 전낭이 없다.
+피한 것이 아니다. 미룬 것이다.
+@set mn=0
+@set grudgeday=day+random(2,4) if:grudge<1
+@set grudge=grudge+1
+@goto #NightEnd
+# KGrRunF
+네 번째 지붕에서 기와가 미끄러진다. 골목 바닥에 떨어진다. 일어서니 앞뒤가 다 상복이다.
+@goto #KGrFight
+# KGrWake
+"불이야!" 소리에 객잔이 깬다. 점소이가 징을 치고, 하진무가 장작개비를 들고 마당에 나선다.
+상복 셋이 물러난다. 물러나면서 맨 끝의 하나가 하진무의 팔을 긋는다.
+새벽, 하진무의 팔에 무명이 감긴다. 그는 아무 말도 하지 않는다. 원수는 아직 거리에 있다.
+@set f_hajinhurt=1
+@fx mn:-4
+@set grudgeday=day+random(3,6) if:grudge<1
+@set grudge=grudge+1
+@goto #NightEnd
+# KGrAlly
+담 위의 사내가 뛰어내린다. 비무판에서 살려 보낸 그 사내다.
+"이 사람 목숨에는 내 목숨이 걸려 있소. 셈을 하려거든 나부터 하시오."
+상복들이 서로를 본다. 두 사람을 상대로 셈을 할 만큼 급한 원한은 아니었던 모양이다. 마당이 빈다.
+@set f_sparedally=0
+@goto #NightEnd
+
 ; --- 밤: 반시진의 선택 ---
 # Night
 @art char:none
@@ -295,8 +458,16 @@
 @choice "뒷골목 비무판 — 판돈 셋, 보는 눈 없음" if:f_ringclosed>0 goto:#NDuelBack
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
 @choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&day>=38&&b_leave<1 goto:#NLeave
+@choice "금창약을 덜어 덧난 상처를 다시 싸맨다" if:taint>0&&taintkind==2&&f_salve>0 goto:#NSalve
 @choice "몸을 쉰다" goto:#NRest
 @stop
+# NSalve
+무명을 풀자 고름 냄새가 방에 찬다. 백초당 금창약을 상처에 꾹꾹 눌러 채운다. 이를 악문다.
+새벽녘, 열이 내린다. 통은 비었다.
+@set taint=0
+@set f_salve=0
+@fx hp:1
+@goto #NightEnd
 # NSw
 @set tr=random(1,100)
 @goto #NSwT1 if:tn_sw1<1&&day>=4&&tr<=30
@@ -395,8 +566,23 @@
 저녁 저자. 등불이 하나둘 켜진다.
 @choice "날품을 판다 — 물지게와 장작" goto:#NWork
 @choice "상점가를 둘러본다" goto:#Town1
+@choice "전당포 뒷방 — 고리대 왕삼에게 은자를 빌린다" if:debt<1&&mn<8 goto:#NLoan
 @choice "객잔으로 돌아간다" goto:#NightEnd
 @stop
+# NLoan
+전당포 뒷방. 기름 먹은 등잔 아래 배가 나온 사내가 장부를 넘긴다. 고리대 왕삼이다.
+"열닷 냥. 이레 뒤에 스물닷 냥. 못 갚으면 갚을 만한 것으로 받소. 손가락이든, 객잔 늙은이 셈판이든."
+@choice "빌린다 — 은자 15, 이레 뒤 25" goto:#NLoanY
+@choice ""됐소." — 일어선다" goto:#NightEnd
+@stop
+# NLoanY
+왕삼이 은자를 세어 밀어 준다. 장부에 이름이 적힌다. 붓끝이 이름 위에서 한 번 멈춘다.
+"청운 쪽 이름이로군. 잘 갚으시오. 그쪽 이름은 값이 잘 나가니."
+@fx mn:15
+@set debt=25
+@set debtday=day+7
+@set debtext=0
+@goto #NightEnd
 # NWork
 @set tr=random(1,100)
 @goto #NWorkT1 if:tn_wk1<1&&day>=6&&tr<=30
@@ -495,6 +681,10 @@
 
 # RunEvent
 @gosub MolakEvents#E_Yong if:nextevent=="E_Yong"
+@gosub MolakEvents#E_Spared if:nextevent=="E_Spared"
+@gosub MolakEvents#E_Cup if:nextevent=="E_Cup"
+@gosub MolakEvents#E_Hostage if:nextevent=="E_Hostage"
+@gosub MolakEvents#E_Flood if:nextevent=="E_Flood"
 @gosub MolakEvents#E_Thugs if:nextevent=="E_Thugs"
 @gosub MolakEvents#E_Pilgrim if:nextevent=="E_Pilgrim"
 @gosub MolakEvents#E_Funeral if:nextevent=="E_Funeral"
@@ -756,13 +946,27 @@
 백초당. 약장 냄새가 깊다.
 백초 할멈이 눈을 들지도 않고 묻는다.
 "뭐가 필요하냐."
-@choice "지혈환 (은자 2) — 상처를 다스린다" if:mn>=2 goto:#TownBC0
+@choice "지혈환 (은자 2) — 상처를 다스린다" if:mn>=2&&taint<1 goto:#TownBC0
+@choice "해독탕 (은자 8) — 피 속의 독과 고름을 뺀다" if:taint>0&&mn>=8&&f_herbbond<1&&f_herbfriend<1 goto:#TownBCT
+@choice ""할멈, 이것 좀 봐 주시오." — 상처를 내민다" if:taint>0&&f_herbbond>0||taint>0&&f_herbfriend>0 goto:#TownBCF
 @choice "청혈산 (은자 3) — 피를 맑게 한다" if:mn>=3 goto:#TownBC1
 @choice "정심단 (은자 6) — 저주의 뿌리를 누른다" if:mn>=6&&curse>=20 goto:#TownBC2
 @choice "돌아선다" goto:#TownBC3
 @stop
 # TownBC0
 @fx mn:-2 hp:4
+@goto #TownB
+# TownBCT
+할멈이 상처를 보자마자 혀를 찬다. 칼끝으로 살을 째고 검은 피를 짜낸다. 비명은 삼킨다.
+"사흘만 늦었으면 내가 아니라 장의사를 찾았을 게다."
+@fx mn:-8 hp:-1
+@set taint=0
+@goto #TownB
+# TownBCF
+할멈이 말없이 약연을 밀어 두고 상처를 짼다. 검은 피가 사발에 고인다.
+"값은 됐다. 청운 사람들 약값은 그쪽 산에 다 받아 놨으니."
+@fx hp:-1
+@set taint=0
 @goto #TownB
 # TownBC1
 @fx mn:-3 curse:-4

@@ -14,6 +14,10 @@ public static class MolakEventDefs
     }
     public static readonly Def[] Table = {
             new Def("E_Yong", 2, 10, 'd', null, null, 0, 30),
+            new Def("E_Spared", 3, 0, 'd', "spared>0", null, 0, 40),
+            new Def("E_Cup", 12, 0, 'n', "rank>0&rank<=20000", null, 0, 14),
+            new Def("E_Hostage", 14, 0, 'd', null, null, 0, 12),
+            new Def("E_Flood", 6, 40, 'd', null, null, 0, 9),
             new Def("E_Thugs", 3, 20, 'd', null, null, 0, 14),
             new Def("E_Pilgrim", 6, 30, 'd', null, null, 0, 10),
             new Def("E_Funeral", 7, 30, 'd', null, null, 0, 8),
@@ -113,6 +117,10 @@ public static class MolakEventDefs
             new Def("E_Swordsong", 50, 0, 'n', null, null, 0, 12),
             new Def("E_Lastmarket", 52, 0, 'd', null, null, 0, 12),
             new Def("E_Vigil", 55, 0, 'd', null, null, 0, 12),
+            new Def("E_Search", 20, 38, 'd', "rank>0&rank<=20000", null, 0, 16),
+            new Def("E_SoaPoster", 22, 40, 'd', "f_soamet&f_wanted", null, 0, 14),
+            new Def("E_HerbTax", 20, 36, 'd', null, "E_Herb2x", 3, 14),
+            new Def("E_RingClosed", 21, 38, 'd', "rank>0", null, 0, 14),
     };
         public static readonly Flav[] Morning = {
             new Flav(1, 9, null),
@@ -143,6 +151,16 @@ public static class MolakEventDefs
             new Flav(36, 0, null),
             new Flav(40, 0, null),
             new Flav(45, 0, null),
+            new Flav(2, 0, "g_runs>=2"),
+            new Flav(5, 0, "g_runs>=4"),
+            new Flav(8, 0, "g_runs>=6"),
+            new Flav(12, 0, "g_runs>=9"),
+            new Flav(4, 0, "curse>=40&curse<75"),
+            new Flav(6, 0, "curse>=40&curse<75"),
+            new Flav(10, 0, "curse>=40&curse<75"),
+            new Flav(8, 0, "curse>=75"),
+            new Flav(12, 0, "curse>=75&f_soamet"),
+            new Flav(15, 0, "curse>=75"),
         };
         public static readonly Flav[] Night = {
             new Flav(1, 0, null),
