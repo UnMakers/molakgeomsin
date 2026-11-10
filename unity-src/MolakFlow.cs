@@ -97,7 +97,11 @@ public class MolakFlow : MonoBehaviour
         // 새 선택지 묶음이 시작되면 처리되지 않은 옛 선택지를 정리 (뭉탱이 방지)
         if (cmd is AddChoice)
         {
-            if (!lastWasChoice) ClearStaleChoices();
+            if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); }
+            string cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
+            bool shown = true;
+            if (!string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
+            if (shown) MolakChoiceMeta.Push(cexp);   // 조건이 거짓이라 안 뜨는 선택지는 카드 순서에서 뺀다
             lastWasChoice = true;
             afterChoice = true;   // 선택지 뒤의 첫 본문은 빈 줄로 단락을 나눈다
         }

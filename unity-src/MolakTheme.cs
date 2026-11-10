@@ -295,7 +295,21 @@ public class MolakTheme : MonoBehaviour
                 seal = sg.transform;
             }
             var sealImg = seal.GetComponent<Image>();
-            var sealCol = Night ? new Color(0.60f, 0.18f, 0.14f, 1f) : new Color(0.66f, 0.17f, 0.12f, 1f);
+            // 조건부 선택지: 원래 글귀(주석 붙기 전)를 기억해 두고 종류·주석을 만든다
+            var lblTx = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (lblTx != null && lblTx.gameObject.name == "Num") lblTx = null;
+            foreach (var tx0 in btn.GetComponentsInChildren<TMPro.TMP_Text>(true)) if (tx0.gameObject.name != "Num") { lblTx = tx0; break; }
+            string rawLabel = lblTx != null ? lblTx.text : "";
+            int hintAt = rawLabel.IndexOf("\n<size=62%>");
+            if (hintAt >= 0) rawLabel = rawLabel.Substring(0, hintAt);
+            var meta = MolakChoiceMeta.Get(cidx, rawLabel);
+            if (lblTx != null)
+            {
+                string hintCol = Night ? "#9C9286" : "#8C8378";
+                string wantText = string.IsNullOrEmpty(meta.Hint) ? rawLabel : rawLabel + "\n<size=62%><color=" + hintCol + ">" + meta.Hint + "</color></size>";
+                if (lblTx.text != wantText) lblTx.text = wantText;
+            }
+            var sealCol = MolakChoiceMeta.SealColor(meta.Kind, Night);
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
