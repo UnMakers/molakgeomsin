@@ -348,6 +348,7 @@
 @gosub MolakDuel#Run
 @goto #LordAfter
 # LdHapGo
+@art scene:hapbyeok
 청운의 횡소가 왼쪽에서, 적운의 쌍검이 오른쪽에서. 두 검파가 갈라지던 그날 이전의 검이 한 번 더 그어진다.
 교주의 멸도가 둘을 동시에 베려다, 한 호흡 늦는다. 둘이 아니라 하나였으니까.
 @page

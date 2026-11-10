@@ -347,6 +347,7 @@
 @set grudgewarn=1
 @scene id:night
 # KGrC
+@art scene:mourners
 @goto #KGrO if:f_orphan>0
 마당에 흰 상복 셋이 선다. 맨 앞의 사내가 칼을 뽑는다.
 "비무판에서 네가 벤 사람의 이름을 아느냐."
