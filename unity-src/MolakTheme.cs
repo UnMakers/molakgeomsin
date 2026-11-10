@@ -313,7 +313,7 @@ public class MolakTheme : MonoBehaviour
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
-            string[] hn = { "一", "二", "三", "四", "五", "六" };
+            string[] hn = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十" };
             string want = hn[Mathf.Clamp(cidx, 0, hn.Length - 1)];
             if (num.text != want) num.text = want;
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
