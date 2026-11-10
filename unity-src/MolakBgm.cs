@@ -106,7 +106,32 @@ public class MolakBgm : MonoBehaviour
             if (src.isPlaying) started = true;
             else if (started && Application.isFocused) Next();
         }
+        RelabelSettings();
         float v = Mathf.Clamp01(am.BgmVolume * am.MasterVolume);
         src.volume = Mathf.MoveTowards(src.volume, v, Time.unscaledDeltaTime * 2f);
+    }
+    // 나니노벨 기본 설정 창의 '소리' 탭: 영어 라벨을 우리말로, 쓰지 않는 목소리 음량은 숨긴다
+    float relabelT;
+    void RelabelSettings ()
+    {
+        if ((relabelT -= Time.unscaledDeltaTime) > 0f) return;
+        relabelT = 0.3f;
+        var ui = Naninovel.Engine.GetService<Naninovel.IUIManager>();
+        var st = ui != null ? ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI : null;
+        if (st == null || !st.Visible) return;
+        foreach (var t in ((Component)st).GetComponentsInChildren<TMPro.TMP_Text>(true))
+        {
+            switch (t.text)
+            {
+                case "Master volume": t.text = "전체 음량"; break;
+                case "Music volume": t.text = "배경음"; break;
+                case "Effects volume": t.text = "효과음"; break;
+            }
+        }
+        foreach (var vs in ((Component)st).GetComponentsInChildren<Naninovel.UI.GameSettingsVoiceVolumeSlider>(true))
+        {
+            var row = vs.transform.parent != null && vs.transform.parent.name.Contains("Voice") ? vs.transform.parent.gameObject : vs.gameObject;
+            if (row.activeSelf) row.SetActive(false);
+        }
     }
 }
