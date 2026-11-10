@@ -198,10 +198,10 @@ public class MolakTitle : MonoBehaviour
         float aw = w, ah = h, ax = 0, ay = 0;
         if (night != null)
         {
-            float breathe = 1.0f + 0.012f * Mathf.Sin(since * 0.06f);
+            float breathe = 1.0f;   // 화면 전체는 움직이지 않는다(달빛·물결만 살짝)
             ah = h * breathe; aw = ah * night.width / (float)night.height;
             if (aw < w * breathe) { aw = w * breathe; ah = aw * night.height / (float)night.width; }
-            ax = (w - aw) * 0.5f + Mathf.Sin(t * 0.025f) * 6f * u;
+            ax = (w - aw) * 0.5f;
             ay = Mathf.Clamp(h * 0.88f - ah * 0.879f, h - ah, 0f);
             Tex(new Rect(ax, ay, aw, ah), night, new Color(1, 1, 1, fadeIn));
         }
@@ -224,7 +224,7 @@ public class MolakTitle : MonoBehaviour
         {
             // 처음 2.6초: 거꾸로 감기며 멈춘다(되감기). 그 뒤로는 아주 천천히 역방향으로.
             float k = Mathf.Clamp01(since / 2.6f), ease = 1f - Mathf.Pow(1f - k, 3f);
-            float ang = -540f * (1f - ease) - since * 3f;
+            float ang = -540f * (1f - ease) - since * 1.2f;
             float er = mr * 2.05f * (1.12f - 0.12f * ease);
             var m = GUI.matrix; GUIUtility.RotateAroundPivot(ang, new Vector2(mcx, mcy));
             Color ec = dawn ? new Color(0.62f, 0.48f, 0.22f, 0.85f) : new Color(0.92f, 0.88f, 0.80f, 0.78f);
@@ -249,6 +249,16 @@ public class MolakTitle : MonoBehaviour
             for (int i = 0; i < 3; i++)
                 Sil(silMourn, X(0.70f + i * 0.055f), Y(0.952f - i * 0.006f), heroH * (0.34f - i * 0.02f), new Color(0.93f, 0.92f, 0.89f, 0.85f * fadeIn), 0.3f);
 
+        // ---- 물결: 수면에 가는 빛줄기가 아주 느리게 흐른다 ----
+        for (int i = 0; i < 9; i++)
+        {
+            float hy = Mathf.Repeat(Mathf.Sin(i * 41.7f + 3f) * 9137.1f, 1f), hx = Mathf.Repeat(Mathf.Sin(i * 17.3f + 5f) * 5531.3f, 1f);
+            float wy = Y(0.895f + hy * 0.085f);
+            float len = aw * (0.06f + hx * 0.10f);
+            float wx = Mathf.Repeat(X(0f) + hx * aw + t * (4f + hy * 5f) * u, aw + len) + X(0f) - len;
+            float a = (0.10f + 0.10f * Mathf.Sin(t * (0.5f + hx * 0.6f) + i * 1.9f)) * fadeIn;
+            Box(new Rect(wx, wy, len, Mathf.Max(1f, 1.4f * u)), new Color(0.97f, 0.96f, 0.92f, Mathf.Max(0f, a)));
+        }
         // ---- 수면의 등불: 지나온 생마다 하나 ----
         int lamps = Mathf.Min(runs, 14);
         for (int i = 0; i < lamps; i++)
