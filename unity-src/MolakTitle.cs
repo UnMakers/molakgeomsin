@@ -289,9 +289,9 @@ public class MolakTitle : MonoBehaviour
 
         // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
         GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
-        float ih = 74*u, n = 5;
-        float my0 = Mathf.Min(h * 0.58f, h - 230*u - n * ih);
-        float rx = w - 64*u, mw = Mathf.Min(w * 0.5f, 520*u);
+        float ih = 96*u, n = 5;   // 손가락 한 마디(약 9mm) 이상
+        float my0 = Mathf.Min(h * 0.55f, h - 200*u - n * ih);
+        float rx = w - 56*u, mw = Mathf.Min(w * 0.62f, 640*u);
         Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.35f : 0.5f));
         string tag = dawn ? "베이고, 돌아가고, 마침내 아침." : "베이고, 돌아가고, 다시 벤다.";
         GUI.Label(new Rect(rx - mw, my0 - 52*u, mw, 40*u), tag, sTag);

@@ -303,6 +303,7 @@ public class MolakMenu : MonoBehaviour
         }
         else
         {
+            ledgerScroll = TouchScroll(1, new Rect(bx, y2, bw, listH), ledgerScroll, rows.Count*lh);
             ledgerScroll = GUI.BeginScrollView(new Rect(bx, y2, bw, listH), ledgerScroll, new Rect(0, 0, bw-24*u, rows.Count*lh));
             for (int i = 0; i < rows.Count; i++)
             {
@@ -316,6 +317,35 @@ public class MolakMenu : MonoBehaviour
         var back = new Rect(bx, h - 124*u, bw, 100*u);
         if (Btn(back, "돌아간다", false, u)) ledger = false;
         g0 = 0f;
+    }
+
+
+    // ===== 손가락 스크롤: IMGUI 스크롤뷰는 터치 드래그를 받지 않으므로 직접 끈다(관성 포함) =====
+    bool tsDrag; float tsStartY, tsStartScroll, tsLastY, tsVel, tsLastT; int tsId = -1;
+    Vector2 TouchScroll (int id, Rect view, Vector2 scroll, float contentH)
+    {
+        float maxY = Mathf.Max(0f, contentH - view.height);
+        var e = Event.current;
+        if (e.type == EventType.MouseDown && view.Contains(e.mousePosition))
+        {
+            tsDrag = true; tsId = id; tsStartY = e.mousePosition.y; tsStartScroll = scroll.y; tsLastY = tsStartY; tsVel = 0f; tsLastT = Time.unscaledTime;
+        }
+        else if (e.type == EventType.MouseDrag && tsDrag && tsId == id)
+        {
+            float y = e.mousePosition.y, now = Time.unscaledTime;
+            scroll.y = Mathf.Clamp(tsStartScroll - (y - tsStartY), 0f, maxY);
+            float dt = Mathf.Max(0.001f, now - tsLastT);
+            tsVel = Mathf.Lerp(tsVel, -(y - tsLastY) / dt, 0.5f);
+            tsLastY = y; tsLastT = now;
+            e.Use();
+        }
+        else if (e.type == EventType.MouseUp && tsId == id) { tsDrag = false; }
+        else if (e.type == EventType.Repaint && !tsDrag && tsId == id && Mathf.Abs(tsVel) > 5f)
+        {
+            scroll.y = Mathf.Clamp(scroll.y + tsVel * Time.unscaledDeltaTime, 0f, maxY);
+            tsVel *= Mathf.Pow(0.06f, Time.unscaledDeltaTime);   // 1초에 6%로 줄어드는 관성
+        }
+        return scroll;
     }
 
     bool facTab;
@@ -344,6 +374,7 @@ public class MolakMenu : MonoBehaviour
             heights[i] = hh; total += hh + gap;
         }
         var view = new Rect(bx, by, bw, listH);
+        facScroll = TouchScroll(2, view, facScroll, total);
         facScroll = GUI.BeginScrollView(view, facScroll, new Rect(0, 0, cw, total));
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=false, richText=true};
         var mottoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(26*u), wordWrap=true, fontStyle=FontStyle.Italic};
@@ -403,6 +434,7 @@ public class MolakMenu : MonoBehaviour
         float listH = h - by - 150*u;
         var view = new Rect(bx, by, bw, listH);
         var content = new Rect(0, 0, bw-24*u, MolakKnow.All.Length*(rh+gap));
+        knowScroll = TouchScroll(3, view, knowScroll, content.height);
         knowScroll = GUI.BeginScrollView(view, knowScroll, content);
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=true};
         var descS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
@@ -450,6 +482,7 @@ public class MolakMenu : MonoBehaviour
         float listH = h - by - 150*u;
         var view = new Rect(bx, by, bw, listH);
         var content = new Rect(0, 0, bw-24*u, MolakEnd.All.Length*(rh+gap));
+        codexScroll = TouchScroll(4, view, codexScroll, content.height);
         codexScroll = GUI.BeginScrollView(view, codexScroll, content);
         var hj = new GUIStyle(sBtn){alignment=TextAnchor.MiddleCenter, fontSize=Mathf.RoundToInt(46*u)};
         hj.normal.textColor = MolakTheme.Blood;
