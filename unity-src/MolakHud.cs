@@ -77,7 +77,7 @@ public class MolakHud : MonoBehaviour
             if (gowun != null) s.font = gowun;
             s.normal.textColor = col; return s;
         };
-        sDay = mk(31, InkM, TextAnchor.MiddleLeft);
+        sDay = mk(32, InkD, TextAnchor.MiddleLeft);
         sStat = mk(31, InkD, TextAnchor.MiddleCenter);
         sRank = mk(28, InkM, TextAnchor.MiddleRight);
         sCurse = mk(26, new Color(0.46f,0.32f,0.60f,1f), TextAnchor.MiddleRight);
@@ -127,7 +127,7 @@ public class MolakHud : MonoBehaviour
         float y = 100*u, lh = 56*u;
         MolakInputGuard.Guard(new Rect(X0, 0, W, y+lh+16*u + (expanded ? 72*u : 0f)));
         string hpCol = hp/hpm <= 0.34f ? (MolakTheme.Night ? "#E06A5A" : "#A33226") : "#" + ColorUtility.ToHtmlStringRGB(MolakTheme.InkText);
-        GUI.Label(new Rect(pad, y, 170*u, lh), day.ToString("0")+"일째", sDay);
+        GUI.Label(new Rect(X0 + 124*u, y, 170*u, lh), day.ToString("0")+"일째", sDay);
         string stats =
             "<color="+hpCol+">체력 "+hp.ToString("0")+"</color>    내공 "+MolakStats.Get("ng").ToString("0")+
             "    살기 "+MolakStats.Get("sl").ToString("0");

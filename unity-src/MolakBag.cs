@@ -114,17 +114,52 @@ public class MolakBag : MonoBehaviour
         return null;
     }
 
+    Rect listViewGui; bool viewValid; float lastPY; bool wasDownBag;
+    static Vector2 PointerGui (out bool down)
+    {
+        down = false; Vector2 p = new Vector2(-1f, -1f);
+        var ts = UnityEngine.InputSystem.Touchscreen.current;
+        if (ts != null && ts.primaryTouch.press.isPressed) { down = true; p = ts.primaryTouch.position.ReadValue(); }
+        else if (UnityEngine.InputSystem.Mouse.current != null) { var ms = UnityEngine.InputSystem.Mouse.current; down = ms.leftButton.isPressed; p = ms.position.ReadValue(); }
+        return new Vector2(p.x, Screen.height - p.y);
+    }
+    void ScrollStep (float dt)
+    {
+        bool down; var p = PointerGui(out down);
+        float u = MolakTheme.U;
+        if (down && !wasDownBag && viewValid && listViewGui.Contains(p)) { listDragging = true; lastPY = p.y; listVel = 0f; }
+        if (listDragging)
+        {
+            if (!down) listDragging = false;
+            else
+            {
+                float dy = p.y - lastPY; lastPY = p.y;
+                float over = listScroll < 0f ? -listScroll : (listScroll > listMax ? listScroll - listMax : 0f);
+                float k = 1f / (1f + over / (90f*u));          // 끝을 넘으면 점점 무거워짐
+                listScroll -= dy * k;
+                float inst = dt > 0f ? -dy / dt : 0f;
+                listVel = Mathf.Lerp(listVel, inst, 0.35f);
+                listVel = Mathf.Clamp(listVel, -7000f*u, 7000f*u);
+            }
+        }
+        if (!listDragging)
+        {
+            listScroll += listVel * dt;
+            listVel *= Mathf.Pow(0.15f, dt);                   // 완만한 감속
+            if (listScroll < 0f) { listVel = listVel < 0f ? listVel * Mathf.Pow(0.0001f, dt) : listVel; listScroll = Mathf.Lerp(listScroll, 0f, 1f - Mathf.Pow(0.002f, dt)); if (listScroll > -0.5f && listVel <= 0f) listScroll = 0f; }
+            else if (listScroll > listMax) { listVel = listVel > 0f ? listVel * Mathf.Pow(0.0001f, dt) : listVel; listScroll = Mathf.Lerp(listScroll, listMax, 1f - Mathf.Pow(0.002f, dt)); if (listScroll < listMax + 0.5f && listVel >= 0f) listScroll = listMax; }
+            if (Mathf.Abs(listVel) < 4f*u) listVel = 0f;
+        }
+        listScroll = Mathf.Clamp(listScroll, -220f*u, listMax + 220f*u);
+        wasDownBag = down;
+    }
+
     void Update ()
     {
         if (MolakMenu.IsOpen && open) open = false;
         openT = Mathf.MoveTowards(openT, open ? 1f : 0f, Time.unscaledDeltaTime * 6f);
-        // 관성 스크롤
-        if (open && !listDragging && Mathf.Abs(listVel) > 1f)
-        {
-            listScroll = Mathf.Clamp(listScroll + listVel * Time.unscaledDeltaTime, 0f, listMax);
-            listVel *= Mathf.Pow(0.08f, Time.unscaledDeltaTime);   // 감쇠
-            if (listScroll <= 0f || listScroll >= listMax) listVel = 0f;
-        }
+        // 부드러운 스크롤: 손가락을 1:1로 따라가고, 놓으면 관성으로 미끄러지며 끝에서는 고무줄처럼 되돌아온다
+        if (open) ScrollStep(Mathf.Min(Time.unscaledDeltaTime, 0.05f)); else { listDragging = false; listVel = 0f; viewValid = false; }
         // 획득 순서 추적 (초당 4회)
         pollT -= Time.unscaledDeltaTime;
         if (pollT <= 0f && Engine.Initialized)
@@ -202,7 +237,7 @@ public class MolakBag : MonoBehaviour
         GUI.Label(new Rect(0, y + 28*u, w, 60*u), "— 행낭(行囊) —", sHead);
         var xr = new Rect(w - 120*u, y + 22*u, 96*u, 72*u);
         var xs = new GUIStyle(sHead){ fontSize = Mathf.RoundToInt(34*u) };
-        GUI.Label(xr, "✕", xs);
+        GUI.Label(xr, "×", xs);
         if (ev.type == EventType.MouseDown && xr.Contains(ev.mousePosition)) { open = false; ev.Use(); return; }
 
         // ---- 목록 (최근 획득 순) ----
@@ -229,16 +264,7 @@ public class MolakBag : MonoBehaviour
         }
         listMax = Mathf.Max(0f, total + 20*u - listH);
         var view = new Rect(cx, listY, cw, listH);
-        // 드래그 스크롤
-        if (ev.type == EventType.MouseDown && view.Contains(ev.mousePosition)) { listDragging = true; lastDragY = ev.mousePosition.y; lastDragT = Time.unscaledTime; listVel = 0f; }
-        else if (ev.type == EventType.MouseDrag && listDragging)
-        {
-            float dy = ev.mousePosition.y - lastDragY; float dt = Mathf.Max(0.001f, Time.unscaledTime - lastDragT);
-            listScroll = Mathf.Clamp(listScroll - dy, -40*u, listMax + 40*u);   // 살짝 넘치는 여유
-            listVel = Mathf.Lerp(listVel, -dy / dt, 0.5f);
-            lastDragY = ev.mousePosition.y; lastDragT = Time.unscaledTime;
-        }
-        else if (ev.type == EventType.MouseUp && listDragging) { listDragging = false; listScroll = Mathf.Clamp(listScroll, 0f, listMax); }
+        listViewGui = view; viewValid = true;   // 드래그는 Update(ScrollStep)에서 입력 시스템으로 처리
         GUI.BeginGroup(view);
         float ry = -listScroll;
         foreach (var o in rows)

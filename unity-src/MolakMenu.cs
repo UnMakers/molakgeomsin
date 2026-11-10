@@ -117,7 +117,12 @@ public class MolakMenu : MonoBehaviour
         MolakInputGuard.Guard(new Rect(burgerR.x-20*u, burgerR.y-20*u, burgerR.width+40*u, burgerR.height+40*u));
         if (!open)
         {
-            GUI.Label(burgerR, "☰", sBurger);
+            { // 세 줄 아이콘 (고운바탕에 ☰ 글리프가 없어 기기에서 □로 나오던 것)
+                var bc = MolakTheme.Night ? new Color(0.88f,0.84f,0.78f,1f) : new Color(0.20f,0.16f,0.13f,1f);
+                float bw0 = 44*u, bt = 5*u, gap0 = 12*u;
+                float bx0 = burgerR.x + (burgerR.width - bw0)/2f, by0 = burgerR.y + (burgerR.height - (3*bt + 2*gap0))/2f;
+                for (int bi = 0; bi < 3; bi++) Box(new Rect(bx0, by0 + bi*(bt+gap0), bw0, bt), bc);
+            }
             if (GUI.Button(burgerR, GUIContent.none, GUIStyle.none)) { open = true; SetProcessInput(false); }
             return;
         }
@@ -138,7 +143,7 @@ public class MolakMenu : MonoBehaviour
         float by = Mathf.Max(60*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
         // ✕ 닫기
-        if (GUI.Button(new Rect(bx+bw-70*u, by-6*u, 70*u, 70*u), "✕", sHead)) { open = false; SetProcessInput(true); return; }
+        if (GUI.Button(new Rect(bx+bw-70*u, by-6*u, 70*u, 70*u), "×", sHead)) { open = false; SetProcessInput(true); return; }
         by += 100*u;
         // 토글 두 개: 자동 진행 · 빨리 넘기기
         float hw = (bw-gap)/2f;
