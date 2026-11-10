@@ -1,4 +1,4 @@
-// (자동 생성: patch8_nani.py) 사건 정의표 v2 — 수정은 evdefs.py 에서.
+// 사건 정의표 v3 (0.4.0부터 이 파일이 원본. tools/evdefs.py 는 0.3.x 기록용)
 public static class MolakEventDefs
 {
     public struct Def
@@ -27,7 +27,7 @@ public static class MolakEventDefs
             new Def("E_Gaebang1", 10, 26, 'd', "f_gaekid", null, 0, 30),
             new Def("E_Gaebang2", 26, 40, 'd', "f_gaeknot", "E_Gaebang1", 5, 30),
             new Def("E_Hao", 13, 24, 'n', "b_jang&!f_haodone", null, 0, 28),
-            new Def("E_JangSell", 15, 18, 'n', "b_jang&!f_jangfriend&!f_haoowe", null, 0, 45),
+            new Def("E_JangSell", 15, 18, 'n', "b_jang&!f_jangfriend&!f_haoowe", null, 0, 32),
             new Def("E_JangTaken", 21, 30, 'n', "f_jangtaken&!f_jangsold", null, 0, 40),
             new Def("E_YongSell", 20, 25, 'n', "f_yongspared&b_yong2&!f_yongfam", null, 0, 35),
             new Def("E_HerbNight", 22, 38, 'n', "!f_herbdead", "E_Herb", 8, 26),

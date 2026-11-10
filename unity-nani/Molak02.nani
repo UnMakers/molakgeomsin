@@ -1,5 +1,6 @@
 ; ===== 몰락검신 — 조운현의 나날 (하루 루프) =====
 # DayLoop
+@ensurevars
 @goto MolakOver#Curse if:curse>=100
 @goto MolakOver#Taint if:taint>=6
 @goto MolakOver#Taint if:taint>0&&hp<=0

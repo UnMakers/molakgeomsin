@@ -7,11 +7,9 @@ using UnityEngine;
 [Alias("initrun")]
 public class InitRunCommand : Command
 {
-#pragma warning disable CS1998
-    public override async Awaitable Execute (ExecutionContext ctx)
-#pragma warning restore CS1998
+    /// <summary>전역(g_) 기본값 보장 — 회차 시작과 옛 저장 불러오기 때 모두 쓴다.</summary>
+    public static void EnsureGlobals (ICustomVariableManager vars)
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         // 전역 기본값 보장
         foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
@@ -28,6 +26,14 @@ public class InitRunCommand : Command
                 if (!vars.VariableExists(pre + le.Id)) vars.SetVariableValue(pre + le.Id, new CustomVariableValue(0f));
         foreach (var gk in new[]{"g_lk_nameless","g_ls_nameless"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
+    }
+
+#pragma warning disable CS1998
+    public override async Awaitable Execute (ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
+        EnsureGlobals(vars);
         // 전역(g_)이 아닌 변수 전부 제거 수준으로 0 초기화
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)
