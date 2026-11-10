@@ -75,7 +75,7 @@ public static class MolakDuel
     {
         switch (kind)
         {
-            case "hochi": case "kyona": case "jinbaek": case "chainmob": case "hunt1": case "hunt2": case "hunt3":
+            case "hochi": case "kyona": case "jinbaek": case "hunt1": case "hunt2": case "hunt3":
             case "wolf": case "lord": case "cheolsan": case "grudge": case "debt": case "assassin": case "tax": case "soa": case "raid": return true;
         }
         return MolakStats.Get("dsit") == 7;
