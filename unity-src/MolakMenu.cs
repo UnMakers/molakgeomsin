@@ -215,14 +215,15 @@ public class MolakMenu : MonoBehaviour
         if (Event.current.type == EventType.MouseDown) { open = false; SetProcessInput(true); }
     }
 
+    UnityEngine.Vector2 ledgerScroll;
     void DrawLedger (float w, float h, float u)
     {
         float g0;
         System.Func<string,float> gv = n => { try { return MolakStats.Get(n); } catch { return 0f; } };
-        float bw = Mathf.Min(w*0.84f, 860*u), rh = 124*u, gap = 16*u;
-        float bx = (w-bw)/2f, by = Mathf.Max(60*u, h*0.14f);
+        float bw = Mathf.Min(w*0.84f, 860*u), rh = 96*u, gap = 12*u;
+        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.07f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 원수 장부 · 청운의 빚 —", sHead);
-        by += 90*u;
+        by += 76*u;
         string[] names = {
             "독아단 아장 호치",
             "독아단주 견아",
@@ -244,15 +245,49 @@ public class MolakMenu : MonoBehaviour
             Box(r, MolakTheme.Raise);
             Box(new Rect(r.x,r.y,r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
             Box(new Rect(r.x,r.yMax-Mathf.Max(1f,1*u),r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
-            var nameStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(36*u)};
-            var stStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleRight, fontSize=Mathf.RoundToInt(30*u)};
+            var nameStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(32*u)};
+            var stStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleRight, fontSize=Mathf.RoundToInt(27*u), richText=true};
             stStyle.normal.textColor = MolakTheme.Ink3;
             GUI.Label(new Rect(r.x+28*u, r.y, r.width*0.62f, r.height), names[i], nameStyle);
             GUI.Label(new Rect(r.x+r.width*0.5f, r.y, r.width*0.5f-28*u, r.height), states[i], stStyle);
         }
-        var back = new Rect(bx, by + 5*(rh+gap) + 30*u, bw, 104*u);
+        // ---- 생을 넘어: 벤 자 · 나 때문에 죽은 자 · 살려 보낸 자 ----
+        float y2 = by + 5*(rh+gap) + 10*u;
+        GUI.Label(new Rect(bx, y2, bw, 50*u), "— 생을 넘어 쌓인 장부 —", sHead);
+        y2 += 62*u;
+        var rows = new System.Collections.Generic.List<string[]>();
+        foreach (var e in MolakLedger.All) { var ln = MolakLedger.Line(e.Id); if (ln != null) rows.Add(new[]{ e.Name, ln }); }
+        float nk = gv("g_lk_nameless"), ns = gv("g_ls_nameless");
+        if (nk > 0 || ns > 0)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+            if (nk > 0) parts.Add("<color=#C03434>벤 목 " + nk.ToString("0") + "</color>");
+            if (ns > 0) parts.Add("<color=#3E6E8E>살려 보낸 목 " + ns.ToString("0") + "</color>");
+            rows.Add(new[]{ "비무판의 이름 없는 자들", string.Join(" · ", parts.ToArray()) });
+        }
+        float lh = 78*u, listH = h - y2 - 140*u;
+        var nmS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(27*u)};
+        var cS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleRight, fontSize=Mathf.RoundToInt(24*u), richText=true};
+        if (rows.Count == 0)
+        {
+            var em = new GUIStyle(sBtn){alignment=TextAnchor.UpperCenter, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
+            em.normal.textColor = MolakTheme.Ink3;
+            GUI.Label(new Rect(bx, y2, bw, 90*u), "아직 아무도 적히지 않았다. 생이 끝날 때마다, 벤 자와 살린 자와 나 때문에 죽은 자가 여기 남는다.", em);
+        }
+        else
+        {
+            ledgerScroll = GUI.BeginScrollView(new Rect(bx, y2, bw, listH), ledgerScroll, new Rect(0, 0, bw-24*u, rows.Count*lh));
+            for (int i = 0; i < rows.Count; i++)
+            {
+                var r = new Rect(0, i*lh, bw-24*u, lh-8*u);
+                Box(r, MolakTheme.Raise);
+                GUI.Label(new Rect(r.x+22*u, r.y, r.width*0.55f, r.height), rows[i][0], nmS);
+                GUI.Label(new Rect(r.x+r.width*0.4f, r.y, r.width*0.6f-22*u, r.height), rows[i][1], cS);
+            }
+            GUI.EndScrollView();
+        }
+        var back = new Rect(bx, h - 124*u, bw, 100*u);
         if (Btn(back, "돌아간다", false, u)) ledger = false;
-        if (Event.current.type == EventType.MouseDown) ledger = false;
         g0 = 0f;
     }
 

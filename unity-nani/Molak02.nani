@@ -829,6 +829,10 @@
 @gosub MolakEvents#E_Hao if:nextevent=="E_Hao"
 @gosub MolakEvents#E_JangSell if:nextevent=="E_JangSell"
 @gosub MolakEvents#E_JangTaken if:nextevent=="E_JangTaken"
+@gosub MolakEvents#E_YongSell if:nextevent=="E_YongSell"
+@gosub MolakEvents#E_HerbNight if:nextevent=="E_HerbNight"
+@gosub MolakEvents#E_HerbBurn if:nextevent=="E_HerbBurn"
+@gosub MolakEvents#E_GwakWife if:nextevent=="E_GwakWife"
 @gosub MolakEvents#E_Thugs if:nextevent=="E_Thugs"
 @gosub MolakEvents#E_Pilgrim if:nextevent=="E_Pilgrim"
 @gosub MolakEvents#E_Funeral if:nextevent=="E_Funeral"
@@ -1107,6 +1111,7 @@
 @choice "객잔으로 돌아간다" goto:#Town1C3
 @stop
 # Town1C0
+@goto #TownBDead if:f_herbdead>0
 @art char:granny
 @goto #TownB
 # Town1C1
@@ -1155,6 +1160,21 @@
 @gosub MolakEvents#H_Jsd
 @goto #TownB
 # TownBC3
+@goto #Town1
+# TownBDead
+@art char:none
+백초당 자리에 검게 탄 기둥 셋이 서 있다. 거지 아이 하나가 잿더미를 뒤져 덜 탄 약초를 고른다.
+@choice "향 가게 — 해약 (은자 14) — 독만 뺀다" if:taint>0&&mn>=14 goto:#TownBDA
+@choice "아이에게서 덜 탄 약초를 산다 (은자 2) — 상처를 다스린다" if:mn>=2&&taint<1 goto:#TownBDB
+@choice "돌아선다" goto:#TownBC3
+@stop
+# TownBDA
+향 가게 주인이 장부를 펴고 당신 키와 옷차림을 적는다. 그러고는 해약 한 첩을 내민다. 암향루의 해약이다. 값은 할멈의 두 배다.
+@fx mn:-14 hp:-1
+@set taint=0
+@goto #Town1
+# TownBDB
+@fx mn:-2 hp:3
 @goto #Town1
 
 # TownM

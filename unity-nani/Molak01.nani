@@ -78,6 +78,7 @@
 @set dlethal=0
 @set dloot=0
 @set dsit=0
+@set dsitforce=0
 @set dstake=0
 @set dtaint=0
 @set duelwin=0
@@ -121,6 +122,10 @@
 @set f_guardfriend=0
 @set f_guardgrudge=0
 @set f_guardsword=0
+@set f_gwakally=0
+@set f_gwakexposed=0
+@set f_gwakhelped=0
+@set f_gwakwifedied=0
 @set f_hajin2=0
 @set f_hajinbond=0
 @set f_hajincold=0
@@ -133,10 +138,13 @@
 @set f_hapbyeok=0
 @set f_hat=0
 @set f_herbbond=0
+@set f_herbburned=0
+@set f_herbdead=0
 @set f_herbfriend=0
 @set f_herbmarked=0
 @set f_herbout=0
 @set f_herbpulse=0
+@set f_herbsafe=0
 @set f_hmfailed=0
 @set f_hmleft=0
 @set f_hmsaved=0
@@ -191,6 +199,7 @@
 @set f_openname=0
 @set f_orphan=0
 @set f_platefake=0
+@set f_poisonswap=0
 @set f_raidprep=0
 @set f_rankplate=0
 @set f_relicinfo=0
@@ -259,7 +268,13 @@
 @set f_wolfinvite=0
 @set f_wolfnear=0
 @set f_wolfseal=0
+@set f_yongally=0
+@set f_yongambush=0
+@set f_yongbetray=0
+@set f_yongfam=0
+@set f_yongfamsaved=0
 @set f_yongkilled=0
+@set f_yongsold=0
 @set f_yongspared=0
 @set grudge=0
 @set grudgeday=0
@@ -270,6 +285,7 @@
 @set injury=0
 @set jsdeff=0
 @set jsdn=0
+@set killed=0
 @set knownewc=0
 @set lrand=0
 @set luck=0
@@ -569,6 +585,9 @@
 @choice "다른 데로 간다" goto:#P4b
 @stop
 # MkSalve
+@goto #MkSalveK if:g_herbdied<1
+노파의 손이 따뜻하다. 지난 생에 업고 나온 등은 뜨거웠다. 머리카락이 다 있다.
+# MkSalveK
 "상처 난 데가 어디냐."
 노파가 묻지도 않고 당신의 손을 잡아 뒤집는다. 손목 맥을 짚더니 이맛살을 찌푸린다.
 "……맥이 둘이구나. 하나는 네 것이 아니고."

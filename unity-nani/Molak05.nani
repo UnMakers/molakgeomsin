@@ -315,6 +315,9 @@
 @art char:gwaksan
 객잔 앞에 창 한 자루가 꽂혀 있다. 도전장 대신이다.
 곽산이 팔짱을 끼고 서 있다.
+@goto #Rival2P if:g_know_gwak>0&&f_gwakhelped<1
+@set tr=random(1,100)
+@goto #Rival2P if:tr<=50&&f_gwakhelped<1
 "지난번엔 성에 안 찼다. 지든 이기든, 한 판 더 하자."
 창잡이의 눈에 독기는 없다. 굶주림이 있을 뿐이다.
 @choice "꽂힌 창을 뽑아 던져 준다" goto:#Rival2A
@@ -576,3 +579,67 @@
 "장부 내놔. 네놈이 누구한테 뭘 팔았는지."
 장의 쥐눈이 골목 어귀의 당신을 스친다. 놀라지 않는다. 와도 되고 안 와도 되는 사람을 보는 눈이다.
 @goto #Jang2Ch
+
+; --- 곽산의 푸른 창날 (독칼 판) ---
+# Rival2P
+꽂힌 창의 날 끝이 푸르스름하다. 쇳빛이 아니다.
+"지난번엔 성에 안 찼다. 오늘은 끝을 보자."
+곽산의 눈에 독기는 없다. 굶주림이 있을 뿐이다. 독은 독기 없는 손이 더 잘 바른다.
+@choice "창을 받는다 — 푸른 날째로" goto:#Rival2PA
+@choice "\"날 끝이 푸르군. 누가 팔았나.\"" if:ng>=10||g_know_gwak>0 goto:#Rival2PB
+@choice "구경꾼들 앞에서 창날을 들어 보인다 — 독칼이다" goto:#Rival2PC
+@stop
+# Rival2PA
+@set dsitforce=4
+@set dkind="rival"
+@gosub MolakDuel#Run
+곽산이 창을 거둔다. 푸른 날을 천으로 감싼다. 손이 서툴다. 독을 다뤄 본 손이 아니다.
+@set f_rivalfriend=1
+@goto Molak02#AfterChapter
+# Rival2PB
+곽산의 턱이 굳는다. 한참 말이 없다가, 창을 땅에서 뽑아 날을 천으로 감싼다.
+"……아내가 기침을 한다. 피가 섞인다. 백초당 외상이 막혔다. 교납 때문에 할멈도 외상을 못 준다더군."
+"그래서 독을 샀나."
+"교 약재 창고 뒷문에서. 당가 독이라 했다. 한 번 이기면 서열 값으로 약 한 달 치다."
+@set g_know_gwak=1
+@choice "백초당으로 데려간다 — 할멈에게 잇는다" if:f_herbdead<1 goto:#Rival2PD
+@choice "아내의 약값을 대신 치른다 (은자 12)" if:mn>=12 goto:#Rival2PE
+@choice "\"독 바른 창은 받지 않겠다.\" — 돌아선다" goto:#Rival2PF
+@stop
+# Rival2PD
+할멈이 곽산의 창날을 코에 대 본다. 눈이 가늘어진다.
+"……이 독은 내가 처음 배운 독이다. 그러니 내가 제일 잘 안다. 교 창고에 이걸 대는 손이 누군지도."
+할멈이 곽산에게 약 꾸러미를 던진다. "외상이다. 갚지 마라. 갚으면 장부에 오른다."
+곽산이 꾸러미를 두 손으로 받는다. 창잡이가 창 말고 다른 것을 두 손으로 쥐는 걸 처음 본다.
+@set g_fac_dang=1
+@set f_gwakhelped=1
+@set f_gwakally=1
+@set f_rivalfriend=1
+@fx curse:-2
+@goto Molak02#AfterChapter
+# Rival2PE
+@fx mn:-12 curse:-1
+은자를 내민다. 곽산이 받지 않는다. 그의 손을 펴서 쥐여 준다.
+"……판돈이 아니라서 받기 싫다." 그래도 손은 닫힌다.
+"북쪽 길이 필요하면 말해라. 창잡이는 발이 넓다. 혈쇄문 폐철장 뒷길도 안다."
+@set f_gwakhelped=1
+@set f_gwakally=1
+@set f_rivalfriend=1
+@set f_valleyroute=1
+@goto Molak02#AfterChapter
+# Rival2PF
+곽산이 창을 어깨에 건다. "독 없이는 너한테 못 이긴다. 그럼 아내가 진다."
+그날 밤 곽산은 다른 비무판으로 간다.
+@goto Molak02#AfterChapter
+# Rival2PC
+창날을 구경꾼들 쪽으로 돌린다. 푸른 기가 해에 번들거린다.
+"독칼이오."
+웅성거림이 판을 덮는다. 비무판에서 독은 칼보다 무거운 죄다. 서열각 서기가 곽산의 이름에 줄을 긋는다.
+곽산이 창을 버리고 걸어 나간다. 등이 작다.
+@set f_gwakexposed=1
+@fx sl:2
+@set tr=random(1,100)
+@goto Molak02#AfterChapter if:tr>50
+@set grudgeday=day+random(6,9) if:grudge<1
+@set grudge=grudge+1
+@goto Molak02#AfterChapter

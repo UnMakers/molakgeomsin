@@ -118,6 +118,7 @@ public class DuelInfoCommand : Command
             else sit = 1 + Random.Range(0, 6);
             if (sit == 1 && MolakStats.Get("day") < 3) sit = 0;
         }
+        { float sf = MolakStats.Get("dsitforce"); if (sf > 0) { sit = Mathf.RoundToInt(sf); MolakStats.Set("dsitforce", 0f); } } // 이야기가 정한 판의 형편(독 바른 창 등)
         MolakStats.Set("dsit", sit);
         var foe = MolakDuel.MakeFoe(kind);
         if (sit == 4) foe.P -= 3f;           // 독에 기대는 손은 검이 무르다
@@ -196,6 +197,11 @@ public class DuelCommand : Command
         if (kind == "raid" && MolakStats.Get("f_hajinbond") > 0 && MolakStats.Get("f_hajindead") < 1) bonus += 2f; // 하진무가 혈랑대에게 계단 셋째 칸을 속였다
         if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 반쪽의 합벽: 그녀의 검이 빈자리를 막는다
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
+        if (kind == "wolf" && MolakStats.Get("f_gwakally") > 0) bonus += 1.5f;    // 곽산이 폐철장 뒷길로 사슬잡이 절반을 끌고 갔다
+        if (kind == "hunt2" && MolakStats.Get("f_gwakally") > 0) bonus += 1f;
+        if (kind == "hochi" && MolakStats.Get("f_yongally") > 0) bonus += 1.5f;   // 도끼 들기 전에 왼발을 끈다
+        if (kind == "hochi" && MolakStats.Get("f_poisonswap") > 0) bonus += 2f;   // 쇠이 끝의 독이 감초다
+        if (kind == "kyona" && MolakStats.Get("f_poisonswap") > 0) bonus += 1.5f;
         if (kind == "raid" && MolakStats.Get("f_maengraid") > 0) bonus += 2f;      // 맹의 칼 셋이 지붕에서 뒤를 쳤다
         if (kind == "lord" && MolakStats.Get("f_namgungdoor") > 0) bonus += 1f;    // 남궁이 측문을 비웠다
         if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_gaewarn") > 0) bonus += 1f;   // 담장의 매듭 셋

@@ -264,6 +264,7 @@
 @set grudge=grudge+1
 @return
 # MKill
+@set killed=killed+1
 검이 한 번 내려간다. 비무판이 조용해진다.
 전낭이 묵직하다. 구경꾼 하나가 슬그머니 자리를 뜬다. 어디로 가는지는 묻지 않아도 안다.
 @fx sl:2 curse:2 mn:5
@@ -273,6 +274,7 @@
 @set grudge=grudge+1
 @return
 # MKillS
+@set killed=killed+1
 아이는 울지 않는다. 사부의 피가 아이의 신발 코까지 번진다.
 아이는 끝까지 당신 얼굴을 본다. 그 눈이 무엇을 외우는지 안다.
 @fx sl:3 curse:3 mn:5
