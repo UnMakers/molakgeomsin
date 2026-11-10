@@ -97,27 +97,44 @@ public class MolakTitle : MonoBehaviour
         return (a != null && a.Visible) || (b != null && b.Visible) || (c != null && c.Visible);
     }
 
-    /// <summary>오른쪽 정렬 글자 행. 왼쪽에 금빛 마름모, 누르면 가는 붉은 선이 왼쪽으로 뻗는다.</summary>
-    bool Item (int idx, Rect r, string label, bool enabled, float u, float t)
+    /// <summary>
+    /// 붓 한 획 위의 글자 — 버튼마다 마른 붓으로 그은 먹 획(세 가지 붓결을 돌려 쓴다)을 깔고, 그 위에 종이색 글씨.
+    /// 첫 획(주 행동)은 주홍 인주색. 손가락이 닿아 있는 동안 획이 짙어지고 살짝 번지며, 떼는 순간 실행한다.
+    /// </summary>
+    int downIdx = -1;
+    Texture2D[] brushes;
+    bool Item (int idx, Rect r, string label, bool enabled, float u, float t, bool primary)
     {
-        bool over = enabled && r.Contains(Event.current.mousePosition);
-        var st = enabled ? sItem : sItemDim;
-        GUI.Label(r, label, st);
-        float tw = st.CalcSize(new GUIContent(label)).x;
-        float mx = r.xMax - tw - 26*u, my = r.center.y;
-        var m = GUI.matrix;
-        GUIUtility.RotateAroundPivot(45f, new Vector2(mx, my));
-        float ds = (over || pressed == idx ? 11f : 8f) * u;
-        Box(new Rect(mx - ds/2, my - ds/2, ds, ds), enabled ? new Color(0.66f,0.52f,0.26f,0.95f) : new Color(0.5f,0.46f,0.4f,0.5f));
-        GUI.matrix = m;
-        if (pressed == idx)
+        if (brushes == null) brushes = new[]{ Resources.Load<Texture2D>("MolakTitleBrush0"), Resources.Load<Texture2D>("MolakTitleBrush1"), Resources.Load<Texture2D>("MolakTitleBrush2") };
+        var e = Event.current;
+        if (enabled && e.type == EventType.MouseDown && r.Contains(e.mousePosition)) downIdx = idx;
+        if (e.type == EventType.MouseUp && downIdx == idx && !r.Contains(e.mousePosition)) downIdx = -1;
+        bool down = downIdx == idx && enabled;
+        // 획: 버튼 칸보다 위아래로 조금 크게, 오른쪽 끝(꼬리)은 칸 밖으로 흘린다
+        var tex = brushes[idx % brushes.Length];
+        float grow = down ? 1.06f : 1f;
+        float bw2 = r.width * 1.12f * grow, bh2 = r.height * 1.35f * grow;
+        var br = new Rect(r.x - r.width * 0.04f - (bw2 - r.width * 1.12f) * 0.5f, r.center.y - bh2 / 2f, bw2, bh2);
+        Color ink = primary ? new Color(0.62f, 0.12f, 0.09f, 1f) : new Color(0.09f, 0.08f, 0.08f, 1f);
+        float a = !enabled ? 0.30f : down ? 1f : 0.90f;
+        // 획이 처음 그어지는 모양: 메뉴가 뜰 때 왼쪽부터 순서대로 번진다
+        float reveal = Mathf.Clamp01((t - shownAt - 1.1f - idx * 0.12f) / 0.45f);
+        if (reveal < 1f)
         {
-            float k = Mathf.SmoothStep(0, 1, Mathf.Clamp01((t - pressedAt) / 0.4f));
-            float len = 140*u * k;
-            Box(new Rect(mx - 16*u - len, my - Mathf.Max(1f, 1f*u), len, Mathf.Max(1.5f, 2f*u)), new Color(0.55f,0.14f,0.11f,0.9f));
+            GUI.BeginGroup(new Rect(br.x, br.y, br.width * Mathf.SmoothStep(0, 1, reveal), br.height));
+            Tex(new Rect(0, 0, br.width, br.height), tex, new Color(ink.r, ink.g, ink.b, a));
+            GUI.EndGroup();
         }
+        else Tex(br, tex, new Color(ink.r, ink.g, ink.b, a));
+        var st = new GUIStyle(enabled ? sItem : sItemDim){ alignment = TextAnchor.MiddleCenter };
+        st.normal.textColor = enabled ? new Color(0.96f, 0.93f, 0.87f, 1f) : new Color(0.80f, 0.77f, 0.72f, 0.8f);
+        // 글씨는 먹이 짙은 앞쪽(획의 왼쪽 60%) 가운데에
+        var lr = new Rect(r.x, r.y + (down ? 2*u : 0), r.width * 0.78f, r.height);
+        var sh = new GUIStyle(st); sh.normal.textColor = new Color(0, 0, 0, 0.35f);
+        GUI.Label(new Rect(lr.x + 1.5f*u, lr.y + 2*u, lr.width, lr.height), label, sh);
+        GUI.Label(lr, label, st);
         bool hit = enabled && GUI.Button(r, GUIContent.none, GUIStyle.none);
-        if (hit) { pressed = idx; pressedAt = t; }
+        if (hit) { pressed = idx; pressedAt = t; downIdx = -1; MolakSfx.Confirm(); }
         return hit;
     }
 
@@ -289,24 +306,25 @@ public class MolakTitle : MonoBehaviour
 
         // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
         GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
-        float ih = 96*u, n = 4;   // 손가락 한 마디(약 9mm) 이상 · 나가기는 폰의 뒤로 가기로
-        float my0 = Mathf.Min(h * 0.55f, h - 200*u - n * ih);
-        float rx = w - 56*u, mw = Mathf.Min(w * 0.62f, 640*u);
-        Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.35f : 0.5f));
+        // 패 하나 = 손가락 한 마디(약 9mm)보다 크게. 나가기는 폰의 홈·뒤로 가기에 맡긴다.
+        float bh = 104*u, gap = 22*u, ih = bh + gap, n = 4;
+        float my0 = Mathf.Min(h * 0.56f, h - 200*u - n * ih);
+        float rx = w - 52*u, mw = Mathf.Min(w * 0.52f, 560*u);
+        Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.25f : 0.35f));
         string tag = dawn ? "베이고, 돌아가고, 마침내 아침." : "베이고, 돌아가고, 다시 벤다.";
-        GUI.Label(new Rect(rx - mw, my0 - 52*u, mw, 40*u), tag, sTag);
-        Box(new Rect(rx - 90*u, my0 - 8*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
+        GUI.Label(new Rect(rx - mw, my0 - 60*u, mw, 40*u), tag, sTag);
+        Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
         bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable;
-        if (Item(0, new Rect(rx - mw, my0, mw, ih), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t) && !busy) wakeAt = t;
-        if (Item(1, new Rect(rx - mw, my0 + ih, mw, ih), "이어하기", canContinue && !busy, u, t))
+        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) wakeAt = t;
+        if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
             var sl = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
             if (sl != null) sl.ChangeVisibility(true, 0.15f);
         }
-        string codexLabel = seenEnds > 0 ? "<size=" + Mathf.RoundToInt(22*u) + "><color=#7A6A55>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>  말로록" : "말로록";
-        if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, ih), codexLabel, !busy, u, t)) MolakMenu.OpenCodex();
-        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, ih), "환경 설정", !busy, u, t))
+        string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>" : "말로록";
+        if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();
+        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "환경 설정", !busy, u, t, false))
         {
             var stg = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
             if (stg != null) stg.ChangeVisibility(true, 0.15f);
@@ -314,7 +332,7 @@ public class MolakTitle : MonoBehaviour
 
         // ---- 발치: 지난 생의 말로 · 회귀 기록 ----
         // 검객의 물그림자를 피해 오른쪽 아래, 메뉴 바로 밑 안개 자락에 둔다
-        float fy = my0 + n * ih + 18*u;
+        float fy = my0 + n * ih + 4*u;
         var sLastR = new GUIStyle(sLast){ alignment = TextAnchor.MiddleRight };
         var sFootR = new GUIStyle(sFoot){ alignment = TextAnchor.MiddleRight };
         if (runs > 0 && !string.IsNullOrEmpty(lastEnd) && lastEnd != "none")
