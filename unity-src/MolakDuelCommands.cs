@@ -39,9 +39,11 @@ public static class MolakDuel
             case "hunt3": return new Foe { Name = "집법전주", Rank = 40, P = 66 + Random.Range(0, 5), Boss = "hunt3" };
             case "cheolsan": return new Foe { Name = "철산도", Rank = 5213, P = 40 + Random.Range(0, 4) };
             // 업보의 칼: 내 힘에 맞춰 오는 상대들 — 질 수도, 이길 수도 있는 판
-            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(MyPower() + Random.Range(-3, 2)) };
+            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(MyPower() + Random.Range(-4, 2)) };
             case "debt": return new Foe { Name = "고리대 왕삼의 수하들", Rank = 6200000, P = Mathf.Round(16 + MolakStats.Get("day") * 0.5f + Random.Range(0, 4)) };
             case "assassin": return new Foe { Name = "교의 자객", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.5f)) : 900000, P = Mathf.Round(MyPower() + Random.Range(-1, 3)) };
+            case "soa": return new Foe { Name = "적운검파 소아", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.8f)) : 600000, P = Mathf.Round(MyPower() + Random.Range(0, 4)), Boss = "soa" };
+            case "raid": return new Foe { Name = "혈랑대 야습조", Rank = 2500, P = Mathf.Round(MyPower() + Random.Range(-2, 3)) };
             case "tax": return new Foe { Name = "징세조 칼잡이들", Rank = 400000, P = 27 + Random.Range(0, 5) };
             case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
             {
@@ -74,7 +76,7 @@ public static class MolakDuel
         switch (kind)
         {
             case "hochi": case "kyona": case "jinbaek": case "chainmob": case "hunt1": case "hunt2": case "hunt3":
-            case "wolf": case "lord": case "cheolsan": case "grudge": case "debt": case "assassin": case "tax": return true;
+            case "wolf": case "lord": case "cheolsan": case "grudge": case "debt": case "assassin": case "tax": case "soa": case "raid": return true;
         }
         return MolakStats.Get("dsit") == 7;
     }
@@ -123,7 +125,7 @@ public class DuelInfoCommand : Command
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         vars.SetVariableValue("duelkind", new CustomVariableValue(kind));
         // 전생의 기억(상점 강화) + 이 상대에게 죽은 적이 있으면 경고
-        bool bossKind = kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival";
+        bool bossKind = kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival";
         MolakStats.Set("memwarn", bossKind && MolakStats.Get("g_up_mem") > 0 && vars.VariableExists("g_died_" + kind) && vars.GetVariableValue("g_died_" + kind).Number > 0 ? 1f : 0f);
         vars.SetVariableValue("foename", new CustomVariableValue(foe.Name));
         vars.SetVariableValue("foerank", new CustomVariableValue(string.Format("{0:N0}", foe.Rank)));
@@ -135,7 +137,7 @@ public class DuelInfoCommand : Command
         MolakStats.Set("canflee", sit == 2 || sit == 7 || kind == "grudge" || kind == "assassin" ? 0f : 1f);
         MolakStats.Set("cansense", sit == 4 && (MolakStats.Get("f_dokinfo") > 0 || MolakStats.Get("sw") >= 18 || MolakStats.Get("f_herbpulse") > 0) ? 1f : 0f);
         MolakStats.Set("dinj", 0f); MolakStats.Set("dtaint", 0f); MolakStats.Set("dloot", 0f);
-        string art = kind == "hochi" ? "hochi" : kind == "kyona" ? "kyona" : kind == "jinbaek" ? "jinbaek" : kind == "lord" ? "lord" : kind == "rival" ? "gwaksan" : kind == "hunt3" ? "lawlord" : null;
+        string art = kind == "soa" ? "soa" : kind == "hochi" ? "hochi" : kind == "kyona" ? "kyona" : kind == "jinbaek" ? "jinbaek" : kind == "lord" ? "lord" : kind == "rival" ? "gwaksan" : kind == "hunt3" ? "lawlord" : null;
         if (art != null) MolakArt.Char(art);
     }
 }
@@ -179,6 +181,11 @@ public class DuelCommand : Command
         if (kind == "lord" && MolakStats.Get("f_northstep") > 0) bonus += 1.5f;
         if (kind == "lord" && MolakStats.Get("f_lordseal") > 0) bonus += 0.5f;
         if (kind == "lord" && MolakStats.Get("f_cheonggang") > 0) bonus += 0.5f;
+        if (kind == "lord" && MolakStats.Get("f_halfhap") > 0) bonus += 2f;
+        if (kind == "tax" && MolakStats.Get("f_taxknow") > 0) bonus += 3f;       // 지난 생에 본 우두머리의 버릇
+        if (kind == "raid" && MolakStats.Get("f_raidprep") > 0) bonus += 3f;     // 그 밤이 올 줄 알고 계단에 기름을 부었다
+        if (kind == "raid" && MolakStats.Get("f_amhally") > 0) bonus += 1.5f;    // 암향이 미리 기별했다
+        if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 반쪽의 합벽: 그녀의 검이 빈자리를 막는다
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
         float odds = MolakDuel.Odds(foe, bonus);
         bool win = Random.Range(1, 101) <= odds;

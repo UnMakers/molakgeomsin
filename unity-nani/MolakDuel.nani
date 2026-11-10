@@ -172,12 +172,19 @@
 피를 뱉고 일어선다. 상대도 성하지 않다. 오늘은 둘 다 숨이 붙어 나간다.
 @return
 # LoseDeath
+@goto #RaidSave if:dkind=="raid"&&aff>=4
+@goto MolakOver#SoaDuelDeath if:dkind=="soa"
+@goto MolakOver#RaidDeath if:dkind=="raid"
 @goto MolakOver#GrudgeDeath if:dkind=="grudge"
 @goto MolakOver#DebtDeath if:dkind=="debt"
 @goto MolakOver#AssassinDeath if:dkind=="assassin"
 @goto MolakOver#TaxDeath if:dkind=="tax"
 @goto MolakOver#SangsaDeath if:dsit==7
 @goto MolakOver#DuelDeath
+
+# RaidSave
+@set hp=1
+@return
 
 ; ---------- 승리 ----------
 # Win
@@ -225,6 +232,9 @@
 # Mercy
 @goto #MercyS if:dsit==6
 상대가 무릎을 꿇은 채 목을 늘인다. 비무에 진 자의 예법이다. 받든 말든 이긴 쪽의 몫이다.
+@goto #MercyC if:g_end_wonsu<1
+<color=#9A70C4>지난 생, 이렇게 늘인 목 하나의 값으로 상복 셋이 찾아왔다.</color>
+# MercyC
 @choice "검을 거두고 손을 내민다" goto:#MSpare
 @choice "검 쥐는 손목의 힘줄을 끊는다" goto:#MMaim
 @choice "목을 친다 — 전낭은 이긴 자의 것" goto:#MKill

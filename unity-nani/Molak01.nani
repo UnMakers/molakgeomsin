@@ -19,6 +19,7 @@
 @set b_ipma=0
 @set b_jang=0
 @set b_jang2=0
+@set b_ldhap=0
 @set b_leave=0
 @set b_ochi=0
 @set b_old=0
@@ -39,6 +40,10 @@
 @set b_s3=0
 @set b_s4=0
 @set b_s5=0
+@set b_s6=0
+@set b_s7=0
+@set b_s8=0
+@set b_shrfire=0
 @set b_soa=0
 @set b_soa3=0
 @set b_soa4=0
@@ -75,7 +80,11 @@
 @set endtitle=0
 @set f_acupgone=0
 @set f_alms=0
+@set f_amhally=0
+@set f_amhdead=0
 @set f_amhdeal=0
+@set f_amhowe=0
+@set f_amhtalk=0
 @set f_amhwarn=0
 @set f_amhyangknown=0
 @set f_beggarnet=0
@@ -105,6 +114,8 @@
 @set f_hajincold=0
 @set f_hajinfree=0
 @set f_hajinhurt=0
+@set f_halfhap=0
+@set f_hapbyeok=0
 @set f_hat=0
 @set f_herbbond=0
 @set f_herbfriend=0
@@ -141,6 +152,7 @@
 @set f_oldseen=0
 @set f_openname=0
 @set f_orphan=0
+@set f_raidprep=0
 @set f_relicinfo=0
 @set f_relicpae=0
 @set f_ringclosed=0
@@ -159,19 +171,29 @@
 @set f_simma=0
 @set f_smithwait=0
 @set f_soa3=0
+@set f_soablades=0
 @set f_soabond=0
+@set f_soadead=0
 @set f_soadone=0
+@set f_soakilled=0
+@set f_soaleft=0
 @set f_soamet=0
 @set f_soaposter=0
 @set f_soareq=0
+@set f_soarift=0
 @set f_soasaved=0
 @set f_soaseal=0
 @set f_soatrain=0
+@set f_soatruth=0
+@set f_soaverse=0
+@set f_soawatch=0
+@set f_soawell=0
 @set f_sparedally=0
 @set f_sparfriend=0
 @set f_springrumor=0
 @set f_spyally=0
 @set f_spyinfo=0
+@set f_stoneseen=0
 @set f_storylore=0
 @set f_sutraknow=0
 @set f_sutrashard=0
@@ -179,6 +201,7 @@
 @set f_taverndone=0
 @set f_taverninfo=0
 @set f_taxhelp=0
+@set f_taxknow=0
 @set f_taxroute=0
 @set f_tea=0
 @set f_thiefkid=0
@@ -270,6 +293,7 @@
 @art char:none
 눈을 뜬다.
 운락객잔의 그 방. 그 천장. 창호지로 스며드는 그 빛.
+@goto #RbSoa if:g_soalast>0
 @goto #RbWin if:g_lastend=="sicheon"||g_lastend=="donghaeng"||g_lastend=="sungeom"
 @goto #RbSimma if:g_lastend=="simma"||g_lastend=="seongsa"
 @goto #RbChain if:g_lastend=="pobak"||g_lastend=="soseul"
@@ -277,6 +301,12 @@
 @goto #RbBody if:g_lastend=="gwaro"||g_lastend=="gongbok"
 @goto #RbLeave if:g_lastend=="wonhaeng"
 @goto #RbKneel if:g_lastend=="ipma"
+@goto #RbCommon
+# RbSoa
+@set g_soalast=0
+손이 먼저 깬다. 무언가를 쥐고 있던 손이다. 펴 보니 비어 있다.
+소매가 젖어 있지 않다. 피가 묻어 있지 않다. 그날 밤 그 손이 놓은 것이 되감기지 않았다.
+사흘 뒤, 저잣거리 국밥집 맞은편에 그녀가 앉을 것이다. 당신을 모르는 얼굴로.
 @goto #RbCommon
 # RbWin
 "…깨어나셨소?"

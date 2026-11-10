@@ -199,7 +199,7 @@ public class MolakEndTester : MonoBehaviour
             if (path == "MolakOver" && day >= 1 && !inOver)
             {
                 inOver = true; lives++;
-                bool clear = dc == "등극" || dc == "성사" || dc == "순검";
+                bool clear = dc == "등극" || dc == "성사" || dc == "순검" || dc == "합벽";
                 if (!clear && dc != "비무 패배" && dc != "포박" && dc != "사술 폭주" && dc != "독" && dc != "곪은 상처" && lastEventChoice != "") DeathChoices.Add(lastEventChoice);
                 lastEventChoice = "";
                 string dk = ""; try { var kv = vars.GetVariableValue("dkind"); dk = kv.Type == CustomVariableValueType.String ? kv.String : ""; } catch { }

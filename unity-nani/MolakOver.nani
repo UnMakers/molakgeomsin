@@ -26,6 +26,18 @@
 이상하다. 아프지가 않다. 시야가 좁아진다. 소리가 멀어진다.
 복수도 못 하고.
 @goto #Dead
+# SoaDuelDeath
+@set deathcause="소아의 검"
+쌍검 중 하나가 막고, 하나가 들어온다. 적운의 검은 두 번 오지 않는다. 한 번에 둘이 온다.
+무릎이 꺾인다. 그녀가 당신을 받아 안는다. 벤 사람이 받아 안는다.
+"……사부. 이번엔, 늦지 않았습니다."
+그녀의 외눈이 젖어 있다. 그 젖은 눈이 당신이 본 마지막이다.
+@goto #Dead
+# RaidDeath
+@set deathcause="야습"
+계단 셋째 칸에서 무릎이 꺾인다. 혈랑대의 칼이 등에 박힌다. 등 뒤를 맡긴 사람이 아직 거기 있는지, 돌아볼 수가 없다.
+마당에 횃불이 떨어진다. 운락객잔의 처마가 탄다. 일 년을 누워 올려다보던 천장이.
+@goto #Dead
 # GrudgeDeath
 @set deathcause="원수"
 "이름을 기억하느냐." 대답할 숨이 없다.
@@ -88,6 +100,10 @@
 @goto #ShopRipe if:deathcause=="성사"
 @goto #ShopSungeom if:deathcause=="순검"
 죽음이 스승이다. 가르침의 값이 목숨일 뿐.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회
+@goto #ShopList
+# ShopTrue
+@shopinfo
+되감기지 않는 아침이었다. 그래도 다시 그 날로 돌아가 읽고 싶다면, 노인의 사술은 아직 책장 사이에 남아 있다.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회 · 등극 {g_clears}회
 @goto #ShopList
 # ShopWin
 깃발은 내렸다. 문양은 아직 익지 않았다. 이야기도.<br>깨달음 <color=#9A70C4>{g_pts}</color> · 회귀 {g_runs}회 · 등극 {g_clears}회

@@ -15,7 +15,7 @@
 @goto #B5 if:day>=5&&b_hajin<1
 @goto #B8 if:day>=8&&b_wanted<1
 @goto #B11 if:day>=11&&b_jang<1
-@goto #B13 if:day>=13&&f_soamet>0&&b_soatrain<1
+@goto #B13 if:day>=13&&f_soamet>0&&f_soadead<1&&b_soatrain<1
 @goto #ChUnju if:day>=15&&f_unjudone<1
 @goto #B20 if:day>=20&&rank>0&&rank<=500000&&b_fame<1
 @goto #ChShr if:day>=22&&f_shrseen<1
@@ -27,30 +27,34 @@
 @goto #A12 if:day>=12&&f_yongspared>0&&b_yong2<1
 @goto #A17 if:day>=17&&b_hajin2x<1
 @goto #A19 if:day>=19&&b_jang2<1
-@goto #A21 if:day>=21&&f_soamet>0&&f_shrinedone>0&&b_soa3<1
+@goto #A21 if:day>=21&&f_soamet>0&&f_soadead<1&&f_shrinedone>0&&b_soa3<1
 @goto #A23 if:day>=23&&b_herb2<1
 @goto #A24 if:day>=24&&rank>0&&rank<=2000&&f_wolfdown<1&&f_wolfedge<1&&b_chain<1
 @goto #A27 if:day>=27&&seen_E_Rival>0&&b_rival2<1
-@goto #A28 if:day>=28&&f_soamet>0&&b_soa4<1
+@goto #A28 if:day>=28&&f_soamet>0&&f_soadead<1&&b_soa4<1
 @goto #A33 if:day>=33&&f_amhyangknown>0&&b_amh2<1
 @goto #A34 if:day>=34&&f_hmsaved>0&&f_ochisaved<1&&b_ochi<1
 @goto #A40 if:day>=40&&f_oldseen>0&&b_old2x<1
+@goto #BShrFire if:day>=28&&f_shrseen>0&&b_shrfire<1
+@goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
+@goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
-@goto #BS1 if:day>=5&&f_soamet>0&&b_s1<1&&dice<=55
+@goto #BS1 if:day>=5&&f_soamet>0&&f_soadead<1&&b_s1<1&&dice<=55
 @goto #BR1 if:day>=6&&b_r1x<1&&dice>=35
-@goto #BS2 if:day>=9&&f_soamet>0&&b_s2<1&&dice<=60
+@goto #BS2 if:day>=9&&f_soamet>0&&f_soadead<1&&b_s2<1&&dice<=60
 @goto #BR2 if:day>=12&&f_janginfo>0&&b_r2x<1&&dice>=30
-@goto #BS3 if:day>=18&&f_soamet>0&&aff>=2&&b_s3<1&&dice<=60
+@goto #BS3 if:day>=18&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s3<1&&dice<=60
 @goto #BR3 if:day>=19&&b_r2x>0&&b_r3x<1&&dice>=35
-@goto #BS4 if:day>=24&&f_soamet>0&&b_s4<1&&dice<=65
+@goto #BS4 if:day>=24&&f_soamet>0&&f_soadead<1&&b_s4<1&&dice<=65
 @goto #BR4 if:day>=27&&b_r3x>0&&b_r4x<1&&dice>=30
-@goto #BS5 if:day>=30&&aff>=4&&f_soasaved>0&&b_s5<1
+@goto #BS5 if:day>=30&&aff>=4&&f_soasaved>0&&f_soadead<1&&b_s5<1
 @goto #BR5 if:day>=34&&b_r4x>0&&b_r5x<1
-@goto #BS1 if:day>=9&&f_soamet>0&&b_s1<1
+@goto #BS1 if:day>=9&&f_soamet>0&&f_soadead<1&&b_s1<1
 @goto #BR1 if:day>=10&&b_r1x<1
 @goto #BR2 if:day>=17&&f_janginfo>0&&b_r2x<1
 @goto #BR3 if:day>=24&&b_r2x>0&&b_r3x<1
 @goto #BR4 if:day>=32&&b_r3x>0&&b_r4x<1
+@goto #BS8 if:day>=42&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s8<1
 @goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
 @goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
 @goto #BH3 if:day>=55&&f_wolfdown<1&&b_hunt3x<1
@@ -244,7 +248,7 @@
 사내가 장부를 손등으로 친다. "사흘 전에도 이 얼굴이었지. 오늘은 사흘이 없소."
 # KDebtC
 @choice "전낭을 던진다 — 빚을 갚는다 (은자 {debt})" if:mn>=debt goto:#KDebtPay
-@choice ""사흘만 주시오." — 이자 열 냥이 붙는다" if:debtext<1 goto:#KDebtExt
+@choice "\"사흘만 주시오.\" — 이자 열 냥이 붙는다" if:debtext<1 goto:#KDebtExt
 @choice "왼손 새끼손가락을 탁자에 올린다" if:f_finger<1 goto:#KDebtFinger
 @choice "그때 살려 보낸 비무꾼이 사내들 뒤에 서 있다" if:f_sparedally>0 goto:#KDebtAlly
 @choice "검을 뽑는다" goto:#KDebtFight
@@ -326,7 +330,7 @@
 마당에 흰 상복 셋이 선다. 그 뒤에 열두어 살 먹은 아이가 검집을 안고 있다. 그날의 그 아이다.
 "사부의 신발을 들고 우리를 찾아왔다. 피가 아직 다 안 말랐더군."
 # KGrCh
-@choice ""모르오. 알 까닭도 없었소." — 검을 뽑는다" goto:#KGrFight
+@choice "\"모르오. 알 까닭도 없었소.\" — 검을 뽑는다" goto:#KGrFight
 @choice "지붕으로 뛰어 달아난다" if:hp>=6 goto:#KGrRun
 @choice "소리쳐 객잔 사람들을 깨운다" goto:#KGrWake
 @choice "그때 살려 보낸 비무꾼이 담 위에 앉아 있다" if:f_sparedally>0 goto:#KGrAlly
@@ -457,7 +461,7 @@
 @choice "비무판을 찾아간다" if:day>=4&&f_ringclosed<1 goto:#NDuel
 @choice "뒷골목 비무판 — 판돈 셋, 보는 눈 없음" if:f_ringclosed>0 goto:#NDuelBack
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
-@choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&day>=38&&b_leave<1 goto:#NLeave
+@choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&f_soadead<1&&day>=38&&b_leave<1 goto:#NLeave
 @choice "금창약을 덜어 덧난 상처를 다시 싸맨다" if:taint>0&&taintkind==2&&f_salve>0 goto:#NSalve
 @choice "몸을 쉰다" goto:#NRest
 @stop
@@ -572,8 +576,11 @@
 # NLoan
 전당포 뒷방. 기름 먹은 등잔 아래 배가 나온 사내가 장부를 넘긴다. 고리대 왕삼이다.
 "열닷 냥. 이레 뒤에 스물닷 냥. 못 갚으면 갚을 만한 것으로 받소. 손가락이든, 객잔 늙은이 셈판이든."
+@goto #NLoanC if:g_end_chae<1
+<color=#9A70C4>저 장부의 붓끝이 지난 생, 피 묻은 손가락으로 이름 위에 줄을 그었다.</color>
+# NLoanC
 @choice "빌린다 — 은자 15, 이레 뒤 25" goto:#NLoanY
-@choice ""됐소." — 일어선다" goto:#NightEnd
+@choice "\"됐소.\" — 일어선다" goto:#NightEnd
 @stop
 # NLoanY
 왕삼이 은자를 세어 밀어 준다. 장부에 이름이 적힌다. 붓끝이 이름 위에서 한 번 멈춘다.
@@ -867,6 +874,18 @@
 # BS5
 @set b_s5=1
 @goto Molak06#SoaN5
+# BS6
+@set b_s6=1
+@goto Molak06#SoaN6
+# BS7
+@set b_s7=1
+@goto Molak06#SoaN7
+# BS8
+@set b_s8=1
+@goto Molak06#SoaN8
+# BShrFire
+@set b_shrfire=1
+@goto Molak06#ShrFire
 # BR1
 @set b_r1x=1
 @goto Molak06#Rev1
@@ -950,7 +969,7 @@
 "뭐가 필요하냐."
 @choice "지혈환 (은자 2) — 상처를 다스린다" if:mn>=2&&taint<1 goto:#TownBC0
 @choice "해독탕 (은자 8) — 피 속의 독과 고름을 뺀다" if:taint>0&&mn>=8&&f_herbbond<1&&f_herbfriend<1 goto:#TownBCT
-@choice ""할멈, 이것 좀 봐 주시오." — 상처를 내민다" if:taint>0&&f_herbbond>0||taint>0&&f_herbfriend>0 goto:#TownBCF
+@choice "\"할멈, 이것 좀 봐 주시오.\" — 상처를 내민다" if:taint>0&&f_herbbond>0||taint>0&&f_herbfriend>0 goto:#TownBCF
 @choice "청혈산 (은자 3) — 피를 맑게 한다" if:mn>=3 goto:#TownBC1
 @choice "정심단 (은자 6) — 저주의 뿌리를 누른다" if:mn>=6&&curse>=20 goto:#TownBC2
 @choice "돌아선다" goto:#TownBC3

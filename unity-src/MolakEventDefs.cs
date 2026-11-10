@@ -29,7 +29,7 @@ public static class MolakEventDefs
             new Def("E_Hunter", 8, 0, 'd', "f_wanted", null, 0, 14),
             new Def("E_DokRevenge", 14, 0, 'd', "f_dokad", null, 0, 14),
             new Def("E_Rival", 16, 0, 'd', "rank>0", null, 0, 14),
-            new Def("E_Soa2", 18, 0, 'd', "f_soamet", null, 0, 14),
+            new Def("E_Soa2", 18, 0, 'd', "f_soamet&!f_soadead", null, 0, 14),
             new Def("E_VillageNews", 29, 0, 'd', "f_hmsaved", null, 0, 14),
             new Def("E_Simma", 1, 0, 'a', "sl>=7", null, 0, 12),
             new Def("E_Dream", 6, 0, 'n', "curse>=30", null, 0, 10),
@@ -118,7 +118,7 @@ public static class MolakEventDefs
             new Def("E_Lastmarket", 52, 0, 'd', null, null, 0, 12),
             new Def("E_Vigil", 55, 0, 'd', null, null, 0, 12),
             new Def("E_Search", 20, 38, 'd', "rank>0&rank<=20000", null, 0, 16),
-            new Def("E_SoaPoster", 22, 40, 'd', "f_soamet&f_wanted", null, 0, 14),
+            new Def("E_SoaPoster", 22, 40, 'd', "f_soamet&f_wanted&!f_soadead", null, 0, 14),
             new Def("E_HerbTax", 20, 36, 'd', null, "E_Herb2x", 3, 14),
             new Def("E_RingClosed", 21, 38, 'd', "rank>0", null, 0, 14),
     };

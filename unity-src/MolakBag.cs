@@ -53,6 +53,8 @@ public class MolakBag : MonoBehaviour
         new Entry("f_relicinfo", "북쪽 짐", "보름에 한 번, 사람 것만 빼고 내려온다.", ""),
         new Entry("f_beggarnet", "거지의 눈", "담 밑을 세는 붉은 끈. 뒷문 담은 낮다.", ""),
         new Entry("f_deadrumor", "사망 도장", "수배서에 '死' 자가 찍혔다. 며칠은 조용할 것이다.", ""),
+        new Entry("g_redverse", "적운의 구결 · 전생", "우물 속에서 백 번 들은 말. 죽어서도 잃어버리지 말라 했다.", "되감기지 않는다"),
+        new Entry("f_hapbyeok", "운검합벽(雲劍合璧)", "두 사람이 하나의 초식을 나누어 쓰는 검. 등을 맡긴 검이 곁에 있어야 한다.", ""),
         new Entry("f_finger", "잘린 새끼손가락", "왕삼의 장부에서 이름 한 줄이 지워진 값.", "검술 −3"),
         new Entry("f_wangsam", "왕삼의 장부", "빚쟁이들을 마당에 눕혔다. 장부는 아직 어딘가에 있다.", ""),
     };
@@ -70,6 +72,7 @@ public class MolakBag : MonoBehaviour
         new Entry("f_jangfriend", "쥐눈이 장", "소식을 사고파는 사이.", ""),
         new Entry("f_ferryfree", "사공의 약속", "삿대질 값은 안 받겠소.", ""),
         new Entry("f_vigil", "마당의 배웅", "아무도 가지 말라고 하지 않았다.", ""),
+        new Entry("f_soablades", "적운의 쌍검 한 자루", "그녀가 메고 다니던 무게.", ""),
         new Entry("f_sparedally", "살려 보낸 비무꾼", "'살려 준 목숨, 한 번은 갚겠소.'", "위기에 한 번"),
         new Entry("f_hajinhurt", "하진무 · 무명 감은 손목", "그는 아무 말도 하지 않는다.", ""),
     };

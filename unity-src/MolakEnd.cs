@@ -35,6 +35,8 @@ public class MolakEnd : MonoBehaviour
         new Entry("sagyeol",   "死決", "사결", "둘 중 하나만 걸어 나간다", "생사결에 응했을 때"),
         new Entry("hyeop",     "俠",   "협",   "남의 일에 칼을 뽑다",  "남을 위해 칼을 뽑았을 때"),
         new Entry("ik",        "溺",   "익",   "물이 먼저 받아 주었다", "불어난 물에 뛰어들었을 때"),
+        new Entry("yaseup",    "夜襲", "야습", "계단 셋째 칸",          "혈랑대가 객잔을 덮친 밤"),
+        new Entry("hapbyeok",  "合璧", "합벽", "두 검이 하나로",        "두 생을 건너 반쪽을 맞추었을 때"),
     };
 
     public static string Resolve ()
@@ -62,6 +64,8 @@ public class MolakEnd : MonoBehaviour
         if (cause == "생사결") return "sagyeol";
         if (cause == "협") return "hyeop";
         if (cause == "익사") return "ik";
+        if (cause == "야습") return "yaseup";
+        if (cause == "합벽") return "hapbyeok";
         if (cause == "비무 패배")
         {
             if (kind == "hochi") return "dokni";

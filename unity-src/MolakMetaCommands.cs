@@ -16,6 +16,11 @@ public class InitRunCommand : Command
         foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
+        // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
+        foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed"})
+            if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
+        foreach (var e in MolakEnd.All)
+            if (!vars.VariableExists("g_end_" + e.Id)) vars.SetVariableValue("g_end_" + e.Id, new CustomVariableValue(0f));
         // 전역(g_)이 아닌 변수 전부 제거 수준으로 0 초기화
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)
