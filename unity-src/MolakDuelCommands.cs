@@ -192,6 +192,7 @@ public class DuelCommand : Command
         if (kind == "tax" && MolakStats.Get("f_taxknow") > 0) bonus += 3f;       // 지난 생에 본 우두머리의 버릇
         if (kind == "raid" && MolakStats.Get("f_raidprep") > 0) bonus += 3f;     // 그 밤이 올 줄 알고 계단에 기름을 부었다
         if (kind == "raid" && MolakStats.Get("f_amhally") > 0) bonus += 1.5f;    // 암향이 미리 기별했다
+        if (kind == "raid" && MolakStats.Get("f_hajinbond") > 0 && MolakStats.Get("f_hajindead") < 1) bonus += 2f; // 하진무가 혈랑대에게 계단 셋째 칸을 속였다
         if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 반쪽의 합벽: 그녀의 검이 빈자리를 막는다
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
         float odds = MolakDuel.Odds(foe, bonus);

@@ -89,6 +89,9 @@
 @goto #DeadK0 if:knownewc<1
 <color=#9A70C4>되감기지 않는 것</color> — {knownew}
 # DeadK0
+@goto #DeadK1 if:g_redverse<1||g_hapdone>0
+<color=#9A70C4>'사당은 스무이틀째에 열린다. 스무여드레에는 탄다. 이번엔 반쪽을 들고 가거라.'</color>
+# DeadK1
 @goto #FirstDeath if:g_runs==1
 @goto #Regress
 # FirstDeath

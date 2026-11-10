@@ -291,7 +291,8 @@ public class MolakMenu : MonoBehaviour
                 var ghost = new GUIStyle(nameS); ghost.normal.textColor = new Color(0.42f,0.37f,0.32f,1f);
                 var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
                 GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), sb.ToString(), ghost);
-                GUI.Label(new Rect(r.x+28*u, r.y+64*u, r.width-56*u, r.height-70*u), "아직 모른다. 어딘가에서 한 번은 겪어 봐야 안다.", descS);
+                GUI.Label(new Rect(r.x+r.width*0.45f, r.y+18*u, r.width*0.55f-24*u, 40*u), e.Where, whereS);
+                GUI.Label(new Rect(r.x+28*u, r.y+64*u, r.width-56*u, r.height-70*u), "아직 모른다. " + e.Where + "에서 한 번은 겪어 봐야 안다 — 살아서든, 죽어서든.", descS);
             }
         }
         GUI.EndScrollView();

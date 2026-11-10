@@ -12,6 +12,7 @@
 @set b_hajin=0
 @set b_hajin2x=0
 @set b_herb2=0
+@set b_hintshr=0
 @set b_hm=0
 @set b_hunt1=0
 @set b_hunt2=0
@@ -20,6 +21,7 @@
 @set b_jang=0
 @set b_jang2=0
 @set b_ldhap=0
+@set b_ldjin=0
 @set b_leave=0
 @set b_ochi=0
 @set b_old=0
@@ -112,7 +114,9 @@
 @set f_guardgrudge=0
 @set f_guardsword=0
 @set f_hajin2=0
+@set f_hajinbond=0
 @set f_hajincold=0
+@set f_hajindead=0
 @set f_hajinfree=0
 @set f_hajinhurt=0
 @set f_halfhap=0
@@ -131,9 +135,14 @@
 @set f_ipmafight=0
 @set f_jangfriend=0
 @set f_janginfo=0
+@set f_jbsister=0
+@set f_jbsisterhate=0
+@set f_jinally=0
 @set f_jinbaek=0
 @set f_jinbaekdead=0
 @set f_jinbaektruth=0
+@set f_jinheld=0
+@set f_jinleft=0
 @set f_kyonadown=0
 @set f_leftwithsoa=0
 @set f_letter=0

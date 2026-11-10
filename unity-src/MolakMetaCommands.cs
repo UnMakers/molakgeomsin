@@ -18,7 +18,7 @@ public class InitRunCommand : Command
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
         foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
-                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
+                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
                                  "g_know_hunt1","g_know_hunt2","g_know_hunt3","g_know_cheolsan","g_know_rival","g_know_chainmob"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         foreach (var e in MolakEnd.All)
@@ -70,6 +70,7 @@ public class DayTickCommand : Command
         float lodg = day >= 25f ? 2f : 1f;
         if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f; // 하진무가 방값을 안 받기로 함
         if (MolakStats.Get("f_hajincold") > 0) lodg += 1f;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
+        if (MolakStats.Get("f_hajindead") > 0) lodg = 3f;   // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
         if (MolakStats.Get("mn") >= lodg) { MolakStats.Add("mn", -lodg); MolakStats.Set("starved", 0f); }
         else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", -2f); MolakStats.Set("starved", 1f); }
         MolakStats.ClampAll();
