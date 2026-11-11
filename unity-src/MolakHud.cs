@@ -91,12 +91,12 @@ public class MolakHud : MonoBehaviour
     {
         var parts = new System.Collections.Generic.List<string>();
         float inj = MolakStats.Get("injury"), taint = MolakStats.Get("taint"), debt = MolakStats.Get("debt");
-        if (taint > 0) parts.Add((MolakStats.Get("taintkind") == 1 ? "독 " : "곪은 상처 ") + taint.ToString("0") + "일째");
-        if (inj > 0) parts.Add("부상 " + inj.ToString("0") + "일");
+        if (taint > 0) parts.Add((MolakStats.Get("taintkind") == 1 ? "독" : "곪은 상처") + (taint >= 4 ? " — 깊다" : taint >= 2 ? " — 번진다" : ""));
+        if (inj > 0) parts.Add("부상");
         if (debt > 0)
         {
             float left = MolakStats.Get("debtday") - MolakStats.Get("day");
-            parts.Add("빚 " + debt.ToString("0") + "냥 · " + (left > 0 ? left.ToString("0") + "일 남음" : "오늘 독촉"));
+            parts.Add("빚 " + debt.ToString("0") + "냥 · " + (left > 3 ? "독촉 전" : left > 0 ? "곧 독촉" : "독촉이 왔다"));
         }
         return string.Join("   ", parts.ToArray());
     }
@@ -141,12 +141,12 @@ public class MolakHud : MonoBehaviour
         string warn = Warn();
         if (warn.Length > 0) GUI.Label(new Rect(X0 + 124*u, sh+6*u, W - 124*u - 220*u, 36*u), warn, sWarn);
 
-        // 한 줄 상태: 일수 · 체력 · 내공 · 살기 + 아랫줄 검술 · 은자 · 서열 (상시)
+        // 한 줄 상태: 체력 · 내공 · 살기 + 아랫줄 검술 · 은자 · 서열 (상시)
         float pad = X0 + 84*u;
         float y = 100*u, lh = 56*u;
         MolakInputGuard.Guard(new Rect(X0, 0, W, y+lh+16*u + (expanded ? 72*u : 0f)));
         string hpCol = hp/hpm <= 0.34f ? (MolakTheme.Night ? "#E06A5A" : "#A33226") : "#" + ColorUtility.ToHtmlStringRGB(MolakTheme.InkText);
-        GUI.Label(new Rect(X0 + 124*u, y, 170*u, lh), day.ToString("0")+"일째", sDay);
+        // 날짜는 보이지 않는다(0.4.3) — 시간은 문양과 바깥 풍경으로만 느낀다
         string stats =
             "<color="+hpCol+">체력 "+hp.ToString("0")+"</color>    내공 "+MolakStats.Get("ng").ToString("0")+
             "    살기 "+MolakStats.Get("sl").ToString("0");

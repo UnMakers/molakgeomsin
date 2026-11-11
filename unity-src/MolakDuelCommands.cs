@@ -48,7 +48,7 @@ public static class MolakDuel
             case "namgung": return new Foe { Name = "남궁세가 소가주 남궁현", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.Min(2140, Mathf.FloorToInt(baseRank * 0.6f))) : 2140, P = Mathf.Round(MyPower() + Random.Range(-1, 3)), Boss = "namgung" };
             case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
             {
-                int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.22f + Random.value * 0.18f))) : Random.Range(5500000, 7000001);
+                int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.11f + Random.value * 0.11f))) : Random.Range(4500000, 6500001);
                 return new Foe { Name = BackNames[Random.Range(0, BackNames.Length)], Rank = t, P = Mathf.Round(7 + Mathf.Log10(8000001f / t) * 11f + Random.Range(0, 4)) };
             }
             case "wolf": return new Foe { Name = "혈쇄문주", Rank = 77, P = 53 + Random.Range(0, 5), Boss = "wolf" };
@@ -60,7 +60,8 @@ public static class MolakDuel
             }
             default:
             {
-                int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.32f + Random.value * 0.26f))) : Random.Range(6500000, 7900001);
+                // 며칠에 한 판(0.4.3) — 한 판에 오르는 폭을 키웠다
+                int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.20f + Random.value * 0.18f))) : Random.Range(5800000, 7600001);
                 return new Foe { Name = Names[Random.Range(0, Names.Length)], Rank = t, P = Mathf.Round(4 + Mathf.Log10(8000001f / t) * 11f + Random.Range(0, 4)) };
             }
         }

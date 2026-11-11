@@ -76,7 +76,7 @@
 @goto #Dead
 # TaintRot
 @set deathcause="곪은 상처"
-옆구리의 상처가 열을 낸다. 사흘째 단내가 났다. 오늘은 냄새가 나지 않는다. 그게 더 나쁘다는 것을 안다.
+옆구리의 상처가 열을 낸다. 며칠째 단내가 났다. 오늘은 냄새가 나지 않는다. 그게 더 나쁘다는 것을 안다.
 열이 머리까지 오른다. 사형들이 마당에서 부르는 소리가 들린다. 마당에는 아무도 없다.
 작은 상처였다. 비무판에서 진 날의.
 @goto #Dead
@@ -136,7 +136,7 @@
 @choice "빈칸 방값 — 하진무의 외상 \[{cost_lodge}\]" if:g_know_lodge>0&&max_lodge<1&&g_pts>=cost_lodge goto:#BuyLodge
 @choice "구르고 또 구른 몸 — 시작 체력 +1 ({lv_vigor}/10) \[{cost_vigor}\]" if:max_vigor<1&&g_pts>=cost_vigor goto:#BuyVigor
 @choice "이번 생의 채비 — 인연 하나, 물건 하나" if:g_runs>=1 goto:#ShopPrep
-@choice "몸이 먼저 기억한다 — 사흘째 국밥집의 칼을 한 번 되묻는다 \[12\]" if:g_end_ohin>0&&g_redo<1&&g_pts>=12 goto:#BuyRedo
+@choice "몸이 먼저 기억한다 — 국밥집의 칼을 한 번 되묻는다 \[12\]" if:g_end_ohin>0&&g_redo<1&&g_pts>=12 goto:#BuyRedo
 @choice "다 시 그 날 로" goto:#Restart
 @stop
 # BuySword
@@ -170,7 +170,7 @@
 <color=#9A70C4>되감기는 것은 시간뿐이다.</color> 그래도 아는 얼굴 하나, 손에 익은 물건 하나쯤은 그 아침으로 먼저 보내 둘 수 있다.<br>이번 생의 인연 {prepbond} · 물건 {prepitem}
 @choice "인연 · 백초 할멈의 단골 — 첫날부터 외상과 맥을 안다 \[3\]" if:g_next_bond<1&&g_pts>=3 goto:#BuyBond1
 @choice "인연 · 약재 거리 거지 아이 — 낮은 담과 매듭을 안다 \[3\]" if:g_next_bond<1&&g_pts>=3 goto:#BuyBond2
-@choice "인연 · 쥐눈이 장 — 열하루째 밤에 팔리지 않는다 \[3\]" if:g_next_bond<1&&g_pts>=3 goto:#BuyBond3
+@choice "인연 · 쥐눈이 장 — 뒷문의 그 밤에 팔리지 않는다 \[3\]" if:g_next_bond<1&&g_pts>=3 goto:#BuyBond3
 @choice "물건 · 죽립과 잿빛 장포 \[2\]" if:g_next_item<1&&g_pts>=2 goto:#BuyItem1
 @choice "물건 · 백초당 금창약 \[2\]" if:g_next_item<1&&g_pts>=2 goto:#BuyItem2
 @choice "물건 · 안식향 한 묶음 \[2\]" if:g_next_item<1&&g_pts>=2 goto:#BuyItem3

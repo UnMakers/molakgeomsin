@@ -61,6 +61,7 @@
 @set canflee=0
 @set cansense=0
 @set cansl=0
+@set chain=0
 @set collapsed=0
 @set cost_body=0
 @set cost_coin=0
@@ -315,7 +316,13 @@
 @set mkv=0
 @set mn=0
 @set mrand=0
+@set ms_d10=0
+@set ms_d18=0
+@set ms_d25=0
+@set ms_d35=0
+@set ms_d50=0
 @set ng=0
+@set nmul=0
 @set nrand=0
 @set odds10=0
 @set pw=0

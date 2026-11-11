@@ -2,12 +2,15 @@
 # DayLoop
 @ensurevars
 @art char:none
+@set chain=0
+@set nmul=0
 @goto MolakOver#Curse if:curse>=100
 @goto MolakOver#Taint if:taint>=6
 @goto MolakOver#Taint if:taint>0&&hp<=0
 @goto #Collapse if:hp<=0&&collapsed<1||hp<=0&&collapsed<2&&f_hajinbond>0&&f_hajindead<1
 @goto MolakOver#Exhaust if:hp<=0
-; --- 장(章)·비트 ---
+; --- 장(章)·비트 --- (며칠 한 바퀴에 이야기 마디는 둘까지)
+# BeatCheck
 @goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10
 @goto Molak06#Ripe1 if:curse>=88&&f_oldseen>0&&b_ripe<1
 @goto Molak06#Capture if:day>=60&&b_capture<1
@@ -276,12 +279,16 @@
 @goto #Daytime
 
 # Daytime
-@pickevent chance:65 slot:day
+@pickevent chance:85 slot:day
+@gosub #RunEvent if:nextevent!="none"
+@pickevent chance:40 slot:day
 @gosub #RunEvent if:nextevent!="none"
 @goto #Night
 
 # AfterChapter
 @art char:none
+@set chain=chain+1
+@goto #BeatCheck if:chain<2
 @goto #Night
 
 ;
@@ -534,7 +541,7 @@
 @set f_sparedally=0
 @goto #NightEnd
 
-; --- 밤: 반시진의 선택 ---
+; --- 밤: 며칠 밤의 선택 ---
 # Night
 @art char:none
 @scene id:night
@@ -555,7 +562,7 @@
 @goto #Nv14 if:nrand==14
 @goto #Nv1
 # Nv1
-해가 저문다. 온전히 당신의 것인 반시진이 남았다.
+해가 저문다. 며칠 밤이 온전히 당신의 것이다.
 @goto #NightChoice
 # NvOld
 @set tn_oldvoice=1
@@ -563,20 +570,20 @@
 '거의 다 익었다.'
 뼛속의 못이 운다. 노인의 목소리다. 그는 어디에도 없다. 있을 필요도 없다. 당신 안에 있으니.
 '서두르지 마라. 익는 것은 네가 아니라 열매니라.'
-소리가 돌아온다. 술꾼들의 노래, 주판 소리. 반시진이 남았다. 전보다 한결 짧은 반시진이.
+소리가 돌아온다. 술꾼들의 노래, 주판 소리. 며칠 밤이 남았다. 전보다 한결 짧은 밤들이.
 @fx curse:1
 @goto #NightChoice
 # Nv2
-등불이 하나둘 켜진다. 하루의 셈이 끝났다. 이제 당신의 반시진이다.
+등불이 하나둘 켜진다. 셈이 끝났다. 이제 며칠 밤은 당신의 것이다.
 @goto #NightChoice
 # Nv3
 객잔의 소음이 잦아든다. 몸은 고단하고, 가슴의 문양은 조용히 제 할 일을 한다.
 @goto #NightChoice
 # Nv4
-창밖에 달이 올랐다. 그날 밤의 달보다 희다. 남은 반시진을 손에 쥔다.
+창밖에 달이 올랐다. 그날 밤의 달보다 희다. 남은 며칠 밤을 손에 쥔다.
 @goto #NightChoice
 # Nv5
-아래층에서 술꾼들의 노랫소리가 올라온다. 반시진이 남았다.
+아래층에서 술꾼들의 노랫소리가 올라온다. 며칠 밤이 남았다.
 @goto #NightChoice
 # Nv6
 점소이가 등잔 기름을 채워 간다. "객관님, 오늘도 늦게 주무십니까요." 늦는다. 매일 늦는다.
@@ -585,13 +592,13 @@
 밤바람에 문풍지가 운다. 가슴의 문양도 같은 박자로 운다.
 @goto #NightChoice
 # Nv8
-하진무가 셈을 마치고 주판을 덮는다. 당신의 하루는 아직 반시진 남았다.
+하진무가 셈을 마치고 주판을 덮는다. 당신의 밤은 며칠 더 남았다.
 @goto #NightChoice
 # Nv9
 골목 어귀에 등불 하나가 오래 서 있다. 누군가 객잔을 지켜보는 밤이다.
 @goto #NightChoice
 # Nv10
-밤이 길어졌다. 계절 탓인지, 당신 탓인지. 반시진이 전보다 무겁다.
+밤이 길어졌다. 계절 탓인지, 당신 탓인지. 밤들이 전보다 무겁다.
 @goto #NightChoice
 # Nv11
 달이 붉다. 그날 밤과 같은 빛이다. 창을 등지고 앉는다.
@@ -624,6 +631,7 @@
 @fx hp:1
 @goto #NightEnd
 # NSw
+@set nmul=3
 @set tr=random(1,100)
 @goto #NSwT1 if:tn_sw1<1&&day>=4&&tr<=30
 @goto #NSwT2 if:tn_sw2<1&&day>=9&&tr<=30
@@ -687,6 +695,7 @@
 @fx sw:2 hp:-1
 @goto #NightEnd
 # NQi
+@set nmul=3
 @set tr=random(1,100)
 @goto #NQiT1 if:tn_qi1<1&&day>=5&&tr<=30
 @goto #NQiT2 if:tn_qi2<1&&day>=12&&curse>=25&&tr<=30
@@ -792,6 +801,7 @@
 @set debtext=0
 @goto #NightEnd
 # NWork
+@set nmul=3
 @set tr=random(1,100)
 @goto #NWorkT1 if:tn_wk1<1&&day>=6&&tr<=30
 @set r=random(2,3)
@@ -853,6 +863,7 @@
 @set b_leave=1
 @goto Molak06#Leave1
 # NRest
+@set nmul=3
 @set tr=random(1,100)
 @goto #NRestT1 if:tn_rest1<1&&day>=5&&tr<=30
 @set tr=random(1,100)
@@ -892,37 +903,43 @@
 @goto #NightEnd
 
 # NightEnd
-@daytick
+@set nmul=0
+@daytick n:3
 @goto MolakOver#Taint if:taint>=6
 @goto MolakOver#Taint if:taint>0&&hp<=0
 @goto #Collapse if:hp<=0&&collapsed<1||hp<=0&&collapsed<2&&f_hajinbond>0&&f_hajindead<1
 @goto MolakOver#Starve if:hp<=0&&starved>0
 @goto MolakOver#Exhaust if:hp<=0
 @goto MolakOver#Curse if:curse>=100
-@goto #D10 if:day==10
-@goto #D18 if:day==18
-@goto #D25 if:day==25
-@goto #D35 if:day==35
-@goto #D50 if:day==50
+@goto #D10 if:day>=10&&ms_d10<1
+@goto #D18 if:day>=18&&ms_d18<1
+@goto #D25 if:day>=25&&ms_d25<1
+@goto #D35 if:day>=35&&ms_d35<1
+@goto #D50 if:day>=50&&ms_d50<1
 @goto #Evening
 # D10
+@set ms_d10=1
 아무것도 하지 않은 날에도 가슴의 문양이 <color=#9A70C4>조금 자라 있다</color>. 사술이 뿌리를 내렸다. 이제 시간은 당신 편이 아니다.
 @goto #Evening
 # D18
+@set ms_d18=1
 가슴의 문양이 <color=#9A70C4>익어간다</color>. 자라는 속도가 눈에 띄게 빨라졌다. 노인의 말이 떠오른다. '다 익으면'… 그 뒤는 듣지 못했다.
 @goto #Evening
 # D25
-하진무가 방값 패를 바꿔 단다. "교의 징세가 또 올랐소, 객. 내일부터 두 냥이오."
+@set ms_d25=1
+하진무가 방값 패를 바꿔 단다. "교의 징세가 또 올랐소, 객. 이제부터 하룻밤 두 냥이오."
 @goto #Evening
 # D35
+@set ms_d35=1
 한밤중, 가슴이 타는 듯해 눈을 뜬다. 문양이 <color=#9A70C4>스스로 꿈틀거리고 있다</color>. 뿌리가 깊어졌다. 이제부터는 하루가 다르게 자랄 것이다.
 @goto #Evening
 # D50
+@set ms_d50=1
 문양이 가슴을 넘어 <color=#C03434>쇄골까지 뻗었다</color>. 백초 할멈이 맥을 짚더니 처음으로 말을 아낀다. 남은 날이 많지 않다.
 @goto #Evening
 # Evening
 @art char:none
-@pickevent chance:40 slot:night
+@pickevent chance:55 slot:night
 @gosub #RunEvent if:nextevent!="none"
 @goto #DayLoop
 
@@ -1164,15 +1181,15 @@
 # BNetHint
 @set b_nethint=1
 @page
-쉰엿새째 아침. 성문 앞 포졸이 둘에서 넷으로 늘었다. 나루에는 관아의 배가 묶였다.
+아침. 성문 앞 포졸이 둘에서 넷으로 늘었다. 나루에는 관아의 배가 묶였다.
 하진무가 주판을 내려놓고 창밖을 본다. "객. 그물을 칠 때는 바깥부터 조이는 법이오."
 사흘 안에 끝을 내지 못하면, 끝이 먼저 온다.
 @goto #Daytime
 # BNetK
 @set b_netk=1
 @page
-쉰이레째 아침. 이 아침을 안다.
-<color=#9A70C4>지난 생, 예순 날 아침에 거리가 비었다. 쉰여드레에 성문이 닫히고, 쉰아흐레 밤에 객잔 지붕에 사람이 오른다.</color>
+그물이 좁혀 오는 아침. 이 아침을 안다.
+<color=#9A70C4>지난 생, 성문이 먼저 닫혔다. 그 밤 객잔 지붕에 사람이 올랐고, 이튿날 아침 거리가 비었다.</color>
 @choice "소금길로 빠진다 — 곽산이 그어 준 산 둘, 물길 하나" if:f_valleyroute>0 goto:#BNetA
 @choice "나루의 밤배를 산다 (은자 15)" if:mn>=15 goto:#BNetB
 @choice "남는다 — 끝을 내러 가든, 끝을 맞든" goto:#BNetC
@@ -1395,7 +1412,7 @@
 "혈마곡 입구의 진(陣) 말이오. 보법 세 걸음이 전부라는 놈도 있고, 북두를 거꾸로 밟으라는 놈도 있소. 둘 다 아는 놈은 아직 살아 돌아온 적이 없소."
 @goto #Town1
 # TJR4
-"적운 낭자가 남쪽 나루 얘기를 하더이다. 강을 건너면 교의 장부가 안 닿는다고. 서른여드레가 지나야 나루에 밤배가 다시 뜬다는 것도."
+"적운 낭자가 남쪽 나루 얘기를 하더이다. 강을 건너면 교의 장부가 안 닿는다고. 늑대 울음이 잦아질 무렵에야 나루에 밤배가 다시 뜬다는 것도."
 장이 웃는다. "칼 내려놓고 사는 것도 끝은 끝이오."
 @goto #Town1
 # TJR5
@@ -1403,10 +1420,10 @@
 장이 당신 옷깃을 힐끗 본다. 더 말하지 않는다.
 @goto #Town1
 # TJR6
-"집법전주가 쉰다섯째 날쯤 운락에 내려온다는 소문이오. 칼로 잡으러 오는 게 아니라, 교주의 말을 전하러 온다나. 무릎 꿇는 놈은 살려 준다고."
+"집법전주가 그물이 닫히기 전에 운락에 내려온다는 소문이오. 칼로 잡으러 오는 게 아니라, 교주의 말을 전하러 온다나. 무릎 꿇는 놈은 살려 준다고."
 @goto #Town1
 # TJR7
-"예순 날이오. 관아 그물이 운락을 다 덮는 데 걸리는 날수. 그 전에 끝을 보든지, 성을 떠나든지."
+"두 달이 채 안 남았소. 관아 그물이 운락을 다 덮는 데 걸리는 시간이. 그 전에 끝을 보든지, 성을 떠나든지."
 @goto #Town1
 # TJR8
 "산사의 비구니 하나가 청운 걸음으로 장작을 팬다더군. 혈랑대주가 보름마다 그 산 아래 사당에 쌀을 둔다는 얘기랑 같이 도는 소문이오."
@@ -1435,7 +1452,7 @@
 
 # S_Hajin
 @page
-닷새째 밤. 하진무가 술상을 들고 올라온다.
+밤. 하진무가 술상을 들고 올라온다.
 "한잔하시겠소."
 청하지 않은 술이다. 그러나 거절하기엔 일 년의 빚이 너무 크다.
 두어 순배가 돌고, 하진무가 입을 연다.
@@ -1493,7 +1510,7 @@
 
 # S_Plate
 @page
-이레째 아침. 게시벽 앞에 탁자 하나가 놓였다.
+아침. 게시벽 앞에 탁자 하나가 놓였다.
 @set tr=random(1,3)
 @goto #S_PlV2 if:tr==2
 @goto #S_PlV3 if:tr==3
@@ -1546,7 +1563,7 @@
 
 # S_Knot
 @page
-서른아흐레째 아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다. 밤사이 누가 맸다.
+아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다. 밤사이 누가 맸다.
 골목 끝에서 꼬지가 손을 흔든다. 손가락 셋을 펴 보이고, 늑대 귀 흉내를 낸다. 그리고 사라진다.
 셋은 늑대. 사흘 안에 이 골목으로 온다.
 @set f_raidprep=1
@@ -1554,14 +1571,14 @@
 @return
 # S_KnotK
 @page
-서른아흐레째 아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다.
+아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다.
 이번 생에 꼬지는 당신을 모른다. 그래도 매듭은 같은 말을 한다. 셋은 늑대. 지난 생에 배운 말이다.
 @set f_gaewarn=1
 @return
 
 # S_Wanted
 @page
-여드레째 아침. 게시벽 앞이 웅성거린다.
+아침. 게시벽 앞이 웅성거린다.
 새 방(榜)이 붙었다. 먹이 아직 번들거린다.
 「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
 그림 속 얼굴. 일 년을 앓기 전의 당신이다.
@@ -1601,13 +1618,13 @@
 @set tr=random(1,3)
 @goto #S_Jang_v2 if:tr==2
 @goto #S_Jang_v3 if:tr==3
-열하루째 밤. 객잔 뒷문에 쥐눈이 장이 서 있다.
+밤. 객잔 뒷문에 쥐눈이 장이 서 있다.
 @goto #S_Jang_vm
 # S_Jang_v2
-열하루째 밤. 객잔 뒷문 빗장 틈으로 접힌 종이가 들어온다. 펴 보니 아무것도 적혀 있지 않다. 문을 열자 쥐눈이 장이 서 있다.
+밤. 객잔 뒷문 빗장 틈으로 접힌 종이가 들어온다. 펴 보니 아무것도 적혀 있지 않다. 문을 열자 쥐눈이 장이 서 있다.
 @goto #S_Jang_vm
 # S_Jang_v3
-열하루째 밤. 부엌 아궁이 앞에서 쥐눈이 장이 손을 쬐고 있다. 하진무가 들인 모양이다. 하진무는 보이지 않는다.
+밤. 부엌 아궁이 앞에서 쥐눈이 장이 손을 쬐고 있다. 하진무가 들인 모양이다. 하진무는 보이지 않는다.
 # S_Jang_vm
 "지나던 길이오."
 소식장수는 지나던 길에 남의 객잔 뒷문에 서지 않는다.
@@ -1660,13 +1677,13 @@
 @set tr=random(1,3)
 @goto #S_Soatrain_v2 if:tr==2
 @goto #S_Soatrain_v3 if:tr==3
-열사흘째. 객잔 마당에 낯익은 쌍검이 꽂혀 있다.
+아침. 객잔 마당에 낯익은 쌍검이 꽂혀 있다.
 @goto #S_Soatrain_vm
 # S_Soatrain_v2
-열사흘째. 새벽 우물가에서 물 긷는 소리가 둘이다. 하나는 점소이, 하나는 쌍검을 등에 멘 채 두레박을 당기는 소아다.
+아침. 새벽 우물가에서 물 긷는 소리가 둘이다. 하나는 점소이, 하나는 쌍검을 등에 멘 채 두레박을 당기는 소아다.
 @goto #S_Soatrain_vm
 # S_Soatrain_v3
-열사흘째. 기와 한 장이 마당으로 떨어진다. 올려다보니 소아가 용마루에 걸터앉아 국수를 먹고 있다. 다 먹고 그릇째 내려온다.
+아침. 기와 한 장이 마당으로 떨어진다. 올려다보니 소아가 용마루에 걸터앉아 국수를 먹고 있다. 다 먹고 그릇째 내려온다.
 # S_Soatrain_vm
 @goto #S_Soatrain_vk if:g_runs<1
 <color=#9A70C4>이 백 합을 안다. 서른일곱째 합에서 왼쪽 검이 먼저 온다.</color>
@@ -1718,15 +1735,15 @@
 @set tr=random(1,3)
 @goto #S_Fame_v2 if:tr==2
 @goto #S_Fame_v3 if:tr==3
-스무날째. 객잔이 수상하다.
+객잔이 수상하다.
 평소보다 손님이 많다. 그런데 다들 술은 마시지 않고 귀만 열어 두고 있다. 낭인, 표사, 정체 모를 자들. 서열이 오른 '운객(雲客)'이 묵는 객잔이라는 소문이 돈 탓이다.
 @goto #S_Fame_vm
 # S_Fame_v2
-스무날째. 객잔 문턱에 짚신이 스무 켤레다. 점소이가 국밥을 나르다 말고 눈짓한다. 손님들이 다 같은 데를 본다. 당신 방 쪽이다.
+아침. 객잔 문턱에 짚신이 스무 켤레다. 점소이가 국밥을 나르다 말고 눈짓한다. 손님들이 다 같은 데를 본다. 당신 방 쪽이다.
 서열이 오른 '운객(雲客)'이 묵는 객잔이라는 소문이 돈 탓이다.
 @goto #S_Fame_vm
 # S_Fame_v3
-스무날째. 아침 국밥에 달걀 하나가 얹혀 있다. 시킨 적 없다. 건너편 탁자의 표사가 잔을 들어 보인다.
+아침. 아침 국밥에 달걀 하나가 얹혀 있다. 시킨 적 없다. 건너편 탁자의 표사가 잔을 들어 보인다.
 서열이 오른 '운객(雲客)'의 얼굴을 보러 온 자들로 객잔이 붐빈다. 술은 안 마시고 귀만 열어 둔 자들이다.
 # S_Fame_vm
 하진무가 주판알을 튕기며 당신에게만 들리게 말한다.
@@ -1753,14 +1770,14 @@
 @set tr=random(1,3)
 @goto #S_Depart_v2 if:tr==2
 @goto #S_Depart_v3 if:tr==3
-서른이틀째 밤. 방문 앞에 봇짐이 놓여 있다.
+밤. 방문 앞에 봇짐이 놓여 있다.
 말린 육포, 기운 버선, 상비약 꾸러미. 하진무의 솜씨다.
 @goto #S_Depart_vm
 # S_Depart_v2
-서른이틀째 밤. 마당 빨랫줄에 장포가 걸려 있다. 해진 소매가 기워져 있다. 실 색이 조금 다르다. 방문 앞에는 봇짐 하나. 하진무의 솜씨다.
+밤. 마당 빨랫줄에 장포가 걸려 있다. 해진 소매가 기워져 있다. 실 색이 조금 다르다. 방문 앞에는 봇짐 하나. 하진무의 솜씨다.
 @goto #S_Depart_vm
 # S_Depart_v3
-서른이틀째 밤. 방문 앞에 검이 놓여 있다. 날이 새로 섰다. 장사꾼 손이라 각도가 서툴다. 그 옆에 봇짐 하나. 하진무의 솜씨다.
+밤. 방문 앞에 검이 놓여 있다. 날이 새로 섰다. 장사꾼 손이라 각도가 서툴다. 그 옆에 봇짐 하나. 하진무의 솜씨다.
 # S_Depart_vm
 @goto #S_Depart_vk if:g_runs<2
 <color=#9A70C4>이 봇짐을 메고 나간 생이 몇이었는지 센다. 봇짐을 메고 돌아온 생은 없다.</color>
