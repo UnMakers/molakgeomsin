@@ -16,6 +16,8 @@ using UnityEngine;
 public class MolakBgm : MonoBehaviour
 {
     public const float DefaultVolume = 0.5f;
+    /// <summary>음원 자체 세기 보정(0.4.4: 테스트 곡이 커서 반으로) — 설정의 배경음 %는 그대로, 실제 소리만 줄인다.</summary>
+    public const float Trim = 0.5f;
     const string InitKey = "molak_bgm_init1";
     static MolakBgm inst;
     AudioSource src;
@@ -37,7 +39,7 @@ public class MolakBgm : MonoBehaviour
         inst.src = go.AddComponent<AudioSource>();
         inst.src.playOnAwake = false; inst.src.spatialBlend = 0f; inst.src.loop = false;
         inst.src.priority = 0; inst.src.ignoreListenerPause = true;
-        inst.src.volume = DefaultVolume;
+        inst.src.volume = DefaultVolume * Trim;
         inst.Next();
     }
 
@@ -164,7 +166,7 @@ public class MolakBgm : MonoBehaviour
                 else if (started && Application.isFocused) Next();
             }
         }
-        float v = Mathf.Clamp01(am.BgmVolume * am.MasterVolume) * fade;
+        float v = Mathf.Clamp01(am.BgmVolume * am.MasterVolume) * fade * Trim;
         src.volume = Mathf.MoveTowards(src.volume, v, Time.unscaledDeltaTime * 2f);
     }
 }
