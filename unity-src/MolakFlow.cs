@@ -118,6 +118,7 @@ public class MolakFlow : MonoBehaviour
 
 
         pt.ResetPrinter = reset;
+        if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); if (buf.Count > 0) MolakPageTurn.Play(); } }   // 글이 있던 쪽을 넘긴다
         MolakScroll.ResetToBottom();
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
         if (!reset) InsertBreak((lastPrintWaited || afterChoice) ? "\n\n" : "\n");

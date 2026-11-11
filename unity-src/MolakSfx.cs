@@ -52,7 +52,8 @@ public class MolakSfx : MonoBehaviour
     }
 
     public static void Tap ()     { Play("tap_brush", 0.9f, Random.Range(0.94f, 1.06f)); Vibrate(); }
-    public static void Confirm () { Play("page_turn", 0.7f, Random.Range(0.96f, 1.04f)); }
+    public static float LastConfirm = -9f;
+    public static void Confirm () { LastConfirm = Time.unscaledTime; Play("page_turn", 0.7f, Random.Range(0.96f, 1.04f)); }
     public static void Hit ()     { Play("hit_drum", 1f, Random.Range(0.95f, 1.05f)); Vibrate(); }
     public static void Bell ()    { Play("bell_rise", 0.8f); }
     public static void Death ()   { Play("death_drum", 1f); Vibrate(); }
