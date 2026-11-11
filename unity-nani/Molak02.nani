@@ -804,7 +804,7 @@
 @set nmul=3
 @set tr=random(1,100)
 @goto #NWorkT1 if:tn_wk1<1&&day>=6&&tr<=30
-@set r=random(2,3)
+@set r=random(3,4)
 @set tr=random(1,100)
 @goto #NWorkX1 if:tr<=10
 @goto #NWorkX2 if:tr<=19&&f_taxknow<1&&day>=14
