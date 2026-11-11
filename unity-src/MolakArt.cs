@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// 삽화 시스템 — 종이 카메라(레이어 30) 위에 장면 삽화와 인물 입상을 먹(곱셈 블렌드)으로 얹는다.
-/// 상단 띠(캔버스 900×1600 기준 y 184~484)에 한 번에 그림 하나만: 인물이 나오면 인물만(띠 가운데), 인물이 빠지면 장면이 다시 떠오른다.
+/// 상단 띠(캔버스 900×1600 기준 y 184~484). 인물이 나오면 장면을 옅게 깔고 그 위에 인물(0.4.9). 장면이 하루의 기본 풍경이면 인물이 있을 법한 자리로 바꾼다.
 /// 마지막에 부른 쪽이 이긴다 — 새 장면(@art scene:)은 서 있던 인물을 내리고, 새 인물(@art char:)은 장면을 가린다(장면은 기억해 둔다).
 /// 하루가 시작될 때(DayLoop) 인물은 내린다.
 /// </summary>
@@ -43,6 +43,13 @@ public class MolakArt : MonoBehaviour
         string key;
         if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetScene(null, ""); return; }
         if (!SceneAlias.TryGetValue(id, out key)) key = id;
+        if (key == "night") IsNight = true; else if (key == "morning") IsNight = false;
+        // 0.4.9: 날씨는 장면을 따라간다(비·눈·불티·핏빛 비). 비무 장면은 그대로 두고, 다른 장면으로 넘어가면 갠다.
+        if (!key.StartsWith("duel"))
+        {
+            string w;
+            MolakVfx.Weather(SceneWeather.TryGetValue(key, out w) ? w : "");
+        }
         if (inst.sceneId == key) { if (inst.charCur != null) inst.SetChar(null, ""); return; }   // 같은 장면을 다시 부르면 인물을 내리고 장면을 보인다
         bool isDuel = key.StartsWith("duel");   // duel, duelbridge … 비무 판의 변형
         if (isDuel) { if (!inst.sceneId.StartsWith("duel")) { prevScene = inst.sceneId; MolakSfx.Draw(); } } else prevScene = null;
@@ -52,11 +59,45 @@ public class MolakArt : MonoBehaviour
         MolakBgm.Mood(isDuel ? "duel" : (key == "raid" || key == "bloodroof") ? "raid" : "day");
     }
 
+    // 0.4.9: 인물이 나오면 그 사람이 있을 법한 자리를 뒤에 깐다(지금 장면이 하루의 기본 풍경일 때만 — 대본이 고른 장면은 그대로 둔다)
+    static readonly HashSet<string> Generic = new HashSet<string> { "", "morning", "night", "rain" };
+    static readonly Dictionary<string, string> HomeDay = new Dictionary<string, string>
+    {
+        {"granny","herbshop"},{"hajinmu","innhall"},{"gwaksan","market"},{"yonggae","crossroad"},{"amhyang","teahouse"},
+        {"soa","innhall"},{"soa_smile","market"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},{"kyona","valley"},
+        {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},
+    };
+    static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
+    {
+        {"granny","herbshop"},{"hajinmu","innhall"},{"gwaksan","alley"},{"yonggae","alley"},{"amhyang","teahouse"},
+        {"soa","roofmoon"},{"soa_smile","roofmoon"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},
+        {"jinbaek","alley"},{"lawlord","gate"},{"oldman","night"},
+    };
+    public static bool IsNight;
+    static readonly Dictionary<string, string> SceneWeather = new Dictionary<string, string>
+    {
+        {"rain","rain"},{"flood","rain"},{"snow","snow"},{"manorfire","embers"},{"herbfire","embers"},{"bloodroof","bloodrain"},{"raid","bloodrain"},
+    };
+
     public static void Char (string id)
     {
         if (inst == null) return;
         if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); return; }
         if (inst.charId == id) return;
+        if (Generic.Contains(inst.sceneId) && !inst.sceneId.StartsWith("duel"))
+        {
+            string home;
+            if ((IsNight ? HomeNight : HomeDay).TryGetValue(id, out home) && home != inst.sceneId)
+            {
+                var hs = Load("MolakArt/scene_" + home);
+                if (hs != null) { inst.sceneCur = hs; inst.sceneId = home; inst.sceneT = 0f; }
+            }
+            else if (inst.sceneCur == null)
+            {
+                var fs = Load("MolakArt/scene_" + (IsNight ? "night" : "morning"));
+                if (fs != null) { inst.sceneCur = fs; inst.sceneId = IsNight ? "night" : "morning"; inst.sceneT = 0f; }
+            }
+        }
         var sp = Load("MolakArt/char_" + id);
         inst.SetChar(sp, id);
     }
@@ -77,7 +118,7 @@ public class MolakArt : MonoBehaviour
     static Sprite Load (string path)
     {
         Sprite s;
-        if (cache.TryGetValue(path, out s)) return s;
+        if (cache.TryGetValue(path, out s) && s != null) return s;   // 에디터에서 플레이를 다시 켜면 만들어 둔 스프라이트가 파괴돼 있다 — 다시 만든다
         var tex = Resources.Load<Texture2D>(path);
         if (tex == null) { Debug.LogWarning("[MolakArt] missing " + path); cache[path] = null; return null; }
         s = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
@@ -147,7 +188,8 @@ public class MolakArt : MonoBehaviour
         if (charR.sprite != charCur && (charR.sprite == null || charT >= 0.5f || charCur == null)) charR.sprite = charCur;
         float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Clamp01(sceneT));
         // 그림은 한 번에 하나: 인물이 서 있으면 장면은 가린다(인물이 빠지면 다시 떠오른다)
-        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0f : 1f, Time.deltaTime * 2.4f);
+        // 0.4.9: 인물이 서면 장면을 지우지 않고 옅게 깔아 둔다 — 인물 뒤에 그 자리의 풍경이 보인다
+        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0.45f : 1f, Time.deltaTime * 2.4f);
         sA *= sceneVis;
         float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Clamp01(charT));
         if (sceneCur == null && sceneT >= 1f) sceneR.sprite = null;

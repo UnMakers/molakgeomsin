@@ -98,6 +98,13 @@ public class MolakHud : MonoBehaviour
             float left = MolakStats.Get("debtday") - MolakStats.Get("day");
             parts.Add("빚 " + debt.ToString("0") + "냥 · " + (left > 3 ? "독촉 전" : left > 0 ? "곧 독촉" : "독촉이 왔다"));
         }
+        // 0.4.9: 날짜 대신 관아 그물 — 예순 날(포박)이 다가오는 것을 숫자 없이 알린다
+        float dd = MolakStats.Get("day");
+        if (MolakStats.Get("b_capture") < 1f && MolakStats.Get("f_dojuroute") < 1f)
+        {
+            if (dd >= 55f) parts.Add("그물이 닫히기 직전");
+            else if (dd >= 46f) parts.Add("관아 그물이 조여 온다");
+        }
         return string.Join("   ", parts.ToArray());
     }
 

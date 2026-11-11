@@ -36,8 +36,8 @@ public class MolakTheme : MonoBehaviour
     static float choiceShownAt = -9f; static int lastChoiceCount;
     /// <summary>선택지 카드 높이·간격 — 선택지가 여섯 개 이상(회귀 상점 등)이면 촘촘하게 접어 화면 위로 넘치지 않게.</summary>
     public static bool Compact (int n) { return n >= 6; }
-    public static float CardH (int n) { return n >= 9 ? 64f : n >= 6 ? 84f : n >= 4 ? 122f : 148f; }
-    public static float CardGap (int n) { return n >= 9 ? 6f : n >= 6 ? 8f : 14f; }
+    public static float CardH (int n) { return n >= 9 ? 60f : n >= 6 ? 76f : n >= 4 ? 100f : 116f; }
+    public static float CardGap (int n) { return n >= 9 ? 3f : n >= 6 ? 4f : 6f; }
     public static float U { get { return Mathf.Min(Screen.width/1080f, Screen.height/1920f); } }
     public static readonly Color Bg = Hex("#100D0C");
     public static readonly Color Paper = Hex("#191411");
@@ -85,7 +85,9 @@ public class MolakTheme : MonoBehaviour
         DontDestroyOnLoad(go);
         var sr = go.AddComponent<SpriteRenderer>();
         sr.material = new Material(Shader.Find("Sprites/Default"));
-        sr.sprite = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f,0.5f), 100f);
+        // 0.4.9: 9-슬라이스 — 네 모서리의 回 문양은 늘어나지 않고(정사각형 유지), 테두리 선과 가운데만 늘어난다
+        sr.sprite = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f,0.5f), 100f, 0, SpriteMeshType.FullRect, new Vector4(96,96,96,96));
+        sr.drawMode = SpriteDrawMode.Sliced;
         sr.color = new Color(0.97f,0.95f,0.92f,1f); // 종이 원색
         sr.sortingOrder = -1000;
         float camH = cam.orthographic ? cam.orthographicSize*2f : 20f;
@@ -134,8 +136,14 @@ public class MolakTheme : MonoBehaviour
         float camH = cam.orthographic ? cam.orthographicSize*2f : 20f;
         float camW = camH*cam.aspect;
         float sw = sr.sprite.texture.width/100f, sh = sr.sprite.texture.height/100f;
-        var want = new Vector3(camW/sw, camH/sh, 1f);
+        // 가로·세로를 같은 배율로 키우고(모서리 정사각형), 모자란 쪽은 슬라이스 크기로 채운다
+        if (sr.drawMode != SpriteDrawMode.Sliced) sr.drawMode = SpriteDrawMode.Sliced;
+        float k = Mathf.Min(camW/sw, camH/sh);
+        var want = new Vector3(k, k, 1f);
         if ((backdrop.localScale - want).sqrMagnitude > 0.0001f) backdrop.localScale = want;
+        var wantSize = new Vector2(camW/k, camH/k);
+        if ((sr.size - wantSize).sqrMagnitude > 0.0001f) sr.size = wantSize;
+        var veilT2 = backdrop.Find("MolakPaperVeil"); if (veilT2 != null) veilT2.localScale = new Vector3(2000f/k, 2000f/k, 1f);
         var wantPos = new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z+4f);
         if ((backdrop.position - wantPos).sqrMagnitude > 0.0001f) backdrop.position = wantPos;
     }
@@ -418,12 +426,12 @@ public class MolakTheme : MonoBehaviour
             {
                 if (tx.gameObject.name == "Num") continue;
                 if (tx.color != inkDark) tx.color = inkDark;
-                float cfs = Mathf.Round((choiceCount >= 9 ? 31f : compact ? 34f : 40f)*FontScale);
+                float cfs = Mathf.Round((choiceCount >= 9 ? 28f : compact ? 30f : 34f)*FontScale);
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
                 if (!tx.enableWordWrapping) tx.enableWordWrapping = true;
                 if (tx.gameObject.name != "Num" && tx.alignment != TMPro.TextAlignmentOptions.MidlineLeft) tx.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                 if (tx.overflowMode != TMPro.TextOverflowModes.Overflow) tx.overflowMode = TMPro.TextOverflowModes.Overflow;
-                float need = tx.preferredHeight + (choiceCount >= 9 ? 14f : compact ? 22f : 44f);
+                float need = tx.preferredHeight + (choiceCount >= 9 ? 12f : compact ? 18f : 34f);
                 if (need > le.minHeight + 1f) le.minHeight = need;
             }
         }

@@ -109,6 +109,13 @@ public class MolakFlow : MonoBehaviour
 
         var pt = cmd as PrintText;
         if (pt == null) return;
+        // 0.4.9: {dejapre} 한 줄(지난 생 장면). 비어 있으면 아무것도 찍지 않고 흐름에도 끼지 않는다.
+        if (pt.Text != null && pt.Text.ToString().Trim() == "{dejapre}")
+        {
+            string dv = "";
+            try { var vm = Engine.GetService<ICustomVariableManager>(); if (vm != null && vm.VariableExists("dejapre")) { var vv = vm.GetVariableValue("dejapre"); if (vv.Type == CustomVariableValueType.String) dv = vv.String; } } catch { }
+            if (string.IsNullOrEmpty(dv) || dv == "none" || dv == "\u200B") { pt.ResetPrinter = false; pt.WaitForInput = false; return; }
+        }
         EnsureParagraphBreaks();
         // (컴파일러가 generic 라인에 reset을 미리 박아 두므로 항상 덮어쓴다)
 
@@ -121,7 +128,10 @@ public class MolakFlow : MonoBehaviour
         if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); if (buf.Count > 0) MolakPageTurn.Play(); } }   // 글이 있던 쪽을 넘긴다
         MolakScroll.ResetToBottom();
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
-        if (!reset) InsertBreak((lastPrintWaited || afterChoice) ? "\n\n" : "\n");
+        // 0.4.9: 대사 줄은 앞뒤로 한 줄 띄운다(서술과 대사가 붙어 있으면 읽기 어렵다)
+        bool curDlg = IsDialogue(pt);
+        if (!reset) InsertBreak((lastPrintWaited || afterChoice || curDlg || prevDlg) ? "\n\n" : "\n");
+        prevDlg = curDlg;
         afterChoice = false;
         // 같은 단락(연속된 서사 문장)은 한 번의 탭으로 쭉 출력: 다음 명령이 또 본문이면 입력 대기 없이 이어간다.
         bool wait = !NextIsText(track);
@@ -162,6 +172,21 @@ public class MolakFlow : MonoBehaviour
             continue; // 변수·능력치·연출·기타 명령은 통과
         }
         return false;
+    }
+
+    static bool prevDlg;
+    static bool IsDialogue (PrintText pt)
+    {
+        try
+        {
+            if (pt.Text == null || !pt.Text.HasValue) return false;
+            var loc = Engine.GetService<ITextLocalizer>();
+            var t = loc != null ? loc.Resolve(pt.Text.Value) : pt.Text.Value.ToString();
+            if (string.IsNullOrEmpty(t)) return false;
+            t = System.Text.RegularExpressions.Regex.Replace(t, "<[^>]+>", "").TrimStart();
+            return t.StartsWith("\"") || t.StartsWith("“") || t.StartsWith("「");
+        }
+        catch { return false; }
     }
 
     void Mark (PlaybackSpot spot) { lastScript = spot.ScriptPath; lastLine = spot.LineIndex; }

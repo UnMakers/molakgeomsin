@@ -11,7 +11,7 @@ public class InitRunCommand : Command
     public static void EnsureGlobals (ICustomVariableManager vars)
     {
         // 전역 기본값 보장
-        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge","g_lastday","g_bestday","g_bestrank"})
+        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge","g_lastday","g_bestday","g_bestrank","g_hapbo","g_samecount"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
         if (!vars.VariableExists("g_lastcause")) vars.SetVariableValue("g_lastcause", new CustomVariableValue("none"));
@@ -75,6 +75,7 @@ public class InitRunCommand : Command
             MolakStats.Set("g_next_bond", 0f); MolakStats.Set("g_next_item", 0f);
         }
         MolakStats.Set("rank", 0);
+        if (MolakStats.Get("g_hapbo") > 0) MolakStats.Set("f_hapbyeok", 1f);   // 0.4.9: 한 번 읽은 합벽 검보는 되감기지 않는다
         MolakStats.Set("seallv", up("seal"));
         MolakKnow.Snapshot();   // 이번 생이 시작될 때 이미 아는 것 — 죽을 때 "되감기지 않는 것"을 가려낸다
         MolakStats.Set("runs", MolakStats.Get("g_runs"));
@@ -412,6 +413,20 @@ public class LifeNoteCommand : Command
         string S (string k) { return vars.VariableExists(k) && vars.GetVariableValue(k).Type == CustomVariableValueType.String ? vars.GetVariableValue(k).String : ""; }
         float day = MolakStats.Get("day"), rank = MolakStats.Get("rank"), gained = MolakStats.Get("gained");
         string cause = S("deathcause");
+        // 이번 생의 뜻(회귀 아침에 고른 것): 이루면 깨달음 +4
+        int vow = Mathf.RoundToInt(MolakStats.Get("vow"));
+        string vowline = "";
+        if (vow > 0)
+        {
+            bool ok = vow == 1 ? (rank > 0f && rank <= 1000f)
+                    : vow == 2 ? (MolakStats.Get("f_soabond") > 0f || MolakStats.Get("aff") >= 3f || MolakStats.Get("f_hajinbond") > 0f || MolakStats.Get("f_herbbond") > 0f || MolakStats.Get("f_gwakally") > 0f || MolakStats.Get("f_yongally") > 0f || MolakStats.Get("f_amhally") > 0f || MolakStats.Get("f_jinally") > 0f)
+                    : day >= 46f;
+            string name = vow == 1 ? "복수" : vow == 2 ? "인연" : "생존";
+            if (ok) { MolakStats.Add("g_pts", 4f); gained += 4f; MolakStats.Set("gained", gained); vowline = "이번 생의 뜻(" + name + ")을 이루었다 — 깨달음 +4"; }
+            else vowline = "이번 생의 뜻(" + name + ")은 이루지 못했다.";
+        }
+        vars.SetVariableValue("vowline", new CustomVariableValue(vowline));
+        MolakStats.Set("vowc", vowline.Length > 0 ? 1f : 0f);
         // 이번 생의 기록
         string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 ? "서열 " + rank.ToString("N0") + "위" : "서열록에 이름 없음") + " · 깨달음 +" + gained.ToString("0");
         vars.SetVariableValue("lifesum", new CustomVariableValue(sum));
@@ -435,6 +450,7 @@ public class LifeNoteCommand : Command
         if (!string.IsNullOrEmpty(cause) && cause == lastCause && !NotDeaths.Contains(cause) && Tips.ContainsKey(cause)) tip = Tips[cause];
         vars.SetVariableValue("deathtip", new CustomVariableValue(tip));
         MolakStats.Set("deathtipc", tip.Length > 0 ? 1f : 0f);
+        MolakStats.Set("g_samecount", (!string.IsNullOrEmpty(cause) && cause == lastCause) ? MolakStats.Get("g_samecount") + 1f : 1f);
         vars.SetVariableValue("g_lastcause", new CustomVariableValue(string.IsNullOrEmpty(cause) ? "none" : cause));
         // 진말로 길의 다음 조각: 세 생째부터, 노인의 한 마디가 없을 때만, 이번 생에서 막힌 자리 하나
         string hint = "";
@@ -449,5 +465,73 @@ public class LifeNoteCommand : Command
         vars.SetVariableValue("truehint", new CustomVariableValue(hint));
         MolakStats.Set("truehintc", hint.Length > 0 ? 1f : 0f);
         try { await Engine.GetServiceOrErr<IStateManager>().SaveGlobal(); } catch { }
+    }
+}
+
+/// <summary>@deja [text:"…"] [need:g_var] — 0.4.9: 지난 생에 이미 지나온 장면이면 다음 본문 줄 앞에 붙일 한 줄({dejapre})을 만든다.
+/// 바로 다음 명령(그 본문 줄)이 예전에 재생된 적이 있으면 '지난 생에 겪은 장면'으로 본다. need 가 있으면 그 전역 앎도 있어야 한다.
+/// text 가 없으면 되풀이의 절박함을 담은 공용 문장 가운데 하나(같은 생에 겹치지 않게)를 고른다.</summary>
+[Alias("deja")]
+public class DejaCommand : Command
+{
+    public StringParameter Text;
+    public StringParameter Need;
+    static readonly string[] Pool = {
+        "이 장면을 안다. 안다고 해서 숨이 편해지지는 않는다.",
+        "또 이 자리다. 지난 생에도 여기서 같은 말을 들었고, 같은 숨을 쉬었다.",
+        "몸이 먼저 굳는다. 머리보다 몸이 이 순간을 더 잘 기억한다.",
+        "몇 번째인지 세다가 그만둔다. 세는 동안에도 날은 같은 쪽으로 흐른다.",
+        "같은 바람, 같은 냄새. 달라진 것은 손에 묻은 죽음의 수뿐이다.",
+        "이번에는 다르게 하리라. 지난번에도 이 자리에서 그렇게 다짐했다.",
+        "기억이 앞질러 간다. 저 사람이 다음에 무슨 말을 할지, 입술보다 먼저 안다.",
+        "손끝이 차다. 지난 생의 마지막 온기가 아직 다 빠지지 않았다.",
+        "되감긴 것은 날뿐이다. 그날의 두려움은 되감기지 않았다.",
+        "이 길을 몇 번이고 지나왔다. 그때마다 어딘가에서 길이 끊겼다.",
+        "낯익은 얼굴들이 웃는다. 이 얼굴들이 어떻게 일그러지는지도 안다.",
+        "가슴의 문양이 낮게 운다. 너도 기억하느냐고 묻는 것만 같다.",
+        "두 번째 보는 장면이 더 아프다. 무엇을 잃을지 알고 보니까.",
+        "같은 돌부리에 두 번 넘어지는 자를 강호는 비웃는다. 당신은 몇 번째인지도 모른다.",
+        "머릿속에서 누가 숫자를 센다. 남은 날인지, 죽은 횟수인지 모를 숫자를.",
+        "모든 것이 그 생 그대로다. 그대로라서 숨이 막힌다.",
+        "지난 생의 당신이 서 있던 자리에 이번 생의 당신이 선다. 둘 다 같은 곳을 본다.",
+        "식은땀이 등줄기를 탄다. 아무 일도 일어나지 않았는데, 일어날 일을 안다.",
+        "웃음소리가 들린다. 지난 생에도 이 웃음 끝에 피 냄새가 났다.",
+        "이 순간을 또 살아야 한다. 몇 번을 살아도 쉬워지지 않는다.",
+    };
+    static readonly List<int> used = new List<int>();
+    static int usedRun = -1;
+
+#pragma warning disable CS1998
+    public override async Awaitable Execute (ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
+        string pre = "";
+        try
+        {
+            var sp = Engine.GetService<IScriptPlayer>();
+            var tr = sp != null ? sp.MainTrack : null;
+            bool seen = false;
+            if (tr != null && tr.PlayedScript != null) seen = sp.HasPlayed(tr.PlayedScript.Path, tr.PlayedIndex + 1);
+            bool need = !Assigned(Need) || MolakStats.Get(Need.Value) > 0f;
+            if (seen && need && MolakStats.Get("g_runs") >= 1f)
+            {
+                string line;
+                if (Assigned(Text) && !string.IsNullOrEmpty(Text.Value)) line = Text.Value;
+                else
+                {
+                    int run = Mathf.RoundToInt(MolakStats.Get("g_runs"));
+                    if (run != usedRun) { used.Clear(); usedRun = run; }
+                    if (used.Count >= Pool.Length) used.Clear();
+                    int k; do { k = Random.Range(0, Pool.Length); } while (used.Contains(k));
+                    used.Add(k); line = Pool[k];
+                }
+                pre = "<color=#9A70C4>" + line + "</color>";
+            }
+        }
+        catch { pre = ""; }
+        // 빈 문자열을 찍으면 나니노벨이 글자 드러내기를 끝내지 못하고 멈춘다 — 보이지 않는 한 글자(폭 없는 공백)로 둔다
+        if (string.IsNullOrEmpty(pre)) pre = "\u200B";
+        vars.SetVariableValue("dejapre", new CustomVariableValue(pre));
     }
 }

@@ -99,12 +99,14 @@
 @set f_amhtalk=0
 @set f_amhwarn=0
 @set f_amhyangknown=0
+@set f_antidote=0
 @set f_baekridead=0
 @set f_beggarnet=0
 @set f_bilok=0
 @set f_bilokhalf=0
 @set f_biloklearn=0
 @set f_blackpill=0
+@set f_bracer=0
 @set f_breath=0
 @set f_breath2=0
 @set f_chaininfo=0
@@ -155,6 +157,7 @@
 @set f_hmfailed=0
 @set f_hmleft=0
 @set f_hmsaved=0
+@set f_honed=0
 @set f_huntdodge=0
 @set f_incense=0
 @set f_inkcord=0
@@ -268,6 +271,7 @@
 @set f_unjudone=0
 @set f_unjuhint=0
 @set f_valleyroute=0
+@set f_vest=0
 @set f_vigil=0
 @set f_wangsam=0
 @set f_wanted=0
@@ -299,6 +303,7 @@
 @set killed=0
 @set knownewc=0
 @set lifecmpc=0
+@set lodgneed=0
 @set lostonce=0
 @set lrand=0
 @set luck=0
@@ -318,6 +323,7 @@
 @set mkthief=0
 @set mkv=0
 @set mn=0
+@set mnwarn=0
 @set mrand=0
 @set ms_d10=0
 @set ms_d18=0
@@ -357,10 +363,14 @@
 @set tn_wk1=0
 @set tr=0
 @set truehintc=0
+@set vow=0
+@set vowc=0
+@set wr=0
 @set wrand=0
 @set yonglost=0
 @set deathcause="none"
 @set deathtip="none"
+@set dejapre="none"
 @set dkind="none"
 @set foename="none"
 @set foerank="none"
@@ -376,6 +386,7 @@
 @set prepitem="none"
 @set tiername="none"
 @set truehint="none"
+@set vowline="none"
 @initrun
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
@@ -399,7 +410,8 @@
 지난 생 마지막 밤, 이 손으로 놓친 사람이 있었다. 사흘 뒤 국밥집 맞은편에 그녀가 앉을 것이다. 당신을 모르는 얼굴로.
 @goto #RbCommon
 # RbWin
-"…깨어나셨소?" 하진무가 꿈속 얼굴을 맞춰 보듯 당신을 오래 본다.
+"…깨어나셨소?"
+하진무가 꿈속 얼굴을 맞춰 보듯 당신을 오래 본다.
 "……이상한 꿈을 꾸었소. 깃발이 타는 꿈을."
 되감는 것은 당신 하나인데, 세상도 가끔 지난 생을 꿈으로 흘린다.
 @goto #RbCommon2
@@ -422,31 +434,73 @@
 무릎이 저리다. 지난 생에 교 앞에 꿇었던 무릎이다. 이번 생은 아직 아무에게도 꿇지 않았다.
 @goto #RbCommon
 # RbCommon
-"…깨어나셨소!" 하진무의 그 목소리.
+@goto #RbSameA if:g_samecount==2
+@goto #RbSameB if:g_samecount>=3
+@goto #RbCommonV
+# RbSameA
+같은 자리에서 두 번 죽었다. 목이 그 칼끝의 각도를, 귀가 그 마지막 소리를 기억한다.
+이불을 움켜쥔 손이 한참 펴지지 않는다.
+@goto #RbCommonV
+# RbSameB
+또 같은 자리다. 세 번인지 네 번인지, 세는 것을 그만둔 지 오래다.
+일어나 앉는 데 한참이 걸린다. 이번에도 그 자리까지 제 발로 걸어가야 한다.
+@goto #RbCommonV
+# RbCommonV
+"…깨어나셨소!"
+하진무의 그 목소리.
 # RbCommon2
 전낭에는 은자 서른 냥. 모든 것이 그 아침 그대로다. 당신의 기억과 <color=#9A70C4>가슴의 문양</color>만 빼고.
 @fx mn:30
+@goto #RbHap0 if:g_hapbo<1
+<color=#9A70C4>합벽의 검보는 품에 없다. 그러나 그 획은 눈꺼풀 안쪽에 그대로 남아 있다.</color>
+# RbHap0
 @goto #RbTh1 if:theme==1
 @goto #RbTh2 if:theme==2
 @goto #RbTh3 if:theme==3
 @goto #RbTh4 if:theme==4
-@goto #P4
+@goto #RbVow
 # RbTh1
 그런데 창밖에 비가 내린다. 지난 생엔 없던 비다.
 <color=#7FA7C9>이번 생은 장마가 길다.</color> 개울이 불고, 상처가 덧난다.
-@goto #P4
+@goto #RbVow
 # RbTh2
-아래층에서 기침 소리가 끊이지 않는다. "객관님, 저잣거리에 돌림병이 돈답니다요."
+아래층에서 기침 소리가 끊이지 않는다.
+"객관님, 저잣거리에 돌림병이 돈답니다요."
 <color=#9C8A5A>이번 생은 역병이 돈다.</color> 약값이 오르고, 사람이 죽는다.
-@goto #P4
+@goto #RbVow
 # RbTh3
-그런데 전낭이 가볍다. "징세조가 올해 객잔 세를 곱으로 매겼소. 객의 몫에서 조금 덜어 냈소."
+그런데 전낭이 가볍다.
+"징세조가 올해 객잔 세를 곱으로 매겼소. 객의 몫에서 조금 덜어 냈소."
 @set mn=mn-10
 <color=#C9A227>이번 생은 징세가 매섭다.</color> 은자가 귀하고 빚이 무겁다.
-@goto #P4
+@goto #RbVow
 # RbTh4
 마당에 늑대 가죽 한 장이 던져져 있다. 혈마교 추격대, 혈랑대가 벌써 왔다는 표시다.
 <color=#C03434>이번 생은 늑대가 이르다.</color> 그 밤이 사흘 당겨진다.
+@goto #RbVow
+# RbVow
+가슴의 문양이 낮게 운다. 뼛속에서 노인의 목소리가 묻는다.
+'이번 생엔 무엇을 하겠느냐.'
+@choice "복수 — 서열록 천 위 안에 이름을 올린다 (살기 +1)" goto:#RbVow1
+@choice "인연 — 이번엔 등을 맡길 사람을 얻는다 (체력 +1)" goto:#RbVow2
+@choice "생존 — 그물이 조여 올 때까지 살아남는다 (은자 +5)" goto:#RbVow3
+@choice "대답하지 않는다" goto:#P4
+@stop
+# RbVow1
+@set vow=1
+@fx sl:1
+'칼이 먼저 오르면 이름은 따라오느니라.'
+@goto #P4
+# RbVow2
+@set vow=2
+@set hpmax=hpmax+1
+@set hp=hp+1
+'등을 맡길 자 하나 없이 오른 자는, 끝내 홀로 떨어지느니라.'
+@goto #P4
+# RbVow3
+@set vow=3
+@fx mn:5
+'살아 있는 자만이 다음 수를 두느니라.'
 @goto #P4
 # Prologue
 @art scene:manorfire
@@ -505,7 +559,8 @@
 @art char:hajinmu
 운락객잔(雲樂客棧)의 주인 하진무(河鎭武)다. 산 아래 쓰러진 당신을 업어 와 꼬박 일 년을 돌봤다고 한다.
 "청운검파에 입은 은혜가 있소. 그 문파의 마지막 제자라면 당연한 일이오."
-하진무가 낡은 전낭을 내민다. "은자 서른 냥이오. 산 사람은 살아야 하지 않겠소."
+하진무가 낡은 전낭을 내민다.
+"은자 서른 냥이오. 산 사람은 살아야 하지 않겠소."
 가슴이 욱신거린다. 옷깃 아래 낙인 같은 <color=#9A70C4>문양</color>. 그날 밤은 꿈이 아니었다.
 @fx mn:30
 @goto #P4
@@ -570,13 +625,15 @@
 @choice "다른 데로 간다" goto:#P4b
 @stop
 # MkHat
-옷전 아낙이 청운 도복을 훑는다. "그 옷 입고 다니면 명이 짧아지우."
+옷전 아낙이 청운 도복을 훑는다.
+"그 옷 입고 다니면 명이 짧아지우."
 죽립(竹笠)과 잿빛 장포로 갈아입는다. 헌 도복이 아궁이 불에 오그라든다.
 @fx mn:-4
 @set f_hat=1
 @goto #MkAlleyIn
 # MkStone
-눈먼 숫돌 장수가 손끝으로 결을 쓸어 보고 값을 부른다. "청석이오. 칼날 세우는 데는 이만한 게 없지. 검객이시구먼. 굳은살이 그리 말하오."
+눈먼 숫돌 장수가 손끝으로 결을 쓸어 보고 값을 부른다.
+"청석이오. 칼날 세우는 데는 이만한 게 없지. 검객이시구먼. 굳은살이 그리 말하오."
 일 년 녹슨 날이 한 시간 만에 다시 선다.
 @fx mn:-3 sw:1
 @set f_whetstone=1
@@ -584,8 +641,10 @@
 # MkSmith
 @set mksmith=1
 @goto #P4m if:mn>=20
-대장장이 무고가 당신을 힐끗 본다. "맡아 둔 검이 하나 있는데, 스무 냥은 있어야 보여 드리겠소."
-전낭이 모자란다. "모아서 오시오. 아무에게나 안 내주는 물건이니."
+대장장이 무고가 당신을 힐끗 본다.
+"맡아 둔 검이 하나 있는데, 스무 냥은 있어야 보여 드리겠소."
+전낭이 모자란다.
+"모아서 오시오. 아무에게나 안 내주는 물건이니."
 @set f_smithwait=1
 @goto #MkAlleyIn
 
@@ -604,20 +663,25 @@
 # MkSalveK
 노파가 당신 손목 맥을 짚더니 이맛살을 찌푸린다.
 "……맥이 둘이구나. 가슴에 있는 그것이 따로 뛰고 있어. 그건 약으로 못 고친다."
-금창약을 내밀며 노파가 당신 손끝 냄새를 맡는다. "쇳독이 올랐구나." 독을 다뤄 본 사람의 코다.
+금창약을 내밀며 노파가 당신 손끝 냄새를 맡는다.
+"쇳독이 올랐구나."
+독을 다뤄 본 사람의 코다.
 @fx mn:-5 hp:2
 @set f_salve=1
 @set f_herbpulse=1
 @goto #MkHerb
 # MkIncense
-"밤마다 가슴이 뜨거운 분들이 많이들 찾소." 향 가게 주인이 안식향을 싸 주며 장부에 무언가 적는다. 사 간 사람의 키와 옷차림까지.
+"밤마다 가슴이 뜨거운 분들이 많이들 찾소."
+향 가게 주인이 안식향을 싸 주며 장부에 무언가 적는다. 사 간 사람의 키와 옷차림까지.
 그날 밤부터 머리맡에 향을 피운다. 가슴의 열이 조금 가라앉는다.
 @fx mn:-4 curse:-2
 @set f_incense=1
 @goto #MkHerb
 # MkAlms
-은자 한 냥이 그릇에서 땡그랑 운다. "……나리, 청운산 쪽 사람이오?"
-대답하지 않아도 아이는 고개를 끄덕인다. "뒷골목 담은 낮소. 쫓기면 그리로 뛰시오."
+은자 한 냥이 그릇에서 땡그랑 운다.
+"……나리, 청운산 쪽 사람이오?"
+대답하지 않아도 아이는 고개를 끄덕인다.
+"뒷골목 담은 낮소. 쫓기면 그리로 뛰시오."
 아이가 그릇의 매듭을 둘로 고쳐 묶자, 담 건너 다른 아이가 고개를 끄덕인다. 거지들끼리의 신호다.
 @fx mn:-1
 @set f_alms=1
@@ -628,7 +692,8 @@
 ; ---------- 주루와 투전판 ----------
 # MkTavern
 주루 일층은 술꾼, 이층은 투전판. 계단 밑에 쥐 닮은 사내가 기대 있다. 소식을 파는 쥐눈이 장이다.
-구석에서 이야기꾼이 부채를 편다. "오늘은 혈마교가 무림을 삼키던 그 밤 이야기올시다!"
+구석에서 이야기꾼이 부채를 편다.
+"오늘은 혈마교가 무림을 삼키던 그 밤 이야기올시다!"
 @choice "쥐눈이 장에게 혈마교를 묻는다 (은자 10)" if:mn>=10&&f_janginfo<1 goto:#P4j
 @choice "투전판에 앉는다 (은자 5)" if:mn>=5&&mkgamble<1 goto:#MkGamble
 @choice "이야기꾼의 이야기를 듣는다 (은자 2)" if:mn>=2&&f_storylore<1 goto:#MkStory
@@ -648,31 +713,37 @@
 마지막 패가 넘어가고, 맞은편 사내가 판돈을 쓸어 간다. 다섯 냥짜리 구경이었다.
 @goto #MkTavern
 # MkGambleA2
-판주가 숨긴 패를 꺼낼 틈을 놓친다. 판돈 열다섯 냥이 당신 앞으로 온다. "운 좋은 양반이로군."
+판주가 숨긴 패를 꺼낼 틈을 놓친다. 판돈 열다섯 냥이 당신 앞으로 온다.
+"운 좋은 양반이로군."
 @fx mn:15
 @goto #MkTavern
 # MkGambleB
 판주의 손목에 손바닥을 얹는다. 소매 속 패가 툭 떨어진다.
-판주가 이를 드러냈다가 당신 눈을 보고 다문다. "……판돈은 돌려드리리다. 그냥 가시오."
+판주가 이를 드러냈다가 당신 눈을 보고 다문다.
+"……판돈은 돌려드리리다. 그냥 가시오."
 @fx mn:10 sl:1
 @set f_gambleshamed=1
 @goto #MkTavern
 # MkGambleC
-패를 엎고 일어선다. "보는 눈은 있는데 겁이 많군."
+패를 엎고 일어선다.
+"보는 눈은 있는데 겁이 많군."
 겁이 아니다. 오늘은 칼부림할 날이 아니다.
 @goto #MkTavern
 # MkStory
 @fx mn:-2
 "혈천마가 산문 아홉을 하룻밤에 넘었다! 그런데 열 번째, 청운산장 앞에서 한참을 멈췄더란 말씀이야! 장문인이 검을 뽑지 않고 서 있었기 때문이라!"
 청중이 웃는다. 당신은 웃지 않는다. 장문인은 정말 그런 사람이었다.
-"무림맹은 그 밤 어디 있었느냐고? 짐을 싸고 있었지!" 정파 연합 무림맹의 원군은 그 밤 오지 않았다. 이번엔 아무도 웃지 않는다.
+"무림맹은 그 밤 어디 있었느냐고? 짐을 싸고 있었지!"
+정파 연합 무림맹의 원군은 그 밤 오지 않았다. 이번엔 아무도 웃지 않는다.
 @set f_storylore=1
 @fx curse:-1
 @goto #MkTavern
 # P4j
-"혈마교라." 쥐눈이 장이 은자를 소매에 넣고 목소리를 낮춘다.
+"혈마교라."
+쥐눈이 장이 은자를 소매에 넣고 목소리를 낮춘다.
 "본거지는 북쪽으로 닷새, 혈마곡(血魔谷). 입구의 혈천진(血天陣)을 모르고 들어가면 뼈도 못 추리오. 교주 혈천마(血天魔)는… 입에 올리기도 겁나는 괴물이고."
-장이 당신 얼굴을 빤히 보며 귓불을 긁는다. 왼 귓불에 바늘구멍 하나가 비어 있다. "…어디서 뵌 얼굴 같소만. 됐소. 이 바닥에선 남의 얼굴을 기억하면 오래 못 사오."
+장이 당신 얼굴을 빤히 보며 귓불을 긁는다. 왼 귓불에 바늘구멍 하나가 비어 있다.
+"…어디서 뵌 얼굴 같소만. 됐소. 이 바닥에선 남의 얼굴을 기억하면 오래 못 사오."
 "같은 소식은 한 사람에게 한 번만 파오. 그러니 비싸지."
 @set g_fac_hao=1
 @fx mn:-10

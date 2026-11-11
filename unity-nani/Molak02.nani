@@ -43,10 +43,10 @@
 @goto #A34 if:day>=34&&f_hmsaved>0&&f_ochisaved<1&&b_ochi<1
 @goto #A40 if:day>=40&&f_oldseen>0&&b_old2x<1
 @goto #BShrFire if:day>=28&&f_shrseen>0&&b_shrfire<1
-@goto #BHintShr if:day>=19&&g_redverse>0&&f_shrseen<1&&b_hintshr<1
+@goto #BHintShr if:day>=19&&g_redverse>0&&f_shrseen<1&&f_hapbyeok<1&&b_hintshr<1
 @goto #BSimK if:curse>=75&&g_end_simma>0&&b_simk<1
-@goto #BNetHint if:day>=56&&b_nethint<1&&b_capture<1
-@goto #BNetK if:day>=57&&g_end_pobak>0&&b_netk<1&&b_capture<1
+@goto #BNetK if:day>=52&&g_end_pobak>0&&b_netk<1&&b_capture<1
+@goto #BNetHint if:day>=52&&b_nethint<1&&b_netk<1&&b_capture<1
 @goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
 @goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
@@ -74,6 +74,10 @@
 ; --- 아침 풍경 ---
 @scene id:day
 @vfx kind:rainoff
+; 0.4.9: 날이 저물수록 눈 오는 아침, 장마의 생엔 비 오는 아침
+@set wr=random(1,100)
+@scene id:snow if:day>=40&&wr<=30||day>=50&&wr<=45
+@scene id:rain if:theme==1&&wr>55
 @goto #MTaint if:taint>0
 @goto #MTh if:theme>0&&day>=thday
 @pickflavor pool:morning
@@ -218,7 +222,8 @@
 담 위에 쌍검 자국 같은 흠집이 새로 나 있다.
 @goto #Daytime
 # M19
-"객관님, 정말 북쪽으로 가십니까요." 대답 대신 국밥 그릇을 비운다.
+"객관님, 정말 북쪽으로 가십니까요."
+대답 대신 국밥 그릇을 비운다.
 @goto #Daytime
 # M20
 아침부터 가슴이 미지근하다. 문양이 자라는 날은 몸이 먼저 안다.
@@ -272,7 +277,9 @@
 문양이 목까지 올라왔다. 하진무가 옷깃을 여며 준다. 그 손이 떨리는 것을 둘 다 모른 척한다.
 @goto #Daytime
 # M37
-소아가 말없이 제 목도리를 풀어 당신 목에 감는다. "추워 보이는군." 거짓말이다.
+소아가 말없이 제 목도리를 풀어 당신 목에 감는다.
+"추워 보이는군."
+거짓말이다.
 @goto #Daytime
 # M38
 국밥을 뜨다 손이 멎는다. 손가락 끝이 <color=#9A70C4>먹빛</color>이다. 씻어도 지워지지 않는다.
@@ -302,7 +309,9 @@
 @goto #Collapse2 if:tr==2
 @goto #Collapse3 if:tr==3
 눈을 뜬다. 운락객잔의 그 방이다.
-"저자 골목에 엎어져 있더이다. 이틀을 잤소." 하진무가 미음 그릇을 내려놓는다. "또 일 년은 안 되오."
+"저자 골목에 엎어져 있더이다. 이틀을 잤소."
+하진무가 미음 그릇을 내려놓는다.
+"또 일 년은 안 되오."
 @goto #CollapseT
 # Collapse2
 누군가의 등에 업혀 흔들린다. 주판 냄새가 나는 늙은 등이다.
@@ -324,8 +333,12 @@
 ; ---------- 업보: 빚 ----------
 # KDebt
 @art char:none
-해 질 녘, 낯선 사내 셋이 마당에 들어선다. "고리대 왕삼 어른 댁에서 왔소. {debt}냥. 오늘이오."
-사내 허리에 녹슨 쇠고리가 걸려 있다. "못 갚으면 이걸 차고 혈쇄문 폐철장에 끌려가 몸으로 갚게 되오."
+@deja need:g_end_chae text:"\"오늘이오.\" 지난 생에도 이 말 다음에 쇠고리가 철컥 닫혔다."
+{dejapre}
+해 질 녘, 낯선 사내 셋이 마당에 들어선다.
+"고리대 왕삼 어른 댁에서 왔소. {debt}냥. 오늘이오."
+사내 허리에 녹슨 쇠고리가 걸려 있다.
+"못 갚으면 이걸 차고 혈쇄문 폐철장에 끌려가 몸으로 갚게 되오."
 @set g_fac_swe=1
 @goto #KDebtC if:debtext<1
 "사흘 전에도 '기다려 달라'는 얼굴이었지. 이번엔 기다려 줄 날이 없소."
@@ -337,13 +350,15 @@
 @choice "검을 뽑는다" goto:#KDebtFight
 @stop
 # KDebtPay
-사내가 은자를 세고 장부의 이름 위에 줄을 긋는다. "또 뵙지 맙시다."
+사내가 은자를 세고 장부의 이름 위에 줄을 긋는다.
+"또 뵙지 맙시다."
 @set mn=mn-debt
 @set debt=0
 @set debtext=0
 @goto #Night
 # KDebtExt
-"사흘. 이자 열 냥. 다음엔 손가락이오." 사내가 하진무의 주판을 툭 쳐 주판알을 흩뜨리고 나간다.
+"사흘. 이자 열 냥. 다음엔 손가락이오."
+사내가 하진무의 주판을 툭 쳐 주판알을 흩뜨리고 나간다.
 @set debt=debt+10
 @set debtday=day+3
 @set debtext=1
@@ -358,7 +373,8 @@
 @set debtext=0
 @goto #Night
 # KDebtAlly
-비무판에서 살려 보낸 사내가 수하의 어깨를 잡는다. "이분 장부는 내가 왕삼 어른과 따로 셈하겠네."
+비무판에서 살려 보낸 사내가 수하의 어깨를 잡는다.
+"이분 장부는 내가 왕삼 어른과 따로 셈하겠네."
 셋이 장부를 덮고 나간다. 비무판에서 그를 살려 준 빚이, 고리대 빚을 지웠다.
 @set f_sparedally=0
 @set debt=0
@@ -368,7 +384,8 @@
 @set dkind="debt"
 @gosub MolakDuel#Run
 @goto #KDebtW if:duelwin>0
-셋은 피를 보고 물러간다. "이틀. 그다음엔 칼잡이를 더 데려오겠소."
+셋은 피를 보고 물러간다.
+"이틀. 그다음엔 칼잡이를 더 데려오겠소."
 @set debtday=day+2
 @set debtext=1
 @goto #NightEnd
@@ -391,6 +408,8 @@
 @set grudgewarn=0
 @goto #KGrA if:f_alms>0||f_thiefkid>0||f_beggarnet>0
 @scene id:night
+@deja
+{dejapre}
 밤. 창호지에 그림자 셋이 비친다.
 문살을 뚫고 무엇인가 어깨를 스친다. 피에 소매가 젖는다.
 @fx hp:-3
@@ -444,14 +463,16 @@
 @set grudge=grudge-1 if:tr<=60
 @goto #Daytime
 # KGrA
-해 질 녘, 골목 아이가 담 너머로 고개를 내민다. "나리, 오늘 밤 지붕에 상복 셋이 있소."
+해 질 녘, 골목 아이가 담 너머로 고개를 내민다.
+"나리, 오늘 밤 지붕에 상복 셋이 있소."
 밤이 되자 정말로 기와가 운다.
 @set grudgewarn=1
 @scene id:night
 # KGrC
 @art scene:mourners
 @goto #KGrO if:f_orphan>0
-마당에 흰 상복 셋이 선다. "비무판에서 네가 벤 사람의 이름을 아느냐."
+마당에 흰 상복 셋이 선다.
+"비무판에서 네가 벤 사람의 이름을 아느냐."
 @goto #KGrCh
 # KGrO
 마당에 흰 상복 셋. 그 뒤에 그날의 그 아이가 검집을 안고 있다.
@@ -471,7 +492,8 @@
 @set dkind="grudge"
 @gosub MolakDuel#Run
 @goto #KGrW if:duelwin>0
-목숨만 건졌다. 셋이 물러난다. "그믐 전에 다시 온다. 그때는 넷이다."
+목숨만 건졌다. 셋이 물러난다.
+"그믐 전에 다시 온다. 그때는 넷이다."
 @set grudgeday=day+random(3,6) if:grudge<1
 @set grudge=grudge+1
 @goto #NightEnd
@@ -500,7 +522,8 @@
 @goto #KGrFight
 # KGrWake
 @goto #KGrWakeD if:f_hajinhurt>0
-"불이야!" 점소이가 징을 치고, 하진무가 장작개비를 들고 나선다.
+"불이야!"
+점소이가 징을 치고, 하진무가 장작개비를 들고 나선다.
 상복들이 물러나며, 맨 끝의 하나가 하진무의 팔을 긋는다.
 새벽, 하진무의 팔에 무명이 감긴다. 그는 아무 말도 하지 않는다.
 @set f_hajinhurt=1
@@ -509,7 +532,8 @@
 @set grudge=grudge+1
 @goto #NightEnd
 # KGrWakeD
-"불이야!" 하진무가 무명 감은 그 팔로 장작개비를 든다.
+"불이야!"
+하진무가 무명 감은 그 팔로 장작개비를 든다.
 이번엔 상복들이 물러나지 않는다.
 맨 앞의 칼이, 당신 앞을 막아선 노인의 가슴에 들어간다. 소리가 작다.
 하진무가 주저앉으며 당신 소매를 잡는다.
@@ -573,7 +597,8 @@
 아래층에서 술꾼들의 노래가 올라온다.
 @goto #NightChoice
 # Nv6
-"객관님, 오늘도 늦게 주무십니까요." 점소이가 등잔 기름을 채워 간다.
+"객관님, 오늘도 늦게 주무십니까요."
+점소이가 등잔 기름을 채워 간다.
 @goto #NightChoice
 # Nv7
 밤바람에 문풍지가 운다. 문양도 같은 박자로 운다.
@@ -608,6 +633,7 @@
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
 @choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&f_soadead<1&&day>=38&&b_leave<1 goto:#NLeave
 @choice "금창약을 덜어 덧난 상처를 다시 싸맨다" if:taint>0&&taintkind==2&&f_salve>0 goto:#NSalve
+@choice "해독환을 삼킨다" if:taint>0&&taintkind==1&&f_antidote>0 goto:#NAntidote
 @choice "몸을 쉰다 — 체력을 되찾는다" goto:#NRest
 @stop
 # NSalve
@@ -617,7 +643,15 @@
 @set f_salve=0
 @fx hp:1
 @goto #NightEnd
+# NAntidote
+환약을 삼키자 속이 뒤집힌다. 밤새 검은 땀이 흐른다.
+새벽녘, 손톱 밑의 푸른 기가 걷혀 있다.
+@set taint=0
+@set f_antidote=0
+@fx hp:-1
+@goto #NightEnd
 # NSw
+@art scene:yard
 @set nmul=3
 @set tr=random(1,100)
 @goto #NSwT1 if:tn_sw1<1&&day>=4&&tr<=30
@@ -649,7 +683,8 @@
 삼백 번째쯤, 담 위에 소아가 앉는다. 오백 번째에 입을 연다.
 "왼손이 반 박자 늦다."
 "……사형은 그게 내 버릇이라 했다."
-"버릇은 죽을 자리를 알려 준다. 고쳐라." 그러고는 담 너머로 사라진다.
+"버릇은 죽을 자리를 알려 준다. 고쳐라."
+그러고는 담 너머로 사라진다.
 @fx sw:2 hp:-1
 @set aff=aff+1
 @goto #NightEnd
@@ -743,6 +778,7 @@
 @fx ng:2 hp:1 curse:1
 @goto #NightEnd
 # NightTown
+@art scene:nightmarket
 저녁 저자. 등불이 켜진다.
 @choice "날품을 판다 — 물지게와 장작" goto:#NWork
 @choice "상점가를 둘러본다" goto:#Town1
@@ -888,7 +924,9 @@
 @fx hp:2 curse:1 sw:1
 @goto #NightEnd
 # NRestX2
-하진무가 국밥 한 그릇을 들고 서 있다. "남았소. 버리기 아까워서." 김이 오른다. 일부러 끓여 온 것이다.
+하진무가 국밥 한 그릇을 들고 서 있다.
+"남았소. 버리기 아까워서."
+김이 오른다. 일부러 끓여 온 것이다.
 @fx hp:5
 @goto #NightEnd
 # NRestT1
@@ -910,6 +948,15 @@
 @goto #D25 if:day>=25&&ms_d25<1
 @goto #D35 if:day>=35&&ms_d35<1
 @goto #D50 if:day>=50&&ms_d50<1
+@set lodgneed=3
+@set lodgneed=6 if:day>=25
+@set lodgneed=9 if:f_hajindead>0
+@set lodgneed=0 if:f_hajinfree>0&&f_hajindead<1
+@goto #DMn if:mn<lodgneed&&mnwarn<1||mn<lodgneed&&mnwarn<day-8
+@goto #Evening
+# DMn
+@set mnwarn=day
+<color=#C03434>전낭이 가볍다.</color> 이대로면 방값이 사흘을 못 간다. 날품을 팔든 비무판에 서든, 은자를 벌어야 한다.
 @goto #Evening
 # D10
 @set ms_d10=1
@@ -921,7 +968,8 @@
 @goto #Evening
 # D25
 @set ms_d25=1
-하진무가 방값 패를 바꿔 단다. "교의 징세가 또 올랐소. 이제부터 하룻밤 두 냥이오."
+하진무가 방값 패를 바꿔 단다.
+"교의 징세가 또 올랐소. 이제부터 하룻밤 두 냥이오."
 @goto #Evening
 # D35
 @set ms_d35=1
@@ -1175,12 +1223,19 @@
 # BNetHint
 @set b_nethint=1
 @page
+@deja
+{dejapre}
 성문 앞 포졸이 넷으로 늘었다. 나루에는 관아의 배가 묶였다.
-"객. 그물을 칠 때는 바깥부터 조이는 법이오." 하진무가 창밖을 본다.
-사흘 안에 끝내지 못하면, 관아의 그물이 먼저 당신을 덮칠 것이다.
-@goto #Daytime
+"객. 그물을 칠 때는 바깥부터 조이는 법이오. 며칠 남지 않았소."
+하진무가 창밖을 본다.
+그 안에 끝을 보지 못하면, 관아의 그물이 먼저 당신을 덮칠 것이다.
+@choice "소금길로 빠진다 — 곽산이 그어 준 산 둘, 물길 하나" if:f_valleyroute>0 goto:#BNetA
+@choice "나루의 밤배를 산다 (은자 15)" if:mn>=15 goto:#BNetB
+@choice "남는다 — 그물이 닫히기 전에 끝을 보러 간다" goto:#BNetC
+@stop
 # BNetK
 @set b_netk=1
+@set b_nethint=1
 @page
 그물이 좁혀 오는 아침. 이 아침을 안다.
 <color=#9A70C4>지난 생, 성문이 먼저 닫혔다. 그 밤 객잔 지붕에 사람이 올랐다.</color>
@@ -1251,6 +1306,8 @@
 
 # ChWolf
 @set f_wolfinvite=1
+@deja need:g_died_wolf text:"녹슨 사슬 고리를 보자 손목부터 저린다. 지난 생, 이 초대장 끝에서 사슬에 감겼다."
+{dejapre}
 객잔 문틈에 녹슨 사슬 고리로 봉한 서찰이 꽂혀 있다.
 「서열 백위 안에 든 것을 축하하오. 혈쇄문(血鎖門)이 그대의 사슬을 준비해 두었소.」
 혈마교의 시험이다. 피할 수는 없다. 언제 갈지는 당신이 정한다.
@@ -1267,18 +1324,26 @@
 @stop
 # Town1C0
 @goto #TownBDead if:f_herbdead>0
+@art scene:herbshop
 @art char:granny
 @goto #TownB
 # Town1C1
+@art scene:smithy
 @goto #TownM
 # Town1C2
+@art scene:pawn
 @goto #TownJ
 # Town1C3
 @goto #NightEnd
 
 # TownB
-백초당. "뭐가 필요하냐." 할멈이 눈도 들지 않고 묻는다.
-@choice "지혈환 (은자 2) — 상처를 다스린다" if:mn>=2&&taint<1 goto:#TownBC0
+백초당.
+"뭐가 필요하냐."
+할멈이 눈도 들지 않고 묻는다.
+@choice "지혈환 (은자 3) — 상처를 다스린다" if:mn>=3&&taint<1 goto:#TownBC0
+@choice "금창약 한 통 (은자 6) — 행낭에 넣어 둔다" if:mn>=6&&f_salve<1 goto:#TownBC4
+@choice "해독환 한 알 (은자 10) — 행낭에 넣어 둔다" if:mn>=10&&f_antidote<1 goto:#TownBC5
+@choice "안식향 한 묶음 (은자 8) — 머리맡에 피운다" if:mn>=8&&f_incense<1 goto:#TownBC6
 @choice "해독탕 (은자 8) — 피 속의 독과 고름을 뺀다" if:taint>0&&mn>=8&&f_herbbond<1&&f_herbfriend<1 goto:#TownBCT
 @choice "\"할멈, 이것 좀 봐 주시오.\" — 상처를 내민다" if:taint>0&&f_herbbond>0||taint>0&&f_herbfriend>0 goto:#TownBCF
 @choice "청혈산 (은자 3) — 피를 맑게 한다" if:mn>=3 goto:#TownBC1
@@ -1286,7 +1351,24 @@
 @choice "돌아선다" goto:#TownBC3
 @stop
 # TownBC0
-@fx mn:-2 hp:4
+@fx mn:-3 hp:4
+@goto #TownB
+# TownBC4
+"상처나 고치거라."
+할멈이 금창약 한 통을 밀어 준다.
+@fx mn:-6
+@set f_salve=1
+@goto #TownB
+# TownBC5
+할멈이 검은 환약 한 알을 기름종이에 싼다.
+"독이 돌거든 삼켜라. 미루면 소용없다."
+@fx mn:-10
+@set f_antidote=1
+@goto #TownB
+# TownBC6
+"단내가 나거든 머리맡에 피워라. 가슴의 열이 조금 낮게 끓는다."
+@fx mn:-8 curse:-2
+@set f_incense=1
 @goto #TownB
 # TownBCT
 할멈이 상처를 보자마자 혀를 차고 칼끝으로 살을 째 검은 피를 짜낸다.
@@ -1333,7 +1415,9 @@
 # TownM
 대장간. 무고가 망치질을 멈추지 않은 채 턱으로 묻는다.
 @choice "맡겨진 검을 받아간다 (은자 20)" if:mn>=20&&f_cheonggang<1 goto:#TownMC0
-@choice "검을 손질한다 (은자 2)" if:mn>=2 goto:#TownMC1
+@choice "날을 벼린다 (은자 8) — 이번 생에 한 번, 검술 +1" if:mn>=8&&f_honed<1 goto:#TownMC1
+@choice "가죽 호완을 맞춘다 (은자 12) — 체력 상한 +1" if:mn>=12&&f_bracer<1 goto:#TownMC4
+@choice "철편 덧댄 조끼를 산다 (은자 25) — 체력 상한 +2" if:mn>=25&&f_vest<1 goto:#TownMC5
 @choice "돌아선다" goto:#TownMC2
 @stop
 # TownMC0
@@ -1342,13 +1426,32 @@
 청강검. 백발 노인이 맡기고 간, 청운검파 장문인의 검이다.
 @goto #Town1
 # TownMC1
-@fx mn:-2 sw:1
+무고가 숫돌에 물을 끼얹는다. 사흘 밤 동안 날이 서는 소리가 대장간 밖까지 들린다.
+@fx mn:-8 sw:1
+@set f_honed=1
+@goto #TownM
+# TownMC4
+소가죽을 두 겹 덧대 손목에 감는다.
+"칼을 받아도 뼈까지는 안 오오."
+@fx mn:-12
+@set hpmax=hpmax+1
+@fx hp:1
+@set f_bracer=1
+@goto #TownM
+# TownMC5
+옷 안에 쇳조각을 엮어 덧댄 조끼다. 무겁다. 대신 한 칼은 막아 준다.
+@fx mn:-25
+@set hpmax=hpmax+2
+@fx hp:2
+@set f_vest=1
 @goto #TownM
 # TownMC2
 @goto #Town1
 
 # TownJ
-전당포 뒷문. "돈이 되는 이야기, 돈이 드는 이야기. 어느 쪽이오." 쥐눈이 장이 손가락을 비빈다.
+전당포 뒷문.
+"돈이 되는 이야기, 돈이 드는 이야기. 어느 쪽이오."
+쥐눈이 장이 손가락을 비빈다.
 @choice "혈마곡의 길과 진(陣) (은자 10)" if:mn>=10&&f_janginfo<1 goto:#TownJC0
 @choice "혈쇄문주의 사슬 버릇 (은자 10)" if:mn>=10&&rank>=1&&f_chaininfo<1 goto:#TownJC1
 @choice "독아단 본단의 소문 (은자 6)" if:mn>=6&&f_dokinfo<1 goto:#TownJC2
@@ -1439,7 +1542,10 @@
 
 # S_Hajin
 @page
-밤. 하진무가 술상을 들고 올라온다. "한잔하시겠소."
+밤. 하진무가 술상을 들고 올라온다.
+"한잔하시겠소."
+@deja text:"하진무가 술을 따르다 멈칫한다. \"객, 얼굴이 어찌 그리 질렸소. 귀신이라도 본 사람처럼.\" 귀신은 아니다. 지난 생의 이 밤을 한 번 더 볼 뿐이다."
+{dejapre}
 거절하기엔 일 년의 빚이 너무 크다.
 두어 순배가 돌고, 하진무가 입을 연다.
 "열두 해 전, 역병이 돌 때 내 여식이 앓아누웠소. 의원들은 다 고개를 저었고."
@@ -1452,7 +1558,8 @@
 @choice "\"그 문파는 이제 없소.\"" goto:#S_HajinC2
 @stop
 # S_HajinK
-하진무의 잔이 입술 앞에서 멎는다. "……객이 그걸 어찌 아시오."
+하진무의 잔이 입술 앞에서 멎는다.
+"……객이 그걸 어찌 아시오."
 "들은 적이 있소. 오래전에."
 노인이 한참 당신을 보다 잔을 비운다. 묻지 않는 것이 이 노인의 셈법이다.
 "장문인께서도 그런 눈을 하셨소. 아직 오지 않은 일을 보는 눈."
@@ -1471,6 +1578,7 @@
 # S_HajinC1
 @fx hp:2 curse:-1
 갚을 길은 하나뿐이다. 살아서, 끝까지 가는 것.
+그때 아래층에서 그릇 깨지는 소리가 난다. 하진무가 잔을 내려놓고 허둥지둥 내려간다. 술상 위에 식어 가는 술 반 잔만 남는다.
 @return
 # S_HajinC2
 @goto #S_HajinC
@@ -1478,12 +1586,15 @@
 # S_HajinB
 청강검을 끌러 탁자에 올린다. 하진무의 떨리는 손이 칼집을 쓸어내린다.
 "…이 검이오. 그날 밤, 머리맡에 세워져 있던."
-그의 눈가가 붉다. "살아서… 꼭 살아서, 이 검의 주인 노릇을 해 주시오."
+그의 눈가가 붉다.
+"살아서… 꼭 살아서, 이 검의 주인 노릇을 해 주시오."
+그 밤, 창밖 골목에서 누군가 오래 객잔을 올려다보다 사라진다.
 @fx hp:2 curse:-2 sw:1
 @return
 
 # S_HajinC
-"없어진 건 산장이오." 하진무가 당신의 잔을 채운다.
+"없어진 건 산장이오."
+하진무가 당신의 잔을 채운다.
 "문파는 사람이오. 그 사람이 여기 살아 앉아 있지 않소."
 반박할 말을 찾지 못한다.
 @fx hp:2 curse:-1
@@ -1491,6 +1602,8 @@
 
 # S_Plate
 @page
+@deja text:"게시벽 앞 탁자. 지난 생, 이 앞에서 댄 이름이 끝내 당신의 목을 불렀다."
+{dejapre}
 아침. 게시벽 앞에 탁자 하나가 놓였다.
 @set tr=random(1,3)
 @goto #S_PlV2 if:tr==2
@@ -1501,14 +1614,16 @@
 비가 그친 아침. 감찰사의 탁자에 젖은 쇠패가 쌓여 있다.
 @goto #S_PlM
 # S_PlV3
-늙은 표사가 쇠패의 숫자를 오래 본다. 지난해보다 이만이 밀렸다. "다음."
+늙은 표사가 쇠패의 숫자를 오래 본다. 지난해보다 이만이 밀렸다.
+"다음."
 # S_PlM
 @set g_fac_gyo=1
 감찰사가 붓을 든다.
 "이름은 적지 않소. 숫자만 적소. 숫자는 거짓말을 안 하니까."
 쇠패 하나가 미끄러져 온다. 숫자 자리가 빈, 무명(無名)의 패다.
 "패를 찬 자는 패를 찬 자에게 비무를 청할 수 있소. 청을 받은 자는 물리지 못하오. 이긴 자가 진 자의 숫자를 가져가오."
-옆줄의 낭인이 중얼거린다. "피는 위로 흐른다더니, 다 말라 버리겠소."
+옆줄의 낭인이 중얼거린다.
+"피는 위로 흐른다더니, 다 말라 버리겠소."
 감찰사의 붓이 멎자 낭인이 입을 다문다.
 @choice "패를 받는다 — 죽립 그늘 그대로" goto:#S_PlA
 @choice "주루 계단 밑으로 간다 — 남의 이름으로 받는 길이 있다 (은자 4)" if:mn>=4 goto:#S_PlB
@@ -1558,6 +1673,8 @@
 
 # S_Wanted
 @page
+@deja text:"은자 삼백 냥. 지난 생엔 이 종이 한 장 값에 칼 든 자들이 객잔 지붕에 올랐다."
+{dejapre}
 아침. 게시벽 앞이 웅성거린다. 새 방(榜)이 붙었다.
 「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
 그림 속 얼굴은 일 년을 앓기 전의 당신이다.
@@ -1567,7 +1684,8 @@
 "삼백 냥이면 평생 먹고살겠구먼."<br>"쉿, 혈마교 일에 입 대지 말게."
 @goto #S_WM
 # S_Wv2
-어물전 아낙이 그림을 짚는다. "눈매가 순하네. 이런 얼굴이 잔당이래."
+어물전 아낙이 그림을 짚는다.
+"눈매가 순하네. 이런 얼굴이 잔당이래."
 @goto #S_WM
 # S_Wv3
 아이 둘이 그림 흉내로 칼싸움을 하다 어미에게 입을 틀어막힌다.
@@ -1582,7 +1700,8 @@
 @stop
 # S_WantedC0
 @fx sl:1
-"영 못 그렸군. 이래서야 아무도 삼백 냥 못 받겠소." 노인이 킬킬 웃는다. 심장은 뛰어도 손은 떨리지 않는다.
+"영 못 그렸군. 이래서야 아무도 삼백 냥 못 받겠소."
+노인이 킬킬 웃는다. 심장은 뛰어도 손은 떨리지 않는다.
 @return
 # S_WantedC1
 @fx sl:1 curse:1
@@ -1597,6 +1716,8 @@
 @set tr=random(1,3)
 @goto #S_Jang_v2 if:tr==2
 @goto #S_Jang_v3 if:tr==3
+@deja need:g_know_jangsell text:"\"지나던 길이오.\" 첫마디까지 안다. 지난 생, 이 사람이 서른 냥에 당신 방을 팔았다."
+{dejapre}
 밤. 객잔 뒷문에 쥐눈이 장이 서 있다.
 @goto #S_Jang_vm
 # S_Jang_v2
@@ -1618,11 +1739,14 @@
 # S_JangC0
 @fx mn:-5
 @set f_jangfriend=1
-"이러면 당분간 기억이 안 나겠군." 장이 은자를 넣고 돌아서다 덧붙인다. "…청운에 진 빚이 나한테도 반 냥쯤 있어서."
+"이러면 당분간 기억이 안 나겠군."
+장이 은자를 넣고 돌아서다 덧붙인다.
+"…청운에 진 빚이 나한테도 반 냥쯤 있어서."
 @return
 # S_JangC1
 @fx sl:1
-장이 피식 웃는다. "파는 날엔 먼저 알려 드리리다. 그게 내 식의 의리요."
+장이 피식 웃는다.
+"파는 날엔 먼저 알려 드리리다. 그게 내 식의 의리요."
 @return
 # S_JangK
 장의 쥐눈이 한 번 깜빡인다.
@@ -1636,7 +1760,8 @@
 @fx curse:-1
 @return
 # S_JangK2
-장의 손이 소매 속 주머니를 꽉 쥔다. "……누구한테 들었소. 아니, 됐소."
+장의 손이 소매 속 주머니를 꽉 쥔다.
+"……누구한테 들었소. 아니, 됐소."
 "그 서른 냥, 받지 마시오. 교는 줄을 하나 더 그을 뿐이오."
 장이 오래 서 있다가, 붉은 끈이 맨 주머니를 문지방에 내려놓는다.
 "내일 돌려주리다. 내 손가락 하나쯤 같이 갈 거요."
@@ -1653,6 +1778,8 @@
 @set tr=random(1,3)
 @goto #S_Soatrain_v2 if:tr==2
 @goto #S_Soatrain_v3 if:tr==3
+@deja need:g_soadied text:"꽂힌 쌍검을 보는 순간 숨이 멎는다. 지난 생, 지붕 위에 남은 것은 이 검 한 자루뿐이었다."
+{dejapre}
 아침. 객잔 마당에 낯익은 쌍검이 꽂혀 있다.
 @goto #S_Soatrain_vm
 # S_Soatrain_v2
@@ -1664,7 +1791,8 @@
 @goto #S_Soatrain_vk if:g_runs<1
 <color=#9A70C4>이 백 합을 안다. 서른일곱째 합에서 왼쪽 검이 먼저 온다.</color>
 # S_Soatrain_vk
-"운주까지 이틀." 소아가 담에 기대 팔짱을 낀다.
+"운주까지 이틀."
+소아가 담에 기대 팔짱을 낀다.
 "들판엔 너보다 급 높은 놈이 절반이다. 그 검으로는 첫 판에 죽는다."
 "백 합이다. 칼을 백 번 맞댄다. 봐주지 않을 테니, 죽기 싫으면 막거라."
 @choice "전력으로 받는다" goto:#S_SoatrainC0
@@ -1679,7 +1807,8 @@
 @goto #S_SoatrainC
 # S_SoatrainC2
 @fx sl:1
-"…그래. 죽는 것도 공부지." 소아가 검을 들고 떠난다.
+"…그래. 죽는 것도 공부지."
+소아가 검을 들고 떠난다.
 @return
 
 # S_SoatrainB
@@ -1699,7 +1828,9 @@
 "…그 버릇, 운검류(雲劍類)로군. 청운도 그리 가르치나."
 같은 뿌리의 검이다. 그녀의 목소리에 처음으로 냉기 아닌 것이 섞인다.
 @set f_soatrain=1
-"적운은…" 소아가 말을 삼킨다. "…가르칠 사람이 이제 없다."
+"적운은…"
+소아가 말을 삼킨다.
+"…가르칠 사람이 이제 없다."
 @return
 
 # S_Fame
@@ -1707,6 +1838,8 @@
 @set tr=random(1,3)
 @goto #S_Fame_v2 if:tr==2
 @goto #S_Fame_v3 if:tr==3
+@deja
+{dejapre}
 객잔이 수상하다.
 낭인, 표사, 정체 모를 손님이 많은데 다들 술은 안 마시고 귀만 열어 두었다. 서열이 오른 '운객(雲客)'이 묵는다는 소문 탓이다.
 @goto #S_Fame_vm
@@ -1742,6 +1875,8 @@
 @set tr=random(1,3)
 @goto #S_Depart_v2 if:tr==2
 @goto #S_Depart_v3 if:tr==3
+@deja need:g_hajindied text:"기운 버선을 쥔 손이 떨린다. 지난 생, 이 버선을 기운 손은 마당에서 식어 갔다."
+{dejapre}
 밤. 방문 앞에 봇짐이 놓여 있다.
 육포, 기운 버선, 상비약. 하진무의 솜씨다.
 @goto #S_Depart_vm
@@ -1762,12 +1897,14 @@
 @stop
 # S_DepartC0
 @fx hp:3 curse:-2
-하진무가 돌아선다. 눈가가 붉은데 웃고 있다. "방은 비워 두겠소. 값은 돌아와서 치르시오."
+하진무가 돌아선다. 눈가가 붉은데 웃고 있다.
+"방은 비워 두겠소. 값은 돌아와서 치르시오."
 @return
 # S_DepartC1
 @fx sl:1
 말은 약속이 되고, 약속은 짐이 된다. 침묵을 고른다. 하진무도 더 묻지 않는다.
 @return
 # S_DepartC2
-"그럼 저 봇짐은 나들이 짐이오?" 거짓말은 서로 들켰고, 들킨 채로 접어 두기로 한다.
+"그럼 저 봇짐은 나들이 짐이오?"
+거짓말은 서로 들켰고, 들킨 채로 접어 두기로 한다.
 @return
