@@ -29,6 +29,7 @@ public class MolakTheme : MonoBehaviour
     /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
     public static int ChoiceCount;
     static float clickT = -1f; static string clickSig = "";
+    static float hideT = -1f; static int hideBatch = -1;   // 0.4.11: 고른 순간 선택지를 감춘다(나니노벨은 다음 선택지 묶음이 올 때까지 옛 선택지를 남겨 둔다)
     public static int StuckCount;
     static string ChoiceSig () { var sb = new System.Text.StringBuilder(); foreach (var c in choiceBuf) sb.Append(c.Id).Append('|'); return sb.ToString(); }
     /// <summary>선택지가 뜬 뒤 눌리지 않는 시간(초).</summary>
@@ -319,6 +320,28 @@ public class MolakTheme : MonoBehaviour
             }
             clickT = -1f;
         }
+        // 0.4.11: 고른 선택지 묶음은 바로 감추고, 잠시 뒤(나니노벨이 고른 길로 넘어간 뒤) 지운다
+        bool hiding = false;
+        if (hideT >= 0f)
+        {
+            if (choiceCount > 0 && ChoiceSig() == clickSig && MolakFlow.ChoiceBatch == hideBatch)
+            {
+                hiding = true;
+                if (Time.unscaledTime - hideT > 0.35f)
+                {
+                    try
+                    {
+                        var chm2 = Naninovel.Engine.GetService<Naninovel.IChoiceHandlerManager>();
+                        var act2 = chm2.GetActor(chm2.DefaultHandlerId);
+                        var tmp = new System.Collections.Generic.List<Naninovel.Choice>(choiceBuf);
+                        foreach (var c in tmp) act2.RemoveChoice(c.Id);
+                    }
+                    catch { }
+                    choiceCount = 0; hideT = -1f; hiding = false;
+                }
+            }
+            else hideT = -1f;   // 새 선택지가 떴거나 이미 사라졌다
+        }
         ChoiceCount = choiceCount;   // 선택지가 떠 있으면 MolakScroll 이 본문 창 아래 한계를 선택지 위로 올린다
         // 선택지 잠금: 글을 빠르게 넘기다 막 뜬 선택지를 읽지도 않고 누르는 일을 막는다.
         // 선택지가 뜬 뒤 ChoiceLock 초 동안은 카드가 흐리게 떠오르며 눌리지 않는다(그 사이 시작한 터치는 무시).
@@ -330,8 +353,8 @@ public class MolakTheme : MonoBehaviour
             {
                 var cg = blLock.GetComponent<CanvasGroup>(); if (cg == null) cg = blLock.AddComponent<CanvasGroup>();
                 float since = Time.unscaledTime - choiceShownAt;
-                bool locked = choiceCount > 0 && since < ChoiceLock;
-                float cgA = choiceCount > 0 ? Mathf.Lerp(0f, 1f, Mathf.Clamp01(since / ChoiceLock)) : 1f;
+                bool locked = (choiceCount > 0 && since < ChoiceLock) || hiding;
+                float cgA = hiding ? 0f : choiceCount > 0 ? Mathf.Lerp(0f, 1f, Mathf.Clamp01(since / ChoiceLock)) : 1f;
                 if (Mathf.Abs(cg.alpha - cgA) > 0.004f) cg.alpha = cgA;
                 if (cg.interactable == locked) cg.interactable = !locked;
                 if (cg.blocksRaycasts == locked) cg.blocksRaycasts = !locked;
@@ -421,7 +444,7 @@ public class MolakTheme : MonoBehaviour
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = InkText;
-            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); }); }
+            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); hideT = Time.unscaledTime; hideBatch = MolakFlow.ChoiceBatch; }); }
             foreach (var tx in btn.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (tx.gameObject.name == "Num") continue;

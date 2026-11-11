@@ -22,6 +22,7 @@ public class MolakFlow : MonoBehaviour
     int lastLine = -9999;
     bool breakNext = true;
     static bool afterChoice;
+    public static int ChoiceBatch;   // 새 선택지 묶음이 시작될 때마다 +1 (같은 메뉴가 다시 떠도 구분)
     bool lastWasChoice;
     bool lastPrintWaited = true;   // 직전 본문이 입력 대기였는가 → 다음 본문은 '새 단락'
     bool fastBlock;                // 단락 출력 중 탭 → 남은 줄 즉시 출력
@@ -97,7 +98,7 @@ public class MolakFlow : MonoBehaviour
         // 새 선택지 묶음이 시작되면 처리되지 않은 옛 선택지를 정리 (뭉탱이 방지)
         if (cmd is AddChoice)
         {
-            if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); }
+            if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); ChoiceBatch++; }
             string cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
             bool shown = true;
             if (!string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
