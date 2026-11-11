@@ -57,6 +57,7 @@ public class MolakEndTester : MonoBehaviour
     static int Find (string[] labels, string s) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(s)) return i; return -1; }
     static int FindAny (string[] labels, string[] keys) { for (int i = 0; i < labels.Length; i++) foreach (var k in keys) if (labels[i].Contains(k)) return i; return -1; }
     static float EstOdds () { float o = 0; for (int i = 0; i < 3; i++) o += MolakDuel.Odds(MolakDuel.MakeFoe("any"), 0); return o / 3f; }
+    float overSeen = -1f;
     static int Rnd (int n) { return Random.Range(0, n); }
     static string G (string n) { try { return MolakStats.Get(n).ToString("0"); } catch { return "-"; } }
 
@@ -220,6 +221,13 @@ public class MolakEndTester : MonoBehaviour
             }
             string dc = "";
             try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
+            // 사인 기록은 죽음 라벨의 @set 이 돈 뒤에 읽는다(라벨에 막 들어선 순간엔 아직 "none")
+            if (path == "MolakOver" && day >= 1 && !inOver && (dc == "" || dc == "none"))
+            {
+                if (overSeen < 0f) overSeen = Time.realtimeSinceStartup;
+                if (Time.realtimeSinceStartup - overSeen < 1.5f) continue;
+            }
+            if (path != "MolakOver") overSeen = -1f;
             if (path == "MolakOver" && day >= 1 && !inOver)
             {
                 inOver = true; lives++;
