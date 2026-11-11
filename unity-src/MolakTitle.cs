@@ -325,12 +325,16 @@ public class MolakTitle : MonoBehaviour
         GUI.Label(new Rect(rx - mw, my0 - 60*u, mw, 40*u), tag, sTag);
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
-        bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable;
+        bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable || state.AutoLoadAvailable;
         if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { wakeAt = t; MolakSfx.Rewind(); }
         if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
-            var sl = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
-            if (sl != null) sl.ChangeVisibility(true, 0.15f);
+            // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록
+            if (!MolakAutoSave.ContinueLatest())
+            {
+                var sl = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
+                if (sl != null) sl.ChangeVisibility(true, 0.15f);
+            }
         }
         string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>" : "말로록";
         if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();

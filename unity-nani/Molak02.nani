@@ -9,9 +9,9 @@
 @goto MolakOver#Taint if:taint>0&&hp<=0
 @goto #Collapse if:hp<=0&&collapsed<1||hp<=0&&collapsed<2&&f_hajinbond>0&&f_hajindead<1
 @goto MolakOver#Exhaust if:hp<=0
-; --- 장(章)·비트 --- (며칠 한 바퀴에 이야기 마디는 둘까지)
+; --- 장(章)·비트 --- (며칠 한 바퀴에 이야기 마디는 셋까지)
 # BeatCheck
-@goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10
+@goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10||f_wolfdown>0&&f_hapbyeok>0&&rank>0&&rank<=30
 @goto Molak06#Ripe1 if:curse>=88&&f_oldseen>0&&b_ripe<1
 @goto Molak06#Capture if:day>=60&&b_capture<1
 @goto #KDebt if:debt>0&&day>=debtday
@@ -50,14 +50,14 @@
 @goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
 @goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
-@goto #BS1 if:day>=5&&f_soamet>0&&f_soadead<1&&b_s1<1&&dice<=55
-@goto #BR1 if:day>=6&&b_r1x<1&&dice>=35
-@goto #BS2 if:day>=9&&f_soamet>0&&f_soadead<1&&b_s2<1&&dice<=60
-@goto #BR2 if:day>=12&&f_janginfo>0&&b_r2x<1&&dice>=30
-@goto #BS3 if:day>=18&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s3<1&&dice<=60
-@goto #BR3 if:day>=19&&b_r2x>0&&b_r3x<1&&dice>=35
-@goto #BS4 if:day>=24&&f_soamet>0&&f_soadead<1&&b_s4<1&&dice<=65
-@goto #BR4 if:day>=27&&b_r3x>0&&b_r4x<1&&dice>=30
+@goto #BS1 if:day>=5&&f_soamet>0&&f_soadead<1&&b_s1<1&&dice<=85
+@goto #BR1 if:day>=6&&b_r1x<1&&dice>=10
+@goto #BS2 if:day>=9&&f_soamet>0&&f_soadead<1&&b_s2<1&&dice<=90
+@goto #BR2 if:day>=12&&f_janginfo>0&&b_r2x<1&&dice>=5
+@goto #BS3 if:day>=18&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s3<1&&dice<=90
+@goto #BR3 if:day>=19&&b_r2x>0&&b_r3x<1&&dice>=10
+@goto #BS4 if:day>=24&&f_soamet>0&&f_soadead<1&&b_s4<1&&dice<=95
+@goto #BR4 if:day>=27&&b_r3x>0&&b_r4x<1&&dice>=5
 @goto #BS5 if:day>=30&&aff>=4&&f_soasaved>0&&f_soadead<1&&b_s5<1
 @goto #BR5 if:day>=34&&b_r4x>0&&b_r5x<1
 @goto #BS1 if:day>=9&&f_soamet>0&&f_soadead<1&&b_s1<1
@@ -288,7 +288,7 @@
 # AfterChapter
 @art char:none
 @set chain=chain+1
-@goto #BeatCheck if:chain<2
+@goto #BeatCheck if:chain<3
 @goto #Night
 
 ;
@@ -1169,7 +1169,7 @@
 @set b_hintshr=1
 @page
 <color=#9A70C4>귀에 그 목소리가 남아 있다.</color> 피 묻은 숨으로 한 번에 건네준 열두 줄. 아직 한 줄도 잊지 않았다.
-관도 서쪽, 운검사태의 사당. 스무이틀째. 스무여드레에는 불이 난다.
+관도 서쪽, 운검사태의 사당. 그 사당은 머지않아 불탄다. 그 전에 가야 한다.
 @goto #Daytime
 # BSimK
 @set b_simk=1
@@ -1402,7 +1402,7 @@
 암향루의 향이 요새 관도까지 흘러나온다느니, 운검류의 사당에 향을 피우는 여인이 있다느니. 두 냥어치 잡소문이다.
 @goto #Town1
 # TJR1
-"관도 서쪽 버려진 사당 말이오. 혈쇄문 사슬잡이들이 스무여드레쯤 기름통을 지고 간다는 말이 있소. 그 전에 볼일이 있으면 서두르시오."
+"관도 서쪽 버려진 사당 말이오. 혈쇄문 사슬잡이들이 머지않아 기름통을 지고 간다는 말이 있소. 그 전에 볼일이 있으면 서두르시오."
 장이 쥐눈을 가늘게 뜬다. "제단 밑에 뭐가 묻혀 있다는 얘기도 있고. 둘이 와야 열린다나."
 @goto #Town1
 # TJR2

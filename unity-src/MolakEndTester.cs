@@ -113,7 +113,7 @@ public class MolakEndTester : MonoBehaviour
             int leave = Find(labels, "소아와 떠난다");
             if (policy == 3) return Rnd(labels.Length);
             if (hp <= hpm * 0.35f) return rest;
-            if (mn < 4 && town >= 0) return town;
+            if (mn < 12 && town >= 0) return town;   // 며칠치 방값(0.4.3)
             switch (policy)
             {
                 case 1:
@@ -140,7 +140,7 @@ public class MolakEndTester : MonoBehaviour
                     if (med >= 0 && ng + 3 < sw) return med;
                     return train;
                 case 4:
-                    if (mn < 20 && town >= 0 && Rnd(2) == 0) return town;
+                    if (mn < 26 && town >= 0 && Rnd(2) == 0) return town;
                     if (duel >= 0 && hp >= hpm * 0.6f && EstOdds() >= 60f) return duel;
                     return train;
                 case 5:

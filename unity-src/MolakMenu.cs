@@ -167,7 +167,7 @@ public class MolakMenu : MonoBehaviour
 
         float bw = Mathf.Min(w*0.84f, 860*u), bh = 104*u, gap = 18*u;
         float bx = (w-bw)/2f;
-        string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정" };
+        string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정", "읽은 글 넘기기  ▶▶" };
         float totalH = 100*u + 4*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
         float by = Mathf.Max(60*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
@@ -223,7 +223,7 @@ public class MolakMenu : MonoBehaviour
                 case 2: codex = true; break;
                 case 3: knowTab = true; break;
                 case 4: facTab = true; break;
-                case 5: if (state != null) { state.QuickSave(); Toast("빠르게 저장했다."); } break;
+                case 5: if (state != null) { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); } break;
                 case 6:
                 {
                     open = false; SetProcessInput(true);
@@ -235,6 +235,13 @@ public class MolakMenu : MonoBehaviour
                 {
                     open = false;
                     MolakSettings.Open();
+                    break;
+                }
+                case 8:   // 이미 본 글은 빠르게 — 처음 보는 글과 선택지에서 멈춘다(나니노벨 읽은 글 넘기기)
+                {
+                    open = false; SetProcessInput(true);
+                    var pl = Engine.GetService<IScriptPlayer>();
+                    if (pl != null) { pl.SkipMode = PlayerSkipMode.ReadOnly; pl.SetSkip(true); Toast("읽은 글을 넘긴다 — 처음 보는 글에서 멈춘다."); }
                     break;
                 }
             }

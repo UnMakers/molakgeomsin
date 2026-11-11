@@ -23,7 +23,7 @@ public class MolakSettings : MonoBehaviour
     public static void Open ()
     {
         if (inst == null) Boot();
-        inst.open = true; inst.openT = 0f; inst.dragId = -1;
+        inst.open = true; inst.openT = 0f; inst.dragId = -1; inst.credits = false;
         SetInput(false);
     }
 
@@ -106,6 +106,8 @@ public class MolakSettings : MonoBehaviour
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         Box(new Rect(0, 0, w, h), new Color(0.04f, 0.035f, 0.03f, 0.96f));
 
+        if (credits) { DrawCredits(w, h, u); GUI.color = g0; return; }
+
         IAudioManager am = Engine.Initialized ? Engine.GetService<IAudioManager>() : null;
         ITextPrinterManager tp = Engine.Initialized ? Engine.GetService<ITextPrinterManager>() : null;
 
@@ -162,11 +164,46 @@ public class MolakSettings : MonoBehaviour
         GUI.Label(br, "닫기", sBtn);
         if (GUI.Button(br, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); Close(); }
         GUI.Label(new Rect(cx, br.yMax + 8 * u, cw, 40 * u), "바뀐 값은 바로 저장된다.", sHint);
+        var cr = new Rect(cx + cw * 0.3f, br.yMax + 56 * u, cw * 0.4f, 64 * u);
+        GUI.Label(cr, "<u>제작 정보</u>", sHint);
+        if (GUI.Button(cr, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); credits = true; }
 
         // 빈 자리를 누른 손가락이 뒤의 타이틀·메뉴로 새지 않게
         GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);
         if (Event.current.type == EventType.MouseUp || Event.current.rawType == EventType.MouseUp) dragId = -1;
         GUI.color = g0;
+    }
+
+    bool credits;
+    Vector2 credScroll;
+
+    /// <summary>제작 정보 — 만든 이, 엔진, 그림·소리의 출처(생성형 AI 사용 고지), 플레이 기록 파일 위치.</summary>
+    void DrawCredits (float w, float h, float u)
+    {
+        float cw = Mathf.Min(w * 0.86f, 860 * u), cx = (w - cw) / 2f;
+        float y = 90 * u;
+        GUI.Label(new Rect(cx, y, cw, 90 * u), "제작 정보", sHead);
+        y += 120 * u;
+        var body = new GUIStyle(sLabel) { wordWrap = true, alignment = TextAnchor.UpperLeft, fontSize = Mathf.RoundToInt(27 * u) };
+        string txt =
+            "<b>몰락검신(沒落劍神)</b>  v" + Application.version + "\n" +
+            "만든 이 · 언메이커\n\n" +
+            "<color=#C9A44C>엔진</color>\nUnity · Naninovel\n\n" +
+            "<color=#C9A44C>그림</color>\n삽화·인물·타이틀 그림은 생성형 AI(animagine-xl 4.0, ComfyUI)로 만든 뒤 손질했다.\n\n" +
+            "<color=#C9A44C>소리</color>\n효과음은 코드로 합성했다. 배경음은 시험용이며 정식 출시 전 교체한다.\n\n" +
+            "<color=#C9A44C>글꼴</color>\n고운바탕(Google Fonts, SIL Open Font License)\n\n" +
+            "<color=#C9A44C>플레이 기록</color>\n생마다 한 줄씩 이 기기에만 남는다. 다른 곳으로 보내지 않는다.\n<size=" + Mathf.RoundToInt(20 * u) + ">" + MolakAutoSave.LogPath + "</size>";
+        float th = body.CalcHeight(new GUIContent(txt), cw);
+        float viewH = h - y - 200 * u;
+        credScroll = GUI.BeginScrollView(new Rect(cx, y, cw, viewH), credScroll, new Rect(0, 0, cw - 20 * u, th + 20 * u), GUIStyle.none, GUIStyle.none);
+        GUI.Label(new Rect(0, 0, cw - 20 * u, th), txt, body);
+        GUI.EndScrollView();
+        var br = new Rect(cx + cw * 0.2f, h - 170 * u, cw * 0.6f, 100 * u);
+        bool over = br.Contains(Event.current.mousePosition);
+        Box(br, over ? new Color(0.22f, 0.19f, 0.16f, 1f) : new Color(0.17f, 0.14f, 0.12f, 1f));
+        GUI.Label(br, "돌아간다", sBtn);
+        if (GUI.Button(br, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); credits = false; }
+        GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);
     }
 
     static string SpeedText (float v) { return v < 0.2f ? "느리게" : v < 0.45f ? "조금 느리게" : v < 0.7f ? "보통" : v < 0.95f ? "빠르게" : "한 번에"; }

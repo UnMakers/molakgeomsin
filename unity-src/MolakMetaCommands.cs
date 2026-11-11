@@ -109,7 +109,7 @@ public class DayTickCommand : Command
             if (MolakStats.Get("f_hajincold") > 0) lodg += 1f;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
             if (MolakStats.Get("f_hajindead") > 0) lodg = 3f;   // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
             if (MolakStats.Get("mn") >= lodg) MolakStats.Add("mn", -lodg);
-            else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", -2f); MolakStats.Set("starved", 1f); }
+            else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", n >= 3 ? -1f : -2f); MolakStats.Set("starved", 1f); }
         }
         // 독·곪은 상처는 마감마다 깊어진다(며칠 한 바퀴면 두 칸 — 손쓸 기회는 한두 바퀴)
         if (MolakStats.Get("taint") > 0) MolakStats.Add("taint", n >= 3 ? 2f : 1f);
@@ -131,6 +131,7 @@ public class RegressCommand : Command
         MolakStats.Add("g_runs", 1f);
         MolakStats.Set("gained", gained);
         MolakLedger.Accumulate();
+        MolakAutoSave.LogLife(gained);
         await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
     }
 }
