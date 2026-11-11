@@ -1,4 +1,4 @@
-; ===== 몰락검신 — 조운현의 나날 (하루 루프) =====
+; ===== 몰락검신 — 조운고을의 나날 (하루 루프) =====
 # DayLoop
 @ensurevars
 @art char:none
@@ -613,15 +613,15 @@
 밤마다 가슴의 글자를 센다. 오늘도 하나 늘었다. 늘어난 만큼 검을 쥔다.
 @goto #NightChoice
 # NightChoice
-@choice "마당에서 검을 간다" goto:#NSw
-@choice "가부좌를 틀고 운기조식한다" goto:#NQi
-@choice "저자로 나간다 — 날품과 가게들" goto:#NightTown
-@choice "비무판을 찾아간다" if:day>=4&&f_ringclosed<1 goto:#NDuel
+@choice "마당에서 검을 수련한다 — 검술이 오른다" goto:#NSw
+@choice "앉아서 기를 돌린다(운기조식) — 내공이 오르고 사술이 가라앉는다" goto:#NQi
+@choice "저자로 나간다 — 품을 팔아 은자를 벌거나 물건을 산다" goto:#NightTown
+@choice "비무판을 찾아간다 — 이기면 서열이 오른다" if:day>=4&&f_ringclosed<1 goto:#NDuel
 @choice "뒷골목 비무판 — 판돈 셋, 보는 눈 없음" if:f_ringclosed>0 goto:#NDuelBack
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
 @choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&f_soadead<1&&day>=38&&b_leave<1 goto:#NLeave
 @choice "금창약을 덜어 덧난 상처를 다시 싸맨다" if:taint>0&&taintkind==2&&f_salve>0 goto:#NSalve
-@choice "몸을 쉰다" goto:#NRest
+@choice "몸을 쉰다 — 체력을 되찾는다" goto:#NRest
 @stop
 # NSalve
 무명을 풀자 고름 냄새가 방에 찬다. 백초당 금창약을 상처에 꾹꾹 눌러 채운다. 이를 악문다.
@@ -668,7 +668,7 @@
 @goto #NightEnd
 # NSwX2
 칠백 번째. 쨍 소리와 함께 손이 가벼워진다. 날 끝이 이가 빠졌다. 녹을 벗긴 지 얼마 안 된 날이다.
-단야방에 맡기면 이틀, 은자 둘.
+대장간에 맡기면 이틀, 은자 둘.
 @fx mn:-2 hp:-1
 @goto #NightEnd
 # NSwT1
@@ -776,7 +776,7 @@
 # NLedger
 @art scene:pawn
 <color=#9A70C4>지난 생, 저 장부가 어느 궤짝 셋째 칸에 드는지 보았다.</color> 피 묻은 손가락으로 이름에 줄을 긋던 그 장부다.
-삼경. 전당포 뒷담은 낮다. 기름 먹은 등잔이 꺼져 있다.
+한밤중. 전당포 뒷담은 낮다. 기름 먹은 등잔이 꺼져 있다.
 @set tr=random(1,100)
 @goto #NLedgerOk if:tr<=55+sl*3
 궤짝 뚜껑을 여는 순간 뒤에서 등잔이 켜진다. 왕삼이 잠옷 바람으로 서 있다. 뒤에 수하 둘.
@@ -1273,10 +1273,10 @@
 
 # Town1
 저자 상점가.
-백초당의 약장 냄새, 단야방의 쇳내, 전당포 뒷문의 눅눅한 그늘.
+백초당의 약장 냄새, 대장간의 쇳내, 전당포 뒷문의 눅눅한 그늘.
 은자로 할 수 있는 일이 다 여기 모여 있다.
 @choice "백초당 — 백초 할멈" goto:#Town1C0
-@choice "단야방 — 무고" goto:#Town1C1
+@choice "대장간 — 무고" goto:#Town1C1
 @choice "전당포 뒷문 — 쥐눈이 장" goto:#Town1C2
 @choice "객잔으로 돌아간다" goto:#Town1C3
 @stop
@@ -1348,7 +1348,7 @@
 @goto #Town1
 
 # TownM
-단야방. 화로가 낮게 운다.
+대장간. 화로가 낮게 운다.
 무고가 망치질을 멈추지 않은 채 턱으로 묻는다. 무슨 일이냐는 뜻이다.
 @choice "맡겨진 검을 받아간다 (은자 20)" if:mn>=20&&f_cheonggang<1 goto:#TownMC0
 @choice "검을 손질한다 (은자 2)" if:mn>=2 goto:#TownMC1
@@ -1463,7 +1463,7 @@
 "한잔하시겠소."
 청하지 않은 술이다. 그러나 거절하기엔 일 년의 빚이 너무 크다.
 두어 순배가 돌고, 하진무가 입을 연다.
-"열두 해 전이오. 역병이 돌 때 내 여식이 앓아누웠소. 현의 의원들은 다 고개를 저었고."
+"열두 해 전이오. 역병이 돌 때 내 여식이 앓아누웠소. 고을의 의원들은 다 고개를 저었고."
 그가 잔을 비운다.
 "지나던 청운검파 장문인께서 하룻밤 내내 아이의 혈을 짚어 주셨소. 약값도, 이름도 받지 않으시고. 그 아이가 지금은 시집가서 애를 둘 낳았소."
 빚이 어디서 시작됐는지 이제 안다.

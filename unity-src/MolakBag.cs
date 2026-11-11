@@ -13,7 +13,7 @@ public class MolakBag : MonoBehaviour
     public static readonly Entry[] Items = {
         new Entry("f_rankplate", "무명의 쇠패", "서열각 감찰사가 내준 쇠패. 숫자 자리가 비어 있다. 패를 찬 자는 서열각의 것이다.", "교도가 함부로 못 벤다"),
         new Entry("f_hat", "죽립과 잿빛 장포", "첫날 옷전에서 산 것. 챙을 내리면 이마에서 콧날까지 그늘이 진다.", "얼굴을 가린다"),
-        new Entry("f_whetstone", "청석 숫돌", "눈먼 숫돌 장수의 청석. 일 년 녹이 반 시진 만에 벗겨졌다.", "검술 +1"),
+        new Entry("f_whetstone", "청석 숫돌", "눈먼 숫돌 장수의 청석. 일 년 묵은 녹이 한 시간 만에 벗겨졌다.", "검술 +1"),
         new Entry("f_salve", "백초당 금창약", "할멈이 '상처나 고치거라' 하며 내준 한 통.", "상처를 싸맨다"),
         new Entry("f_incense", "안식향", "머리맡에 피우면 가슴의 열이 조금 낮게 끓는다.", "저주 −2"),
         new Entry("f_cheonggang", "청강검(靑鋼劍)", "청운검파 장문인의 검. 손에 감기듯 맞는다.", ""),
@@ -33,7 +33,7 @@ public class MolakBag : MonoBehaviour
         new Entry("f_janginfo", "혈천진 보법 서찰", "혈마곡 입구 진법의 틈. 왼, 왼, 오른.", "혈마교주 비무 보정"),
     };
     public static readonly Entry[] Lore = {
-        new Entry("f_storylore", "설서인의 강담", "열 번째 산문, 청운산장에서 장문인은 검을 뽑지 않고 서 있었다고 한다.", ""),
+        new Entry("f_storylore", "이야기꾼의 대목", "열 번째 산문, 청운산장에서 장문인은 검을 뽑지 않고 서 있었다고 한다.", ""),
         new Entry("f_herbpulse", "두 개의 맥", "백초 할멈이 짚었다. 하나는 네 것이 아니라고.", ""),
         new Entry("f_breath", "토탁(吐濁) 구결", "거지 중의 숨법. 들숨 여섯, 날숨 아홉.", "운기 시 저주 증가 감소"),
         new Entry("f_breath2", "토탁 · 두 번째 구결", "날숨 아홉 끝의 반 호흡.", "운기 시 저주 증가 더 감소"),

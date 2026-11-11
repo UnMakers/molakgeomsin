@@ -107,10 +107,10 @@ public class MolakEndTester : MonoBehaviour
             }
         }
         // 밤 행동
-        if (Find(labels, "몸을 쉰다") >= 0 && Find(labels, "마당에서 검을 간다") >= 0)
+        if (Find(labels, "몸을 쉰다") >= 0 && Find(labels, "마당에서 검을") >= 0)
         {
             int wolf = Find(labels, "혈쇄문의 초대"), duel = Find(labels, "비무판"), backRing = Find(labels, "사설 비무판");
-            int rest = Find(labels, "몸을 쉰다"), town = Find(labels, "저자로 나간다"), med = Find(labels, "가부좌"), train = Find(labels, "마당에서 검을 간다");
+            int rest = Find(labels, "몸을 쉰다"), town = Find(labels, "저자로 나간다"), med = Find(labels, "기를 돌린다"), train = Find(labels, "마당에서 검을");
             int leave = Find(labels, "소아와 떠난다");
             if (policy == 3) return Rnd(labels.Length);
             if (hp <= hpm * 0.35f) return rest;

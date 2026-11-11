@@ -145,11 +145,41 @@ public class MolakScroll : MonoBehaviour
         contentOffset = Mathf.Max(0f, prH - vpH);
         userScroll = Mathf.Clamp(userScroll, 0f, contentOffset);
         float y = contentOffset - userScroll;     // 양수 = 위로 밀어 올림 (맨 아래 정렬)
+        // 맨 위 줄이 반쯤 잘려 보이지 않게: 뷰포트 윗변에 걸친 줄은 통째로 위로 밀어 올린다(아래에 한 줄 미만의 빈자리가 남는다)
+        if (userScroll < 0.5f && contentOffset > 0.5f) y += TopLineCut(y);
         if (Mathf.Abs(printer.anchoredPosition.y - y) > 0.01f || Mathf.Abs(printer.offsetMin.x) > 0.01f || Mathf.Abs(printer.offsetMax.x) > 0.01f)
         {
             printer.offsetMin = new Vector2(0f, printer.offsetMin.y);
             printer.offsetMax = new Vector2(0f, y);
         }
+    }
+
+    TMPro.TMP_Text dlg;
+    /// <summary>현재 배치(printer 가 y 만큼 올라간 상태)를 기준으로, 뷰포트 윗변에 걸친 줄을 완전히 가리려면 더 올려야 할 양(캔버스 단위).</summary>
+    float TopLineCut (float y)
+    {
+        if (dlg == null || !dlg.isActiveAndEnabled)
+        {
+            dlg = null;
+            foreach (var t0 in printer.GetComponentsInChildren<TMPro.TMP_Text>(false)) if (t0.gameObject.name == "DialogueText") { dlg = t0; break; }
+            if (dlg == null) return 0f;
+        }
+        var ti = dlg.textInfo; if (ti == null || ti.lineCount == 0) return 0f;
+        var rc = viewport.GetComponentInParent<Canvas>(); if (rc == null) return 0f;
+        float scale = rc.rootCanvas.transform.lossyScale.y; if (scale <= 0f) return 0f;
+        float vpTop = viewport.TransformPoint(new Vector3(0f, viewport.rect.yMax, 0f)).y;
+        // 지금 적용된 위치와 이번에 놓을 위치(y)의 차이만큼 줄 위치를 옮겨서 판단
+        float shiftWorld = (y - printer.offsetMax.y) * scale;
+        for (int i = 0; i < ti.lineCount; i++)
+        {
+            var li = ti.lineInfo[i];
+            if (li.characterCount == 0) continue;
+            float top = dlg.transform.TransformPoint(new Vector3(0f, li.ascender, 0f)).y + shiftWorld;
+            float bot = dlg.transform.TransformPoint(new Vector3(0f, li.descender, 0f)).y + shiftWorld;
+            if (top > vpTop + 0.5f && bot < vpTop - 0.5f) return (vpTop - bot) / scale + 2f;   // 걸친 줄: 아랫변이 뷰포트 윗변을 넘도록
+            if (top <= vpTop) break;   // 위에서부터 훑다가 완전히 보이는 줄을 만나면 끝
+        }
+        return 0f;
     }
 
     // 위로 올려 본 상태 표시 — 뷰포트 아래쪽에 '최신으로' 힌트
