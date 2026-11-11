@@ -24,6 +24,32 @@ public static class MolakStats
         Vars?.SetVariableValue(name, new CustomVariableValue(value));
     }
 
+    /// <summary>그 이름의 변수가 있는가.</summary>
+    public static bool Has (string name)
+    {
+        var vars = Vars;
+        return vars != null && vars.VariableExists(name);
+    }
+
+    /// <summary>문자열 변수. 없거나 숫자 변수면 fallback.</summary>
+    public static string Str (string name, string fallback = "")
+    {
+        var vars = Vars;
+        if (vars == null || !vars.VariableExists(name)) return fallback;
+        var v = vars.GetVariableValue(name);
+        if (v.Type != CustomVariableValueType.String || v.String == null) return fallback;
+        return v.String;
+    }
+
+    public static void SetStr (string name, string value)
+    {
+        Vars?.SetVariableValue(name, new CustomVariableValue(value ?? ""));
+    }
+
+    /// <summary>없을 때만 기본값으로 만든다(옛 저장 호환).</summary>
+    public static void EnsureNum (string name, float value = 0f) { if (!Has(name)) Set(name, value); }
+    public static void EnsureStr (string name, string value = "none") { if (!Has(name)) SetStr(name, value); }
+
     public static void Add (string name, float delta)
     {
         if (Mathf.Approximately(delta, 0f)) return;
@@ -35,22 +61,22 @@ public static class MolakStats
     {
         var seal = Get("seallv");
         var soa = Get("soaseal");
-        return (1f - 0.12f * seal) * (soa > 0 ? 0.85f : 1f);
+        return (1f - MolakRules.SealCutPerLv * seal) * (soa > 0 ? MolakRules.SoaSealMul : 1f);
     }
 
     public static void ClampAll ()
     {
         var hpMax = Mathf.Max(1f, Get("hpmax"));
         Set("hp", Mathf.Clamp(Get("hp"), 0f, hpMax));
-        Set("curse", Mathf.Clamp(Get("curse"), 0f, 100f));
+        Set("curse", Mathf.Clamp(Get("curse"), 0f, MolakRules.CurseMax));
         foreach (var k in new[] { "ng", "sw", "sl", "mn" })
             if (Get(k) < 0f) Set(k, 0f);
     }
 
-    /// <summary>체력 상한 재계산: 10 + floor((sw+ng)/9). 상한이 오르면 그만큼 회복.</summary>
+    /// <summary>체력 상한 재계산: 기본 + floor((sw+ng)/BodyGrowthDivisor). 상한이 오르면 그만큼 회복.</summary>
     public static void GrowBody ()
     {
-        var nm = 10f + Mathf.Floor((Get("sw") + Get("ng")) / 9f);
+        var nm = MolakRules.BaseHp + Mathf.Floor((Get("sw") + Get("ng")) / MolakRules.BodyGrowthDivisor);
         var cur = Get("hpmax");
         if (nm > cur)
         {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Naninovel;
 using UnityEngine;
 
@@ -131,17 +132,16 @@ public class DuelInfoCommand : Command
         float drunkLie = 0f;
         if (sit == 11) { drunkLie = Random.Range(-35f, 25f); foe.P += Random.Range(-3f, 5f); } // 취한 걸음은 읽히지 않는다
         MolakDuel.Pending = foe;
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        vars.SetVariableValue("duelkind", new CustomVariableValue(kind));
+        MolakStats.SetStr("duelkind", kind);
         // 전생의 기억(상점 강화) + 이 상대에게 죽은 적이 있으면 경고
-        bool bossKind = kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival";
+        bool bossKind = DuelCommand.RemembersFirstMove.Contains(kind);
         // 지난 생에 이 상대에게 진 적이 있으면(살았든 죽었든) 첫 수를 안다. 상점의 '전생의 기억'은 죽은 기억까지 또렷하게 한다.
-        bool diedTo = vars.VariableExists("g_died_" + kind) && vars.GetVariableValue("g_died_" + kind).Number > 0;
+        bool diedTo = MolakStats.Get("g_died_" + kind) > 0;
         bool lostTo = MolakStats.Get("g_know_" + kind) > 0;
         MolakStats.Set("memwarn", bossKind && (lostTo || (MolakStats.Get("g_up_mem") > 0 && diedTo)) ? 1f : 0f);
-        vars.SetVariableValue("foename", new CustomVariableValue(foe.Name));
-        vars.SetVariableValue("foerank", new CustomVariableValue(string.Format("{0:N0}", foe.Rank)));
-        vars.SetVariableValue("foetier", new CustomVariableValue(MolakDuel.TierName(foe.Rank)));
+        MolakStats.SetStr("foename", foe.Name);
+        MolakStats.SetStr("foerank", string.Format("{0:N0}", foe.Rank));
+        MolakStats.SetStr("foetier", MolakDuel.TierName(foe.Rank));
         MolakStats.Set("odds10", Mathf.Clamp(Mathf.Round((MolakDuel.Odds(foe, 0) + drunkLie) / 10f), 1f, 9f));
         MolakStats.Set("cansl", MolakStats.Get("sl") >= 3 ? 1f : 0f);
         MolakStats.Set("cancurse", MolakStats.Get("curse") >= 10 ? 1f : 0f);
@@ -149,8 +149,7 @@ public class DuelInfoCommand : Command
         MolakStats.Set("canflee", sit == 2 || sit == 7 || sit == 8 || kind == "grudge" || kind == "assassin" ? 0f : 1f);
         MolakStats.Set("cansense", sit == 4 && (MolakStats.Get("f_dokinfo") > 0 || MolakStats.Get("sw") >= 18 || MolakStats.Get("f_herbpulse") > 0) ? 1f : 0f);
         MolakStats.Set("dinj", 0f); MolakStats.Set("dtaint", 0f); MolakStats.Set("dloot", 0f);
-        string art = kind == "soa" ? "soa" : kind == "hochi" ? "hochi" : kind == "kyona" ? "kyona" : kind == "jinbaek" ? "jinbaek" : kind == "lord" ? "lord" : kind == "rival" ? "gwaksan" : kind == "hunt3" ? "lawlord" : null;
-        if (art != null) MolakArt.Char(art);
+        if (DuelCommand.FoeArt.TryGetValue(kind, out var art)) MolakArt.Char(art);
     }
 }
 
@@ -158,19 +157,23 @@ public class DuelInfoCommand : Command
 [Alias("duel")]
 public class DuelCommand : Command
 {
-    public static bool IsBossKind (string kind)
-    {
-        return kind == "soa" || kind == "wolf" || kind == "lord" || kind == "jinbaek" || kind == "hochi" || kind == "kyona" || kind == "hunt3" || kind == "cheolsan" || kind == "rival" || kind == "chainmob" || kind == "hunt1" || kind == "hunt2" || kind == "namgung";
-    }
+    /// <summary>이야기 속 이름 있는 상대(비무판 잡졸이 아닌 판).</summary>
+    public static readonly HashSet<string> BossKinds = new HashSet<string> { "soa", "wolf", "lord", "jinbaek", "hochi", "kyona", "hunt3", "cheolsan", "rival", "chainmob", "hunt1", "hunt2", "namgung" };
+    /// <summary>지난 생에 진 적이 있으면 첫 수를 기억해 경고해 주는 상대.</summary>
+    public static readonly HashSet<string> RemembersFirstMove = new HashSet<string> { "soa", "wolf", "lord", "jinbaek", "hochi", "kyona", "hunt3", "cheolsan", "rival" };
+    /// <summary>판에 오를 때 띄우는 인물 그림.</summary>
+    public static readonly Dictionary<string, string> FoeArt = new Dictionary<string, string> {
+        { "soa", "soa" }, { "hochi", "hochi" }, { "kyona", "kyona" }, { "jinbaek", "jinbaek" }, { "lord", "lord" }, { "rival", "gwaksan" }, { "hunt3", "lawlord" },
+    };
+    public static bool IsBossKind (string kind) { return BossKinds.Contains(kind); }
     public StringParameter Style;
 
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         var foe = MolakDuel.Pending;
-        string kind = vars.VariableExists("duelkind") ? vars.GetVariableValue("duelkind").String : "any";
+        string kind = MolakStats.Str("duelkind", "any");
         string style = Assigned(Style) ? Style.Value : "front";
         float bonus = 0f, hpRisk = 3f;
         float sl = MolakStats.Get("sl"), curse = MolakStats.Get("curse");
@@ -235,9 +238,9 @@ public class DuelCommand : Command
             if (style == "killer" || style == "curse" || style == "curse2") MolakStats.Add("sl", 1f);
             MolakStats.Set("duelwin", 1f); MolakArt.EndDuel();
             MolakStats.Set("tierup", tierUp ? 1f : 0f);
-            vars.SetVariableValue("oldrank", new CustomVariableValue(oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명"));
-            vars.SetVariableValue("newrank", new CustomVariableValue(string.Format("{0:N0}", newRank)));
-            vars.SetVariableValue("tiername", new CustomVariableValue(MolakDuel.TierName(newRank)));
+            MolakStats.SetStr("oldrank", oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명");
+            MolakStats.SetStr("newrank", string.Format("{0:N0}", newRank));
+            MolakStats.SetStr("tiername", MolakDuel.TierName(newRank));
             MolakVfx.Gold();
             MolakHud.RankShift(oldRank, newRank, tierUp, MolakDuel.TierName(newRank));
             MolakDuelCard.Show(true, foe.Name, "서열 " + (oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명") + " → " + string.Format("{0:N0}", newRank) + "위", tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");

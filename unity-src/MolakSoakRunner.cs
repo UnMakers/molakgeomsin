@@ -25,7 +25,7 @@ public class MolakSoakRunner : MonoBehaviour
             Status = tag + " policy " + policies[pi] + " (" + (pi + 1) + "/" + policies.Length + ")";
             var names = new System.Collections.Generic.List<string>();
             foreach (var v in vars.Variables) if (v.Name.StartsWith("g_")) names.Add(v.Name);
-            foreach (var n in names) vars.SetVariableValue(n, (n == "g_lastend" || n == "g_lastcause") ? new CustomVariableValue("none") : new CustomVariableValue(0f));
+            foreach (var n in names) { if (n == "g_lastend" || n == "g_lastcause") MolakStats.SetStr(n, "none"); else MolakStats.Set(n, 0f); }
             for (int attempt = 0; attempt < 3; attempt++)
             {
                 sm.ResetState(new string[0], () => ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"));

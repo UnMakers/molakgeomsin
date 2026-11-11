@@ -262,7 +262,6 @@ public class MolakMenu : MonoBehaviour
     UnityEngine.Vector2 ledgerScroll;
     void DrawLedger (float w, float h, float u)
     {
-        float g0;
         System.Func<string,float> gv = n => { try { return MolakStats.Get(n); } catch { return 0f; } };
         float bw = Mathf.Min(w*0.84f, 860*u), rh = 96*u, gap = 12*u;
         float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.07f);
@@ -344,7 +343,6 @@ public class MolakMenu : MonoBehaviour
         }
         var back = new Rect(bx, h - 124*u, bw, 100*u);
         if (Btn(back, "돌아간다", false, u)) ledger = false;
-        g0 = 0f;
     }
 
 

@@ -26,19 +26,13 @@ public class MolakTheme : MonoBehaviour
     static readonly System.Collections.Generic.List<Naninovel.Choice> choiceBuf = new System.Collections.Generic.List<Naninovel.Choice>();
     static readonly System.Collections.Generic.HashSet<int> sfxHooked = new System.Collections.Generic.HashSet<int>();
 
-    /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
+    /// <summary>지금 떠 있는(아직 고르지 않은) 선택지 수. MolakScroll·MolakArt 가 본문 창과 삽화 띠를 맞춘다.</summary>
     public static int ChoiceCount;
     static float clickT = -1f; static string clickSig = "";
-    static float hideT = -1f; static int hideBatch = -1;   // 0.4.11: 고른 순간 선택지를 감춘다(나니노벨은 다음 선택지 묶음이 올 때까지 옛 선택지를 남겨 둔다)
     public static int StuckCount;
     static string ChoiceSig () { var sb = new System.Text.StringBuilder(); foreach (var c in choiceBuf) sb.Append(c.Id).Append('|'); return sb.ToString(); }
-    /// <summary>선택지가 뜬 뒤 눌리지 않는 시간(초).</summary>
-    public const float ChoiceLock = 0.35f;   // 0.4.8: 마지막 글 뒤 한 번 더 눌러야 선택지가 뜨므로 잠금은 짧게(길면 '눌렀는데 안 눌린다'로 느껴짐)
     static float choiceShownAt = -9f; static int lastChoiceCount;
-    /// <summary>선택지 카드 높이·간격 — 선택지가 여섯 개 이상(회귀 상점 등)이면 촘촘하게 접어 화면 위로 넘치지 않게.</summary>
-    public static bool Compact (int n) { return n >= 6; }
-    public static float CardH (int n) { return n >= 9 ? 60f : n >= 6 ? 76f : n >= 4 ? 100f : 116f; }
-    public static float CardGap (int n) { return n >= 9 ? 3f : n >= 6 ? 4f : 6f; }
+    /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
     public static float U { get { return Mathf.Min(Screen.width/1080f, Screen.height/1920f); } }
     public static readonly Color Bg = Hex("#100D0C");
     public static readonly Color Paper = Hex("#191411");
@@ -48,7 +42,9 @@ public class MolakTheme : MonoBehaviour
     public static readonly Color Ink3 = Hex("#8A7D67");
     public static readonly Color Blood = Hex("#C03434");
     public static readonly Color Gold = Hex("#C9A227");
-    public static readonly Color Curse = Hex("#9A70C4");
+    /// <summary>저주·사술의 보랏빛. 되풀이(@deja) 문장도 이 빛으로 적는다.</summary>
+    public const string CurseHex = "#9A70C4";
+    public static readonly Color Curse = Hex(CurseHex);
 
     public static Color Hex (string h){Color c;ColorUtility.TryParseHtmlString(h,out c);return c;}
 
@@ -233,9 +229,9 @@ public class MolakTheme : MonoBehaviour
     /// <summary>선택지 카드 폭: 배경 종이의 테두리 선(화면 폭의 약 4.5%) 안쪽에 들어오도록 화면 비율에 맞춰 계산</summary>
     static float CardWidth (Component c)
     {
-        float cw = 900f;
+        float cw = MolakLayout.Canvas.x;
         var cv = c.GetComponentInParent<Canvas>(); if (cv != null && cv.rootCanvas != null) cw = ((RectTransform)cv.rootCanvas.transform).rect.width;
-        return Mathf.Min(840f, cw * 0.84f);
+        return Mathf.Min(MolakLayout.CardMaxW, cw * MolakLayout.CardWidthRatio);
     }
 
     static TMPro.TMP_Text dlgText;
@@ -247,10 +243,10 @@ public class MolakTheme : MonoBehaviour
             foreach (var t0 in FindObjectsByType<TMPro.TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) if (t0.gameObject.name == "DialogueText") { dlgText = t0; break; }
             if (dlgText == null) return true;
         }
-        float canvasH = 1600f;
+        float canvasH = MolakLayout.Canvas.y;
         var rc = dlgText.canvas != null ? dlgText.canvas.rootCanvas : null; if (rc != null) canvasH = ((RectTransform)rc.transform).rect.height;
-        float top = MolakArt.BandTop + MolakArt.BandH + 24f;
-        float bottom = 150f + choices * (CardH(choices) + CardGap(choices)) + 30f;
+        float top = MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand;
+        float bottom = MolakLayout.BodyBottom(choices);
         return dlgText.preferredHeight + 20f <= canvasH - top - bottom;
     }
 
@@ -267,7 +263,7 @@ public class MolakTheme : MonoBehaviour
         // 본문 상자: 화면 가운데, 크게
         // 본문 창(Printer)의 위치·마스크·스크롤은 MolakScroll 이 담당
         // 선택지: 하단 고정, 폭 확대
-        var bl = GameObject.Find("Naninovel<Runtime>/UI/ChoiceHandler/ButtonList");
+        var bl = MolakUi.ChoiceList;
         if (bl != null)
         {
             var cp = bl.transform.Find("ContentPanel") as RectTransform;
@@ -276,15 +272,15 @@ public class MolakTheme : MonoBehaviour
                 cp.anchorMin = new Vector2(0.5f, 0f);
                 cp.anchorMax = new Vector2(0.5f, 0f);
                 cp.pivot = new Vector2(0.5f, 0f);
-                cp.anchoredPosition = new Vector2(0f, 150f);
-                cp.sizeDelta = new Vector2(850f, cp.sizeDelta.y);
+                cp.anchoredPosition = new Vector2(0f, MolakLayout.BagStripH);
+                cp.sizeDelta = new Vector2(MolakLayout.ChoicePanelW, cp.sizeDelta.y);
             }
         }
         // 모바일 세로 기준 UI 스케일 (폭 기준 매칭 — 폰에서 글자·버튼이 작아지지 않게)
         foreach (var cs in FindObjectsByType<UnityEngine.UI.CanvasScaler>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (cs.uiScaleMode != UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize) continue;
-            var want = new Vector2(900f, 1600f);
+            var want = MolakLayout.Canvas;
             if (cs.referenceResolution != want || cs.screenMatchMode != UnityEngine.UI.CanvasScaler.ScreenMatchMode.Expand)
             {
                 cs.screenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.Expand;
@@ -320,46 +316,28 @@ public class MolakTheme : MonoBehaviour
             }
             clickT = -1f;
         }
-        // 0.4.11: 고른 선택지 묶음은 바로 감추고, 잠시 뒤(나니노벨이 고른 길로 넘어간 뒤) 지운다
-        bool hiding = false;
-        if (hideT >= 0f)
-        {
-            if (choiceCount > 0 && ChoiceSig() == clickSig && MolakFlow.ChoiceBatch == hideBatch)
-            {
-                hiding = true;
-                if (Time.unscaledTime - hideT > 0.35f)
-                {
-                    try
-                    {
-                        var chm2 = Naninovel.Engine.GetService<Naninovel.IChoiceHandlerManager>();
-                        var act2 = chm2.GetActor(chm2.DefaultHandlerId);
-                        var tmp = new System.Collections.Generic.List<Naninovel.Choice>(choiceBuf);
-                        foreach (var c in tmp) act2.RemoveChoice(c.Id);
-                    }
-                    catch { }
-                    choiceCount = 0; hideT = -1f; hiding = false;
-                }
-            }
-            else hideT = -1f;   // 새 선택지가 떴거나 이미 사라졌다
-        }
         ChoiceCount = choiceCount;   // 선택지가 떠 있으면 MolakScroll 이 본문 창 아래 한계를 선택지 위로 올린다
-        // 선택지 잠금: 글을 빠르게 넘기다 막 뜬 선택지를 읽지도 않고 누르는 일을 막는다.
-        // 선택지가 뜬 뒤 ChoiceLock 초 동안은 카드가 흐리게 떠오르며 눌리지 않는다(그 사이 시작한 터치는 무시).
+        // 선택지 잠금: 선택지가 뜬 뒤 ChoiceLock 초 동안은 카드가 흐리게 떠오르며 눌리지 않는다(그 사이 시작한 터치는 무시).
+        // 주의: ButtonList 자체의 CanvasGroup 은 나니노벨이 선택지 창을 보이고 감추는 데 쓴다(고르면 alpha 0).
+        //       예전에는 여기서 그 값을 매 프레임 1 로 되돌려 놓아, 고른 선택지가 다음 묶음이 올 때까지 남아 있었다.
+        //       그래서 잠금·떠오름은 안쪽 ContentPanel 에 따로 단 CanvasGroup 으로만 한다(두 값은 곱해진다).
         if (choiceCount > 0 && choiceCount != lastChoiceCount) choiceShownAt = Time.unscaledTime;
         lastChoiceCount = choiceCount;
         {
-            var blLock = GameObject.Find("Naninovel<Runtime>/UI/ChoiceHandler/ButtonList");
-            if (blLock != null)
+            var list = MolakUi.ChoiceList;
+            var content = list != null ? list.transform.Find("ContentPanel") : null;
+            if (content != null)
             {
-                var cg = blLock.GetComponent<CanvasGroup>(); if (cg == null) cg = blLock.AddComponent<CanvasGroup>();
+                var cg = content.GetComponent<CanvasGroup>(); if (cg == null) cg = content.gameObject.AddComponent<CanvasGroup>();
                 float since = Time.unscaledTime - choiceShownAt;
-                bool locked = (choiceCount > 0 && since < ChoiceLock) || hiding;
-                float cgA = hiding ? 0f : choiceCount > 0 ? Mathf.Lerp(0f, 1f, Mathf.Clamp01(since / ChoiceLock)) : 1f;
+                bool locked = choiceCount > 0 && since < MolakLayout.ChoiceLock;
+                float cgA = choiceCount > 0 ? Mathf.Clamp01(since / MolakLayout.ChoiceLock) : 1f;
                 if (Mathf.Abs(cg.alpha - cgA) > 0.004f) cg.alpha = cgA;
                 if (cg.interactable == locked) cg.interactable = !locked;
                 if (cg.blocksRaycasts == locked) cg.blocksRaycasts = !locked;
             }
         }
+        var tier = MolakLayout.For(choiceCount);
         foreach (var btn in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             // ---- 선택지 카드: 한지 바탕 + 이중 먹선 테두리 + 왼쪽 주홍 인장(一二三四) ----
@@ -388,11 +366,11 @@ public class MolakTheme : MonoBehaviour
                 var ng = new GameObject("Num", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
                 ng.transform.SetParent(sg.transform, false);
                 var nrt = (RectTransform)ng.transform; nrt.anchorMin = Vector2.zero; nrt.anchorMax = Vector2.one; nrt.offsetMin = Vector2.zero; nrt.offsetMax = new Vector2(0f, 2f);
-                var nt = ng.GetComponent<TMPro.TextMeshProUGUI>(); nt.alignment = TMPro.TextAlignmentOptions.Center; nt.fontSize = 26f; nt.raycastTarget = false; nt.enableWordWrapping = false;
+                var nt = ng.GetComponent<TMPro.TextMeshProUGUI>(); nt.alignment = TMPro.TextAlignmentOptions.Center; nt.fontSize = 26f; nt.raycastTarget = false; nt.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
                 seal = sg.transform;
             }
             var sealImg = seal.GetComponent<Image>();
-            { var srt0 = (RectTransform)seal; float ss = Compact(choiceCount) ? 36f : 44f; if (Mathf.Abs(srt0.sizeDelta.x - ss) > 0.5f) { srt0.sizeDelta = new Vector2(ss, ss); srt0.anchoredPosition = new Vector2(ss < 40f ? 42f : 48f, 0f); } }
+            { var srt0 = (RectTransform)seal; if (Mathf.Abs(srt0.sizeDelta.x - tier.Seal) > 0.5f) { srt0.sizeDelta = new Vector2(tier.Seal, tier.Seal); srt0.anchoredPosition = new Vector2(tier.SealX, 0f); } }
             // 조건부 선택지: 원래 글귀(주석 붙기 전)를 기억해 두고 종류·주석을 만든다
             var lblTx = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
             if (lblTx != null && lblTx.gameObject.name == "Num") lblTx = null;
@@ -412,15 +390,14 @@ public class MolakTheme : MonoBehaviour
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
-            string[] hn = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五" };
-            string want = hn[Mathf.Clamp(cidx, 0, hn.Length - 1)];
+            string want = MolakLayout.Numeral(cidx);
             if (num.text != want) num.text = want;
-            { float nfs = want.Length > 1 ? (Compact(choiceCount) ? 15f : 18f) : (Compact(choiceCount) ? 21f : 26f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
+            { float nfs = want.Length > 1 ? tier.Numeral2 : tier.Numeral; if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
             if (num.color != numCol) num.color = numCol;
             var vlg0 = btn.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
-            if (vlg0 != null && (vlg0.padding.left != 90 || vlg0.padding.right != 36 || vlg0.childAlignment != TextAnchor.MiddleLeft))
-            { vlg0.padding.left = 90; vlg0.padding.right = 36; vlg0.childAlignment = TextAnchor.MiddleLeft; }
+            if (vlg0 != null && (vlg0.padding.left != MolakLayout.CardPadLeft || vlg0.padding.right != MolakLayout.CardPadRight || vlg0.childAlignment != TextAnchor.MiddleLeft))
+            { vlg0.padding.left = MolakLayout.CardPadLeft; vlg0.padding.right = MolakLayout.CardPadRight; vlg0.childAlignment = TextAnchor.MiddleLeft; }
             var ub = btn.GetComponent<UnityEngine.UI.Button>();
             // 붓 자국: 평소엔 옅게(알파 절반), 누르면 먹이 배어든 듯 짙게(텍스처 본래 농도)
             if (ub != null && (ub.targetGraphic != rootImg || ub.colors.normalColor != new Color(1f, 1f, 1f, 0.5f) || ub.colors.pressedColor != Color.white))
@@ -439,27 +416,26 @@ public class MolakTheme : MonoBehaviour
             }
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
-            float wantH = CardH(choiceCount);
-            bool compact = Compact(choiceCount);
+            float wantH = tier.CardH;
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = InkText;
-            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); hideT = Time.unscaledTime; hideBatch = MolakFlow.ChoiceBatch; }); }
+            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); }); }
             foreach (var tx in btn.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (tx.gameObject.name == "Num") continue;
                 if (tx.color != inkDark) tx.color = inkDark;
-                float cfs = Mathf.Round((choiceCount >= 9 ? 28f : compact ? 30f : 34f)*FontScale);
+                float cfs = Mathf.Round(tier.Font * FontScale);
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
-                if (!tx.enableWordWrapping) tx.enableWordWrapping = true;
+                if (tx.textWrappingMode != TMPro.TextWrappingModes.Normal) tx.textWrappingMode = TMPro.TextWrappingModes.Normal;
                 if (tx.gameObject.name != "Num" && tx.alignment != TMPro.TextAlignmentOptions.MidlineLeft) tx.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                 if (tx.overflowMode != TMPro.TextOverflowModes.Overflow) tx.overflowMode = TMPro.TextOverflowModes.Overflow;
-                float need = tx.preferredHeight + (choiceCount >= 9 ? 12f : compact ? 18f : 34f);
+                float need = tx.preferredHeight + tier.TextPad;
                 if (need > le.minHeight + 1f) le.minHeight = need;
             }
         }
         // 선택지 리스트: 흰 패널 배경 제거(뭉탱이 원인) + 카드 간격
-        var blGo = GameObject.Find("Naninovel<Runtime>/UI/ChoiceHandler/ButtonList");
+        var blGo = MolakUi.ChoiceList;
         if (blGo != null)
         {
             foreach (var img in blGo.GetComponentsInChildren<Image>(true))
@@ -479,7 +455,7 @@ public class MolakTheme : MonoBehaviour
             foreach (var vlg in blGo.GetComponentsInChildren<UnityEngine.UI.VerticalLayoutGroup>(true))
             {
                 if (vlg.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
-                { float gp = CardGap(choiceCount); if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
+                { float gp = tier.Gap; if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
                 if (vlg.childForceExpandWidth) vlg.childForceExpandWidth = false;   // 카드 폭 820 — 마스크(860) 안쪽으로
                 var ca = vlg.childAlignment == TextAnchor.UpperLeft ? TextAnchor.UpperCenter : (vlg.childAlignment == TextAnchor.MiddleLeft ? TextAnchor.MiddleCenter : (vlg.childAlignment == TextAnchor.LowerLeft ? TextAnchor.LowerCenter : vlg.childAlignment));
                 if (vlg.childAlignment != ca) vlg.childAlignment = ca;
@@ -500,7 +476,7 @@ public class MolakTheme : MonoBehaviour
             foreach (var img in panel.GetComponentsInChildren<Image>(true))
                 if (img.color.a > 0.001f) img.color = new Color(0f,0f,0f,0f); // 상자 없음 — 종이에 바로 쓴다
             var inkTxt = InkText;
-            float bfs = Mathf.Round(36f*FontScale);
+            float bfs = Mathf.Round(MolakLayout.BodyFont * FontScale);
             foreach (var tx in panel.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (tx.color != inkTxt) tx.color = inkTxt;

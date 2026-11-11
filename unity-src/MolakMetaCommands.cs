@@ -7,26 +7,26 @@ using UnityEngine;
 [Alias("initrun")]
 public class InitRunCommand : Command
 {
-    /// <summary>전역(g_) 기본값 보장 — 회차 시작과 옛 저장 불러오기 때 모두 쓴다.</summary>
-    public static void EnsureGlobals (ICustomVariableManager vars)
+    /// <summary>코드에서만 쓰는 전역 수치(스크립트에는 나오지 않아 자동 목록에 없는 것).</summary>
+    static readonly string[] CodeGlobals = {
+        "g_pts", "g_runs", "g_clears", "g_lastday", "g_bestday", "g_bestrank", "g_hapbo", "g_samecount", "g_lasttheme",
+        "g_next_bond", "g_next_item", "g_redo", "g_lk_nameless", "g_ls_nameless",
+    };
+
+    /// <summary>전역(g_) 기본값 보장 — 회차 시작과 옛 저장 불러오기 때 모두 쓴다.
+    /// 되감기지 않는 앎(지난 생들에서 보고 듣고 죽으며 알게 된 것)은 조건식에서 쓰기 전에 반드시 있어야 한다.
+    /// 목록을 손으로 적어 두면 새 변수를 빠뜨리기 쉬워, 스크립트에서 뽑은 목록(MolakVarList.Globals)과 표에서 끌어낸 이름을 쓴다.</summary>
+    public static void EnsureGlobals ()
     {
-        // 전역 기본값 보장
-        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge","g_lastday","g_bestday","g_bestrank","g_hapbo","g_samecount"})
-            if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
-        if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
-        if (!vars.VariableExists("g_lastcause")) vars.SetVariableValue("g_lastcause", new CustomVariableValue("none"));
-        // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
-        foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
-                                 "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_know_yong","g_know_gwak","g_gwakwifedied","g_herbdied","g_know_ripe","g_next_bond","g_next_item","g_redo","g_lasttheme","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
-                                 "g_know_hunt1","g_know_hunt2","g_know_hunt3","g_know_cheolsan","g_know_rival","g_know_chainmob"})
-            if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
-        foreach (var e in MolakEnd.All)
-            if (!vars.VariableExists("g_end_" + e.Id)) vars.SetVariableValue("g_end_" + e.Id, new CustomVariableValue(0f));
+        foreach (var n in MolakVarList.Globals) MolakStats.EnsureNum(n);
+        foreach (var n in CodeGlobals) MolakStats.EnsureNum(n);
+        foreach (var u in ShopInfoCommand.Ups) MolakStats.EnsureNum("g_up_" + u.key);                  // 깨달음 강화 단계
+        foreach (var k in DuelCommand.BossKinds) { MolakStats.EnsureNum("g_know_" + k); MolakStats.EnsureNum("g_died_" + k); } // 진 상대의 검로·죽은 기억
+        foreach (var e in MolakEnd.All) MolakStats.EnsureNum("g_end_" + e.Id);                            // 본 말로
         foreach (var le in MolakLedger.All)
-            foreach (var pre in new[]{"g_lk_","g_ld_","g_ls_"})
-                if (!vars.VariableExists(pre + le.Id)) vars.SetVariableValue(pre + le.Id, new CustomVariableValue(0f));
-        foreach (var gk in new[]{"g_lk_nameless","g_ls_nameless"})
-            if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
+            foreach (var pre in new[] { "g_lk_", "g_ld_", "g_ls_" }) MolakStats.EnsureNum(pre + le.Id);      // 강호록
+        MolakStats.EnsureStr("g_lastend");
+        MolakStats.EnsureStr("g_lastcause");
     }
 
 #pragma warning disable CS1998
@@ -34,34 +34,35 @@ public class InitRunCommand : Command
 #pragma warning restore CS1998
     {
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        EnsureGlobals(vars);
+        EnsureGlobals();
         // 전역(g_)이 아닌 변수 전부 제거 수준으로 0 초기화
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)
             vars.SetVariableValue(n, ty == CustomVariableValueType.String ? new CustomVariableValue("none") : new CustomVariableValue(0f));
         float up (string k) => MolakStats.Get("g_up_" + k);
-        MolakStats.Set("hpmax", 10 + 2 * up("body") + up("vigor"));
-        MolakStats.Set("hp", 10 + 2 * up("body") + up("vigor"));
+        float hp0 = MolakRules.BaseHp + MolakRules.HpPerBody * up("body") + MolakRules.HpPerVigor * up("vigor");
+        MolakStats.Set("hpmax", hp0);
+        MolakStats.Set("hp", hp0);
         if (up("tea") > 0) MolakStats.Set("f_tea", 1f);      // 회귀 상점: 청심차 비방
         if (up("lodge") > 0) MolakStats.Set("f_hajinfree", 1f); // 회귀 상점: 빈칸 방값
-        MolakStats.Set("ng", up("core") * 3);
-        MolakStats.Set("sw", 2 + up("sword") * 2);
+        MolakStats.Set("ng", up("core") * MolakRules.CorePerLv);
+        MolakStats.Set("sw", MolakRules.BaseSword + up("sword") * MolakRules.SwordPerLv);
         MolakStats.Set("sl", 0);
-        MolakStats.Set("mn", 3 + up("coin") * 5);
-        MolakStats.Set("curse", 5);
+        MolakStats.Set("mn", MolakRules.BaseCoin + up("coin") * MolakRules.CoinPerLv);
+        MolakStats.Set("curse", MolakRules.StartCurse);
         MolakStats.Set("day", 1);
         // 이번 생의 바람(회차 테마): 첫 생은 맑음. 그 뒤로는 다섯에 하나 맑음, 나머지 넷 중 하나 — 지난 생과 겹치지 않게.
         {
-            int th = 0;
-            if (MolakStats.Get("g_runs") >= 1 && Random.Range(0, 5) > 0)
+            int th = MolakRules.ThemeClear;
+            if (MolakStats.Get("g_runs") >= 1 && Random.Range(0, MolakRules.ThemeClearOdds) > 0)
             {
                 int last = Mathf.RoundToInt(MolakStats.Get("g_lasttheme"));
-                do { th = Random.Range(1, 5); } while (th == last);
+                do { th = Random.Range(MolakRules.ThemeMonsoon, MolakRules.ThemeEarlyRaid + 1); } while (th == last);
             }
             MolakStats.Set("theme", th);
             MolakStats.Set("g_lasttheme", th);
-            MolakStats.Set("raidday", th == 4 ? 38f : 42f);
-            MolakStats.Set("thday", 3f);
+            MolakStats.Set("raidday", th == MolakRules.ThemeEarlyRaid ? MolakRules.RaidDayEarly : MolakRules.RaidDay);
+            MolakStats.Set("thday", MolakRules.ThemeHintDay);
         }
         // 이번 생의 채비: 상점에서 골라 둔 인연·물건을 첫 아침에 쥐여 주고 비운다
         {
@@ -71,7 +72,7 @@ public class InitRunCommand : Command
             if (b == 3) { MolakStats.Set("f_jangfriend", 1f); }
             if (it == 1) MolakStats.Set("f_hat", 1f);
             if (it == 2) MolakStats.Set("f_salve", 1f);
-            if (it == 3) { MolakStats.Set("f_incense", 1f); MolakStats.Add("curse", -2f); }
+            if (it == 3) { MolakStats.Set("f_incense", 1f); MolakStats.Add("curse", -MolakRules.IncenseCurseCut); }
             MolakStats.Set("g_next_bond", 0f); MolakStats.Set("g_next_item", 0f);
         }
         MolakStats.Set("rank", 0);
@@ -98,20 +99,19 @@ public class DayTickCommand : Command
         {
             MolakStats.Add("day", 1f);
             float day = MolakStats.Get("day");
-            float accel = (day >= 35f ? 1.4f : 1f) * (day >= 50f ? 1.6f : 1f);
-            float root = (0.7f + 0.03f * day) * accel * MolakStats.CurseFactor();
-            if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - 0.15f); // 청심차 비방: 매일 반 김
+            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor();
+            if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - MolakRules.TeaCurseCut); // 청심차 비방: 매일 반 김
             MolakStats.Add("curse", root);
             if (MolakStats.Get("f_ringclosed") > 0) MolakStats.Add("f_ringclosed", -1f); // 비무판 폐쇄 일수
             if (MolakStats.Get("injury") > 0) MolakStats.Add("injury", -1f);                 // 부상: 사흘이면 아문다
             if (MolakStats.Get("taint") > 0)                                                 // 독·곪은 상처: 날마다 몸을 깎는다
                 MolakStats.Add("hp", MolakStats.Get("taint") >= 4f ? -2f : -1f);
-            float lodg = day >= 25f ? 2f : 1f;
-            if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f; // 하진무가 방값을 안 받기로 함
-            if (MolakStats.Get("f_hajincold") > 0) lodg += 1f;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
-            if (MolakStats.Get("f_hajindead") > 0) lodg = 3f;   // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
+            float lodg = day >= MolakRules.LodgeLateDay ? MolakRules.LodgeLate : MolakRules.LodgeBase;
+            if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f;                          // 하진무가 방값을 안 받기로 함
+            if (MolakStats.Get("f_hajincold") > 0) lodg += MolakRules.LodgeColdExtra;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
+            if (MolakStats.Get("f_hajindead") > 0) lodg = MolakRules.LodgeNoHajin;     // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
             if (MolakStats.Get("mn") >= lodg) MolakStats.Add("mn", -lodg);
-            else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", n >= 3 ? -1f : -2f); MolakStats.Set("starved", 1f); }
+            else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", -(n >= 3 ? MolakRules.StarveHpLong : MolakRules.StarveHpShort)); MolakStats.Set("starved", 1f); }
         }
         // 독·곪은 상처는 마감마다 깊어진다(며칠 한 바퀴면 두 칸 — 손쓸 기회는 한두 바퀴)
         if (MolakStats.Get("taint") > 0) MolakStats.Add("taint", n >= 3 ? 2f : 1f);
@@ -132,7 +132,7 @@ public class RegressCommand : Command
     public override async Awaitable Execute (ExecutionContext ctx)
     {
         float day = MolakStats.Get("day"), sw = MolakStats.Get("sw"), ng = MolakStats.Get("ng");
-        float gained = Mathf.Max(1f, Mathf.Floor(day / 3f) + Mathf.Floor((sw + ng) / 6f) + (MolakStats.Get("rank") > 0 ? 2f : 0f));
+        float gained = MolakRules.Enlightenment(day, sw, ng, MolakStats.Get("rank"));
         MolakStats.Add("g_pts", gained);
         MolakStats.Add("g_runs", 1f);
         MolakStats.Set("gained", gained);
@@ -176,11 +176,9 @@ public class ShopInfoCommand : Command
             MolakStats.Set("cost_" + u.key, u.baseCost + lv * u.step);
             MolakStats.Set("max_" + u.key, lv >= u.max ? 1f : 0f);
         }
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        string[] bonds = { "없음", "백초 할멈의 단골", "거지 아이", "쥐눈이 장" };
-        string[] items = { "없음", "죽립", "금창약", "안식향" };
-        vars.SetVariableValue("prepbond", new CustomVariableValue(bonds[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_bond")), 0, 3)]));
-        vars.SetVariableValue("prepitem", new CustomVariableValue(items[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_item")), 0, 3)]));
+        var bonds = MolakRules.PrepBondNames; var items = MolakRules.PrepItemNames;
+        MolakStats.SetStr("prepbond", bonds[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_bond")), 0, bonds.Length - 1)]);
+        MolakStats.SetStr("prepitem", items[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_item")), 0, items.Length - 1)]);
     }
 }
 
@@ -196,7 +194,7 @@ public class BuyUpCommand : Command
         string k = Kind.Value;
         if (k.StartsWith("bond") || k.StartsWith("item") || k == "redo")
         {
-            int pcost = k.StartsWith("bond") ? 3 : k.StartsWith("item") ? 2 : 12;
+            int pcost = k.StartsWith("bond") ? MolakRules.PrepBondCost : k.StartsWith("item") ? MolakRules.PrepItemCost : MolakRules.RedoCost;
             string slot = k.StartsWith("bond") ? "g_next_bond" : k.StartsWith("item") ? "g_next_item" : "g_redo";
             if (MolakStats.Get(slot) > 0 || MolakStats.Get("g_pts") < pcost) { MolakStats.Set("buyok", 0f); return; }
             MolakStats.Add("g_pts", -pcost);
@@ -266,39 +264,13 @@ public class PickEventCommand : Command
 
     /// <summary>가중치 × 이번 생의 바람(theme). 정수로 10배해서 쓴다.</summary>
     static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id))); }
-    public static float ThemeMul (string id)
-    {
-        switch (Mathf.RoundToInt(MolakStats.Get("theme")))
-        {
-            case 1: // 장마
-                if (id == "E_Flood") return 3f;
-                if (id.StartsWith("E_Rain")) return 2.5f;
-                if (id == "E_Ferry" || id == "E_Ferry2" || id == "E_Ferry3") return 1.6f;
-                break;
-            case 2: // 역병
-                if (id.StartsWith("E_Herb")) return 1.8f;
-                if (id == "E_Funeral" || id == "E_Emptytown" || id == "E_Lastletter" || id == "E_Vigil") return 2.5f;
-                if (id.StartsWith("E_Monk") || id.StartsWith("E_Beggar") || id.StartsWith("E_Gaebang")) return 1.6f;
-                if (id.StartsWith("E_Gamble") || id.StartsWith("E_Nightmarket") || id == "E_Caravan" || id.StartsWith("E_Peddler")) return 0.4f;
-                break;
-            case 3: // 징세 강화
-                if (id.StartsWith("E_Bloodtax") || id == "E_Hostage" || id == "E_HerbTax" || id == "E_JangSell") return 2.5f;
-                if (id.StartsWith("E_Guard") || id == "E_HajinNight" || id == "E_HerbBurn") return 1.6f;
-                break;
-            case 4: // 혈랑대 이른 생
-                if (id.StartsWith("E_Hunter") || id == "E_Search" || id == "E_SoaPoster") return 2.5f;
-                if (id.StartsWith("E_Spy") || id.StartsWith("E_Cultists") || id == "E_Cup") return 1.6f;
-                break;
-        }
-        return 1f;
-    }
+    public static float ThemeMul (string id) { return MolakRules.ThemeMul(Mathf.RoundToInt(MolakStats.Get("theme")), id); }
 
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        void SetNext (string v) => vars.SetVariableValue("nextevent", new CustomVariableValue(v));
+        void SetNext (string v) => MolakStats.SetStr("nextevent", v);
         float day = MolakStats.Get("day");
         char slot = Assigned(Slot) && !string.IsNullOrEmpty(Slot.Value) ? char.ToLowerInvariant(Slot.Value[0]) : 'a';
 
@@ -376,27 +348,8 @@ public class PickFlavorCommand : Command
 [Alias("lifenote")]
 public class LifeNoteCommand : Command
 {
-    static readonly Dictionary<string, string> Tips = new Dictionary<string, string> {
-        { "아사",        "'배가 비면 검도 빈다. 날품이라도 팔거라. 객잔 늙은이의 빈칸도, 약방의 미음도 있느니라.'" },
-        { "탈진",        "'몸이 반쯤 꺾였으면 판에 서지 마라. 사흘 쉬는 것도 수련이니라.'" },
-        { "포박",        "'그물은 바깥부터 조인다. 예순 날이 차기 전에 끝을 보든지, 길을 떠나든지 하거라.'" },
-        { "소아의 검",   "'대답을 기다려 주는 칼은 없느니라. 그 아이 앞에서는 먼저 입을 열거라.'" },
-        { "소아의 오인", "'문양이 짙은 채로 그 아이 앞에 서지 마라. 그 눈에는 마인으로 보이느니라.'" },
-        { "원수",        "'비무판에서 벤 목이 상복을 부른다. 목을 칠지는 이긴 쪽이 정하느니라.'" },
-        { "자객",        "'서열록에 오른 이름은 교의 장부에도 오른다. 높이 오를수록 등 뒤를 보거라.'" },
-        { "독",          "'푸른 날에 스쳤거든 미루지 마라. 독은 검을 기다려 주지 않느니라.'" },
-        { "곪은 상처",   "'작은 상처를 작게 보면 큰 병이 된다. 약값을 아끼지 마라.'" },
-        { "사술 폭주",   "'문양은 사술을 쓸수록 자란다. 청심차와 봉인이 그 열을 누르느니라.'" },
-        { "빚",          "'왕삼의 장부는 이자가 빠르다. 외상 판에 칼을 걸지 마라.'" },
-        { "협",          "'징세조 앞에서 고개를 드는 날이 마지막 날이 될 수 있느니라.'" },
-        { "야습",        "'그 밤은 정해진 밤이다. 계단과 뒷문을 미리 보아 두거라.'" },
-        { "미인계",      "'단 술 앞에서는 살기가 혀보다 먼저 독을 안다. 살기를 길러 두거라.'" },
-        { "미숙한 초식", "'몸에 배지 않은 초식에 목숨을 걸지 마라. 검이 먼저 익어야 하느니라.'" },
-        { "익사",        "'물 위에서는 먼저 나가는 쪽이 먼저 빠지느니라.'" },
-        { "입마",        "'부르는 소리에 무릎 꿇지 마라. 그 소리는 네 것이 아니니라.'" },
-        { "생사결",      "'금 안에는 물러설 데가 없다. 이길 셈이 서지 않거든 금을 넘지 마라.'" },
-        { "비무 패배",   "'판에 서기 전에 상대를 읽거라. 질 판은 걸어 나와도 부끄럽지 않느니라.'" },
-    };
+    /// <summary>같은 사인으로 두 번 죽었을 때 노인의 한 마디 — Resources/MolakData/death_tips.txt</summary>
+    static IReadOnlyDictionary<string, string> Tips => MolakData.Map("death_tips");
     static readonly HashSet<string> NotDeaths = new HashSet<string> { "등극", "합벽", "성사", "순검", "원행", "재건", "도주" };
 
     static string Days (float d)
@@ -407,33 +360,35 @@ public class LifeNoteCommand : Command
         if (d < 30f) return "스무 날 남짓 버텼다";
         if (d < 40f) return "한 달 남짓 버텼다";
         if (d < 50f) return "마흔 날 남짓 버텼다";
-        if (d < 60f) return "쉰 날을 넘겼다";
+        if (d < MolakRules.RunDays) return "쉰 날을 넘겼다";
         return "예순 날을 다 채웠다";
     }
 
     public override async Awaitable Execute (ExecutionContext ctx)
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        string S (string k) { return vars.VariableExists(k) && vars.GetVariableValue(k).Type == CustomVariableValueType.String ? vars.GetVariableValue(k).String : ""; }
         float day = MolakStats.Get("day"), rank = MolakStats.Get("rank"), gained = MolakStats.Get("gained");
-        string cause = S("deathcause");
+        string cause = MolakStats.Str("deathcause");
         // 이번 생의 뜻(회귀 아침에 고른 것): 이루면 깨달음 +4
         int vow = Mathf.RoundToInt(MolakStats.Get("vow"));
         string vowline = "";
         if (vow > 0)
         {
-            bool ok = vow == 1 ? (rank > 0f && rank <= 1000f)
-                    : vow == 2 ? (MolakStats.Get("f_soabond") > 0f || MolakStats.Get("aff") >= 3f || MolakStats.Get("f_hajinbond") > 0f || MolakStats.Get("f_herbbond") > 0f || MolakStats.Get("f_gwakally") > 0f || MolakStats.Get("f_yongally") > 0f || MolakStats.Get("f_amhally") > 0f || MolakStats.Get("f_jinally") > 0f)
-                    : day >= 46f;
+            bool ok = vow == 1 ? (rank > 0f && rank <= MolakRules.VowRevengeRank)
+                    : vow == 2 ? (MolakStats.Get("aff") >= MolakRules.VowBondAff || System.Array.Exists(MolakRules.VowBondFlags, f => MolakStats.Get(f) > 0f))
+                    : day >= MolakRules.VowSurviveDay;
             string name = vow == 1 ? "복수" : vow == 2 ? "인연" : "생존";
-            if (ok) { MolakStats.Add("g_pts", 4f); gained += 4f; MolakStats.Set("gained", gained); vowline = "이번 생의 뜻(" + name + ")을 이루었다 — 깨달음 +4"; }
+            if (ok)
+            {
+                MolakStats.Add("g_pts", MolakRules.VowReward); gained += MolakRules.VowReward; MolakStats.Set("gained", gained);
+                vowline = "이번 생의 뜻(" + name + ")을 이루었다 — 깨달음 +" + MolakRules.VowReward.ToString("0");
+            }
             else vowline = "이번 생의 뜻(" + name + ")은 이루지 못했다.";
         }
-        vars.SetVariableValue("vowline", new CustomVariableValue(vowline));
+        MolakStats.SetStr("vowline", vowline);
         MolakStats.Set("vowc", vowline.Length > 0 ? 1f : 0f);
         // 이번 생의 기록
         string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 ? "서열 " + rank.ToString("N0") + "위" : "서열록에 이름 없음") + " · 깨달음 +" + gained.ToString("0");
-        vars.SetVariableValue("lifesum", new CustomVariableValue(sum));
+        MolakStats.SetStr("lifesum", sum);
         // 지난 생과 견줌(두 번째 생부터)
         float lastDay = MolakStats.Get("g_lastday"), bestDay = MolakStats.Get("g_bestday"), bestRank = MolakStats.Get("g_bestrank");
         var cmp = new List<string>();
@@ -443,19 +398,20 @@ public class LifeNoteCommand : Command
             else if (day > lastDay + 2f) cmp.Add("지난 생보다 오래 버텼다");
             if (rank > 0f && (bestRank <= 0f || rank < bestRank)) cmp.Add("가장 높이 오른 생이다");
         }
-        vars.SetVariableValue("lifecmp", new CustomVariableValue(string.Join(". ", cmp) + (cmp.Count > 0 ? "." : "")));
+        MolakStats.SetStr("lifecmp", string.Join(". ", cmp) + (cmp.Count > 0 ? "." : ""));
         MolakStats.Set("lifecmpc", cmp.Count);
         MolakStats.Set("g_lastday", day);
         if (day > bestDay) MolakStats.Set("g_bestday", day);
         if (rank > 0f && (bestRank <= 0f || rank < bestRank)) MolakStats.Set("g_bestrank", rank);
         // 같은 자리에서 두 번 — 노인의 한 마디
-        string lastCause = S("g_lastcause");
+        string lastCause = MolakStats.Str("g_lastcause");
         string tip = "";
-        if (!string.IsNullOrEmpty(cause) && cause == lastCause && !NotDeaths.Contains(cause) && Tips.ContainsKey(cause)) tip = Tips[cause];
-        vars.SetVariableValue("deathtip", new CustomVariableValue(tip));
+        if (!string.IsNullOrEmpty(cause) && cause == lastCause && !NotDeaths.Contains(cause)) Tips.TryGetValue(cause, out tip);
+        tip = tip ?? "";
+        MolakStats.SetStr("deathtip", tip);
         MolakStats.Set("deathtipc", tip.Length > 0 ? 1f : 0f);
         MolakStats.Set("g_samecount", (!string.IsNullOrEmpty(cause) && cause == lastCause) ? MolakStats.Get("g_samecount") + 1f : 1f);
-        vars.SetVariableValue("g_lastcause", new CustomVariableValue(string.IsNullOrEmpty(cause) ? "none" : cause));
+        MolakStats.SetStr("g_lastcause", string.IsNullOrEmpty(cause) ? "none" : cause);
         // 진말로 길의 다음 조각: 세 생째부터, 노인의 한 마디가 없을 때만, 이번 생에서 막힌 자리 하나
         string hint = "";
         if (tip.Length == 0 && MolakStats.Get("g_runs") >= 3f && MolakStats.Get("g_hapdone") < 1f)
@@ -466,7 +422,7 @@ public class LifeNoteCommand : Command
             else if (hap && MolakStats.Get("f_wolfdown") < 1f) hint = "'교주의 산문은 혈쇄문의 사슬을 끊은 자에게만 열리느니라.'";
             else if (hap && (rank <= 0f || rank > 30f)) hint = "'검보를 품었거든 서열은 서른 안이면 족하다.'";
         }
-        vars.SetVariableValue("truehint", new CustomVariableValue(hint));
+        MolakStats.SetStr("truehint", hint);
         MolakStats.Set("truehintc", hint.Length > 0 ? 1f : 0f);
         try { await Engine.GetServiceOrErr<IStateManager>().SaveGlobal(); } catch { }
     }
@@ -480,28 +436,8 @@ public class DejaCommand : Command
 {
     public StringParameter Text;
     public StringParameter Need;
-    static readonly string[] Pool = {
-        "이 장면을 안다. 안다고 해서 숨이 편해지지는 않는다.",
-        "또 이 자리다. 지난 생에도 여기서 같은 말을 들었고, 같은 숨을 쉬었다.",
-        "몸이 먼저 굳는다. 머리보다 몸이 이 순간을 더 잘 기억한다.",
-        "몇 번째인지 세다가 그만둔다. 세는 동안에도 날은 같은 쪽으로 흐른다.",
-        "같은 바람, 같은 냄새. 달라진 것은 손에 묻은 죽음의 수뿐이다.",
-        "이번에는 다르게 하리라. 지난번에도 이 자리에서 그렇게 다짐했다.",
-        "기억이 앞질러 간다. 저 사람이 다음에 무슨 말을 할지, 입술보다 먼저 안다.",
-        "손끝이 차다. 지난 생의 마지막 온기가 아직 다 빠지지 않았다.",
-        "되감긴 것은 날뿐이다. 그날의 두려움은 되감기지 않았다.",
-        "이 길을 몇 번이고 지나왔다. 그때마다 어딘가에서 길이 끊겼다.",
-        "낯익은 얼굴들이 웃는다. 이 얼굴들이 어떻게 일그러지는지도 안다.",
-        "가슴의 문양이 낮게 운다. 너도 기억하느냐고 묻는 것만 같다.",
-        "두 번째 보는 장면이 더 아프다. 무엇을 잃을지 알고 보니까.",
-        "같은 돌부리에 두 번 넘어지는 자를 강호는 비웃는다. 당신은 몇 번째인지도 모른다.",
-        "머릿속에서 누가 숫자를 센다. 남은 날인지, 죽은 횟수인지 모를 숫자를.",
-        "모든 것이 그 생 그대로다. 그대로라서 숨이 막힌다.",
-        "지난 생의 당신이 서 있던 자리에 이번 생의 당신이 선다. 둘 다 같은 곳을 본다.",
-        "식은땀이 등줄기를 탄다. 아무 일도 일어나지 않았는데, 일어날 일을 안다.",
-        "웃음소리가 들린다. 지난 생에도 이 웃음 끝에 피 냄새가 났다.",
-        "이 순간을 또 살아야 한다. 몇 번을 살아도 쉬워지지 않는다.",
-    };
+    /// <summary>되풀이의 절박함을 담은 공용 문장 — Resources/MolakData/deja_lines.txt</summary>
+    static IReadOnlyList<string> Pool => MolakData.List("deja_lines");
     static readonly List<int> used = new List<int>();
     static int usedRun = -1;
 
@@ -509,7 +445,6 @@ public class DejaCommand : Command
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         string pre = "";
         try
         {
@@ -526,16 +461,21 @@ public class DejaCommand : Command
                 {
                     int run = Mathf.RoundToInt(MolakStats.Get("g_runs"));
                     if (run != usedRun) { used.Clear(); usedRun = run; }
-                    if (used.Count >= Pool.Length) used.Clear();
-                    int k; do { k = Random.Range(0, Pool.Length); } while (used.Contains(k));
-                    used.Add(k); line = Pool[k];
+                    var pool = Pool;
+                    if (pool.Count == 0) line = "";
+                    else
+                    {
+                        if (used.Count >= pool.Count) used.Clear();
+                        int k; do { k = Random.Range(0, pool.Count); } while (used.Contains(k));
+                        used.Add(k); line = pool[k];
+                    }
                 }
-                pre = "<color=#9A70C4>" + line + "</color>";
+                if (line.Length > 0) pre = "<color=" + MolakTheme.CurseHex + ">" + line + "</color>";
             }
         }
         catch { pre = ""; }
         // 빈 문자열을 찍으면 나니노벨이 글자 드러내기를 끝내지 못하고 멈춘다 — 보이지 않는 한 글자(폭 없는 공백)로 둔다
         if (string.IsNullOrEmpty(pre)) pre = "\u200B";
-        vars.SetVariableValue("dejapre", new CustomVariableValue(pre));
+        MolakStats.SetStr("dejapre", pre);
     }
 }

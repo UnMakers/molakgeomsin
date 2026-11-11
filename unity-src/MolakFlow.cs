@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 public class MolakFlow : MonoBehaviour
 {
-    public static int MaxMessages = 40;    // 쌓이는 최대 문장 수(상한) — 실제 제한은 화면 높이로 한다
+    public static int MaxMessages = 40;    // 쌓이는 최대 문장 수(성능상 상한). 넘친 본문은 MolakScroll 이 위로 밀어 두어 스크롤로 다시 본다
     public static int MaxChars = 900;      // 쌓이는 최대 글자 수(초과 시 다음 문장에서 비움)
     public static int MaxLineGap = 7;      // 이 이상 행이 건너뛰면 맥락 전환으로 간주
 
@@ -22,7 +22,6 @@ public class MolakFlow : MonoBehaviour
     int lastLine = -9999;
     bool breakNext = true;
     static bool afterChoice;
-    public static int ChoiceBatch;   // 새 선택지 묶음이 시작될 때마다 +1 (같은 메뉴가 다시 떠도 구분)
     bool lastWasChoice;
     bool lastPrintWaited = true;   // 직전 본문이 입력 대기였는가 → 다음 본문은 '새 단락'
     bool fastBlock;                // 단락 출력 중 탭 → 남은 줄 즉시 출력
@@ -98,7 +97,7 @@ public class MolakFlow : MonoBehaviour
         // 새 선택지 묶음이 시작되면 처리되지 않은 옛 선택지를 정리 (뭉탱이 방지)
         if (cmd is AddChoice)
         {
-            if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); ChoiceBatch++; }
+            if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); }
             string cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
             bool shown = true;
             if (!string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
@@ -113,8 +112,7 @@ public class MolakFlow : MonoBehaviour
         // 0.4.9: {dejapre} 한 줄(지난 생 장면). 비어 있으면 아무것도 찍지 않고 흐름에도 끼지 않는다.
         if (pt.Text != null && pt.Text.ToString().Trim() == "{dejapre}")
         {
-            string dv = "";
-            try { var vm = Engine.GetService<ICustomVariableManager>(); if (vm != null && vm.VariableExists("dejapre")) { var vv = vm.GetVariableValue("dejapre"); if (vv.Type == CustomVariableValueType.String) dv = vv.String; } } catch { }
+            string dv = MolakStats.Str("dejapre");
             if (string.IsNullOrEmpty(dv) || dv == "none" || dv == "\u200B") { pt.ResetPrinter = false; pt.WaitForInput = false; return; }
         }
         EnsureParagraphBreaks();
@@ -248,18 +246,11 @@ public class MolakFlow : MonoBehaviour
         if (pr == null) return false;
         buf.Clear(); pr.CollectMessages(buf);
         if (buf.Count == 0) return false;
-        // 허용 높이(캔버스 단위): 띠가 있으면 좁게, 없으면 넓게 — 선택지 4개가 떠도 겹치지 않는 범위
-        // 허용 높이: 실제 캔버스 높이 기준(폰은 1600보다 길다) — 상단 오프셋과 하단 여백(선택지 2개분)을 뺀 값
-        float canvasH = 1600f;
-        float topOff = MolakArt.BandActive ? (MolakArt.BandTop + MolakArt.BandH + 24f) : 215f;
-        float room = 100f; // 새 문단을 위한 여유(약 2줄)
         TMPro.TMP_Text tx = null;
         foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if (t0.gameObject.name == "DialogueText") tx = t0;
         if (tx == null) return buf.Count >= MaxMessages;
-        var rc = tx.GetComponentInParent<Canvas>(); if (rc != null && rc.rootCanvas != null) canvasH = (rc.rootCanvas.transform as RectTransform).rect.height;
-        float limit = canvasH - topOff - 150f - 2f*174f - 30f;
         // 넘친 본문은 지우지 않고 MolakScroll 이 뷰포트 밖으로 밀어 둔다(스크롤로 다시 볼 수 있음). 성능상 하드 캡만 유지.
         int guard = 0;
         while (buf.Count > MaxMessages && guard++ < 20)

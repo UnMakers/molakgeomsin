@@ -16,14 +16,16 @@ public class MolakEndTester : MonoBehaviour
     public static System.Text.StringBuilder Log = new System.Text.StringBuilder();
     public static System.Text.StringBuilder Lives = new System.Text.StringBuilder();
     public static string Status = "idle";
-    public static string ResultPath = @"C:\Users\sjf1t\RuinedSword\Build\soak_results.csv";
-    public static string DeathPath = @"C:\Users\sjf1t\RuinedSword\Build\soak_deaths.txt";
+    /// <summary>소크 결과는 프로젝트 옆 Build 폴더에 남긴다.</summary>
+    static string BuildDir { get { return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.dataPath), "Build"); } }
+    public static string ResultPath { get { return System.IO.Path.Combine(BuildDir, "soak_results.csv"); } }
+    public static string DeathPath { get { return System.IO.Path.Combine(BuildDir, "soak_deaths.txt"); } }
     public static HashSet<string> ChoiceSeen = new HashSet<string>();
     public static HashSet<string> DeathChoices = new HashSet<string>();
     string lastEventChoice = "";
     static readonly HashSet<int> clickedSets = new HashSet<int>();   // 이미 고른 선택지 묶음(버튼 인스턴스) — 같은 묶음을 두 번 누르지 않는다
     public static int DoubleSkips;
-    public bool god = true; public int maxLives = 1; public int lives = 0; public int policy = 0; public string tag = "";
+    public bool god = true; public int maxLives = 1; public int lives = 0; public int policy = 0; public string runTag = "";
     public bool done;
     float lastProgress; int lastIdx = -1; float lastDay = -1; string lastScript = ""; bool inOver;
     int choicesThisLife; int duelsThisLife; int duelWinsThisLife; float lastDuelWin = -1f;
@@ -36,11 +38,11 @@ public class MolakEndTester : MonoBehaviour
     public static void Run (bool godMode) { Run(godMode, 1); }
     public static void Run (bool godMode, int maxLives)
     {
-        Ensure(); I.god = godMode; I.maxLives = maxLives; I.policy = 0; I.tag = "run"; I.Begin();
+        Ensure(); I.god = godMode; I.maxLives = maxLives; I.policy = 0; I.runTag = "run"; I.Begin();
     }
     public static void Batch (int policy, int lives, string tag)
     {
-        Ensure(); DeathChoices.Clear(); I.god = false; I.maxLives = lives; I.policy = policy; I.tag = tag; I.Begin();
+        Ensure(); DeathChoices.Clear(); I.god = false; I.maxLives = lives; I.policy = policy; I.runTag = tag; I.Begin();
     }
     static void Ensure ()
     {
@@ -187,7 +189,7 @@ public class MolakEndTester : MonoBehaviour
     string LifeRow (string outcome, string cause)
     {
         int seen = 0; try { foreach (var v in Engine.GetService<ICustomVariableManager>().Variables) if (v.Name.StartsWith("seen_") && v.Value.Type == CustomVariableValueType.Numeric && v.Value.Number > 0) seen++; } catch { }
-        return string.Join(",", new[] { tag, policy.ToString(), (lives).ToString(), outcome, cause, MolakStats.Get("day").ToString("0"), MolakStats.Get("rank").ToString("0"),
+        return string.Join(",", new[] { runTag, policy.ToString(), (lives).ToString(), outcome, cause, MolakStats.Get("day").ToString("0"), MolakStats.Get("rank").ToString("0"),
             MolakStats.Get("sw").ToString("0"), MolakStats.Get("ng").ToString("0"), MolakStats.Get("hp").ToString("0"), MolakStats.Get("hpmax").ToString("0"),
             MolakStats.Get("mn").ToString("0"), MolakStats.Get("curse").ToString("0"), MolakStats.Get("sl").ToString("0"), seen.ToString(), choicesThisLife.ToString(),
             duelsThisLife.ToString(), duelWinsThisLife.ToString(), MolakStats.Get("g_pts").ToString("0"),
@@ -197,7 +199,6 @@ public class MolakEndTester : MonoBehaviour
     IEnumerator Loop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         sp.SetAutoPlay(true); sp.SetSkip(true);
         lastProgress = Time.realtimeSinceStartup;
         while (!done)
@@ -220,7 +221,7 @@ public class MolakEndTester : MonoBehaviour
                 if (MolakStats.Get("mn") < 20) MolakStats.Set("mn", 20);
             }
             string dc = "";
-            try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
+            dc = MolakStats.Str("deathcause");
             // 사인 기록은 죽음 라벨의 @set 이 돈 뒤에 읽는다(라벨에 막 들어선 순간엔 아직 "none")
             if (path == "MolakOver" && day >= 1 && !inOver && (dc == "" || dc == "none"))
             {
@@ -234,7 +235,7 @@ public class MolakEndTester : MonoBehaviour
                 bool clear = dc == "등극" || dc == "성사" || dc == "순검" || dc == "합벽";
                 if (!clear && dc != "비무 패배" && dc != "포박" && dc != "사술 폭주" && dc != "독" && dc != "곪은 상처" && lastEventChoice != "") DeathChoices.Add(lastEventChoice);
                 lastEventChoice = "";
-                string dk = ""; try { var kv = vars.GetVariableValue("dkind"); dk = kv.Type == CustomVariableValueType.String ? kv.String : ""; } catch { }
+                string dk = MolakStats.Str("dkind");
                 var row = LifeRow(clear ? "END" : "DEAD", dc == "비무 패배" ? dc + "(" + dk + ")" : dc);
                 Lives.AppendLine(row); WriteResult(row);
                 try
@@ -244,7 +245,7 @@ public class MolakEndTester : MonoBehaviour
                     System.IO.File.AppendAllText(DeathPath, "== " + row + "\n" + string.Join("\n", ll, from, ll.Length - from) + "\n", new System.Text.UTF8Encoding(false));
                 }
                 catch { }
-                if (lives >= maxLives || (clear && tag == "run")) { Status = (clear ? "ending:" : "death:") + dc; done = true; yield break; }
+                if (lives >= maxLives || (clear && runTag == "run")) { Status = (clear ? "ending:" : "death:") + dc; done = true; yield break; }
                 ResetLifeCounters();
             }
             if (path != "MolakOver") inOver = false;
@@ -287,7 +288,7 @@ public class MolakEndTester : MonoBehaviour
                 var cmd = tr.PlayedCommand;
                 string where = "[" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day;
                 Log.AppendLine("STALL at " + where);
-                WriteResult(tag + "," + policy + "," + lives + ",STALL," + where.Replace(",", ";"));
+                WriteResult(runTag + "," + policy + "," + lives + ",STALL," + where.Replace(",", ";"));
                 Status = "stall"; done = true; yield break;
             }
         }
@@ -303,7 +304,6 @@ public class MolakEndTester : MonoBehaviour
     IEnumerator DriveLoop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.realtimeSinceStartup; lastScript = "";
         while (!done)
         {
@@ -314,7 +314,7 @@ public class MolakEndTester : MonoBehaviour
             if (path != lastScript) { Log.AppendLine("d" + day + " -> script " + path); lastScript = path; }
             if (tr.PlayedIndex != lastIdx) { lastProgress = Time.realtimeSinceStartup; lastIdx = tr.PlayedIndex; }
             string dc = "";
-            try { var v = vars.GetVariableValue("deathcause"); dc = v.Type == CustomVariableValueType.String ? v.String : ""; } catch { }
+            dc = MolakStats.Str("deathcause");
             sp.SetAutoPlay(true); sp.SetSkip(true);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)

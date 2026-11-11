@@ -102,8 +102,8 @@ public class MolakHud : MonoBehaviour
         float dd = MolakStats.Get("day");
         if (MolakStats.Get("b_capture") < 1f && MolakStats.Get("f_dojuroute") < 1f)
         {
-            if (dd >= 55f) parts.Add("그물이 닫히기 직전");
-            else if (dd >= 46f) parts.Add("관아 그물이 조여 온다");
+            if (dd >= MolakRules.NetCloseDay) parts.Add("그물이 닫히기 직전");
+            else if (dd >= MolakRules.NetWarnDay) parts.Add("관아 그물이 조여 온다");
         }
         return string.Join("   ", parts.ToArray());
     }

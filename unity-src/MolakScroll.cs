@@ -39,12 +39,12 @@ public class MolakScroll : MonoBehaviour
     /// <summary>새 본문 출력 시작 — 맨 아래로 복귀.</summary>
     public static void ResetToBottom () { if (inst != null) inst.userScroll = 0f; }
 
-    static float CanvasScale () => Mathf.Min(Screen.width / 900f, Screen.height / 1600f);
+    static float CanvasScale () => Mathf.Min(Screen.width / MolakLayout.Canvas.x, Screen.height / MolakLayout.Canvas.y);
 
     bool Ensure ()
     {
         if (viewport != null && printer != null) return true;
-        var panel = GameObject.Find("Naninovel<Runtime>/UI/TextPrinter/Dialogue/Content/PrinterPanel");
+        var panel = MolakUi.PrinterPanel;
         if (panel == null) return false;
         var pr = panel.transform.Find("Printer") as RectTransform;
         var vpT = panel.transform.Find("MolakViewport") as RectTransform;
@@ -55,7 +55,7 @@ public class MolakScroll : MonoBehaviour
             vpT = go.GetComponent<RectTransform>();
             vpT.SetParent(panel.transform, false);
             vpT.anchorMin = new Vector2(0f, 0f); vpT.anchorMax = new Vector2(1f, 1f); vpT.pivot = new Vector2(0.5f, 1f);
-            vpT.offsetMin = new Vector2(70f, 150f); vpT.offsetMax = new Vector2(-70f, -215f);
+            vpT.offsetMin = new Vector2(MolakLayout.BodySide, MolakLayout.BagStripH); vpT.offsetMax = new Vector2(-MolakLayout.BodySide, -MolakLayout.BodyTop);
             pr.SetParent(vpT, false);
             pr.anchorMin = new Vector2(0f, 1f); pr.anchorMax = new Vector2(1f, 1f); pr.pivot = new Vector2(0.5f, 1f);
             pr.offsetMin = new Vector2(0f, pr.offsetMin.y); pr.offsetMax = new Vector2(0f, 0f);
@@ -88,7 +88,7 @@ public class MolakScroll : MonoBehaviour
         {
             pressing = true; pressPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false;
             // 화면 맨 아래 띠(선택지 아래 150캔버스단위)에서 시작한 누름 → 위로 쓸면 행낭
-            float zone = (MolakTheme.ChoiceCount > 0 ? 150f : 280f) * CanvasScale();
+            float zone = (MolakTheme.ChoiceCount > 0 ? MolakLayout.BagSwipeZoneWithChoices : MolakLayout.BagSwipeZone) * CanvasScale();
             pressInBottomZone = pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen;
         }
         else if (down && pressing)
@@ -129,25 +129,24 @@ public class MolakScroll : MonoBehaviour
 
     void Layout ()
     {
-        float canvasW = 900f, canvasH = 1600f;
+        float canvasW = MolakLayout.Canvas.x, canvasH = MolakLayout.Canvas.y;
         var root = viewport.GetComponentInParent<Canvas>();
         if (root != null && root.rootCanvas != null) { var r = (root.rootCanvas.transform as RectTransform).rect; canvasW = r.width; canvasH = r.height; }
-        float side = Mathf.Max(70f, (canvasW - 900f) / 2f + 70f);
-        float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + 24f) : -215f;
+        float side = Mathf.Max(MolakLayout.BodySide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.BodySide);
+        float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand) : -MolakLayout.BodyTop;
         topCur = Mathf.Lerp(topCur, topOff, Time.deltaTime * 6f);
         if (Mathf.Abs(topCur - topOff) < 0.5f) topCur = topOff;
 
         // 아래 한계: 선택지가 떠 있으면 선택지 위, 아니면 화면 하단 여백
-        float bottom = 150f;   // 하단 행낭 띠(150u) 위까지
         int choices = MolakTheme.ChoiceCount;
+        float listH = 0f;
         if (choices > 0)
         {
-            var bl = GameObject.Find("Naninovel<Runtime>/UI/ChoiceHandler/ButtonList");
+            var bl = MolakUi.ChoiceList;
             var cp = bl != null ? bl.transform.Find("ContentPanel") as RectTransform : null;
-            float h = cp != null && cp.rect.height > 10f ? cp.rect.height : choices * (MolakTheme.CardH(choices) + MolakTheme.CardGap(choices));
-            bottom = 150f + h + 30f;
+            if (cp != null) listH = cp.rect.height;   // 실측이 있으면 실측, 없으면 단계별 어림
         }
-        bottom = Mathf.Min(bottom, canvasH - 300f);
+        float bottom = Mathf.Min(MolakLayout.BodyBottom(choices, listH), canvasH - MolakLayout.BodyMinH);
         var wantMin = new Vector2(side, bottom); var wantMax = new Vector2(-side, topCur);
         if ((viewport.offsetMin - wantMin).sqrMagnitude > 0.01f) viewport.offsetMin = wantMin;
         if ((viewport.offsetMax - wantMax).sqrMagnitude > 0.01f) viewport.offsetMax = wantMax;

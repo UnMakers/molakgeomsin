@@ -179,8 +179,7 @@ public class MolakTitle : MonoBehaviour
 
         int runs = (int)G("g_runs"), clears = (int)G("g_clears"), seenEnds = 0;
         foreach (var e in MolakEnd.All) if (G("g_end_" + e.Id) > 0) seenEnds++;
-        string lastEnd = "none";
-        try { var cv = Engine.GetService<ICustomVariableManager>(); if (cv != null && cv.VariableExists("g_lastend")) { var v = cv.GetVariableValue("g_lastend"); if (v.Type == CustomVariableValueType.String) lastEnd = v.String; } } catch {}
+        string lastEnd = MolakStats.Str("g_lastend", "none");
         bool dawn = G("g_hapdone") > 0;
         bool soaWith = dawn || G("g_end_donghaeng") > 0 || G("g_end_wonhaeng") > 0;
         bool soaGhost = !dawn && G("g_soadied") > 0;

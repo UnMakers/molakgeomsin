@@ -43,9 +43,8 @@ public class MolakEnd : MonoBehaviour
 
     public static string Resolve ()
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        string cause = vars.VariableExists("deathcause") ? vars.GetVariableValue("deathcause").String : "";
-        string kind = vars.VariableExists("dkind") ? vars.GetVariableValue("dkind").String : "";
+        string cause = MolakStats.Str("deathcause");
+        string kind = MolakStats.Str("dkind");
         if (cause == "등극") return MolakStats.Get("f_soabond") > 0 ? "donghaeng" : "sicheon";
         if (cause == "성사") return "seongsa";
         if (cause == "입마") return "ipma";

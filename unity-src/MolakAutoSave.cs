@@ -77,9 +77,7 @@ public class MolakAutoSave : MonoBehaviour
     {
         try
         {
-            var vars = Engine.GetService<ICustomVariableManager>();
-            string cause = "";
-            if (vars != null) { var v = vars.GetVariableValue("deathcause"); cause = v.ToString(); }
+            string cause = MolakStats.Str("deathcause");
             bool head = !System.IO.File.Exists(LogPath);
             string G (string n) { return MolakStats.Get(n).ToString("0"); }
             var line = string.Join(",", new[] {

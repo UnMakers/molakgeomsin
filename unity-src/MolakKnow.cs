@@ -73,7 +73,7 @@ public static class MolakKnow
     {
         var sb = new System.Text.StringBuilder();
         for (int i = 0; i < All.Length; i++) if (Known(All[i])) sb.Append(i).Append(',');
-        Engine.GetServiceOrErr<ICustomVariableManager>().SetVariableValue("knowsnap", new CustomVariableValue(sb.ToString()));
+        MolakStats.SetStr("knowsnap", sb.ToString());
     }
 }
 
@@ -85,14 +85,12 @@ public class KnowNewCommand : Command
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
     {
-        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
-        string snap = "";
-        try { var v = vars.GetVariableValue("knowsnap"); if (v.Type == CustomVariableValueType.String) snap = v.String; } catch { }
+        string snap = MolakStats.Str("knowsnap");
         var had = new System.Collections.Generic.HashSet<string>(snap.Split(','));
         var names = new System.Collections.Generic.List<string>();
         for (int i = 0; i < MolakKnow.All.Length; i++)
             if (MolakKnow.Known(MolakKnow.All[i]) && !had.Contains(i.ToString())) names.Add("「" + MolakKnow.All[i].Name + "」");
-        vars.SetVariableValue("knownew", new CustomVariableValue(string.Join(" ", names.ToArray())));
+        MolakStats.SetStr("knownew", string.Join(" ", names.ToArray()));
         MolakStats.Set("knownewc", names.Count);
     }
 }

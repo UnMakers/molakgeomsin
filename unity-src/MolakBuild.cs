@@ -9,10 +9,14 @@ using UnityEngine;
 /// </summary>
 public static class MolakBuild
 {
-    public const string Apk = @"C:\Users\sjf1t\RuinedSword\Build\Android\molakgeomsin.apk";
-    public const string ResultFile = @"C:\Users\sjf1t\RuinedSword\Build\android_build_result.txt";
-    /// <summary>Google Drive 데스크톱 동기화 폴더(내 드라이브/작업중(Ings)/시현/전생검신/Build_Apk). 빌드 성공 시 버전명 붙여 복사.</summary>
-    public const string DriveDir = @"G:\내 드라이브\작업중(Ings)\시현\전생검신\Build_Apk";
+    /// <summary>빌드 산출물은 프로젝트 옆 Build 폴더에 둔다(프로젝트를 어디로 옮겨도 따라간다).</summary>
+    static string BuildDir { get { return Path.Combine(Path.GetDirectoryName(Application.dataPath), "Build"); } }
+    public static string Apk { get { return Path.Combine(BuildDir, "Android", "molakgeomsin.apk"); } }
+    public static string ResultFile { get { return Path.Combine(BuildDir, "android_build_result.txt"); } }
+    /// <summary>빌드가 끝나면 APK·PC zip 을 버전명 붙여 복사해 두는 공유 폴더(Google Drive 데스크톱 동기화 폴더).
+    /// 기기마다 다를 수 있어 EditorPrefs "Molak.DriveDir" 로 바꿀 수 있다. 폴더가 없으면 복사를 건너뛴다.</summary>
+    const string DefaultDriveDir = @"G:\내 드라이브\작업중(Ings)\시현\전생검신\Build_Apk";
+    public static string DriveDir { get { return EditorPrefs.GetString("Molak.DriveDir", DefaultDriveDir); } }
 
     public static string CopyToDrive (string version)
     {
@@ -34,6 +38,7 @@ public static class MolakBuild
             AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
         PlayerSettings.bundleVersion = version;
         PlayerSettings.Android.bundleVersionCode = code;
+        Directory.CreateDirectory(Path.GetDirectoryName(Apk));
         var opts = new BuildPlayerOptions {
             scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
             locationPathName = Apk, target = BuildTarget.Android, options = BuildOptions.None
@@ -64,8 +69,8 @@ public static class MolakBuild
         return res;
     }
 
-    public const string WinDir = @"C:\Users\sjf1t\RuinedSword\Build\Win";
-    public const string WinResultFile = @"C:\Users\sjf1t\RuinedSword\Build\win_build_result.txt";
+    public static string WinDir { get { return Path.Combine(BuildDir, "Win"); } }
+    public static string WinResultFile { get { return Path.Combine(BuildDir, "win_build_result.txt"); } }
 
     /// <summary>PC(Windows 64비트) 빌드 → Build\Win\v{버전}\몰락검신.exe, 폴더째 zip 으로 묶어 드라이브 Build_Apk 에 함께 둔다.</summary>
     public static string Windows (string version)
