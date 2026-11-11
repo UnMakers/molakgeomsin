@@ -115,6 +115,11 @@ rep('Molak04.nani', '혈마교의 수문진(守門陣)이다.', '혈마교의 �
 rep('Molak04.nani', '한 식경에 한 번씩', '밥 한 끼 먹을 동안에 한 번씩')
 rep('MolakEvents.nani', '삼키고 한 식경, 속이 뒤집힌다.', '삼키고 얼마 지나지 않아 속이 뒤집힌다.')
 
+# '전생의 앎' 이름을 '지난 생'·'남은 기억'으로(사용자: 너무 짜친다)
+rep('MolakOver.nani', '@choice "전생의 기억 — 숨은 길이 보인다', '@choice "또렷한 기억 — 숨은 길이 보인다')
+rep('MolakOver.nani', '같은 자리에 서면 그 앎이 보랏빛 인장을', '같은 자리에 서면 그 기억이 보랏빛 인장을')
+rep('Molak03.nani', '전생의 기억이 경고한다.', '지난 생의 기억이 경고한다.')
+
 for f, t in files.items():
     io.open(os.path.join(D, f), 'w', encoding='utf-8').write(t)
 print('ok', len(files), 'miss', miss)

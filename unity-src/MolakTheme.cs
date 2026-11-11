@@ -28,6 +28,9 @@ public class MolakTheme : MonoBehaviour
 
     /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
     public static int ChoiceCount;
+    /// <summary>선택지가 뜬 뒤 눌리지 않는 시간(초).</summary>
+    public const float ChoiceLock = 0.6f;
+    static float choiceShownAt = -9f; static int lastChoiceCount;
     /// <summary>선택지 카드 높이·간격 — 선택지가 여섯 개 이상(회귀 상점 등)이면 촘촘하게 접어 화면 위로 넘치지 않게.</summary>
     public static bool Compact (int n) { return n >= 6; }
     public static float CardH (int n) { return n >= 9 ? 64f : n >= 6 ? 84f : n >= 4 ? 122f : 148f; }
@@ -267,6 +270,23 @@ public class MolakTheme : MonoBehaviour
         MolakArt.Collapsed = choiceCount >= 4 || (choiceCount >= 3 && !BandFits(choiceCount));
         EnsureCardSprite();
         ChoiceCount = choiceCount;   // 선택지가 떠 있으면 MolakScroll 이 본문 창 아래 한계를 선택지 위로 올린다
+        // 선택지 잠금: 글을 빠르게 넘기다 막 뜬 선택지를 읽지도 않고 누르는 일을 막는다.
+        // 선택지가 뜬 뒤 ChoiceLock 초 동안은 카드가 흐리게 떠오르며 눌리지 않는다(그 사이 시작한 터치는 무시).
+        if (choiceCount > 0 && choiceCount != lastChoiceCount) choiceShownAt = Time.unscaledTime;
+        lastChoiceCount = choiceCount;
+        {
+            var blLock = GameObject.Find("Naninovel<Runtime>/UI/ChoiceHandler/ButtonList");
+            if (blLock != null)
+            {
+                var cg = blLock.GetComponent<CanvasGroup>(); if (cg == null) cg = blLock.AddComponent<CanvasGroup>();
+                float since = Time.unscaledTime - choiceShownAt;
+                bool locked = choiceCount > 0 && since < ChoiceLock;
+                float cgA = choiceCount > 0 ? Mathf.Lerp(0.3f, 1f, Mathf.Clamp01(since / ChoiceLock)) : 1f;
+                if (Mathf.Abs(cg.alpha - cgA) > 0.004f) cg.alpha = cgA;
+                if (cg.interactable == locked) cg.interactable = !locked;
+                if (cg.blocksRaycasts == locked) cg.blocksRaycasts = !locked;
+            }
+        }
         foreach (var btn in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             // ---- 선택지 카드: 한지 바탕 + 이중 먹선 테두리 + 왼쪽 주홍 인장(一二三四) ----

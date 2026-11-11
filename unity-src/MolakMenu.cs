@@ -116,7 +116,7 @@ public class MolakMenu : MonoBehaviour
                 var ls = new GUIStyle(sToast){ alignment = TextAnchor.UpperLeft, wordWrap = true, richText = true, fontSize = Mathf.RoundToInt(27*u) };
                 GUI.Label(new Rect(lx + 28*u, ly + 18*u, lw - 56*u, lh - 30*u),
                     "선택지 앞 인장의 색은 그 길이 열린 까닭이다.\n" +
-                    "<color=#8E62B8>■</color> 전생의 앎   <color=#4A7398>■</color> 물건·인연   <color=#5A524C>■</color> 능력치   <color=#B08A30>■</color> 은자   <color=#7A2A68>■</color> 사술   <color=#B03A2A>■</color> 그 밖\n" +
+                    "<color=#8E62B8>■</color> 지난 생   <color=#4A7398>■</color> 물건·인연   <color=#5A524C>■</color> 능력치   <color=#B08A30>■</color> 은자   <color=#7A2A68>■</color> 사술   <color=#B03A2A>■</color> 그 밖\n" +
                     "<size=85%>회색 작은 글씨는 그 선택지를 연 조건이다.</size>", ls);
                 GUI.color = g;
             }
@@ -167,7 +167,7 @@ public class MolakMenu : MonoBehaviour
 
         float bw = Mathf.Min(w*0.84f, 860*u), bh = 104*u, gap = 18*u;
         float bx = (w-bw)/2f;
-        string[] labels = { "지난 기록", "원수 장부", "말로록", "전생의 앎", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정", "읽은 글 넘기기  ▶▶" };
+        string[] labels = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정", "읽은 글 넘기기  ▶▶" };
         float totalH = 100*u + 4*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
         float by = Mathf.Max(60*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
@@ -445,7 +445,7 @@ public class MolakMenu : MonoBehaviour
         float bw = Mathf.Min(w*0.88f, 900*u);
         float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.08f);
         int got = MolakKnow.Count();
-        GUI.Label(new Rect(bx, by, bw, 56*u), "— 전생의 앎 · " + got + " / " + MolakKnow.All.Length + " —", sHead);
+        GUI.Label(new Rect(bx, by, bw, 56*u), "— 남은 기억 · " + got + " / " + MolakKnow.All.Length + " —", sHead);
         by += 76*u;
         float rh = 150*u, gap = 14*u;
         float listH = h - by - 150*u;

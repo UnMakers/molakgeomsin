@@ -100,7 +100,7 @@
 노인의 목소리가 뼛속에서 울린다. 가슴의 문양이, 사술이 당신을 되감았다.
 @page
 되감기는 것은 몸뿐이다.
-<color=#9A70C4>이번 생에 본 것, 들은 것, 죽으며 깨달은 것은 남는다.</color> 다음 생, 같은 자리에 서면 그 앎이 보랏빛 인장을 단 선택지가 되어 떠오른다.
+<color=#9A70C4>이번 생에 본 것, 들은 것, 죽으며 깨달은 것은 남는다.</color> 다음 생, 같은 자리에 서면 그 기억이 보랏빛 인장을 단 선택지가 되어 떠오른다.
 죽음마다 쌓인 깨달음으로는 다음 몸을 미리 닦아 둘 수 있다. 칼이 먼저 기억하고, 숨이 먼저 기억한다.
 '몇 번을 죽어도 좋다. 같은 자리에서 두 번 죽지만 마라.'
 @goto #Shop if:deathcause!="소아의 검"
@@ -136,7 +136,7 @@
 @choice "잔류 진기 — 시작 내공 +3 \[{cost_core}\]" if:max_core<1&&g_pts>=cost_core goto:#BuyCore
 @choice "묻어둔 은자 — 시작 은자 +5 \[{cost_coin}\]" if:max_coin<1&&g_pts>=cost_coin goto:#BuyCoin
 @choice "봉인 문양 — 사술이 더디게 자란다 \[{cost_seal}\]" if:max_seal<1&&g_pts>=cost_seal goto:#BuySeal
-@choice "전생의 기억 — 숨은 길이 보인다 \[{cost_mem}\]" if:max_mem<1&&g_pts>=cost_mem goto:#BuyMem
+@choice "또렷한 기억 — 숨은 길이 보인다 \[{cost_mem}\]" if:max_mem<1&&g_pts>=cost_mem goto:#BuyMem
 @choice "청심차 비방 — 처음부터 사술이 조금 덜 자란다 \[{cost_tea}\]" if:g_know_tea>0&&max_tea<1&&g_pts>=cost_tea goto:#BuyTea
 @choice "빈칸 방값 — 하진무의 외상 \[{cost_lodge}\]" if:g_know_lodge>0&&max_lodge<1&&g_pts>=cost_lodge goto:#BuyLodge
 @choice "구르고 또 구른 몸 — 시작 체력 +1 ({lv_vigor}/10) \[{cost_vigor}\]" if:max_vigor<1&&g_pts>=cost_vigor goto:#BuyVigor

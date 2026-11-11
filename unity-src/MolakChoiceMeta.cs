@@ -64,15 +64,15 @@ public static class MolakChoiceMeta
             if (!positive) return null;
             kind = Know;
             if (v.StartsWith("g_end_")) { var e = MolakEnd.Find(v.Substring(6)); return "지난 생의 말로 · " + e.Kor; }
-            if (v == "g_redverse") return "전생의 기억 · 적운의 구결";
-            if (v == "g_soaname") return "전생의 기억 · 그 이름";
-            if (v == "g_soadied") return "전생의 기억 · 그 밤";
+            if (v == "g_redverse") return "지난 생 · 적운의 구결";
+            if (v == "g_soaname") return "지난 생 · 그 이름";
+            if (v == "g_soadied") return "지난 생 · 그 밤";
             if (v == "g_runs") return "회귀한 자";
-            if (v == "g_up_mem") return "전생의 기억";
+            if (v == "g_up_mem") return "지난 생";
             if (v == "g_clears") return "등극을 겪은 자";
             foreach (var ke in MolakKnow.All)
-                foreach (var kk in ke.Keys.Split('|')) if (kk == v) return "전생의 기억 · " + ke.Name;
-            return "전생의 기억";
+                foreach (var kk in ke.Keys.Split('|')) if (kk == v) return "지난 생 · " + ke.Name;
+            return "지난 생";
         }
         // 능력치·자원
         switch (v)

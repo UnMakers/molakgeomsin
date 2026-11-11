@@ -29,7 +29,7 @@ public class MolakEndTester : MonoBehaviour
     int choicesThisLife; int duelsThisLife; int duelWinsThisLife; float lastDuelWin = -1f;
     static readonly string[] PreferGod = { "혈쇄문의 초대", "비무판", "정면으로 벤다", "산으로", "들어간다", "응한다", "벤다", "싸운다", "막는다" };
     static readonly string[] Avoid = { "처음 화면" };
-    static readonly string[] ShopPref = { "봉인 문양", "잔류 진기", "검흔", "단련된 육신", "청심차", "구르고", "빈칸 방값", "전생의 기억", "묻어둔 은자", "다 시 그 날 로" };
+    static readonly string[] ShopPref = { "봉인 문양", "잔류 진기", "검흔", "단련된 육신", "청심차", "구르고", "빈칸 방값", "또렷한 기억", "묻어둔 은자", "다 시 그 날 로" };
     static readonly string[] Violent = { "벤다", "검을 뽑", "맞선", "덤빈", "칼", "친다", "꺾는다", "베어", "찌른다", "공터로" };
     static readonly string[] Careful = { "물러", "지나", "피한", "숨", "돌아", "모른 척", "고개를 숙", "쉰다", "거절", "놓아준다", "기다린다" };
 
@@ -53,7 +53,7 @@ public class MolakEndTester : MonoBehaviour
     }
     void ResetLifeCounters () { choicesThisLife = 0; duelsThisLife = 0; duelWinsThisLife = 0; }
 
-    static readonly string[] TruePath = { "합벽", "석함", "제단", "구결", "검보", "소아", "그녀", "지붕", "장부를 편다", "사당", "적운", "운검", "전생의 기억" };
+    static readonly string[] TruePath = { "합벽", "석함", "제단", "구결", "검보", "소아", "그녀", "지붕", "장부를 편다", "사당", "적운", "운검", "지난 생" };
     static int Find (string[] labels, string s) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(s)) return i; return -1; }
     static int FindAny (string[] labels, string[] keys) { for (int i = 0; i < labels.Length; i++) foreach (var k in keys) if (labels[i].Contains(k)) return i; return -1; }
     static float EstOdds () { float o = 0; for (int i = 0; i < 3; i++) o += MolakDuel.Odds(MolakDuel.MakeFoe("any"), 0); return o / 3f; }
