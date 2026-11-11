@@ -28,13 +28,16 @@ public class MolakTheme : MonoBehaviour
 
     /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
     public static int ChoiceCount;
+    static float clickT = -1f; static string clickSig = "";
+    public static int StuckCount;
+    static string ChoiceSig () { var sb = new System.Text.StringBuilder(); foreach (var c in choiceBuf) sb.Append(c.Id).Append('|'); return sb.ToString(); }
     /// <summary>선택지가 뜬 뒤 눌리지 않는 시간(초).</summary>
-    public const float ChoiceLock = 0.6f;
+    public const float ChoiceLock = 0.35f;   // 0.4.8: 마지막 글 뒤 한 번 더 눌러야 선택지가 뜨므로 잠금은 짧게(길면 '눌렀는데 안 눌린다'로 느껴짐)
     static float choiceShownAt = -9f; static int lastChoiceCount;
     /// <summary>선택지 카드 높이·간격 — 선택지가 여섯 개 이상(회귀 상점 등)이면 촘촘하게 접어 화면 위로 넘치지 않게.</summary>
     public static bool Compact (int n) { return n >= 6; }
     public static float CardH (int n) { return n >= 9 ? 64f : n >= 6 ? 84f : n >= 4 ? 122f : 148f; }
-    public static float CardGap (int n) { return n >= 9 ? 8f : n >= 6 ? 12f : 26f; }
+    public static float CardGap (int n) { return n >= 9 ? 6f : n >= 6 ? 8f : 14f; }
     public static float U { get { return Mathf.Min(Screen.width/1080f, Screen.height/1920f); } }
     public static readonly Color Bg = Hex("#100D0C");
     public static readonly Color Paper = Hex("#191411");
@@ -154,30 +157,56 @@ public class MolakTheme : MonoBehaviour
 
     static Sprite cardSpriteDay, cardSpriteNight, sealSprite;
     static bool builtChoiceNight;
-    /// <summary>선택지 카드 9-슬라이스: 바탕 + 바깥 먹선(2px) + 안쪽 가는 선(1px), 모서리 따냄</summary>
-    static Sprite MakeCard (Color face, Color line, Color inner)
+    /// <summary>0.4.8 선택지 카드: 먹 붓 자국. 왼쪽 붓머리는 짙고 둥글게, 오른쪽으로 갈수록 옅어지며 붓털 결대로 갈라져 끝난다.
+    /// 텍스처 알파는 '눌렀을 때' 농도로 만들고, 평소에는 버튼 색(알파 절반)으로 옅게 보인다.</summary>
+    static Sprite MakeBrush (Color ink, int seed)
     {
-        int S = 64;
-        var tx = new Texture2D(S, S, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
-        for (int y = 0; y < S; y++)
-            for (int x = 0; x < S; x++)
+        int W = 512, H = 128;
+        var tx = new Texture2D(W, H, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
+        var rnd = new System.Random(seed);
+        // 붓털: 줄마다 결 농도와 끝나는 지점(갈라짐)
+        float[] fib = new float[H], len = new float[H];
+        for (int y = 0; y < H; y++) { fib[y] = (float)rnd.NextDouble(); len[y] = 0.6f + 0.4f * (float)rnd.NextDouble(); }
+        for (int y = 1; y < H - 1; y++) fib[y] = (fib[y - 1] + 2f * fib[y] + fib[y + 1]) * 0.25f;
+        for (int y = 1; y < H - 1; y++) len[y] = Mathf.Lerp(len[y], (len[y - 1] + len[y + 1]) * 0.5f, 0.35f);
+        float ph1 = (float)rnd.NextDouble() * 6.28f, ph2 = (float)rnd.NextDouble() * 6.28f;
+        var px = new Color[W * H];
+        for (int x = 0; x < W; x++)
+        {
+            float u = x / (float)(W - 1);
+            float jt = ((float)rnd.NextDouble() - 0.5f) * 0.012f, jb = ((float)rnd.NextDouble() - 0.5f) * 0.012f;
+            // 위·아래 가장자리 흔들림(저주파 + 잔떨림), 오른쪽으로 조금씩 가늘어진다
+            float top = 0.12f + 0.025f * Mathf.Sin(u * 7.1f + ph1) + 0.012f * Mathf.Sin(u * 23f + ph2) + jt + u * 0.06f;
+            float bot = 0.12f + 0.025f * Mathf.Sin(u * 5.3f + ph2) + 0.012f * Mathf.Sin(u * 19f + ph1) + jb + u * 0.07f;
+            const float hc = 0.07f;
+            if (u < hc) { float k = (hc - u) / hc; float cap = 0.5f * (1f - Mathf.Sqrt(Mathf.Max(0f, 1f - k * k))); top = Mathf.Max(top, 0.12f + cap * 0.76f); bot = Mathf.Max(bot, 0.12f + cap * 0.76f); }   // 둥근 붓머리
+            float press = 1f + 0.55f * Mathf.Exp(-u / 0.10f);                         // 붓을 처음 누른 자리가 짙다
+            float fade = Mathf.Lerp(1f, 0.35f, Mathf.Pow(u, 0.85f));                  // 왼쪽 짙고 오른쪽 옅게
+            for (int y = 0; y < H; y++)
             {
-                int dx = Mathf.Min(x, S - 1 - x), dy = Mathf.Min(y, S - 1 - y), d = Mathf.Min(dx, dy);
-                Color c;
-                if (dx + dy < 3) c = new Color(0, 0, 0, 0);            // 모서리 따냄
-                else if (d < 2) c = line;                               // 바깥 먹선
-                else if (d == 5) c = Color.Lerp(face, inner, 0.6f);      // 안쪽 가는 선(옅게)
-                else c = face;
-                tx.SetPixel(x, y, c);
+                float v = y / (float)(H - 1);
+                float a = 0f;
+                if (v > bot && v < 1f - top)
+                {
+                    float edge = Mathf.Min(v - bot, (1f - top) - v);
+                    float soft = Mathf.Clamp01(edge / 0.016f);
+                    float rim = 1f + 0.3f * Mathf.Clamp01(1f - edge / 0.05f);              // 마른 붓 테두리가 조금 더 짙다
+                    float grain = 0.5f + 0.5f * fib[y];
+                    float dry = u > 0.35f ? Mathf.Clamp01((fib[y] + 0.15f - (u - 0.35f) * 1.1f) / 0.25f) : 1f;   // 오른쪽으로 갈수록 결 사이가 빈다
+                    float tail = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((u - len[y]) / 0.08f));               // 붓털마다 다른 자리에서 끊긴다
+                    a = soft * rim * grain * dry * tail * fade * press;
+                }
+                px[y * W + x] = new Color(ink.r, ink.g, ink.b, Mathf.Clamp01(a) * ink.a);
             }
-        tx.Apply();
-        return Sprite.Create(tx, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, new Vector4(12, 12, 12, 12));
+        }
+        tx.SetPixels(px); tx.Apply();
+        return Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
     }
     static void EnsureCardSprite ()
     {
         if (cardSpriteDay != null) return;
-        cardSpriteDay = MakeCard(new Color(0.975f, 0.955f, 0.915f, 0.97f), new Color(0.27f, 0.21f, 0.17f, 1f), new Color(0.55f, 0.47f, 0.39f, 0.55f));
-        cardSpriteNight = MakeCard(new Color(0.12f, 0.105f, 0.095f, 0.96f), new Color(0.62f, 0.55f, 0.46f, 1f), new Color(0.45f, 0.40f, 0.34f, 0.6f));
+        cardSpriteDay = MakeBrush(new Color(0.17f, 0.13f, 0.10f, 0.64f), 11);
+        cardSpriteNight = MakeBrush(new Color(0.88f, 0.82f, 0.72f, 0.44f), 11);
         // 인장: 가장자리가 살짝 거친 사각
         int S = 32; var t2 = new Texture2D(S, S, TextureFormat.RGBA32, false);
         var rnd = new System.Random(7);
@@ -269,6 +298,19 @@ public class MolakTheme : MonoBehaviour
         // 삽화 띠 접기: 선택지 4개 이상이거나, 띠를 펼치면 본문이 선택지 위 공간에 다 안 들어갈 때만
         MolakArt.Collapsed = choiceCount >= 4 || (choiceCount >= 3 && !BandFits(choiceCount));
         EnsureCardSprite();
+        // 선택지 멈춤 감시: 고른 뒤 2.5초가 지나도 같은 선택지(같은 Id 묶음)가 그대로면 기록한다(시험자 보고 '골랐는데 안 사라짐' 추적)
+        if (clickT >= 0f && Time.unscaledTime - clickT > 2.5f)
+        {
+            if (choiceCount > 0 && ChoiceSig() == clickSig)
+            {
+                string where = "";
+                try { var plo = Naninovel.Engine.GetService<Naninovel.IScriptPlayer>(); var tr = plo.GetType().GetProperty("MainTrack").GetValue(plo, null) as Naninovel.IScriptTrack; where = tr.PlaybackSpot + " cmd=" + (tr.PlayedCommand != null ? tr.PlayedCommand.GetType().Name : "-") + " exec=" + tr.Executing + " await=" + tr.AwaitingInput; } catch { }
+                Debug.LogWarning("[MolakChoiceStuck] " + choiceCount + "개 그대로 · " + where + " · " + clickSig);
+                StuckCount++;
+                try { System.IO.File.AppendAllText(System.IO.Path.Combine(Application.persistentDataPath, "molak_debug.txt"), System.DateTime.Now.ToString("MM-dd HH:mm:ss") + " 선택지 멈춤 " + where + "\n"); } catch { }
+            }
+            clickT = -1f;
+        }
         ChoiceCount = choiceCount;   // 선택지가 떠 있으면 MolakScroll 이 본문 창 아래 한계를 선택지 위로 올린다
         // 선택지 잠금: 글을 빠르게 넘기다 막 뜬 선택지를 읽지도 않고 누르는 일을 막는다.
         // 선택지가 뜬 뒤 ChoiceLock 초 동안은 카드가 흐리게 떠오르며 눌리지 않는다(그 사이 시작한 터치는 무시).
@@ -281,7 +323,7 @@ public class MolakTheme : MonoBehaviour
                 var cg = blLock.GetComponent<CanvasGroup>(); if (cg == null) cg = blLock.AddComponent<CanvasGroup>();
                 float since = Time.unscaledTime - choiceShownAt;
                 bool locked = choiceCount > 0 && since < ChoiceLock;
-                float cgA = choiceCount > 0 ? Mathf.Lerp(0.3f, 1f, Mathf.Clamp01(since / ChoiceLock)) : 1f;
+                float cgA = choiceCount > 0 ? Mathf.Lerp(0f, 1f, Mathf.Clamp01(since / ChoiceLock)) : 1f;
                 if (Mathf.Abs(cg.alpha - cgA) > 0.004f) cg.alpha = cgA;
                 if (cg.interactable == locked) cg.interactable = !locked;
                 if (cg.blocksRaycasts == locked) cg.blocksRaycasts = !locked;
@@ -297,7 +339,7 @@ public class MolakTheme : MonoBehaviour
             if (rootImg != null)
             {
                 var spr = Night ? cardSpriteNight : cardSpriteDay;
-                if (rootImg.sprite != spr) { rootImg.sprite = spr; rootImg.type = Image.Type.Sliced; rootImg.pixelsPerUnitMultiplier = 1f; }
+                if (rootImg.sprite != spr) { rootImg.sprite = spr; rootImg.type = Image.Type.Simple; rootImg.preserveAspect = false; }
                 if (rootImg.color != Color.white) rootImg.color = Color.white;
             }
             foreach (var img in btn.GetComponentsInChildren<Image>(true))
@@ -310,16 +352,16 @@ public class MolakTheme : MonoBehaviour
                 sg.GetComponent<UnityEngine.UI.LayoutElement>().ignoreLayout = true;
                 var srt = (RectTransform)sg.transform;
                 srt.anchorMin = new Vector2(0f, 0.5f); srt.anchorMax = new Vector2(0f, 0.5f); srt.pivot = new Vector2(0.5f, 0.5f);
-                srt.sizeDelta = new Vector2(58f, 58f); srt.anchoredPosition = new Vector2(56f, 0f);
+                srt.sizeDelta = new Vector2(44f, 44f); srt.anchoredPosition = new Vector2(48f, 0f);
                 sg.GetComponent<Image>().raycastTarget = false;
                 var ng = new GameObject("Num", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
                 ng.transform.SetParent(sg.transform, false);
                 var nrt = (RectTransform)ng.transform; nrt.anchorMin = Vector2.zero; nrt.anchorMax = Vector2.one; nrt.offsetMin = Vector2.zero; nrt.offsetMax = new Vector2(0f, 2f);
-                var nt = ng.GetComponent<TMPro.TextMeshProUGUI>(); nt.alignment = TMPro.TextAlignmentOptions.Center; nt.fontSize = 34f; nt.raycastTarget = false; nt.enableWordWrapping = false;
+                var nt = ng.GetComponent<TMPro.TextMeshProUGUI>(); nt.alignment = TMPro.TextAlignmentOptions.Center; nt.fontSize = 26f; nt.raycastTarget = false; nt.enableWordWrapping = false;
                 seal = sg.transform;
             }
             var sealImg = seal.GetComponent<Image>();
-            { var srt0 = (RectTransform)seal; float ss = Compact(choiceCount) ? 46f : 58f; if (Mathf.Abs(srt0.sizeDelta.x - ss) > 0.5f) { srt0.sizeDelta = new Vector2(ss, ss); srt0.anchoredPosition = new Vector2(ss < 50f ? 50f : 56f, 0f); } }
+            { var srt0 = (RectTransform)seal; float ss = Compact(choiceCount) ? 36f : 44f; if (Mathf.Abs(srt0.sizeDelta.x - ss) > 0.5f) { srt0.sizeDelta = new Vector2(ss, ss); srt0.anchoredPosition = new Vector2(ss < 40f ? 42f : 48f, 0f); } }
             // 조건부 선택지: 원래 글귀(주석 붙기 전)를 기억해 두고 종류·주석을 만든다
             var lblTx = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
             if (lblTx != null && lblTx.gameObject.name == "Num") lblTx = null;
@@ -342,23 +384,24 @@ public class MolakTheme : MonoBehaviour
             string[] hn = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五" };
             string want = hn[Mathf.Clamp(cidx, 0, hn.Length - 1)];
             if (num.text != want) num.text = want;
-            { float nfs = want.Length > 1 ? (Compact(choiceCount) ? 20f : 24f) : (Compact(choiceCount) ? 28f : 34f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
+            { float nfs = want.Length > 1 ? (Compact(choiceCount) ? 15f : 18f) : (Compact(choiceCount) ? 21f : 26f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
             if (num.color != numCol) num.color = numCol;
             var vlg0 = btn.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
-            if (vlg0 != null && (vlg0.padding.left != 108 || vlg0.padding.right != 36 || vlg0.childAlignment != TextAnchor.MiddleLeft))
-            { vlg0.padding.left = 108; vlg0.padding.right = 36; vlg0.childAlignment = TextAnchor.MiddleLeft; }
+            if (vlg0 != null && (vlg0.padding.left != 90 || vlg0.padding.right != 36 || vlg0.childAlignment != TextAnchor.MiddleLeft))
+            { vlg0.padding.left = 90; vlg0.padding.right = 36; vlg0.childAlignment = TextAnchor.MiddleLeft; }
             var ub = btn.GetComponent<UnityEngine.UI.Button>();
-            if (ub != null && (ub.targetGraphic != rootImg || ub.colors.normalColor != Color.white || (Night ? ub.colors.highlightedColor.r < 1f : ub.colors.highlightedColor.r > 0.99f)))
+            // 붓 자국: 평소엔 옅게(알파 절반), 누르면 먹이 배어든 듯 짙게(텍스처 본래 농도)
+            if (ub != null && (ub.targetGraphic != rootImg || ub.colors.normalColor != new Color(1f, 1f, 1f, 0.5f) || ub.colors.pressedColor != Color.white))
             {
                 ub.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
                 ub.targetGraphic = rootImg;
                 var cb = ub.colors;
-                cb.normalColor = Color.white;
-                cb.highlightedColor = Night ? new Color(1.12f, 1.10f, 1.06f, 1f) : new Color(0.97f, 0.95f, 0.91f, 1f);
-                cb.pressedColor = Night ? new Color(1.45f, 1.38f, 1.28f, 1f) : new Color(0.84f, 0.79f, 0.71f, 1f);
-                cb.selectedColor = Color.white;
-                cb.disabledColor = new Color(1f, 1f, 1f, 0.45f);
+                cb.normalColor = new Color(1f, 1f, 1f, 0.5f);
+                cb.highlightedColor = new Color(1f, 1f, 1f, 0.58f);
+                cb.pressedColor = Color.white;
+                cb.selectedColor = new Color(1f, 1f, 1f, 0.5f);
+                cb.disabledColor = new Color(1f, 1f, 1f, 0.25f);
                 cb.colorMultiplier = 1f;
                 cb.fadeDuration = 0.06f;
                 ub.colors = cb;
@@ -370,7 +413,7 @@ public class MolakTheme : MonoBehaviour
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = InkText;
-            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); }); }
+            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); }); }
             foreach (var tx in btn.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (tx.gameObject.name == "Num") continue;

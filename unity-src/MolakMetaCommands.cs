@@ -11,9 +11,10 @@ public class InitRunCommand : Command
     public static void EnsureGlobals (ICustomVariableManager vars)
     {
         // 전역 기본값 보장
-        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge"})
+        foreach (var gk in new[]{"g_pts","g_runs","g_clears","g_up_sword","g_up_body","g_up_core","g_up_coin","g_up_seal","g_up_mem","g_up_tea","g_up_lodge","g_up_vigor","g_know_tea","g_know_lodge","g_lastday","g_bestday","g_bestrank"})
             if (!vars.VariableExists(gk)) vars.SetVariableValue(gk, new CustomVariableValue(0f));
         if (!vars.VariableExists("g_lastend")) vars.SetVariableValue("g_lastend", new CustomVariableValue("none"));
+        if (!vars.VariableExists("g_lastcause")) vars.SetVariableValue("g_lastcause", new CustomVariableValue("none"));
         // 되감기지 않는 앎: 지난 생들에서 보고 듣고 죽으며 알게 된 것 (조건식에서 쓰기 전에 반드시 존재해야 한다)
         foreach (var gk in new[]{"g_redverse","g_soadied","g_soalast","g_soaname","g_know_cup","g_know_amhkey","g_know_amhsister","g_amhkilled","g_amhfreed",
                                  "g_know_raid","g_know_wangsam","g_know_taxday","g_jbtruth","g_know_hajin","g_hajindied","g_hapdone","g_know_maeng","g_know_gaeknot","g_know_namgung","g_know_hao","g_know_maengsell","g_know_jangsell","g_maenglate","g_know_yong","g_know_gwak","g_gwakwifedied","g_herbdied","g_know_ripe","g_next_bond","g_next_item","g_redo","g_lasttheme","g_fac_gyo","g_fac_gyo2","g_fac_maeng","g_fac_namgung","g_fac_gae","g_fac_gae2","g_fac_hao","g_fac_hao2","g_fac_nok","g_fac_dok","g_fac_swe","g_fac_swe2","g_fac_amh","g_fac_amh2","g_fac_pyo","g_fac_pyo2","g_fac_dang","g_fac_jeok","g_fac_gwan","g_know_soa","g_know_wolf","g_know_lord","g_know_jinbaek","g_know_hochi","g_know_kyona",
@@ -361,5 +362,92 @@ public class PickFlavorCommand : Command
         int idx = pool.Count > 0 ? pool[Random.Range(0, pool.Count)] : 0;
         MolakStats.Set(seenPrefix + idx, 1f);
         MolakStats.Set(outVar, idx + 1);
+    }
+}
+
+/// <summary>@lifenote — 0.4.8 말로 직후 한 장: 이번 생의 기록(버틴 날·서열·깨달음), 지난 생과 견줌,
+/// 같은 사인으로 두 번 죽었을 때 노인의 한 마디, 몇 생째 진말로에 닿지 못할 때 길의 다음 조각.
+/// 표시 변수: lifesum · lifecmp/lifecmpc · deathtip/deathtipc · truehint/truehintc</summary>
+[Alias("lifenote")]
+public class LifeNoteCommand : Command
+{
+    static readonly Dictionary<string, string> Tips = new Dictionary<string, string> {
+        { "아사",        "'배가 비면 검도 빈다. 날품이라도 팔거라. 객잔 늙은이의 빈칸도, 약방의 미음도 있느니라.'" },
+        { "탈진",        "'몸이 반쯤 꺾였으면 판에 서지 마라. 사흘 쉬는 것도 수련이니라.'" },
+        { "포박",        "'그물은 바깥부터 조인다. 예순 날이 차기 전에 끝을 보든지, 길을 떠나든지 하거라.'" },
+        { "소아의 검",   "'대답을 기다려 주는 칼은 없느니라. 그 아이 앞에서는 먼저 입을 열거라.'" },
+        { "소아의 오인", "'문양이 짙은 채로 그 아이 앞에 서지 마라. 그 눈에는 마인으로 보이느니라.'" },
+        { "원수",        "'비무판에서 벤 목이 상복을 부른다. 목을 칠지는 이긴 쪽이 정하느니라.'" },
+        { "자객",        "'서열록에 오른 이름은 교의 장부에도 오른다. 높이 오를수록 등 뒤를 보거라.'" },
+        { "독",          "'푸른 날에 스쳤거든 미루지 마라. 독은 검을 기다려 주지 않느니라.'" },
+        { "곪은 상처",   "'작은 상처를 작게 보면 큰 병이 된다. 약값을 아끼지 마라.'" },
+        { "사술 폭주",   "'문양은 사술을 쓸수록 자란다. 청심차와 봉인이 그 열을 누르느니라.'" },
+        { "빚",          "'왕삼의 장부는 이자가 빠르다. 외상 판에 칼을 걸지 마라.'" },
+        { "협",          "'징세조 앞에서 고개를 드는 날이 마지막 날이 될 수 있느니라.'" },
+        { "야습",        "'그 밤은 정해진 밤이다. 계단과 뒷문을 미리 보아 두거라.'" },
+        { "미인계",      "'단 술 앞에서는 살기가 혀보다 먼저 독을 안다. 살기를 길러 두거라.'" },
+        { "미숙한 초식", "'몸에 배지 않은 초식에 목숨을 걸지 마라. 검이 먼저 익어야 하느니라.'" },
+        { "익사",        "'물 위에서는 먼저 나가는 쪽이 먼저 빠지느니라.'" },
+        { "입마",        "'부르는 소리에 무릎 꿇지 마라. 그 소리는 네 것이 아니니라.'" },
+        { "생사결",      "'금 안에는 물러설 데가 없다. 이길 셈이 서지 않거든 금을 넘지 마라.'" },
+        { "비무 패배",   "'판에 서기 전에 상대를 읽거라. 질 판은 걸어 나와도 부끄럽지 않느니라.'" },
+    };
+    static readonly HashSet<string> NotDeaths = new HashSet<string> { "등극", "합벽", "성사", "순검", "원행", "재건", "도주" };
+
+    static string Days (float d)
+    {
+        if (d <= 3f) return "사흘을 넘기지 못했다";
+        if (d < 10f) return "열흘을 채우지 못했다";
+        if (d < 20f) return "보름 남짓 버텼다";
+        if (d < 30f) return "스무 날 남짓 버텼다";
+        if (d < 40f) return "한 달 남짓 버텼다";
+        if (d < 50f) return "마흔 날 남짓 버텼다";
+        if (d < 60f) return "쉰 날을 넘겼다";
+        return "예순 날을 다 채웠다";
+    }
+
+    public override async Awaitable Execute (ExecutionContext ctx)
+    {
+        var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
+        string S (string k) { return vars.VariableExists(k) && vars.GetVariableValue(k).Type == CustomVariableValueType.String ? vars.GetVariableValue(k).String : ""; }
+        float day = MolakStats.Get("day"), rank = MolakStats.Get("rank"), gained = MolakStats.Get("gained");
+        string cause = S("deathcause");
+        // 이번 생의 기록
+        string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 ? "서열 " + rank.ToString("N0") + "위" : "서열록에 이름 없음") + " · 깨달음 +" + gained.ToString("0");
+        vars.SetVariableValue("lifesum", new CustomVariableValue(sum));
+        // 지난 생과 견줌(두 번째 생부터)
+        float lastDay = MolakStats.Get("g_lastday"), bestDay = MolakStats.Get("g_bestday"), bestRank = MolakStats.Get("g_bestrank");
+        var cmp = new List<string>();
+        if (MolakStats.Get("g_runs") >= 2f && lastDay > 0f)
+        {
+            if (day > bestDay) cmp.Add("가장 오래 버틴 생이다");
+            else if (day > lastDay + 2f) cmp.Add("지난 생보다 오래 버텼다");
+            if (rank > 0f && (bestRank <= 0f || rank < bestRank)) cmp.Add("가장 높이 오른 생이다");
+        }
+        vars.SetVariableValue("lifecmp", new CustomVariableValue(string.Join(". ", cmp) + (cmp.Count > 0 ? "." : "")));
+        MolakStats.Set("lifecmpc", cmp.Count);
+        MolakStats.Set("g_lastday", day);
+        if (day > bestDay) MolakStats.Set("g_bestday", day);
+        if (rank > 0f && (bestRank <= 0f || rank < bestRank)) MolakStats.Set("g_bestrank", rank);
+        // 같은 자리에서 두 번 — 노인의 한 마디
+        string lastCause = S("g_lastcause");
+        string tip = "";
+        if (!string.IsNullOrEmpty(cause) && cause == lastCause && !NotDeaths.Contains(cause) && Tips.ContainsKey(cause)) tip = Tips[cause];
+        vars.SetVariableValue("deathtip", new CustomVariableValue(tip));
+        MolakStats.Set("deathtipc", tip.Length > 0 ? 1f : 0f);
+        vars.SetVariableValue("g_lastcause", new CustomVariableValue(string.IsNullOrEmpty(cause) ? "none" : cause));
+        // 진말로 길의 다음 조각: 세 생째부터, 노인의 한 마디가 없을 때만, 이번 생에서 막힌 자리 하나
+        string hint = "";
+        if (tip.Length == 0 && MolakStats.Get("g_runs") >= 3f && MolakStats.Get("g_hapdone") < 1f)
+        {
+            bool hap = MolakStats.Get("f_hapbyeok") > 0f, bond = MolakStats.Get("f_soabond") > 0f || MolakStats.Get("aff") >= 5f;
+            if (MolakStats.Get("g_redverse") < 1f) hint = "'적운의 아이 곁에서 혈랑대의 밤을 맞거라. 지붕 위에 남는 것이 있느니라.'";
+            else if (hap && !bond) hint = "'검보는 두 사람의 검이다. 그 아이가 등을 맡길 만큼 곁에 두거라.'";
+            else if (hap && MolakStats.Get("f_wolfdown") < 1f) hint = "'교주의 산문은 혈쇄문의 사슬을 끊은 자에게만 열리느니라.'";
+            else if (hap && (rank <= 0f || rank > 30f)) hint = "'검보를 품었거든 서열은 서른 안이면 족하다.'";
+        }
+        vars.SetVariableValue("truehint", new CustomVariableValue(hint));
+        MolakStats.Set("truehintc", hint.Length > 0 ? 1f : 0f);
+        try { await Engine.GetServiceOrErr<IStateManager>().SaveGlobal(); } catch { }
     }
 }

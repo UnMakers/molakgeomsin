@@ -146,7 +146,7 @@ public class MolakFlow : MonoBehaviour
         {
             var c = pl[k];
             if (c is PrintText) return true;
-            if (c is AddChoice) return true;            // 선택지는 탭 없이 바로 뜨게
+            if (c is AddChoice) return false;           // 0.4.8: 마지막 글을 다 읽고 한 번 더 눌러야 선택지가 뜬다(선택지가 글을 가리지 않게)
             var n = c.GetType().Name;
             // 흐름을 끊는 명령 = 단락 경계
             if (c is Gosub || c is Return || c is Stop || c is Wait) return false;
