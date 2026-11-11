@@ -408,7 +408,7 @@
 @set grudgewarn=0
 @goto #KGrA if:f_alms>0||f_thiefkid>0||f_beggarnet>0
 @scene id:night
-@deja
+@deja text:"창호지의 그림자 셋. 어깨가 먼저 움찔한다. 이 상복들이 어느 쪽에서 들어오는지 안다."
 {dejapre}
 밤. 창호지에 그림자 셋이 비친다.
 문살을 뚫고 무엇인가 어깨를 스친다. 피에 소매가 젖는다.
@@ -1223,7 +1223,7 @@
 # BNetHint
 @set b_nethint=1
 @page
-@deja
+@deja text:"포졸이 넷. 묶인 관아의 배. 지난 생에도 이 아침을 봤다. 그때는 이 아침이 끝의 시작인 줄 몰랐다."
 {dejapre}
 성문 앞 포졸이 넷으로 늘었다. 나루에는 관아의 배가 묶였다.
 "객. 그물을 칠 때는 바깥부터 조이는 법이오. 며칠 남지 않았소."
@@ -1838,7 +1838,7 @@
 @set tr=random(1,3)
 @goto #S_Fame_v2 if:tr==2
 @goto #S_Fame_v3 if:tr==3
-@deja
+@deja text:"귀만 열어 둔 손님들. 지난 생에도 이 소문 뒤로 객잔에 칼이 들어왔다."
 {dejapre}
 객잔이 수상하다.
 낭인, 표사, 정체 모를 손님이 많은데 다들 술은 안 마시고 귀만 열어 두었다. 서열이 오른 '운객(雲客)'이 묵는다는 소문 탓이다.

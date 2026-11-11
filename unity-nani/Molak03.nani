@@ -357,7 +357,7 @@
 # Hm1
 @art char:granny
 ; ===== 제四장 잿빛 나무 =====
-@deja
+@deja text:"북쪽 산길. 지난 생에 이 길 끝의 마을이 어떻게 되었는지 안다. 걸음이 빨라진다."
 {dejapre}
 북쪽 산길.
 @goto #HmAmb if:f_yongsold>0&&f_yongambush<1
@@ -534,7 +534,7 @@
 @set tr=random(1,3)
 @goto #Unju0_v2 if:tr==2
 @goto #Unju0_v3 if:tr==3
-@deja
+@deja text:"보름날, 운주 들판. 흙먼지 속에서 누가 어떤 칼을 들고 나올지 이미 안다. 안다고 쉬운 판은 아니다."
 {dejapre}
 보름날. 운주 들판. 들판 가득 둘러선 무인들과 병장기의 쇳빛, 가운데 공터의 흙먼지.
 @goto #Unju0_vm

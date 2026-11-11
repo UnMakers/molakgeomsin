@@ -116,6 +116,10 @@ public class DayTickCommand : Command
         // 독·곪은 상처는 마감마다 깊어진다(며칠 한 바퀴면 두 칸 — 손쓸 기회는 한두 바퀴)
         if (MolakStats.Get("taint") > 0) MolakStats.Add("taint", n >= 3 ? 2f : 1f);
         MolakStats.ClampAll();
+#if UNITY_EDITOR
+        // 에디터 전용: 은자 흐름 기록(소크 분석용)
+        try { System.IO.File.AppendAllText(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.dataPath), "Build", "soak_money.csv"), MolakStats.Get("g_runs").ToString("0") + "," + MolakStats.Get("day").ToString("0") + "," + MolakStats.Get("mn").ToString("0") + "," + MolakStats.Get("rank").ToString("0") + "\n"); } catch { }
+#endif
     }
 }
 
