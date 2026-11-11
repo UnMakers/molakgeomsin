@@ -16,6 +16,9 @@ public class MolakScroll : MonoBehaviour
     float userScroll;          // 아래 정렬 기준으로 위로 올린 양(캔버스 단위)
     float contentOffset;       // 본문 높이 - 뷰포트 높이 (>=0)
     float topCur = -215f;
+    float over;                // 끝을 넘겨 당긴 양(캔버스 단위, + = 맨 위(옛 글)를 넘어 아래로, − = 맨 아래(새 글)를 넘어 위로). 손을 떼면 0으로 돌아간다.
+    const float RubberD = 700f; // 고무줄 세기 — 클수록 덜 뻑뻑하다
+    static float Rubber (float x) { return x <= 0f ? 0f : RubberD * (1f - 1f / (x * 0.55f / RubberD + 1f)); }
 
     // 드래그 상태 (MolakInputGuard가 참조)
     public static bool Dragging { get; private set; }
@@ -66,6 +69,12 @@ public class MolakScroll : MonoBehaviour
     {
         if (!Engine.Initialized || !Ensure()) return;
         HandleDrag();
+        if (!Dragging && over != 0f)
+        {
+            float dt = Mathf.Min(Time.unscaledDeltaTime, 0.1f);
+            over = Mathf.Lerp(over, 0f, 1f - Mathf.Pow(0.0004f, dt));   // 약 0.3초에 제자리로
+            if (Mathf.Abs(over) < 0.5f) over = 0f;
+        }
         Layout();
     }
 
@@ -105,7 +114,11 @@ public class MolakScroll : MonoBehaviour
             {
                 float dyCanvas = dyPx / Mathf.Max(0.01f, CanvasScale());
                 // 손가락을 위로 올리면 본문이 위로 가므로(최신 쪽으로) userScroll 감소, 아래로 내리면 과거로 → 증가
-                userScroll = Mathf.Clamp(pressScroll - dyCanvas, 0f, Mathf.Max(0f, contentOffset));
+                // 끝을 넘겨 당기면 고무줄처럼 늘어난다(당길수록 조금씩 뻑뻑), 손을 떼면 Update 에서 되돌아간다
+                float raw = pressScroll - dyCanvas, mx = Mathf.Max(0f, contentOffset);
+                if (raw > mx) { userScroll = mx; over = Rubber(raw - mx); }
+                else if (raw < 0f) { userScroll = 0f; over = -Rubber(-raw); }
+                else { userScroll = raw; over = 0f; }
             }
         }
         else if (!down && pressing)
@@ -146,6 +159,7 @@ public class MolakScroll : MonoBehaviour
         float y = contentOffset - userScroll;     // 양수 = 위로 밀어 올림 (맨 아래 정렬)
         // 맨 위 줄이 반쯤 잘려 보이지 않게: 뷰포트 윗변에 걸친 줄은 통째로 위로 밀어 올린다(아래에 한 줄 미만의 빈자리가 남는다)
         if (userScroll < 0.5f && contentOffset > 0.5f) y += TopLineCut(y);
+        y -= over;   // 고무줄(줄 잘림 계산 뒤에 더해, 당기는 동안 줄 맞춤이 흔들리지 않게)
         if (Mathf.Abs(printer.anchoredPosition.y - y) > 0.01f || Mathf.Abs(printer.offsetMin.x) > 0.01f || Mathf.Abs(printer.offsetMax.x) > 0.01f)
         {
             printer.offsetMin = new Vector2(0f, printer.offsetMin.y);

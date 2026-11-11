@@ -159,7 +159,7 @@ public class MolakBag : MonoBehaviour
             {
                 float dy = p.y - lastPY; lastPY = p.y;
                 float over = listScroll < 0f ? -listScroll : (listScroll > listMax ? listScroll - listMax : 0f);
-                float k = 1f / (1f + over / (90f*u));          // 끝을 넘으면 점점 무거워짐
+                float k = 1f / (1f + over / (34f*u));          // 끝을 넘으면 빠르게 무거워짐 — 행낭은 '여기가 끝'이라는 손맛만
                 listScroll -= dy * k;
                 float inst = dt > 0f ? -dy / dt : 0f;
                 listVel = Mathf.Lerp(listVel, inst, 0.35f);
@@ -174,7 +174,7 @@ public class MolakBag : MonoBehaviour
             else if (listScroll > listMax) { listVel = listVel > 0f ? listVel * Mathf.Pow(0.0001f, dt) : listVel; listScroll = Mathf.Lerp(listScroll, listMax, 1f - Mathf.Pow(0.002f, dt)); if (listScroll < listMax + 0.5f && listVel >= 0f) listScroll = listMax; }
             if (Mathf.Abs(listVel) < 4f*u) listVel = 0f;
         }
-        listScroll = Mathf.Clamp(listScroll, -220f*u, listMax + 220f*u);
+        listScroll = Mathf.Clamp(listScroll, -70f*u, listMax + 70f*u);
         wasDownBag = down;
     }
 
