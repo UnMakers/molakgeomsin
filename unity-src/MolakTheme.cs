@@ -28,6 +28,10 @@ public class MolakTheme : MonoBehaviour
 
     /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
     public static int ChoiceCount;
+    /// <summary>선택지 카드 높이·간격 — 선택지가 여섯 개 이상(회귀 상점 등)이면 촘촘하게 접어 화면 위로 넘치지 않게.</summary>
+    public static bool Compact (int n) { return n >= 6; }
+    public static float CardH (int n) { return n >= 9 ? 64f : n >= 6 ? 84f : n >= 4 ? 122f : 148f; }
+    public static float CardGap (int n) { return n >= 9 ? 8f : n >= 6 ? 12f : 26f; }
     public static float U { get { return Mathf.Min(Screen.width/1080f, Screen.height/1920f); } }
     public static readonly Color Bg = Hex("#100D0C");
     public static readonly Color Paper = Hex("#191411");
@@ -205,7 +209,7 @@ public class MolakTheme : MonoBehaviour
         float canvasH = 1600f;
         var rc = dlgText.canvas != null ? dlgText.canvas.rootCanvas : null; if (rc != null) canvasH = ((RectTransform)rc.transform).rect.height;
         float top = MolakArt.BandTop + MolakArt.BandH + 24f;
-        float bottom = 150f + choices * (148f + 26f) + 30f;
+        float bottom = 150f + choices * (CardH(choices) + CardGap(choices)) + 30f;
         return dlgText.preferredHeight + 20f <= canvasH - top - bottom;
     }
 
@@ -295,6 +299,7 @@ public class MolakTheme : MonoBehaviour
                 seal = sg.transform;
             }
             var sealImg = seal.GetComponent<Image>();
+            { var srt0 = (RectTransform)seal; float ss = Compact(choiceCount) ? 46f : 58f; if (Mathf.Abs(srt0.sizeDelta.x - ss) > 0.5f) { srt0.sizeDelta = new Vector2(ss, ss); srt0.anchoredPosition = new Vector2(ss < 50f ? 50f : 56f, 0f); } }
             // 조건부 선택지: 원래 글귀(주석 붙기 전)를 기억해 두고 종류·주석을 만든다
             var lblTx = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
             if (lblTx != null && lblTx.gameObject.name == "Num") lblTx = null;
@@ -314,9 +319,10 @@ public class MolakTheme : MonoBehaviour
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
-            string[] hn = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十" };
+            string[] hn = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五" };
             string want = hn[Mathf.Clamp(cidx, 0, hn.Length - 1)];
             if (num.text != want) num.text = want;
+            { float nfs = want.Length > 1 ? (Compact(choiceCount) ? 20f : 24f) : (Compact(choiceCount) ? 28f : 34f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
             if (num.color != numCol) num.color = numCol;
             var vlg0 = btn.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
@@ -339,7 +345,8 @@ public class MolakTheme : MonoBehaviour
             }
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
-            float wantH = choiceCount >= 4 ? 122f : 148f;
+            float wantH = CardH(choiceCount);
+            bool compact = Compact(choiceCount);
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = InkText;
@@ -348,12 +355,12 @@ public class MolakTheme : MonoBehaviour
             {
                 if (tx.gameObject.name == "Num") continue;
                 if (tx.color != inkDark) tx.color = inkDark;
-                float cfs = Mathf.Round(40f*FontScale);
+                float cfs = Mathf.Round((choiceCount >= 9 ? 31f : compact ? 34f : 40f)*FontScale);
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
                 if (!tx.enableWordWrapping) tx.enableWordWrapping = true;
                 if (tx.gameObject.name != "Num" && tx.alignment != TMPro.TextAlignmentOptions.MidlineLeft) tx.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                 if (tx.overflowMode != TMPro.TextOverflowModes.Overflow) tx.overflowMode = TMPro.TextOverflowModes.Overflow;
-                float need = tx.preferredHeight + 44f;
+                float need = tx.preferredHeight + (choiceCount >= 9 ? 14f : compact ? 22f : 44f);
                 if (need > le.minHeight + 1f) le.minHeight = need;
             }
         }
@@ -378,7 +385,7 @@ public class MolakTheme : MonoBehaviour
             foreach (var vlg in blGo.GetComponentsInChildren<UnityEngine.UI.VerticalLayoutGroup>(true))
             {
                 if (vlg.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
-                if (vlg.spacing < 28f) vlg.spacing = 26f;
+                { float gp = CardGap(choiceCount); if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
                 if (vlg.childForceExpandWidth) vlg.childForceExpandWidth = false;   // 카드 폭 820 — 마스크(860) 안쪽으로
                 var ca = vlg.childAlignment == TextAnchor.UpperLeft ? TextAnchor.UpperCenter : (vlg.childAlignment == TextAnchor.MiddleLeft ? TextAnchor.MiddleCenter : (vlg.childAlignment == TextAnchor.LowerLeft ? TextAnchor.LowerCenter : vlg.childAlignment));
                 if (vlg.childAlignment != ca) vlg.childAlignment = ca;

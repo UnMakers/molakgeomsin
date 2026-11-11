@@ -29,7 +29,7 @@
 # SoaDuelDeath
 @set deathcause="소아의 검"
 쌍검 중 하나가 막고, 하나가 들어온다. 적운의 검은 두 번 오지 않는다. 한 번에 둘이 온다.
-무릎이 꺾인다. 그녀가 당신을 받아 안는다. 벤 사람이 받아 안는다.
+무릎이 꺾인다. 그녀가 당신을 받아 안는다. 당신을 벤 바로 그 사람이.
 "……사부. 이번엔, 늦지 않았습니다."
 그녀의 외눈이 젖어 있다. 그 젖은 눈이 당신이 본 마지막이다.
 @goto #Dead
@@ -42,7 +42,7 @@
 @set deathcause="원수"
 "이름을 기억하느냐." 대답할 숨이 없다.
 칼이 셋이었는데 들어온 것은 하나다. 나머지 둘은 지켜볼 뿐이다. 그날 비무판의 구경꾼들처럼.
-누군가 얼굴에 흰 천을 덮는다. 상복 자락이다. 이 칼은 비무판에서 시작되었다.
+누군가 얼굴에 흰 천을 덮는다. 상복 자락이다. 이 원한은 그날 비무판에서 시작되었다.
 @goto #Dead
 # DebtDeath
 @set deathcause="빚"
@@ -71,12 +71,12 @@
 @goto #TaintRot if:taintkind==2
 @set deathcause="독"
 입술이 검다. 손톱 밑이 검다. 피가 식어 간다는 말을 백초 할멈에게서 들은 적이 있다. 들을 때는 비유인 줄 알았다.
-침상에서 일어서려는데 다리가 없다. 있는데 없다.
+침상에서 일어서려는데 다리에 감각이 없다. 다리는 있는데, 없는 것만 같다.
 검은 끝내 뽑지 못한다. 독은 검을 기다려 주지 않는다.
 @goto #Dead
 # TaintRot
 @set deathcause="곪은 상처"
-옆구리의 상처가 열을 낸다. 며칠째 단내가 났다. 오늘은 냄새가 나지 않는다. 그게 더 나쁘다는 것을 안다.
+옆구리의 상처가 열을 낸다. 며칠째 단내가 났다. 오늘은 냄새조차 나지 않는다. 상처가 속까지 썩었다는 뜻이다.
 열이 머리까지 오른다. 사형들이 마당에서 부르는 소리가 들린다. 마당에는 아무도 없다.
 작은 상처였다. 비무판에서 진 날의.
 @goto #Dead
@@ -135,9 +135,9 @@
 @choice "단련된 육신 — 시작 체력 +2 \[{cost_body}\]" if:max_body<1&&g_pts>=cost_body goto:#BuyBody
 @choice "잔류 진기 — 시작 내공 +3 \[{cost_core}\]" if:max_core<1&&g_pts>=cost_core goto:#BuyCore
 @choice "묻어둔 은자 — 시작 은자 +5 \[{cost_coin}\]" if:max_coin<1&&g_pts>=cost_coin goto:#BuyCoin
-@choice "봉인 문양 — 저주 성장 둔화 \[{cost_seal}\]" if:max_seal<1&&g_pts>=cost_seal goto:#BuySeal
+@choice "봉인 문양 — 사술이 더디게 자란다 \[{cost_seal}\]" if:max_seal<1&&g_pts>=cost_seal goto:#BuySeal
 @choice "전생의 기억 — 숨은 길이 보인다 \[{cost_mem}\]" if:max_mem<1&&g_pts>=cost_mem goto:#BuyMem
-@choice "청심차 비방 — 처음부터 매일 저주 −0.15 \[{cost_tea}\]" if:g_know_tea>0&&max_tea<1&&g_pts>=cost_tea goto:#BuyTea
+@choice "청심차 비방 — 처음부터 사술이 조금 덜 자란다 \[{cost_tea}\]" if:g_know_tea>0&&max_tea<1&&g_pts>=cost_tea goto:#BuyTea
 @choice "빈칸 방값 — 하진무의 외상 \[{cost_lodge}\]" if:g_know_lodge>0&&max_lodge<1&&g_pts>=cost_lodge goto:#BuyLodge
 @choice "구르고 또 구른 몸 — 시작 체력 +1 ({lv_vigor}/10) \[{cost_vigor}\]" if:max_vigor<1&&g_pts>=cost_vigor goto:#BuyVigor
 @choice "이번 생의 채비 — 인연 하나, 물건 하나" if:g_runs>=1 goto:#ShopPrep
@@ -208,7 +208,7 @@
 # RipeAfter
 눈을 뜨면, 그날 아침이다.
 노인의 검로가 손에 남아 있다. 떨쳐지지 않는다. 떨칠 생각도 없다.
-가슴의 문양이 낮게 열을 낸다. 처음 보는 열이 아니다. 다만 이번엔, 열 쪽에서 당신을 안다.
+가슴의 문양이 낮게 열을 낸다. 처음 보는 열이 아니다. 다만 이번엔 그 열이 먼저 당신을 알아본다.
 @goto #Shop
 # IpmaAfter
 …그런데.

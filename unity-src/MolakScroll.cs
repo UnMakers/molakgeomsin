@@ -131,8 +131,7 @@ public class MolakScroll : MonoBehaviour
         {
             var bl = GameObject.Find("Naninovel<Runtime>/UI/ChoiceHandler/ButtonList");
             var cp = bl != null ? bl.transform.Find("ContentPanel") as RectTransform : null;
-            float cardH = choices >= 4 ? 122f : 148f;
-            float h = cp != null && cp.rect.height > 10f ? cp.rect.height : choices * (cardH + 26f);
+            float h = cp != null && cp.rect.height > 10f ? cp.rect.height : choices * (MolakTheme.CardH(choices) + MolakTheme.CardGap(choices));
             bottom = 150f + h + 30f;
         }
         bottom = Mathf.Min(bottom, canvasH - 300f);
@@ -170,16 +169,34 @@ public class MolakScroll : MonoBehaviour
         float vpTop = viewport.TransformPoint(new Vector3(0f, viewport.rect.yMax, 0f)).y;
         // 지금 적용된 위치와 이번에 놓을 위치(y)의 차이만큼 줄 위치를 옮겨서 판단
         float shiftWorld = (y - printer.offsetMax.y) * scale;
+        float cut = 0f; int first = -1;
         for (int i = 0; i < ti.lineCount; i++)
         {
             var li = ti.lineInfo[i];
             if (li.characterCount == 0) continue;
             float top = dlg.transform.TransformPoint(new Vector3(0f, li.ascender, 0f)).y + shiftWorld;
             float bot = dlg.transform.TransformPoint(new Vector3(0f, li.descender, 0f)).y + shiftWorld;
-            if (top > vpTop + 0.5f && bot < vpTop - 0.5f) return (vpTop - bot) / scale + 2f;   // 걸친 줄: 아랫변이 뷰포트 윗변을 넘도록
-            if (top <= vpTop) break;   // 위에서부터 훑다가 완전히 보이는 줄을 만나면 끝
+            if (top > vpTop + 0.5f && bot < vpTop - 0.5f) { cut = (vpTop - bot) / scale + 2f; first = i + 1; break; }   // 걸친 줄: 아랫변이 뷰포트 윗변을 넘도록
+            if (top <= vpTop) { first = i; break; }   // 위에서부터 훑다가 완전히 보이는 줄을 만나면 끝
         }
-        return 0f;
+        if (first <= 0 || first >= ti.lineCount) return cut;
+        // 맨 윗줄이 문장 중간(줄바꿈으로 이어진 줄)이면, 두 줄 안에 문단 첫 줄이 있을 때 그 줄부터 보이게 더 올린다 — "…잡아가는 징세조다." 처럼 토막 난 첫 줄 방지
+        if (ParaStart(ti, first)) return cut;
+        for (int j = first + 1; j <= first + 2 && j < ti.lineCount; j++)
+        {
+            if (!ParaStart(ti, j)) continue;
+            float prevBot = dlg.transform.TransformPoint(new Vector3(0f, ti.lineInfo[j - 1].descender, 0f)).y + shiftWorld;
+            return Mathf.Max(cut, (vpTop - prevBot) / scale + 2f);
+        }
+        return cut;
+    }
+
+    static bool ParaStart (TMPro.TMP_TextInfo ti, int line)
+    {
+        int c = ti.lineInfo[line].firstCharacterIndex;
+        if (c <= 0) return true;
+        char p = ti.characterInfo[c - 1].character;
+        return p == '\n' || p == '\r' || p == '\u2029';
     }
 
     // 위로 올려 본 상태 표시 — 뷰포트 아래쪽에 '최신으로' 힌트
