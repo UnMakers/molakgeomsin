@@ -9,6 +9,7 @@ public class MolakPageTurn : MonoBehaviour
 {
     static MolakPageTurn inst;
     float t = -1f, lastPlay = -9f;
+    int seed = 7;
     const float Dur = 0.52f;
     static Texture2D shade, curl;
 
@@ -26,7 +27,7 @@ public class MolakPageTurn : MonoBehaviour
         if (Time.unscaledTime - inst.lastPlay < 0.35f) return;      // 연달아 비워질 때는 한 번만
         try { var pl = Naninovel.Engine.GetService<Naninovel.IScriptPlayer>(); if (pl != null && pl.Skipping) return; } catch { }
         inst.lastPlay = Time.unscaledTime;
-        inst.t = 0f;
+        inst.t = 0f; inst.seed = Random.Range(0, 99999);
         if (Time.unscaledTime - MolakSfx.LastConfirm > 0.5f) MolakSfx.Play("page_turn", 0.55f, Random.Range(0.95f, 1.06f));   // 선택지를 고른 소리와 겹치지 않게
     }
 
@@ -49,7 +50,13 @@ public class MolakPageTurn : MonoBehaviour
         curl.Apply();
     }
 
-    void Update () { if (t >= 0f) { t += Time.unscaledDeltaTime; if (t > Dur) t = -1f; } }
+    /// <summary>시험용: 0 이상이면 그 순간에 멈춰 그린다(스크린샷 확인).</summary>
+    public static float DebugFreeze = -1f;
+    void Update ()
+    {
+        if (DebugFreeze >= 0f) { t = DebugFreeze; return; }
+        if (t >= 0f) { t += Time.unscaledDeltaTime; if (t > Dur) t = -1f; }
+    }
 
     void OnGUI ()
     {
@@ -76,13 +83,22 @@ public class MolakPageTurn : MonoBehaviour
         GUI.color = new Color(paper.r, paper.g, paper.b, 0.96f * fade);
         GUI.DrawTexture(new Rect(0, top, fold, ph), Texture2D.whiteTexture);
         // 앞 장 위의 옛 줄 흔적(희미한 먹 줄 몇 개) — 넘기는 것이 '글이 있던 쪽'임을 보인다
-        var ink = night ? new Color(0.9f, 0.86f, 0.78f, 0.10f * fade) : new Color(0.2f, 0.16f, 0.12f, 0.10f * fade);
+        var ink = night ? new Color(0.9f, 0.86f, 0.78f, 0.07f * fade) : new Color(0.2f, 0.16f, 0.12f, 0.07f * fade);
         GUI.color = ink;
-        for (int i = 0; i < 9; i++)
+        // 낱말 덩어리처럼 끊긴 짧은 획들(공책 줄처럼 보이지 않게)
+        var rnd = new System.Random(seed);
+        for (int i = 0; i < 12; i++)
         {
-            float ly = top + 60f * u + i * 92f * u; if (ly > bottom - 40f * u) break;
-            float lw = Mathf.Min(fold - 90f * u, (w - 180f * u) * (i % 3 == 2 ? 0.62f : 0.94f));
-            if (lw > 0) GUI.DrawTexture(new Rect(90f * u, ly, lw, 6f * u), Texture2D.whiteTexture);
+            float ly = top + 70f * u + i * 66f * u; if (ly > bottom - 40f * u) break;
+            if (i % 4 == 3) continue;                                   // 단락 사이 빈 줄
+            float x = 90f * u, end = (w - 90f * u) * (i % 4 == 2 ? 0.55f + (float)rnd.NextDouble() * 0.3f : 1f);
+            while (x < end)
+            {
+                float seg = (40f + (float)rnd.NextDouble() * 110f) * u;
+                float xe = Mathf.Min(x + seg, end, fold - 6f * u);
+                if (xe > x) GUI.DrawTexture(new Rect(x, ly, xe - x, 9f * u), Texture2D.whiteTexture);
+                x += seg + 18f * u;
+            }
         }
         // 2) 접히는 선 오른쪽(새 쪽) 위로 드리우는 그림자
         GUI.color = new Color(1, 1, 1, (night ? 0.55f : 0.32f) * fade * (1f - e * 0.6f));

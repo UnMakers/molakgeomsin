@@ -849,9 +849,16 @@
 @goto #NightEnd
 # NDuel
 저잣거리 공터의 비무판. 서열을 건 칼들이 밤마다 부딪치는 곳이다.
+@set dmore=0
+# NDuelAgain
 @set dkind="any"
 @gosub MolakDuel#Run
-@goto #NightEnd
+@set dmore=dmore+1
+@goto #NightEnd if:duelwin<1||dmore>=3||hp<hpmax/2
+남은 밤이 있다. 판 가장자리에서 다음 칼이 손짓한다.
+@choice "한 판 더 — 남은 밤도 비무판에서" goto:#NDuelAgain
+@choice "오늘은 여기까지" goto:#NightEnd
+@stop
 # NDuelBack
 폐가 뒷마당. 횃불 둘. 심판도 방(榜)도 없다. 이기면 판돈이고, 지면 아무도 묻지 않는다.
 @set dkind="back"
