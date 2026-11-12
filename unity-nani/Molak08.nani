@@ -98,7 +98,7 @@
 @fx hp:-3
 @set amhaff=amhaff+2
 @set f_amhturn=1
-@mark text:"암향의 편에 섰다" note:"그녀가 다시는 루(樓)로 돌아가지 않는다."
+@mark text:"암향의 편에 섰다"
 @goto Molak02#AfterChapter
 # Am2A2
 잔을 든다. 그녀의 눈을 본다.
@@ -110,7 +110,7 @@
 @vfx kind:clash
 @set amhaff=amhaff+3
 @set f_amhturn=1
-@mark text:"암향의 편에 섰다" note:"그녀가 다시는 루(樓)로 돌아가지 않는다."
+@mark text:"암향의 편에 섰다"
 @goto #Am2Go
 # Am2B
 두 잔을 바꾼다. 그녀가 보고만 있다.
@@ -128,7 +128,7 @@
 @set f_antidote=0
 @set amhaff=amhaff+3
 @set f_amhturn=1
-@mark text:"암향의 편에 섰다" note:"그녀가 다시는 루(樓)로 돌아가지 않는다."
+@mark text:"암향의 편에 섰다"
 @goto #Am2Go
 # Am2BR
 @risk on:ng need:+1
@@ -146,7 +146,7 @@
 "……공자. 동생한테, 눈 오는 날 팔려 온 게 아니라고 해 주세요. 꽃 피는 날이었다고."
 맥이 멎는다. 향 두 대가 끝까지 탄다. 어느 쪽이 매화였는지 끝내 모른다.
 @vfx kind:beat
-@mark text:"암향의 독을 다 거두지 못했다" note:"향 두 대가 끝까지 탔다."
+@mark text:"암향의 독을 다 거두지 못했다"
 @black text:"맥이 멎는다." red:true hold:1.7
 @set f_amhdead=1
 @set g_amhdied=1
@@ -165,7 +165,7 @@
 "상자를 내려놓으시오. 그리고 이 루를 비우시오. 오늘 밤 안에."
 그녀가 루주의 무릎에서 상자를 빼앗아 안는다. 향고 옆방 자물쇠는 당신의 칼등이 떨어뜨린다.
 @set f_amhturn=1
-@mark text:"암향의 편에 섰다" note:"그녀가 다시는 루(樓)로 돌아가지 않는다."
+@mark text:"암향의 편에 섰다"
 @set g_amhfreed=1
 @set f_amhally=1
 @set amhaff=amhaff+3
@@ -188,7 +188,7 @@
 "루에 돌아가면 동생이 죽고, 안 돌아가면 제가 죽어요. 셈이 그래요."
 "셈은 다시 하면 되오."
 "……공자는 죽어서 돌아온 분이라, 셈을 다시 하는 게 쉬우신가 봐요."
-그녀가 처음으로 당신 어깨에 이마를 댄다. 향 냄새가 나지 않는다. 그냥 사람 냄새가 난다.
+그녀가 당신 어깨에 이마를 댄다. 늘 나던 향 냄새가 오늘은 없다.
 @goto Molak02#AfterChapter
 
 ; ---------- 암향 III: 향 없는 곳 (50일+, 마음이 깊을 때) ----------

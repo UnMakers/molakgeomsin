@@ -278,7 +278,7 @@ public class MolakBag : MonoBehaviour
             }
             else body = head + "   <color=" + subCol + ">비어 있다</color>";
             GUI.Label(new Rect(0, by0 + 26*u, w, 64*u), body, sHintName);
-            GUI.Label(new Rect(0, by0 + 88*u, w, 44*u), "<color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + "      끌어 올려 펼치기</color>", sHint);
+            GUI.Label(new Rect(0, by0 + 88*u, w, 44*u), "<color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + "      위로 올려 열기</color>", sHint);
             return;
         }
 
@@ -352,7 +352,6 @@ public class MolakBag : MonoBehaviour
         listViewGui = view; viewValid = true;   // 드래그는 Update(ScrollStep)에서 입력 시스템으로 처리
         var card = night ? new Color(0.135f, 0.12f, 0.11f, 1f) : new Color(0.995f, 0.985f, 0.96f, 1f);
         var edge = new Color(ink3.r, ink3.g, ink3.b, night ? 0.25f : 0.22f);
-        string newestFlag = newestIdx >= 0 ? order[newestIdx] : null;
         GUI.BeginGroup(view);
         float ry = -listScroll, pad = 26*u, inW = cw - pad*2 - 8*u;
         foreach (var e in list)
@@ -365,8 +364,7 @@ public class MolakBag : MonoBehaviour
                 Box(new Rect(r.x, r.y, r.width, Mathf.Max(1f, 1*u)), edge); Box(new Rect(r.x, r.yMax - Mathf.Max(1f, 1*u), r.width, Mathf.Max(1f, 1*u)), edge);
                 Box(new Rect(r.x, r.y, 6*u, r.height), accents[tab]);
                 float yy = ry + 18*u, xx = pad + 8*u;
-                bool isNew = e.Flag == newestFlag;
-                GUI.Label(new Rect(xx, yy, inW, 48*u), e.Name + (isNew ? "  <size=" + Mathf.RoundToInt(22*u) + "><color=#B03030>· 새로</color></size>" : ""), sName);
+                GUI.Label(new Rect(xx, yy, inW, 48*u), e.Name, sName);
                 yy += 50*u;
                 if (!string.IsNullOrEmpty(e.Effect)) { float eh = sEff.CalcHeight(new GUIContent("▸ " + e.Effect), inW); GUI.Label(new Rect(xx, yy, inW, eh), "▸ " + e.Effect, sEff); yy += eh + 6*u; }
                 if (!string.IsNullOrEmpty(e.Desc)) GUI.Label(new Rect(xx, yy, inW, ry + rh - yy), e.Desc, sDesc);
@@ -386,7 +384,7 @@ public class MolakBag : MonoBehaviour
         if (listScroll < listMax - 2f)
         {
             sTab.normal.textColor = new Color(ink3.r, ink3.g, ink3.b, 0.9f);
-            GUI.Label(new Rect(cx, listY + listH + 4*u, cw, 44*u), "<size=" + Mathf.RoundToInt(25*u) + ">▾ 밀어 올리면 더 있다</size>", sTab);
+            GUI.Label(new Rect(cx, listY + listH + 4*u, cw, 44*u), "<size=" + Mathf.RoundToInt(25*u) + ">▾ 아래에 더 있다</size>", sTab);
         }
     }
 

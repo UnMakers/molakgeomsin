@@ -195,7 +195,7 @@
 @fx curse:-4 sw:1
 @set aff=aff+1
 @set f_soabond=1
-@mark text:"소아 곁에 남았다" note:"그녀가 처음으로 등을 보인다."
+@mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 # SoaN5X
 대답 대신 검을 반 치 뽑는다.
@@ -205,7 +205,7 @@
 "두고 보지."
 @fx curse:-3 sw:1
 @set f_soabond=1
-@mark text:"소아 곁에 남았다" note:"그녀가 처음으로 등을 보인다."
+@mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 # SoaN5A
 "약속했지?"
@@ -214,7 +214,7 @@
 소아가 다시 기와에 눕는다. 그날 밤과 같은 달인데, 오늘은 그냥 밝다.
 @fx curse:-5
 @set f_soabond=1
-@mark text:"소아 곁에 남았다" note:"그녀가 처음으로 등을 보인다."
+@mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 # SoaN5B
 말은 필요 없었다.
@@ -223,7 +223,7 @@
 기와 아래 어딘가에서 짧은 휘파람이 두 번 울린다. 소아의 손이 쌍검 자루로 간다. 달은 그대로인데, 밤이 식는다.
 @fx curse:-6 hp:1
 @set f_soabond=1
-@mark text:"소아 곁에 남았다" note:"그녀가 처음으로 등을 보인다."
+@mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 
 ; ---------- 소아 아크 II: 우물, 장부, 그리고 그 밤 (0.3.3) ----------
@@ -369,7 +369,7 @@
 @fx hp:-1
 @goto Molak02#AfterChapter
 # SoaN7Kill
-@mark text:"소아를 베었다" note:"그녀의 두 번째 검은 마지막 한 치에서 멈췄다."
+@mark text:"소아를 베었다"
 @set f_soadead=1
 @set f_soakilled=1
 @set g_soadied=1
@@ -391,7 +391,7 @@
 @choice "검을 거둔다" goto:#SoaN7CSpare
 @stop
 # SoaN7CKill
-@mark text:"소아를 베었다" note:"속은 쪽이 베었다. 그녀는 피하지 않았다."
+@mark text:"소아를 베었다"
 @set f_soadead=1
 @set f_soakilled=1
 @set g_soadied=1
@@ -399,12 +399,12 @@
 검이 한 번 움직인다. 그녀는 피하지 않는다.
 쓰러지는 몸을 받는다. 쌍검을 메고 다니던 몸이 이렇게 가벼웠다.
 그녀의 입술이 무언가를 말하려다 만다. 반쪽은 끝내 건너오지 않는다.
-@black text:"……|반쪽은 끝내 건너오지 않는다." red:true hold:1.7
+@black text:"……|숨이 멎었다." red:true hold:1.7
 @fx sl:3 curse:6
 @set f_soablades=1
 @goto Molak02#AfterChapter
 # SoaN7CSpare
-@mark text:"소아를 베지 않았다" note:"목에 남은 붉은 줄 하나가 그녀를 살린다."
+@mark text:"소아를 베지 않았다"
 검을 거둔다. 그녀의 목에 붉은 줄 하나가 남는다.
 "……바보 같은 놈."
 소아가 장부를 탁자에 둔 채 나간다. 첫 줄 아래에 그녀의 글씨로 한 줄이 더 적혀 있다.
@@ -530,7 +530,7 @@
 @page
 @art scene:temple
 @art char:soa_grief
-되감기기 직전, 가슴의 문양이 처음으로 앞을 보여 준다. 되감기는 쪽이 아니라, 당신 없이 흘러가는 쪽을.
+되감기기 직전, 문양이 한 장면을 보여 준다. 당신이 없는 뒷날이다.
 새벽, 산사 종루 밑. 소아가 하진무와 점소이 사이에 앉아 있다. 셋 다 살아 있다.
 객잔 쪽 하늘이 붉다. 소아가 일어선다. 하진무가 그 소매를 잡는다. 놓지 않는다.
 "……가지 마시오. 객이 그러라고 했소."
@@ -580,7 +580,7 @@
 용마루 끝에 그녀가 쌍검을 무릎에 눕히고 앉은 채로 있다. 우물 덮개 위의 그 사부처럼.
 @goto #SoaN8BWrit if:aff>=3
 눈이 감겨 있지 않다. 당신이 달아난 쪽을 보고 있다.
-@mark text:"그 밤, 지붕을 떠났다" note:"그녀는 끝까지 당신이 간 쪽을 보고 있었다."
+@mark text:"그 밤, 지붕을 떠났다"
 @black text:"……|소아." red:true hold:1.8
 @set f_soadead=1
 @set g_soadied=1
@@ -593,7 +593,7 @@
 적운의 구결이다. 다 못 쓸까 봐, 같은 줄을 두 번 썼다.
 @vfx kind:beat
 맨 끝에 한 글자. 蓮.
-@mark text:"그 밤, 지붕을 떠났다" note:"그녀는 남은 숨으로 구결을 두 번 썼다."
+@mark text:"그 밤, 지붕을 떠났다"
 @black text:"蓮." red:true hold:2
 @set f_soadead=1
 @set g_soadied=1
@@ -963,14 +963,14 @@
 "대사형. 보름마다 사당 앞에 이름 없는 쌀이 놓여 있었어요. 일 년 동안 스물네 번."
 혈랑대주가 서열록에 이름도 없는 비구니 앞에서 고개를 들지 못한다.
 "막내가 저를 찾아왔어요. 대사형이 무엇을 바꾸고 저를 살렸는지, 저는 이제 알아요."
-진백이 처음으로 당신을 본다. 죽어 있던 눈에 무언가가 돌아와 있다.
+진백이 그제야 당신을 똑바로 본다. 흐리던 눈에 초점이 돌아와 있다.
 "……막내야. 너는 어찌 이 아이를 알았느냐. 그 문 앞의 일은 나 혼자 지고 갈 셈이었다."
 @choice "\"혼자 지게 두지 않으려고 왔소. 교주는 둘이 베겠소.\"" goto:#Rev5SA
 @choice "\"사매를 데리고 떠나시오. 셈은 내가 끝내겠소.\"" goto:#Rev5SB
 @choice "검을 뽑는다 — 그래도, 문을 연 손이다" goto:#Rev5SC
 @stop
 # Rev5SA
-@mark text:"진백에게 검을 거두었다" note:"첫째 사형의 셈이 아직 끝나지 않았다."
+@mark text:"진백에게 검을 거두었다"
 진백이 검을 거꾸로 쥐어 자루를 당신에게 내민다. 청운에서 사형이 사제에게 검을 맡기던 법이다.
 "교주의 대전에는 옆문이 있다. 집법당 칼잡이들이 지키지. 그 문은 내가 막는다. 너는 북두를 거꾸로 밟아라."
 청묘가 두 사람의 소매를 한 번씩 잡았다 놓는다. 승복 소매가 떨린다.
@@ -1001,7 +1001,7 @@
 진백이 무너지며 사매의 소매를 붙든다.
 "……울지 마라. 막내 잘못이 아니다. 내 셈이 늦었을 뿐이다."
 청묘가 진백을 끌어안고 당신을 본다. 원망하는 눈이 아니다. 그래서 더 오래 남는다.
-@mark text:"진백을 베었다" note:"청묘의 눈이 당신을 놓지 않는다."
+@mark text:"진백을 베었다"
 @black text:"……|첫째 사형." red:true hold:1.8
 @set f_jinbaekdead=1
 @set f_jbsisterhate=1
@@ -1379,7 +1379,7 @@
 @regress
 @goto MolakOver#IpmaAfter
 # IpmaK
-교주의 손이 옷깃에서 멎는다. 지겨운 눈에 처음으로 다른 것이 섞인다.
+교주의 손이 옷깃에서 멎는다. 지겨워하던 눈빛이 달라진다.
 "……그 늙은이가 너에게 거기까지 보여 주었더냐."
 "늙은이가 아니오. 내가 무릎을 꿇고 보았소. 존명이라 대답하고."
 대전이 조용하다. 교주가 손을 거두고, 비무를 받는 자리에서 일어선다.

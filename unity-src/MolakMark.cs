@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 0.4.24 갈림길 표식: 플레이어가 고른 것이 이야기를 갈랐다는 것을 그 자리에서 보여 준다.
 ///  - 화면 위쪽에 붉은 岐(갈림길) 인장과 함께 한 줄이 먹처럼 번졌다 사라진다. 대본은 멈추지 않는다.
-///  - 이번 생의 갈림길로 적어 두었다가(lifemarks), 죽을 때 @black marks:true 가 "이번 생, 당신이 고른 것." 으로 다시 읽어 준다.
+///  - 이번 생의 갈림길로 적어 두었다가(lifemarks), 죽을 때 @black marks:true 가 "이번 생에 고른 것" 으로 다시 읽어 준다.
 /// 큰 갈림에만 쓴다. 한 생에 서너 번이 알맞다.
 /// </summary>
 public class MolakMark : MonoBehaviour
@@ -40,7 +40,7 @@ public class MolakMark : MonoBehaviour
     public static void Show (string text, string note)
     {
         if (inst == null) { var go = new GameObject("MolakMark"); DontDestroyOnLoad(go); inst = go.AddComponent<MolakMark>(); }
-        inst.line = text; inst.sub = string.IsNullOrEmpty(note) ? "이 생이 여기서 갈린다." : note;
+        inst.line = text; inst.sub = note ?? "";
         inst.t0 = Time.realtimeSinceStartup;
     }
 
@@ -87,8 +87,12 @@ public class MolakMark : MonoBehaviour
         sMain.normal.textColor = new Color(0.95f, 0.9f, 0.8f, a);
         sSub.normal.textColor = new Color(0.9f, 0.76f, 0.66f, a);
         float tx = seal.xMax + 30 * u, tw = bx + bw - 40 * u - tx;
-        GUI.Label(new Rect(tx, by + 22 * u, tw, 64 * u), line, sMain);
-        GUI.Label(new Rect(tx, by + 90 * u, tw, 48 * u), "— " + sub, sSub);
+        if (string.IsNullOrEmpty(sub)) GUI.Label(new Rect(tx, by, tw, bh), line, sMain);   // 한 줄이면 띠 가운데에
+        else
+        {
+            GUI.Label(new Rect(tx, by + 22 * u, tw, 64 * u), line, sMain);
+            GUI.Label(new Rect(tx, by + 90 * u, tw, 48 * u), "— " + sub, sSub);
+        }
     }
 }
 

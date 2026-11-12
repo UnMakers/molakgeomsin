@@ -137,7 +137,7 @@ public class BlackCommand : Command
     public StringParameter Text;
     public DecimalParameter Hold;
     public BooleanParameter Red;
-    /// <summary>marks:true — 이번 생의 갈림길(@mark 로 적은 것)을 "이번 생, 당신이 고른 것." 아래로 한 줄씩 다시 읽는다. 적힌 게 없으면 건너뛴다.</summary>
+    /// <summary>marks:true — 이번 생의 갈림길(@mark 로 적은 것)을 "이번 생에 고른 것" 아래로 한 줄씩 다시 읽는다. 적힌 게 없으면 건너뛴다.</summary>
     public BooleanParameter Marks;
 
     public override async Awaitable Execute (ExecutionContext ctx)
@@ -152,7 +152,7 @@ public class BlackCommand : Command
             var m = MolakMark.Marks();
             if (m.Count == 0) return;
             for (int i = 0; i < m.Count; i++) if (!m[i].EndsWith(".")) m[i] += ".";
-            m.Insert(0, Assigned(Text) ? Text.Value : "이번 생, 당신이 고른 것.");
+            m.Insert(0, Assigned(Text) ? Text.Value : "이번 생에 고른 것");
             lines = m.ToArray();
             if (!Assigned(Hold)) hold = 1.3f;
             stackMode = true;
