@@ -321,6 +321,9 @@
 # Rival2
 @art char:gwaksan
 객잔 앞에 도전장 대신 창 한 자루가 꽂혀 있다. 곽산이 팔짱을 끼고 서 있다.
+@goto #Rival2Sac0 if:g_sac_gwak<1
+<color=#9A70C4>저 창이 짚단 과녁 옆에 똑바로 서 있던 마당을 안다.</color> 곽산은 모른다. 생사결 금 밖에서 그가 누구의 이름을 불렀는지도.
+# Rival2Sac0
 @goto #Rival2P if:g_know_gwak>0&&f_gwakhelped<1
 @set tr=random(1,100)
 @goto #Rival2P if:tr<=50&&f_gwakhelped<1

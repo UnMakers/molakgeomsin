@@ -157,6 +157,7 @@
 @set f_cmally=0
 @set f_cmaxe=0
 @set f_cmeve=0
+@set f_cmfiresaved=0
 @set f_cmform=0
 @set f_cmglimpse=0
 @set f_cmsword=0
@@ -189,6 +190,7 @@
 @set f_gwakhelped=0
 @set f_gwakmourn=0
 @set f_gwakwifedied=0
+@set f_gwakwifesaved=0
 @set f_hajin2=0
 @set f_hajinbond=0
 @set f_hajincold=0

@@ -267,7 +267,16 @@ public class PickEventCommand : Command
     const int DryBoost = 20;
 
     /// <summary>가중치 × 이번 생의 바람(theme). 정수로 10배해서 쓴다.</summary>
-    static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id))); }
+    static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id) * RunMul(d.Id))); }
+    // 0.4.21 생을 넘는 사건 기억: 앞선 생들에서 자주 본 사건은 덜, 아직 못 본 사건은 더 나온다(첫 생에는 그대로).
+    // g_ev_<id>는 나니노벨 전역 변수(g_ 접두)라 회귀해도 남는다.
+    public static float RunMul (string id)
+    {
+        if (MolakStats.Get("g_runs") < 1f) return 1f;
+        float k = MolakStats.Get("g_ev_" + id);
+        if (k <= 0f) return 1.8f;
+        return Mathf.Max(0.35f, 1f / (1f + 0.5f * k));
+    }
     public static float ThemeMul (string id) { return MolakRules.ThemeMul(Mathf.RoundToInt(MolakStats.Get("theme")), id); }
 
 #pragma warning disable CS1998
@@ -306,6 +315,7 @@ public class PickEventCommand : Command
 
         MolakStats.Set("seen_" + pick.Id, 1f);
         MolakStats.Set("seenday_" + pick.Id, day);
+        MolakStats.Add("g_ev_" + pick.Id, 1f);
         MolakStats.Set("evdry", 0f);
         MolakStats.Add("evcount", 1f);
         SetNext(pick.Id);

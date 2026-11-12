@@ -1080,6 +1080,8 @@
 @gosub MolakEvents#E_HerbNight if:nextevent=="E_HerbNight"
 @gosub MolakEvents#E_HerbBurn if:nextevent=="E_HerbBurn"
 @gosub MolakEvents#E_GwakWife if:nextevent=="E_GwakWife"
+@gosub MolakEvents#E_GwakSang if:nextevent=="E_GwakSang"
+@gosub MolakEvents#E_CmFire if:nextevent=="E_CmFire"
 @gosub MolakEvents#E_Thugs if:nextevent=="E_Thugs"
 @gosub MolakEvents#E_Pilgrim if:nextevent=="E_Pilgrim"
 @gosub MolakEvents#E_Funeral if:nextevent=="E_Funeral"

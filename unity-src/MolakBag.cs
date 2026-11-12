@@ -87,6 +87,8 @@ public class MolakBag : MonoBehaviour
         new Entry("f_yongcrew", "나루의 지게꾼들", "가난한 짐은 삯을 안 받는다. 지게꾼끼리 다시 세운 법.", "야습과 몰이의 밤, 골목 어귀를 막아 준다"),
         new Entry("f_hajindot", "장부의 점", "점 찍은 칸은 돌아온다는 뜻이오. 이 장부에 점 찍힌 칸은 객이 처음이오.", ""),
         new Entry("f_gwakdinner", "곽산의 국", "둘이 와야 국이 준다.", ""),
+        new Entry("f_gwakwifesaved", "석 달 치 약값", "판돈이오. 다음 비무판에서 내가 지면 갚으시오.", ""),
+        new Entry("f_cmfiresaved", "그을린 법당 귀퉁이", "둘이 막았어요. 그 밤엔 혼자였는데.", ""),
         new Entry("f_yongspear", "작대기와 창", "짐 지는 손은 위로 받치고, 창 쥐는 손은 앞으로 민다.", "야습과 몰이의 밤, 지게꾼들의 작대기가 골목을 엇대어 막는다"),
         new Entry("f_hajingrave", "성 밖 언덕의 봉분", "주판 소리를 좋아하던 사람. 객잔이 망하지 않고 있다는 소리.", ""),
         new Entry("f_northvill", "우물가의 노파", "먹을 걸 주는 걸 보니 교 사람이 아니구려.", ""),
