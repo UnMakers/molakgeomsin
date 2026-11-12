@@ -324,6 +324,9 @@
 @gosub #LdNamgung
 @goto #Ld2Again if:g_clears>0
 골짜기 최심부, 검은 전각. 문은 열려 있다. 기다리고 있었다는 뜻이다.
+@goto #Ld2V0 if:f_northinfo<1
+문지방을 넘는데 발밑 돌 틈으로 낮은 소리가 올라온다. 울음인지 숨소리인지. 산골 마을 노파가 말한 전각 밑이다. 그릇들이 아직 거기 있다.
+# Ld2V0
 대전(大殿) 끝, 붉은 단 위에 사내가 앉아 있다. <color=#C03434>공기가 그자를 중심으로 휘어 있다</color>.
 혈마교주, 혈천마.
 "…살아 있는 얼굴이로다. 그 밤의."
@@ -700,12 +703,33 @@
 노인이 등을 돌린다.
 "노부를 찾을 수 있으리라."
 눈을 한 번 깜빡인 사이 노인은 없다. 공기가 풀리고, 그제야 무릎을 꿇으며 숨을 토한다.
+@gosub #EpiRoad
 @vfx kind:dawn
 복수는 끝났다.<br>이야기는, 끝나지 않았다.
 \[ 제一부 完 \]
 @set deathcause="등극"
 @ending
 @goto MolakOver#Shop
+# EpiRoad
+@goto #EpiRoadEnd if:b_north<1
+@page
+돌아오는 길은 닷새가 아니라 엿새가 걸린다. 다리가 서두르지 않는다.
+@goto #EpiRoadV if:f_northvill<1
+산골 마을 우물가. 노파가 두레박을 길어 올리고 있다. 그 옆에 아이 둘이 맨발로 서 있다. 전각 밑에서 걸어 나온 얼굴들이다.
+노파가 당신을 보고 두레박을 내려놓는다. 아무 말도 하지 않는다. 물 한 바가지를 떠서 내민다. 맑다.
+# EpiRoadV
+@goto #EpiRoadG if:f_northgwak<1
+북령 목책. 깃대에 붉은 끈은 없다. 창 하나가 기둥에 기대어 있고, 곽산이 그 밑에서 졸고 있다.
+발소리에 그가 눈을 뜬다. 한참 당신을 본다. 그러고는 일어나 창을 어깨에 멘다.
+"국 식겠다. 가자."
+# EpiRoadG
+@goto #EpiRoadY if:f_northyong<1
+나루. 맨 앞 배에 용개가 앉아 있다. 엿새째 그 배에서 내려오지 않았다고, 지게꾼들이 웃으며 일러 준다.
+"오셨습죠. 거 보십쇼. 아직 다 못 갚았으니 오실 줄 알았습니다요."
+# EpiRoadY
+운락의 지붕들이 보인다. 객잔 처마 밑 등잔에 불이 켜져 있다. 낮인데도.
+# EpiRoadEnd
+@return
 # H_Tavernluck
 @set r=random(1,100)
 @goto #TavernBad if:r>60

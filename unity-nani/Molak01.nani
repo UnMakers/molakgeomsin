@@ -43,6 +43,7 @@
 @set b_leave=0
 @set b_nethint=0
 @set b_netk=0
+@set b_north=0
 @set b_ochi=0
 @set b_old=0
 @set b_old25=0
@@ -186,6 +187,7 @@
 @set f_gwakdinner=0
 @set f_gwakexposed=0
 @set f_gwakhelped=0
+@set f_gwakmourn=0
 @set f_gwakwifedied=0
 @set f_hajin2=0
 @set f_hajinbond=0
@@ -267,7 +269,11 @@
 @set f_newrobe=0
 @set f_nightmarketgone=0
 @set f_noplate=0
+@set f_northgwak=0
+@set f_northinfo=0
 @set f_northstep=0
+@set f_northvill=0
+@set f_northyong=0
 @set f_ochisaved=0
 @set f_old2=0
 @set f_old25=0
