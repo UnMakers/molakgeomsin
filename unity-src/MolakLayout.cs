@@ -10,8 +10,11 @@ public static class MolakLayout
     public static readonly Vector2 Canvas = new Vector2(900f, 1600f);
 
     // ---- 하단 띠·본문 ----
-    /// <summary>화면 아래 행낭 띠 높이. 선택지 목록은 이 위에 쌓인다.</summary>
-    public const float BagStripH = 150f;
+    /// <summary>화면 아래 행낭 띠 높이. 선택지 목록은 이 위에 쌓인다.
+    /// 0.4.22: 150 → 300. 휴대폰 아래 내비게이션 막대(제스처 바)와 글자가 겹쳐서, 띠를 두 배로 키우고 글은 위쪽 절반(BagStripContentH)에만 둔다.</summary>
+    public const float BagStripH = 300f;
+    /// <summary>행낭 띠 안에서 글과 손잡이가 차지하는 위쪽 높이. 그 아래는 기기 막대에 내주는 여백.</summary>
+    public const float BagStripContentH = 150f;
     /// <summary>본문 창과 선택지 사이 숨 쉴 틈.</summary>
     public const float AboveChoices = 30f;
     /// <summary>본문 창이 아무리 눌려도 남겨 두는 최소 높이.</summary>
@@ -19,7 +22,7 @@ public static class MolakLayout
     /// <summary>본문 창 좌우 여백, 삽화 띠가 없을 때의 위 여백, 삽화 띠 아래 틈.</summary>
     public const float BodySide = 70f, BodyTop = 215f, BelowBand = 24f;
     /// <summary>위로 쓸어 행낭을 여는 하단 구역 높이(선택지가 떠 있을 때 / 없을 때).</summary>
-    public const float BagSwipeZoneWithChoices = 150f, BagSwipeZone = 280f;
+    public const float BagSwipeZoneWithChoices = 300f, BagSwipeZone = 430f;
     /// <summary>본문 글자 기본 크기(설정의 글자 크기 배율이 곱해진다).</summary>
     public const float BodyFont = 36f;
 

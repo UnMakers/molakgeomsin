@@ -257,7 +257,7 @@ public class MolakBag : MonoBehaviour
             string latest = order.Count > 0 ? order[order.Count - 1] : null;
             var le = latest != null ? Find(latest) : null;
             sHint.normal.textColor = hintCol; sHintName.normal.textColor = hintCol;
-            float bandH = 150*u, by0 = h - bandH;
+            float bandH = MolakLayout.BagStripH*u, by0 = h - bandH;   // 띠 아래 절반은 기기 막대 여백, 글은 위 절반
             Box(new Rect(0, by0, w, bandH), night ? new Color(0.10f,0.09f,0.085f,0.94f) : new Color(0.93f,0.90f,0.84f,0.94f));
             Box(new Rect(0, by0, w, Mathf.Max(1f, 2*u)), night ? new Color(0.45f,0.40f,0.35f,0.9f) : new Color(0.55f,0.48f,0.40f,0.7f));
             Box(new Rect(w/2f - 56*u, by0 + 12*u, 112*u, 7*u), night ? new Color(0.7f,0.65f,0.58f,0.9f) : new Color(0.35f,0.30f,0.25f,0.75f));
@@ -302,7 +302,7 @@ public class MolakBag : MonoBehaviour
 
         // ---- 목록 (최근 획득 순) ----
         float cx = Mathf.Max(40*u, (w - Mathf.Min(w*0.9f, 920*u))/2f), cw = w - 2*cx;
-        float listY = y + 104*u, listH = panelH - 124*u;
+        float listY = y + 104*u, listH = panelH - 124*u - (MolakLayout.BagStripH - MolakLayout.BagStripContentH)*u;   // 펼친 목록도 기기 막대 위에서 끝난다
         var sections = new[] { "물건", "비방 · 소식", "인연" };
         var tables = new[] { Items, Lore, Bonds };
         var rows = new List<object>(); float total = 0f; int shown = 0;

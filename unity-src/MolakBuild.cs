@@ -12,25 +12,33 @@ public static class MolakBuild
     /// <summary>빌드 산출물은 프로젝트 옆 Build 폴더에 둔다(프로젝트를 어디로 옮겨도 따라간다).</summary>
     static string BuildDir { get { return Path.Combine(Path.GetDirectoryName(Application.dataPath), "Build"); } }
     public static string Apk { get { return Path.Combine(BuildDir, "Android", "molakgeomsin.apk"); } }
+    /// <summary>플레이 스토어 업로드용 AAB(0.4.22). 업로드 키스토어가 지정되어 있어야 스토어가 받는다.</summary>
+    public static string Aab { get { return Path.Combine(BuildDir, "Android", "molakgeomsin.aab"); } }
     public static string ResultFile { get { return Path.Combine(BuildDir, "android_build_result.txt"); } }
     /// <summary>빌드가 끝나면 APK·PC zip 을 버전명 붙여 복사해 두는 공유 폴더(Google Drive 데스크톱 동기화 폴더).
     /// 기기마다 다를 수 있어 EditorPrefs "Molak.DriveDir" 로 바꿀 수 있다. 폴더가 없으면 복사를 건너뛴다.</summary>
     const string DefaultDriveDir = @"G:\내 드라이브\작업중(Ings)\시현\전생검신\Build_Apk";
     public static string DriveDir { get { return EditorPrefs.GetString("Molak.DriveDir", DefaultDriveDir); } }
 
-    public static string CopyToDrive (string version)
+    public static string CopyToDrive (string version, bool aab = false)
     {
         try
         {
             if (!Directory.Exists(DriveDir)) return " | drive: 폴더 없음";
-            var dst = Path.Combine(DriveDir, "몰락검신_v" + version + ".apk");
-            File.Copy(Apk, dst, true);
+            var dst = Path.Combine(DriveDir, "몰락검신_v" + version + (aab ? ".aab" : ".apk"));
+            File.Copy(aab ? Aab : Apk, dst, true);
             return " | drive: " + Path.GetFileName(dst);
         }
         catch (System.Exception ex) { return " | driveEXC " + ex.Message; }
     }
 
-    public static string Android (string version, int code)
+    public static string Android (string version, int code) { return Build(version, code, false); }
+
+    /// <summary>스토어용 AAB. 타깃 API는 36으로 고정한다(2026-08-31부터 새 앱·업데이트 요구 수준).
+    /// 업로드 키스토어(Publishing Settings)가 없으면 디버그 서명이라 스토어가 거절한다 — 결과 줄에 표시한다.</summary>
+    public static string Bundle (string version, int code) { return Build(version, code, true); }
+
+    static string Build (string version, int code, bool aab)
     {
         if (File.Exists(ResultFile)) File.Delete(ResultFile);
         // 보조: .nani 전부 재임포트(커맨드 컴파일 이후 상태 보장)
@@ -39,9 +47,13 @@ public static class MolakBuild
         PlayerSettings.bundleVersion = version;
         PlayerSettings.Android.bundleVersionCode = code;
         Directory.CreateDirectory(Path.GetDirectoryName(Apk));
+        bool prevBundle = EditorUserBuildSettings.buildAppBundle;
+        var prevTarget = PlayerSettings.Android.targetSdkVersion;
+        EditorUserBuildSettings.buildAppBundle = aab;
+        if (aab) PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)36;
         var opts = new BuildPlayerOptions {
             scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
-            locationPathName = Apk, target = BuildTarget.Android, options = BuildOptions.None
+            locationPathName = aab ? Aab : Apk, target = BuildTarget.Android, options = BuildOptions.None
         };
         var building = typeof(Naninovel.BuildProcessor).GetProperty("Building");
         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -57,13 +69,16 @@ public static class MolakBuild
             if (bad.Count > 0) throw new System.Exception("TEMP script path broken: " + string.Join(",", bad.Select(b => b ? b.Path : "null")));
             var report = BuildPipeline.BuildPlayer(opts);
             res = "result=" + report.summary.result + " size=" + (report.summary.totalSize / (1024 * 1024)) + "MB errors=" + report.summary.totalErrors + " time=" + (int)sw.Elapsed.TotalSeconds + "s v=" + version;
-            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded) res += CopyToDrive(version);
+            if (aab) res += " | aab target=" + (int)PlayerSettings.Android.targetSdkVersion + (PlayerSettings.Android.useCustomKeystore ? " signed=upload" : " signed=DEBUG(스토어 거절)");
+            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded) res += CopyToDrive(version, aab);
         }
         catch (System.Exception ex) { res = "EXC " + ex.GetType().Name + ": " + ex.Message; }
         finally
         {
             try { Naninovel.BuildProcessor.PostprocessBuild(); } catch (System.Exception ex2) { res += " | cleanupEXC " + ex2.Message; }
             building.SetValue(null, false, null);
+            EditorUserBuildSettings.buildAppBundle = prevBundle;
+            if (aab) PlayerSettings.Android.targetSdkVersion = prevTarget;
         }
         File.WriteAllText(ResultFile, res + "\n");
         return res;
