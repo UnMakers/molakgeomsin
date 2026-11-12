@@ -91,6 +91,7 @@
 @goto #BR6L if:day>=44&&f_jinleft>0&&f_jinbaekdead<1&&b_r6<1
 @goto #BR6D if:day>=40&&f_jinbaekdead>0&&b_r5x>0&&b_r6<1
 @goto #BR6N if:day>=40&&b_r5x>0&&f_jinally<1&&f_jinleft<1&&f_jinbaekdead<1&&f_jinbaektruth<1&&b_r6<1
+@goto #BOld25 if:day>=42&&f_oldseen>0&&f_old2>0&&curse<88&&b_old25<1
 @goto #BOld3 if:day>=46&&f_oldseen>0&&f_old2>0&&curse<88&&b_old3<1
 @goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
 @goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
@@ -1373,6 +1374,10 @@
 @chapter text:"지붕 위의 사형" sub:"복수"
 @set b_r6=1
 @goto Molak09#Rev6N
+# BOld25
+@chapter text:"사당의 두 번째 손님" sub:"노인"
+@set b_old25=1
+@goto Molak13#Old25
 # BOld3
 @chapter text:"셋째 잔" sub:"노인"
 @set b_old3=1

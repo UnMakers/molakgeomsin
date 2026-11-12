@@ -863,7 +863,7 @@
 @set f_r4wait=1
 @goto Molak02#AfterChapter
 # Rev4S
-@art scene:temple
+@art scene:templeyard
 @art char:cheongmyo
 청묘가 장작을 패다 멈춘다. 도끼가 장작에 박힌 채 손을 떠난다.
 "……알고 있었어요. 보름마다 쌀이 놓였으니까. 그 매듭, 대사형 매듭이니까."

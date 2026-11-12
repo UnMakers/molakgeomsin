@@ -645,6 +645,7 @@
 # EpiAmhC
 @goto #EpiTail
 # EpiCm
+@art scene:hut
 @art char:cheongmyo_robe
 골짜기 초막에서 사람이 온다. 승복이 아니라 짧은 무복 차림. 머리가 한 치쯤 자랐다.
 "막내. 위패 자리, 아직 왼쪽 비어 있어요."

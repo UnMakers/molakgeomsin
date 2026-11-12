@@ -243,7 +243,7 @@
 ; ---------- 청묘 I: 허리로 긋는 장작 (24일+, 그녀를 만난 뒤) ----------
 # Cm1
 @scene id:day
-@art scene:temple
+@art scene:templeyard
 @art char:cheongmyo
 @deja text:"장작 패는 소리. 지난 생에도 그녀는 이 소리로 횡소를 가르쳤다. 몇 번째 장작에서 웃는지 안다."
 {dejapre}
@@ -373,7 +373,7 @@
 ; ---------- 청묘 III: 산문 밖의 봄 (50일+, 마음이 깊을 때) ----------
 # Cm3
 @scene id:day
-@art scene:temple
+@art scene:templeyard
 @art char:cheongmyo_robe
 @deja text:"벗어 놓은 승복. 지난 생에도 그녀는 이 아침에 머리를 길렀다고 웃었다. 그다음을 안다."
 {dejapre}
@@ -390,7 +390,7 @@
 # Cm3A
 칼집을 받는다. 그녀가 앞서 걷는다. 산길에서 그녀의 걸음이 사형들 걸음과 같다는 것을 처음 안다.
 @page
-@art scene:shrine
+@art scene:hut
 @art char:cheongmyo_robe
 골짜기의 초막. 둘이 지붕을 잇고, 마당을 쓴다. 막내가 하던 일이다. 이번엔 둘이 한다.
 위패를 세우는 날, 그녀가 향 대신 장작 하나를 세운다. 아홉째, 운해. 장작이 소리 없이 갈라진다.

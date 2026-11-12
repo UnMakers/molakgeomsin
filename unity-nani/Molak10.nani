@@ -5,7 +5,7 @@
 ; ---------- 암향 II½: 연의 머리 (46일+, 해약이 떨어진 달 뒤) ----------
 # Am25
 @scene id:night
-@art scene:ferry
+@art scene:attic
 @art char:amhyang_pain
 @deja text:"나루 창고 다락, 빗 하나. 지난 생에도 이 아이는 언니 머리를 먼저 빗겨 달라고 했다. 그 손끝의 빛깔을 안다."
 {dejapre}
@@ -33,7 +33,7 @@
 "……남의 아이 목숨값을 대신 내는 얼굴이 아니구나. 제 빚 갚는 얼굴이다. 가거라."
 @fx mn:-12
 @page
-@art scene:ferry
+@art scene:attic
 @art char:amhyang_soft
 환약이 아이 혀 위에서 녹는다. 쓰다고 얼굴을 찡그린다. 설이 아이 등을 쓸어 준다.
 날이 밝을 무렵, 아이 손끝의 검은 기가 손톱 밑으로 반 치 물러난다.
@@ -94,7 +94,7 @@
 ; ---------- 청묘 II½: 곳간의 문 (42일+, 보름의 쌀 뒤) ----------
 # Cm25
 @scene id:night
-@art scene:shrineash
+@art scene:ruins
 @art char:cheongmyo
 @deja text:"타다 만 산문, 곳간의 빗장. 지난 생에도 그녀는 이 문 앞에서 한 번 멈췄다. 안에 무엇이 남았는지 안다."
 {dejapre}
@@ -138,6 +138,8 @@
 @goto #Cm25In
 # Cm25In
 @page
+@art scene:storehouse
+@art char:cheongmyo
 곳간 빗장이 안에서 걸려 있다. 그 밤 그녀가 건 빗장이다. 문틈에 칼을 넣어 빗장을 들어 올린다.
 곳간 안은 타지 않았다. 대사형이 불길을 이쪽으로 돌리지 않았다.
 벽에 손톱으로 그은 금이 있다. 셋. 그리고 넷째는 반만 그어졌다.

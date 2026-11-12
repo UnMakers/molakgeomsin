@@ -45,6 +45,7 @@
 @set b_netk=0
 @set b_ochi=0
 @set b_old=0
+@set b_old25=0
 @set b_old2x=0
 @set b_old3=0
 @set b_plate=0
@@ -269,6 +270,7 @@
 @set f_northstep=0
 @set f_ochisaved=0
 @set f_old2=0
+@set f_old25=0
 @set f_old3=0
 @set f_oldface=0
 @set f_oldhint=0
