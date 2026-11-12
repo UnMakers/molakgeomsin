@@ -1033,6 +1033,11 @@
 @gosub MolakEvents#E_JinSister if:nextevent=="E_JinSister"
 @gosub MolakEvents#E_HajinNight if:nextevent=="E_HajinNight"
 @gosub MolakEvents#E_Cup if:nextevent=="E_Cup"
+@gosub MolakEvents#E_SoaWhet if:nextevent=="E_SoaWhet"
+@gosub MolakEvents#E_SoaBowl if:nextevent=="E_SoaBowl"
+@gosub MolakEvents#E_AmhShop if:nextevent=="E_AmhShop"
+@gosub MolakEvents#E_AmhSpill if:nextevent=="E_AmhSpill"
+@gosub MolakEvents#E_TempleBell if:nextevent=="E_TempleBell"
 @gosub MolakEvents#E_Hostage if:nextevent=="E_Hostage"
 @gosub MolakEvents#E_Flood if:nextevent=="E_Flood"
 @gosub MolakEvents#E_Maeng1 if:nextevent=="E_Maeng1"
@@ -1155,155 +1160,200 @@
 
 ; --- 비트 진입 블록 ---
 # ChSoa
+@chapter text:"소아, 첫 만남" sub:"소아"
 @set b_soa=1
 @goto Molak03#Soa1
 # B5
+@chapter text:"객잔 주인 하진무" sub:"객잔"
 @set b_hajin=1
 @gosub #S_Hajin
 @goto #Daytime
 # B7
+@chapter text:"서열각의 쇠패" sub:"서열각"
 @set b_plate=1
 @gosub #S_Plate
 @goto #Daytime
 # BKnot
+@chapter text:"꼬지의 매듭" sub:"개방"
 @set b_knot=1
 @gosub #S_Knot
 @goto #Daytime
 # BKnotK
+@chapter text:"꼬지의 매듭" sub:"개방"
 @set b_knot=1
 @gosub #S_KnotK
 @goto #Daytime
 # B8
+@chapter text:"수배서" sub:"수배"
 @set b_wanted=1
 @gosub #S_Wanted
 @goto #Daytime
 # B11
+@chapter text:"쥐눈이 장" sub:"쥐눈이 장"
 @set b_jang=1
 @gosub #S_Jang
 @goto #Daytime
 # B13
+@chapter text:"소아와의 대련" sub:"소아"
 @set b_soatrain=1
 @gosub #S_Soatrain
 @goto #Daytime
 # B20
+@chapter text:"이름이 돌다" sub:"서열각"
 @set b_fame=1
 @gosub #S_Fame
 @goto #Daytime
 # B32
+@chapter text:"떠날 채비" sub:"객잔"
 @set b_depart=1
 @gosub #S_Depart
 @goto #Daytime
 # ChUnju
+@chapter text:"운주 들판의 무인 모임" sub:"사당"
 @set f_unjudone=1
 @goto Molak03#Unju0
 # ChShr
+@chapter text:"운검사태의 사당" sub:"사당"
 @scene id:shrine
 @set f_shrseen=1
 @goto Molak03#Shr1
 # ChBilok
+@chapter text:"운검비록" sub:"청운의 유산"
 @set b_bilok=1
 @gosub MolakEvents#E_Bilok
 @goto #Night
 # ChHm
+@chapter text:"회목촌" sub:"회목촌"
 @set b_hm=1
 @goto Molak03#Hm1
 # ChAmhyang
+@chapter text:"암향루의 향" sub:"암향루"
 @set b_amhyang=1
 @gosub MolakEvents#E_Amhyang
 @goto #Night
 # ChOld
+@chapter text:"노인의 얼굴" sub:"노인"
 @set b_old=1
 @gosub MolakEvents#E_Oldvision
 @goto #Night
 
 # BH1
+@chapter text:"그물" sub:"그물"
 @set b_hunt1=1
 @goto Molak06#Hunt1
 # BH2
+@chapter text:"몰이" sub:"그물"
 @set b_hunt2=1
 @goto Molak06#Hunt2
 # BH3
+@chapter text:"집법전주" sub:"그물"
 @set b_hunt3x=1
 @goto Molak06#Hunt3
 # BS1
+@chapter text:"밤의 대작" sub:"소아"
 @set b_s1=1
 @goto Molak06#SoaN1
 # BS2
+@chapter text:"저자 동행" sub:"소아"
 @set b_s2=1
 @goto Molak06#SoaN2
 # BS3
+@chapter text:"비 오는 밤" sub:"소아"
 @set b_s3=1
 @goto Molak06#SoaN3
 # BS4
+@chapter text:"사슬은 그녀를 노린다" sub:"소아"
 @set b_s4=1
 @goto Molak06#SoaN4
 # BS5
+@chapter text:"지붕 위의 달" sub:"소아"
 @set b_s5=1
 @goto Molak06#SoaN5
 # BS6
+@chapter text:"우물" sub:"소아"
 @set b_s6=1
 @goto Molak06#SoaN6
 # BS7
+@chapter text:"장부의 첫 줄" sub:"소아"
 @set b_s7=1
 @goto Molak06#SoaN7
 # BS8
+@chapter text:"그 밤" sub:"소아"
 @set b_s8=1
 @goto Molak06#SoaN8
 # BS9
+@chapter text:"꿰맨 자리" sub:"소아"
 @set b_s9=1
 @goto Molak07#SoaN9
 # BS10
+@chapter text:"사슬 창고" sub:"소아"
 @set b_s10=1
 @goto Molak07#SoaN10
 # BS11
+@chapter text:"같은 달 아래, 마지막" sub:"소아"
 @set b_s11=1
 @goto Molak07#SoaN11
 # BG1
+@chapter text:"빈 계단" sub:"소아"
 @set b_g1=1
 @goto Molak07#SoaG1
 # BG2
+@chapter text:"다음 생에" sub:"소아"
 @set b_g2=1
 @goto Molak07#SoaG2
 # BAm1
+@chapter text:"손목의 맥" sub:"암향"
 @set b_am1=1
 @goto Molak08#Am1
 # BAm2
+@chapter text:"해약이 떨어진 달" sub:"암향"
 @set b_am2=1
 @goto Molak08#Am2
 # BAm3
+@chapter text:"향 없는 곳" sub:"암향"
 @set b_am3=1
 @goto Molak08#Am3
 # BCm1
+@chapter text:"허리로 긋는 장작" sub:"청묘"
 @set b_cm1=1
 @goto Molak08#Cm1
 # BCm2
+@chapter text:"보름의 쌀" sub:"청묘"
 @set b_cm2=1
 @goto Molak08#Cm2
 # BCm3
+@chapter text:"산문 밖의 봄" sub:"청묘"
 @set b_cm3=1
 @goto Molak08#Cm3
 # BR6A
+@chapter text:"북두를 거꾸로" sub:"복수"
 @set b_r6=1
 @goto Molak09#Rev6A
 # BR6L
+@chapter text:"북쪽 고개의 횃불" sub:"복수"
 @set b_r6=1
 @goto Molak09#Rev6L
 # BR6D
+@chapter text:"쌀자루의 편지" sub:"복수"
 @set b_r6=1
 @goto Molak09#Rev6D
 # BR6N
+@chapter text:"지붕 위의 사형" sub:"복수"
 @set b_r6=1
 @goto Molak09#Rev6N
 # BOld3
+@chapter text:"셋째 잔" sub:"노인"
 @set b_old3=1
 @goto Molak09#Old3
 # BHintShr
+@chapter text:"열두 줄의 귀띔" sub:"사당"
 @set b_hintshr=1
 @page
 <color=#9A70C4>귀에 그 목소리가 남아 있다.</color> 피 묻은 숨으로 건네준 열두 줄. 한 줄도 잊지 않았다.
 관도 서쪽, 운검사태의 사당. 머지않아 불탄다. 그 전에 가야 한다.
 @goto #Daytime
 # BSimK
+@chapter text:"심마의 기억" sub:"노인"
 @set b_simk=1
 @page
 <color=#9A70C4>지난 생, 이 열에서 마음이 먼저 꺾였다.</color>
@@ -1311,6 +1361,7 @@
 @fx curse:-2
 @goto #Daytime
 # BNetHint
+@chapter text:"그물의 아침" sub:"그물"
 @set b_nethint=1
 @page
 @deja text:"포졸이 넷. 묶인 관아의 배. 지난 생에도 이 아침을 봤다. 그때는 이 아침이 끝의 시작인 줄 몰랐다."
@@ -1325,6 +1376,7 @@
 @choice "남는다 — 그물이 닫히기 전에 끝을 보러 간다" goto:#BNetC
 @stop
 # BNetK
+@chapter text:"그물의 아침" sub:"그물"
 @set b_netk=1
 @set b_nethint=1
 @page
@@ -1350,58 +1402,76 @@
 # BNetC
 @goto #Daytime
 # BShrFire
+@chapter text:"사당이 타다" sub:"사당"
 @set b_shrfire=1
 @goto Molak06#ShrFire
 # BR1
+@chapter text:"소문" sub:"복수"
 @set b_r1x=1
 @goto Molak06#Rev1
 # BR2
+@chapter text:"혈랑대" sub:"복수"
 @set b_r2x=1
 @goto Molak06#Rev2
 # BR3
+@chapter text:"늑대의 그림자" sub:"복수"
 @set b_r3x=1
 @goto Molak06#Rev3
 # BR4
+@chapter text:"이름" sub:"복수"
 @set b_r4x=1
 @goto Molak06#Rev4
 # BR5
+@chapter text:"대사형" sub:"복수"
 @set b_r5x=1
 @goto Molak06#Rev5
 # A12
+@chapter text:"용개의 보은" sub:"용개"
 @set b_yong2=1
 @goto Molak05#Yong2
 # A17
+@chapter text:"객잔의 위기" sub:"객잔"
 @set b_hajin2x=1
 @goto Molak05#Hajin2
 # A19
+@chapter text:"장의 장부" sub:"쥐눈이 장"
 @set b_jang2=1
 @goto Molak05#Jang2
 # A21
+@chapter text:"사당의 향" sub:"소아"
 @set b_soa3=1
 @goto Molak05#Soa3
 # A23
+@chapter text:"할멈의 약궤" sub:"백초 할멈"
 @set b_herb2=1
 @goto Molak05#Herb2
 # A24
+@chapter text:"사슬의 전령" sub:"혈쇄문"
 @set b_chain=1
 @goto Molak05#Chain1
 # A27
+@chapter text:"곽산의 재도전" sub:"곽산"
 @set b_rival2=1
 @goto Molak05#Rival2
 # A28
+@chapter text:"소아의 부탁" sub:"소아"
 @set b_soa4=1
 @goto Molak05#Soa4
 # A33
+@chapter text:"향의 값" sub:"암향루"
 @set b_amh2=1
 @goto Molak05#Amh2
 # A34
+@chapter text:"오치의 행방" sub:"회목촌"
 @set b_ochi=1
 @goto Molak05#Ochi1
 # A40
+@chapter text:"바위의 각자" sub:"노인"
 @set b_old2x=1
 @goto Molak05#Old2
 
 # ChWolf
+@chapter text:"혈쇄문주의 초대" sub:"복수"
 @set f_wolfinvite=1
 @deja need:g_died_wolf text:"녹슨 사슬 고리를 보자 손목부터 저린다. 지난 생, 이 초대장 끝에서 사슬에 감겼다."
 {dejapre}

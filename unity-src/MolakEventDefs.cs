@@ -16,6 +16,12 @@ public static class MolakEventDefs
             new Def("E_Yong", 2, 10, 'd', null, null, 0, 30),
             new Def("E_Spared", 3, 0, 'd', "spared>0", null, 0, 40),
             new Def("E_Cup", 12, 0, 'n', "rank>0&rank<=20000", null, 0, 14),
+            // 0.4.12 히로인의 일상
+            new Def("E_SoaWhet", 10, 45, 'd', "f_soamet&!f_soadead", null, 0, 22),
+            new Def("E_SoaBowl", 6, 50, 'd', "f_soamet&!f_soadead", null, 0, 22),
+            new Def("E_AmhShop", 8, 26, 'd', null, null, 0, 14),
+            new Def("E_AmhSpill", 16, 32, 'n', "f_amhseen&!f_amhdead", "E_AmhShop", 3, 22),
+            new Def("E_TempleBell", 18, 50, 'd', null, null, 0, 12),
             new Def("E_Hostage", 14, 0, 'd', "!f_hajindead", null, 0, 12),
             new Def("E_JinSister", 20, 40, 'd', "g_jbtruth&!f_jinbaekdead&!f_jbsister", null, 0, 30),
             new Def("E_HajinNight", 24, 40, 'n', "!f_hajindead&!f_hajinbond", null, 0, 22),

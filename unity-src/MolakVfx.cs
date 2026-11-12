@@ -54,6 +54,11 @@ public class MolakVfx : MonoBehaviour
     /// <summary>칼이 부딪는 순간: 흰 섬광 한 번 + 짧은 흔들림 + 칼 소리</summary>
     public static void Clash (bool heavy) { Flash(new Color(1f, 0.97f, 0.9f, heavy ? 0.55f : 0.35f), heavy ? 0.35f : 0.22f); Shake(heavy ? 16f : 9f); MolakSfx.Draw(); }
 
+    // 마디 이름(@chapter): 띠 그림 위에 붓 글씨 제목, 2.6초
+    float chapT = -1f; string chapText = "", chapSub = "";
+    GUIStyle sChap, sChapSub; float chapU = -1f;
+    public static void Chapter (string text, string sub) { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapT = 0f; MolakSfx.Bell(); }
+
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
     public static void Stamp (string hanja, string line, bool big) { if (instance == null) return; instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; }
@@ -182,6 +187,40 @@ public class MolakVfx : MonoBehaviour
                 Box(new Rect(w * 0.90f, band, w * 0.10f, h - 2*band), c);
                 var cc = new Color(c.r, c.g, c.b, c.a * 0.45f);
                 Box(new Rect(0, 0, w, h), cc);
+            }
+        }
+        // 마디 이름
+        if (chapT >= 0f)
+        {
+            chapT += Time.deltaTime;
+            const float CD = 2.6f;
+            if (chapT > CD) chapT = -1f;
+            else
+            {
+                float u = MolakTheme.U;
+                if (sChap == null || !Mathf.Approximately(chapU, u))
+                {
+                    chapU = u; if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+                    sChap = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(64 * u), alignment = TextAnchor.MiddleCenter };
+                    sChapSub = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(26 * u), alignment = TextAnchor.MiddleCenter };
+                    sChap.font = MolakTypography.Heading(gowun); sChapSub.font = MolakTypography.Heading(gowun);
+                }
+                float a = chapT < 0.35f ? chapT / 0.35f : (chapT > CD - 0.7f ? (CD - chapT) / 0.7f : 1f);
+                float cy = h * 0.165f;
+                // 붓 자국 띠(가운데 짙고 양끝 옅게)
+                var g0 = GUI.color;
+                for (int i = 0; i < 24; i++)
+                {
+                    float t = i / 23f, k = 1f - Mathf.Abs(t - 0.5f) * 2f;
+                    GUI.color = new Color(0.08f, 0.06f, 0.05f, 0.62f * a * Mathf.Pow(k, 0.6f));
+                    GUI.DrawTexture(new Rect(w * (0.08f + 0.84f * t), cy - 58 * u, w * 0.84f / 23f + 1f, 116 * u), Px);
+                }
+                GUI.color = g0;
+                float slide = (1f - Mathf.Clamp01(chapT / 0.5f)) * 24f * u;
+                sChapSub.normal.textColor = new Color(MolakTheme.Gold.r, MolakTheme.Gold.g, MolakTheme.Gold.b, 0.95f * a);
+                if (chapSub.Length > 0) GUI.Label(new Rect(0, cy - 54 * u, w, 34 * u), chapSub, sChapSub);
+                sChap.normal.textColor = new Color(0.96f, 0.92f, 0.85f, a);
+                GUI.Label(new Rect(slide, cy - 28 * u, w, 80 * u), chapText, sChap);
             }
         }
         // 승부수 인장

@@ -115,12 +115,14 @@ public class MolakArt : MonoBehaviour
     public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); }
 
     static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
+    static readonly HashSet<string> missing = new HashSet<string>();
     static Sprite Load (string path)
     {
         Sprite s;
         if (cache.TryGetValue(path, out s) && s != null) return s;   // 에디터에서 플레이를 다시 켜면 만들어 둔 스프라이트가 파괴돼 있다 — 다시 만든다
+        if (missing.Contains(path)) return null;                       // 그림이 아직 없는 인물·장면: 한 번만 알리고 조용히 넘어간다
         var tex = Resources.Load<Texture2D>(path);
-        if (tex == null) { Debug.LogWarning("[MolakArt] missing " + path); cache[path] = null; return null; }
+        if (tex == null) { Debug.LogWarning("[MolakArt] missing " + path); missing.Add(path); return null; }
         s = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
         cache[path] = s;
         return s;

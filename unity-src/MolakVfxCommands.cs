@@ -58,3 +58,20 @@ public class ArtCommand : Command
         await Awaitable.NextFrameAsync();
     }
 }
+
+/// <summary>@chapter text:"꿰맨 자리" sub:"소아" — 이야기 마디가 시작될 때 띠 그림 위에 마디 이름을 붓 글씨로 잠깐 띄운다(입력은 막지 않는다).
+/// 같은 생에 같은 마디를 다시 보거나 읽은 글 넘기기 중이면 띄우지 않는다.</summary>
+[Alias("chapter")]
+public class ChapterCommand : Command
+{
+    public StringParameter Text;
+    public StringParameter Sub;
+#pragma warning disable CS1998
+    public override async Awaitable Execute (ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        var sp = Engine.GetService<IScriptPlayer>();
+        if (sp != null && sp.Skipping) return;
+        MolakVfx.Chapter(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "");
+    }
+}
