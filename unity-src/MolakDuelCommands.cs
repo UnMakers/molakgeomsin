@@ -219,6 +219,7 @@ public class DuelCommand : Command
         if (kind == "hunt3" && MolakStats.Get("f_lawdoubt") > 0) bonus += 2f;     // 법이 법 밖의 것을 들었다
         if (kind == "lord" && MolakStats.Get("f_ipmaknow") > 0) bonus += 2f;      // 부름의 거짓을 안다
         if (kind == "raid" && MolakStats.Get("f_maengraid") > 0) bonus += 2f;      // 맹의 칼 셋이 지붕에서 뒤를 쳤다
+        if ((kind == "raid" || kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_rivalfriend") > 0 && MolakStats.Get("f_gwakally") < 1) bonus += 1.5f; // 곽산이 등을 받친다(맹약까지는 아니어도)
         if (kind == "lord" && MolakStats.Get("f_namgungdoor") > 0) bonus += 1f;    // 남궁이 측문을 비웠다
         if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_gaewarn") > 0) bonus += 1f;   // 담장의 매듭 셋
         if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_huntdodge") > 0) bonus += 2f; // 빈방을 부수게 했다
@@ -241,7 +242,7 @@ public class DuelCommand : Command
             MolakStats.SetStr("oldrank", oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명");
             MolakStats.SetStr("newrank", string.Format("{0:N0}", newRank));
             MolakStats.SetStr("tiername", MolakDuel.TierName(newRank));
-            MolakVfx.Gold();
+            MolakVfx.Gold(); MolakVfx.Shake(10f); MolakSfx.Draw();
             MolakHud.RankShift(oldRank, newRank, tierUp, MolakDuel.TierName(newRank));
             MolakDuelCard.Show(true, foe.Name, "서열 " + (oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명") + " → " + string.Format("{0:N0}", newRank) + "위", tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");
             if (foe.Boss == "wolf") MolakStats.Set("f_wolfdown", 1f);
@@ -271,7 +272,7 @@ public class DuelCommand : Command
             MolakStats.Add("hp", -dmg);
             if (IsBossKind(kind)) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다
             MolakStats.Set("duelwin", 0f); MolakArt.EndDuel();
-            MolakVfx.Blood();
+            MolakVfx.Blood(); MolakSfx.Hit(); MolakArt.Hurt();
             MolakStats.Set("tierup", 0f);
             MolakDuelCard.Show(false, foe.Name, "서열 변동 없음 · 체력 −" + Mathf.RoundToInt(dmg), MolakStats.Get("dtaint") > 0 ? (MolakStats.Get("taintkind") == 1 ? "독이 들었다" : "상처가 덧났다") : (MolakStats.Get("dinj") > 0 ? "부상 — 사흘" : ""));
         }

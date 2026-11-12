@@ -13,13 +13,43 @@ public static class MolakChoiceMeta
     public const int Normal = 0, Know = 1, Item = 2, Stat = 3, Coin = 4, Curse = 5;
     public struct Meta { public string Hint; public int Kind; }
     public static readonly List<string> Batch = new List<string>();   // 이번 선택지 묶음의 if: 조건들(실행 순서 = 카드 순서)
+    /// <summary>카드마다의 승부수 표시: 글귀 끝의 〔검술+2〕 · 〔내공 12〕 · 〔살기〕 (없으면 null). 나니노벨이 대괄호를 인라인 명령으로 읽지 않도록 거북 괄호를 쓴다.</summary>
+    public static readonly List<string> Risks = new List<string>();
 
-    public static void Reset () { Batch.Clear(); }
-    public static void Push (string cond) { Batch.Add(cond ?? ""); }
+    public static void Reset () { Batch.Clear(); Risks.Clear(); }
+    public static void Push (string cond, string label = null) { Batch.Add(cond ?? ""); Risks.Add(RiskTag(label)); }
+
+    /// <summary>글귀 안의 승부수 표시.</summary>
+    static readonly Regex RiskRx = new Regex(@"\s*〔(검술|내공|살기)\s*([+\-]?\d+)?〕");
+    public static string RiskTag (string label)
+    {
+        if (string.IsNullOrEmpty(label)) return null;
+        var m = RiskRx.Match(label);
+        return m.Success ? MolakRules.StatKey(m.Groups[1].Value) + "|" + (m.Groups[2].Success ? m.Groups[2].Value : "0") : null;
+    }
+    public static string StripRisk (string label) { return string.IsNullOrEmpty(label) ? label : RiskRx.Replace(label, ""); }
+
+    /// <summary>승부수 주석: "검술 14 대 18 · 승산 4할". 실제 판정(@risk)과 같은 식으로 셈한다.</summary>
+    public static string RiskHint (string tag)
+    {
+        var parts = tag.Split('|');
+        string stat = parts[0]; float day = MolakStats.Get("day");
+        float need = MolakRules.RiskNeed(stat, parts.Length > 1 ? parts[1] : "0", day);
+        float have = MolakStats.Get(stat);
+        return MolakRules.StatName(stat) + " " + have.ToString("0") + " 대 " + need.ToString("0") + " · 승산 " + MolakRules.OddsText(MolakRules.RiskOdds(stat, have, need));
+    }
 
     public static Meta Get (int index, string label)
     {
-        return Build(index >= 0 && index < Batch.Count ? Batch[index] : "", label);
+        var m = Build(index >= 0 && index < Batch.Count ? Batch[index] : "", label);
+        string risk = index >= 0 && index < Risks.Count ? Risks[index] : null;
+        if (risk != null)
+        {
+            string rh = RiskHint(risk);
+            m.Hint = string.IsNullOrEmpty(m.Hint) ? rh : rh + "  ·  " + m.Hint;
+            if (m.Kind == Normal || m.Kind == Coin) m.Kind = Stat;
+        }
+        return m;
     }
 
     static readonly Regex Atom = new Regex(@"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(>=|<=|==|!=|>|<)\s*([0-9.]+)\s*$");

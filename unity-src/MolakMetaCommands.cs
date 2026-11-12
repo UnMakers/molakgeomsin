@@ -111,6 +111,10 @@ public class DayTickCommand : Command
             if (MolakStats.Get("f_hajincold") > 0) lodg += MolakRules.LodgeColdExtra;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
             if (MolakStats.Get("f_hajindead") > 0) lodg = MolakRules.LodgeNoHajin;     // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
             if (MolakStats.Get("mn") >= lodg) MolakStats.Add("mn", -lodg);
+            else if (MolakStats.Get("f_gaerice") > 0 && day - MolakStats.Get("gaefedday") >= MolakRules.GaeRiceGap)
+            {   // 다리 밑의 솥: 굶는 날 거지들이 한 그릇 덜어 준다(나흘에 한 번). 아침에 그 장면이 나온다.
+                MolakStats.Set("mn", 0f); MolakStats.Set("gaefed", 1f); MolakStats.Set("gaefedday", day);
+            }
             else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", -(n >= 3 ? MolakRules.StarveHpLong : MolakRules.StarveHpShort)); MolakStats.Set("starved", 1f); }
         }
         // 독·곪은 상처는 마감마다 깊어진다(며칠 한 바퀴면 두 칸 — 손쓸 기회는 한두 바퀴)

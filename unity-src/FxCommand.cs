@@ -22,7 +22,14 @@ public class FxCommand : Command
 #pragma warning restore CS1998
     {
         float k = Mathf.Max(1f, MolakStats.Get("nmul"));
-        if (Assigned(Hp)) { float v = Hp.Value * k; MolakStats.Add("hp", v); MolakHud.Delta("hp", v); if (v <= -2) MolakSfx.Hit(); }
+        if (Assigned(Hp))
+        {
+            float v = Hp.Value * k; MolakStats.Add("hp", v); MolakHud.Delta("hp", v);
+            // 맞은 만큼 화면이 흔들린다: 한 칸은 움찔, 두 칸은 북소리, 넉 칸부터는 핏빛
+            if (v <= -1) { MolakVfx.Shake(Mathf.Min(18f, 5f + 3f * -v)); MolakArt.Hurt(); }
+            if (v <= -2) MolakSfx.Hit();
+            if (v <= -4) MolakVfx.Blood();
+        }
         if (Assigned(Ng)) { float v = Ng.Value * k; MolakStats.Add("ng", v); MolakHud.Delta("ng", v); }
         if (Assigned(Sw))
         {
@@ -37,13 +44,14 @@ public class FxCommand : Command
             MolakStats.Add("sw", dsw); MolakHud.Delta("sw", dsw);
         }
         if (Assigned(Sl)) { float v = Sl.Value * k; MolakStats.Add("sl", v); MolakHud.Delta("sl", v); }
-        if (Assigned(Mn)) { float v = Mn.Value * k; MolakStats.Add("mn", v); MolakHud.Delta("mn", v); }
+        if (Assigned(Mn)) { float v = Mn.Value * k; MolakStats.Add("mn", v); MolakHud.Delta("mn", v); if (v >= 10) MolakVfx.Gold(); }
         if (Assigned(Day)) MolakStats.Add("day", Day.Value);
         if (Assigned(Curse))
         {
             float d = Curse.Value * k;
             if (d > 0) d = Mathf.Max(1f, Mathf.Round(d * MolakStats.CurseFactor()));
             MolakStats.Add("curse", d); MolakHud.Delta("curse", d);
+            if (d >= 3) MolakVfx.CursePulse();   // 문양이 크게 한 번 뛴다
         }
         if (Assigned(Sw) || Assigned(Ng)) MolakStats.GrowBody();
         MolakStats.ClampAll();

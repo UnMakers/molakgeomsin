@@ -14,6 +14,12 @@ public class VfxCommand : Command
             case "gold": MolakVfx.Gold(); break;
             case "curse": MolakVfx.CursePulse(); break;
             case "shake": MolakVfx.Shake(14f); break;
+            case "clash": MolakVfx.Clash(false); break;            // 칼이 맞부딪는 순간
+            case "heavy": MolakVfx.Clash(true); break;             // 크게 맞는/베는 순간
+            case "hit": MolakVfx.Blood(); MolakSfx.Hit(); MolakArt.Hurt(); break;   // 베였다
+            case "beat": MolakVfx.Flash(new Color(0f, 0f, 0f, 0.55f), 0.9f); MolakSfx.Death(); break; // 숨이 멎는 한 박자(어둠이 덮였다 걷힌다)
+            case "rewind": MolakVfx.Flash(new Color(0.93f, 0.90f, 0.98f, 0.6f), 1.6f); MolakVfx.Shake(6f); MolakSfx.Rewind(); break; // 시간이 거꾸로 감긴다
+            case "dawn": MolakVfx.Flash(new Color(0.98f, 0.88f, 0.62f, 0.4f), 2.2f); MolakSfx.Bell(); break;   // 되감기지 않는 아침
             case "rain": MolakVfx.Rain(true); break;
             case "rainoff": MolakVfx.Rain(false); break;
             case "bloodrain": MolakVfx.Weather("bloodrain"); break;

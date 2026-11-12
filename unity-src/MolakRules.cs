@@ -52,6 +52,8 @@ public static class MolakRules
     // ---- 숙식 ----
     /// <summary>객잔 방값: 처음엔 하루 1냥, 스물다섯째 날부터 2냥. 하진무가 차갑게 돌아서면 +1, 하진무가 없으면 3냥.</summary>
     public const float LodgeBase = 1f, LodgeLate = 2f, LodgeLateDay = 25f, LodgeColdExtra = 1f, LodgeNoHajin = 3f;
+    /// <summary>다리 밑의 솥(개방의 인연): 굶는 날 한 그릇을 얻는 간격(날).</summary>
+    public const float GaeRiceGap = 4f;
     /// <summary>방값을 못 내면 굶는다 — 하루짜리 마감은 체력 -2, 며칠 마감은 -1(날마다).</summary>
     public const float StarveHpShort = 2f, StarveHpLong = 1f;
 
@@ -72,6 +74,50 @@ public static class MolakRules
     public const float VowBondAff = 3f;
     /// <summary>생존: 그물이 조여 오는 날까지 버티면 이룬다.</summary>
     public const float VowSurviveDay = NetWarnDay;
+
+    // ---- 강호의 격(格): 날이 갈수록 강호의 칼이 무거워진다 ----
+    /// <summary>그날 개봉 바닥에서 '보통'으로 통하는 수준. 처음 사는 생의 평범한 성장(소크 중앙값)에 맞췄다.
+    /// 판정 문턱 '[검술+2]'는 이 격보다 둘 높다는 뜻 — 이레째의 사냥꾼과 쉰째 날의 사냥꾼은 같은 칼이 아니다.</summary>
+    public static float Bar (string stat, float day)
+    {
+        switch (stat)
+        {
+            case "sw": return Mathf.Round(5f + 0.45f * day);
+            case "ng": return Mathf.Round(4f + 0.30f * day);
+            case "sl": return Mathf.Round(2f + 0.20f * day);
+        }
+        return 0f;
+    }
+
+    /// <summary>승부수의 문턱. spec 이 "+2"/"-1"/"0" 꼴이면 그날의 격에 더하고, "12" 꼴이면 그 수 그대로.</summary>
+    public static float RiskNeed (string stat, string spec, float day)
+    {
+        spec = (spec ?? "").Trim();
+        if (spec.Length == 0) return Bar(stat, day);
+        bool rel = spec[0] == '+' || spec[0] == '-' || spec == "0";
+        float n; float.TryParse(spec, out n);
+        return rel ? Mathf.Max(1f, Bar(stat, day) + n) : n;
+    }
+
+    /// <summary>승산(勝算), 할 단위(10~90%). 확실한 판은 없다 — 아홉 할을 넘지 않고, 한 할 밑으로 내려가지도 않는다.</summary>
+    public static int RiskOdds (string stat, float have, float need)
+    {
+        float k = stat == "sl" ? 8f : 6f;
+        float p = 55f + (have - need) * k;
+        return Mathf.Clamp(Mathf.RoundToInt(p / 10f) * 10, 10, 90);
+    }
+
+    public static string StatName (string stat)
+    {
+        switch (stat) { case "sw": return "검술"; case "ng": return "내공"; case "sl": return "살기"; }
+        return stat;
+    }
+    public static string StatKey (string korean)
+    {
+        switch (korean) { case "검술": return "sw"; case "내공": return "ng"; case "살기": return "sl"; }
+        return null;
+    }
+    public static string OddsText (int p) { return (p / 10) + "할"; }
 
     // ---- 회귀 상점: 이번 생의 채비 ----
     public const int PrepBondCost = 3, PrepItemCost = 2, RedoCost = 12;

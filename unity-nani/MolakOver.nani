@@ -11,15 +11,18 @@
 @set deathcause="탈진"
 몸이 앞으로 쏠린다. 다리에 힘이 들어가지 않는다.
 한 걸음. 두 걸음. 더는 나아가지 못한다.
+@vfx kind:beat
 차가운 흙바닥. 하늘이 보인다.
 …여기서 끝인가.
 @goto #Dead
 # Starve
 @set deathcause="아사"
+@vfx kind:beat
 굶주림은 검보다 느리지만, 더 집요하다.
 @goto #Dead
 # DuelDeath
 @set deathcause="비무 패배"
+@vfx kind:hit
 검이 스쳤다고 생각했다. 옆구리가 뜨겁다. 손을 대 본다. 붉다.
 검을 들어 올리는데 팔이 말을 듣지 않는다. 무릎이 꺾인다.
 아프지가 않다. 시야가 좁아진다. 소리가 멀어진다.
@@ -27,20 +30,25 @@
 @goto #Dead
 # SoaDuelDeath
 @set deathcause="소아의 검"
+@vfx kind:heavy
 쌍검 중 하나가 막고, 하나가 들어온다. 적운의 검은 한 번에 둘이 온다.
 무릎이 꺾인다. 그녀가 당신을 받아 안는다. 당신을 벤 바로 그 사람이.
 "……사부. 이번엔, 늦지 않았습니다."
+@vfx kind:beat
 그녀의 외눈이 젖어 있다. 그 젖은 눈이 당신이 본 마지막이다.
 @goto #Dead
 # RaidDeath
 @set deathcause="야습"
+@vfx kind:hit
 계단 셋째 칸에서 무릎이 꺾인다. 혈랑대의 칼이 등에 박힌다. 등 뒤를 맡긴 사람이 아직 거기 있는지, 돌아볼 수가 없다.
+@vfx kind:embers
 운락객잔의 처마가 탄다. 일 년을 누워 올려다보던 천장이.
 @goto #Dead
 # GrudgeDeath
 @set deathcause="원수"
 "이름을 기억하느냐."
 대답할 숨이 없다.
+@vfx kind:hit
 칼이 셋이었는데 들어온 것은 하나다. 나머지 둘은 지켜볼 뿐이다.
 누군가 얼굴에 흰 천을 덮는다. 상복 자락이다. 이 원한은 그날 비무판에서 시작되었다.
 @goto #Dead
@@ -54,17 +62,20 @@
 # AssassinDeath
 @set deathcause="자객"
 술잔이 바닥에서 구른다. 매화 향이 뒤늦게 목을 감는다.
+@vfx kind:hit
 사내의 칼은 서두르지 않는다. 서열록에 오른 이름은 교의 장부에도 오른다. 그 장부는 비무로 지우지 못한다.
 @goto #Dead
 # TaxDeath
 @set deathcause="협"
 @set g_know_taxday=1
+@vfx kind:hit
 붉은 끈 다섯이 당신을 내려다본다.
 "객잔 늙은이 손목 하나 값으로 목을 바꾸다니."
 하진무가 무릎으로 기어 온다. 그 손목은 무사하다. 그거면 됐다고, 말이 나오지 않는다.
 @goto #Dead
 # SangsaDeath
 @set deathcause="생사결"
+@vfx kind:hit
 금 밖으로 걸어 나가는 사람은 하나다. 그 등이 멀어진다.
 판주가 당신의 전낭을 털어 간다. 아무도 이름을 묻지 않는다. 이 마당의 예법이다.
 @goto #Dead
@@ -72,16 +83,19 @@
 @goto #TaintRot if:taintkind==2
 @set deathcause="독"
 입술이 검다. 손톱 밑이 검다. 피가 식는다는 할멈의 말은 비유가 아니었다.
+@vfx kind:beat
 일어서려는데 다리에 감각이 없다.
 검은 끝내 뽑지 못한다. 독은 검을 기다려 주지 않는다.
 @goto #Dead
 # TaintRot
 @set deathcause="곪은 상처"
 옆구리의 상처가 열을 낸다. 며칠째 나던 단내가 오늘은 나지 않는다. 속까지 썩었다는 뜻이다.
+@vfx kind:beat
 열이 머리까지 오른다. 사형들이 부르는 소리가 들린다. 마당에는 아무도 없다.
 작은 상처였다. 비무판에서 진 날의.
 @goto #Dead
 # Dead
+@vfx kind:beat
 @ending
 @vfx kind:bloodrain
 \[ 末路 · {endhanja} — {endtitle} \]
@@ -111,6 +125,7 @@
 @goto #FirstDeath if:g_runs==1
 @goto #Regress
 # FirstDeath
+@vfx kind:rewind
 시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
 '네가 가장 절망하는 날, 이 술(術)의 참뜻을 알게 되리라.'
 노인의 목소리가 뼛속에서 울린다. 가슴의 문양이, 사술이 당신을 되감았다.
@@ -124,6 +139,7 @@
 '대답을 기다려 주는 칼은 없느니라. 다음엔 입을 열거라.'
 @goto #Shop
 # Regress
+@vfx kind:rewind
 시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
 눈을 뜨면, 그날 아침이다.
 @goto #Shop

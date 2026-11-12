@@ -127,7 +127,10 @@ public class MolakArt : MonoBehaviour
     }
 
     void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; if (s != null && charCur != null) SetChar(null, ""); }
-    void SetChar (Sprite s, string id) { charCur = s; charId = id; charT = 0f; }
+    void SetChar (Sprite s, string id) { if (id != charId) pushT = 0f; charCur = s; charId = id; charT = 0f; }
+    float pushT = 1f, hurtT = -1f;
+    /// <summary>인물이 맞았다: 반 박자 옆으로 흔들린다(장면만 있으면 장면이).</summary>
+    public static void Hurt () { if (inst != null) inst.hurtT = 0f; }
 
     void Ensure ()
     {
@@ -217,20 +220,33 @@ public class MolakArt : MonoBehaviour
         mask.transform.position = new Vector3(cx, bandCy, z);
         mask.transform.localScale = new Vector3(bandW/0.04f, bandH/0.04f, 1f);
 
+        // 맞은 순간의 흔들림(0.32초)
+        float jit = 0f;
+        if (hurtT >= 0f) { hurtT += Time.deltaTime; float hk = 1f - hurtT / 0.32f; if (hk <= 0f) hurtT = -1f; else jit = Mathf.Sin(hurtT * 70f) * hk * 14f * unit; }
         float sceneW = bandW, sceneCx = cx;
         if (sceneR.sprite != null)
         {
             var sp = sceneR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
             float k = Mathf.Max(sceneW/sw, bandH/sh);
+            // 그림이 멈춰 있지 않도록: 아주 느리게 다가갔다 물러나며 옆으로 흐른다(한 바퀴 약 1분 반). 띠 밖으로는 넘치지 않는다.
+            float t = Time.time;
+            float zoom = 1.06f + 0.03f * Mathf.Sin(t * 0.07f);
+            k *= zoom;
+            float spareX = Mathf.Max(0f, sw * k - sceneW) * 0.5f, spareY = Mathf.Max(0f, sh * k - bandH) * 0.5f;
+            float px = Mathf.Sin(t * 0.043f + 1.3f) * spareX * 0.8f, py = Mathf.Cos(t * 0.031f) * spareY * 0.6f;
             sceneR.transform.localScale = new Vector3(k, k, 1f);
-            sceneR.transform.position = new Vector3(sceneCx, bandCy, z + 0.1f);
+            sceneR.transform.position = new Vector3(sceneCx + px + (charR.sprite == null ? jit : 0f), bandCy + py, z + 0.1f);
         }
         if (charR.sprite != null)
         {
             var sp = charR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
             float k = (bandH*1.75f)/sh;
+            // 인물은 등장할 때 한 걸음 다가오고(0.7초), 그 뒤로는 숨을 쉰다
+            pushT = Mathf.Min(1f, pushT + Time.deltaTime / 0.7f);
+            float ease = 1f - Mathf.Pow(1f - pushT, 3f);
+            k *= Mathf.Lerp(0.93f, 1f, ease) * (1f + 0.006f * Mathf.Sin(Time.time * 1.15f));
             charR.transform.localScale = new Vector3(k, k, 1f);
-            float x = cx;   // 홀로 서니 띠 가운데
+            float x = cx + jit;   // 홀로 서니 띠 가운데
             float y = bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             charR.transform.position = new Vector3(x, y, z);
         }

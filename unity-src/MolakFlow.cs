@@ -101,7 +101,7 @@ public class MolakFlow : MonoBehaviour
             string cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
             bool shown = true;
             if (!string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
-            if (shown) MolakChoiceMeta.Push(cexp);   // 조건이 거짓이라 안 뜨는 선택지는 카드 순서에서 뺀다
+            if (shown) MolakChoiceMeta.Push(cexp, ChoiceText(cmd));   // 조건이 거짓이라 안 뜨는 선택지는 카드 순서에서 뺀다
             lastWasChoice = true;
             afterChoice = true;   // 선택지 뒤의 첫 본문은 빈 줄로 단락을 나눈다
         }
@@ -174,6 +174,22 @@ public class MolakFlow : MonoBehaviour
     }
 
     static bool prevDlg;
+    /// <summary>선택지 글귀(번역 키를 풀어 낸 실제 글). 승부수 표시 〔검술+2〕 를 읽는 데 쓴다.</summary>
+    static string ChoiceText (Command cmd)
+    {
+        try
+        {
+            foreach (var f in cmd.GetType().GetFields())
+            {
+                if (!(f.GetValue(cmd) is LocalizableTextParameter p) || !p.HasValue) continue;
+                var loc = Engine.GetService<ITextLocalizer>();
+                return loc != null ? loc.Resolve(p.Value) : p.Value.ToString();
+            }
+        }
+        catch { }
+        return null;
+    }
+
     static bool IsDialogue (PrintText pt)
     {
         try

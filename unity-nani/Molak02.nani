@@ -46,7 +46,7 @@
 @goto #BHintShr if:day>=19&&g_redverse>0&&f_shrseen<1&&f_hapbyeok<1&&b_hintshr<1
 @goto #BSimK if:curse>=75&&g_end_simma>0&&b_simk<1
 @goto #BNetK if:day>=52&&g_end_pobak>0&&b_netk<1&&b_capture<1
-@goto #BNetHint if:day>=52&&b_nethint<1&&b_netk<1&&b_capture<1
+@goto #BNetHint if:day>=52&&b_nethint<1&&b_netk<1&&b_capture<1||day>=48&&f_haoowe>0&&b_nethint<1&&b_netk<1&&b_capture<1
 @goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
 @goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
@@ -71,13 +71,37 @@
 @goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
 @goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
 @goto #BH3 if:day>=55&&f_wolfdown<1&&b_hunt3x<1
+; --- 눈·굶주림의 아침(0.4.12) ---
+# MSnow
+문틈으로 눈발이 든다. 홑옷 사이로 한기가 뼈까지 파고든다.
+손가락이 굳어 검집을 두 번 놓친다.
+@fx hp:-1
+@goto #MAfterSnow
+# MSnowF
+@set b_frost=1
+눈이 온다. 하진무가 말없이 두고 간 솜옷의 깃을 여민다.
+한기가 살갗에서 멈춘다. 그 사내는 그때 이미 이 겨울을 알았던 것이다.
+@goto #MAfterSnow
+# MGae
+@set gaefed=0
+배를 곯은 아침, 다리 밑 솥에서 거지들이 국 한 그릇을 덜어 준다.
+"밥 먹었소? 아직이오. 그럼 앉으시오."
+@fx hp:1
+@goto #MAfterGae
 ; --- 아침 풍경 ---
 @scene id:day
 @vfx kind:rainoff
 ; 0.4.9: 날이 저물수록 눈 오는 아침, 장마의 생엔 비 오는 아침
 @set wr=random(1,100)
-@scene id:snow if:day>=40&&wr<=30||day>=50&&wr<=45
+@set wsnow=0
+@set wsnow=1 if:day>=40&&wr<=30||day>=50&&wr<=45
+@scene id:snow if:wsnow>0
 @scene id:rain if:theme==1&&wr>55
+@goto #MSnow if:wsnow>0&&f_frost<1
+@goto #MSnowF if:wsnow>0&&f_frost>0&&b_frost<1
+# MAfterSnow
+@goto #MGae if:gaefed>0&&gaefedday>0
+# MAfterGae
 @goto #MTaint if:taint>0
 @goto #MTh if:theme>0&&day>=thday
 @pickflavor pool:morning
@@ -535,8 +559,10 @@
 "불이야!"
 하진무가 무명 감은 그 팔로 장작개비를 든다.
 이번엔 상복들이 물러나지 않는다.
+@vfx kind:hit
 맨 앞의 칼이, 당신 앞을 막아선 노인의 가슴에 들어간다. 소리가 작다.
 하진무가 주저앉으며 당신 소매를 잡는다.
+@vfx kind:beat
 "……셈이…… 이제 맞소. 장문인께…… 진 빚, 객한테…… 다 갚았으니."
 상복들이 물러난다. 저희도 이걸 바란 건 아니었다는 얼굴로. 주판알 몇 개가 피 웅덩이로 굴러간다.
 @set f_hajindead=1
@@ -1230,7 +1256,8 @@
 하진무가 창밖을 본다.
 그 안에 끝을 보지 못하면, 관아의 그물이 먼저 당신을 덮칠 것이다.
 @choice "소금길로 빠진다 — 곽산이 그어 준 산 둘, 물길 하나" if:f_valleyroute>0 goto:#BNetA
-@choice "나루의 밤배를 산다 (은자 15)" if:mn>=15 goto:#BNetB
+@choice "나루의 밤배를 산다 (은자 15)" if:mn>=15&&f_ferryfree<1 goto:#BNetB
+@choice "사공을 찾아간다 — 빚진 배 한 번" if:f_ferryfree>0 goto:#BNetBF
 @choice "남는다 — 그물이 닫히기 전에 끝을 보러 간다" goto:#BNetC
 @stop
 # BNetK
@@ -1240,11 +1267,17 @@
 그물이 좁혀 오는 아침. 이 아침을 안다.
 <color=#9A70C4>지난 생, 성문이 먼저 닫혔다. 그 밤 객잔 지붕에 사람이 올랐다.</color>
 @choice "소금길로 빠진다 — 곽산이 그어 준 산 둘, 물길 하나" if:f_valleyroute>0 goto:#BNetA
-@choice "나루의 밤배를 산다 (은자 15)" if:mn>=15 goto:#BNetB
+@choice "나루의 밤배를 산다 (은자 15)" if:mn>=15&&f_ferryfree<1 goto:#BNetB
+@choice "사공을 찾아간다 — 빚진 배 한 번" if:f_ferryfree>0 goto:#BNetBF
 @choice "남는다 — 끝을 내러 가든, 끝을 맞든" goto:#BNetC
 @stop
 # BNetA
 @set f_dojuroute=1
+@goto Molak06#Doju
+# BNetBF
+늙은 사공이 삿대를 고쳐 쥔다. 묻지도 않는다.
+"말씀만 하시라 했잖소. 저 산 쪽 첫 손님이오. 타시오, 등불은 끄고."
+@set f_dojuroute=2
 @goto Molak06#Doju
 # BNetB
 @fx mn:-15
@@ -1340,17 +1373,19 @@
 백초당.
 "뭐가 필요하냐."
 할멈이 눈도 들지 않고 묻는다.
-@choice "지혈환 (은자 3) — 상처를 다스린다" if:mn>=3&&taint<1 goto:#TownBC0
+@choice "지혈환 (은자 3) — 상처를 다스린다" if:mn>=3&&taint<1&&buyhx!=day goto:#TownBC0
 @choice "금창약 한 통 (은자 6) — 행낭에 넣어 둔다" if:mn>=6&&f_salve<1 goto:#TownBC4
 @choice "해독환 한 알 (은자 10) — 행낭에 넣어 둔다" if:mn>=10&&f_antidote<1 goto:#TownBC5
 @choice "안식향 한 묶음 (은자 8) — 머리맡에 피운다" if:mn>=8&&f_incense<1 goto:#TownBC6
 @choice "해독탕 (은자 8) — 피 속의 독과 고름을 뺀다" if:taint>0&&mn>=8&&f_herbbond<1&&f_herbfriend<1 goto:#TownBCT
 @choice "\"할멈, 이것 좀 봐 주시오.\" — 상처를 내민다" if:taint>0&&f_herbbond>0||taint>0&&f_herbfriend>0 goto:#TownBCF
-@choice "청혈산 (은자 3) — 피를 맑게 한다" if:mn>=3 goto:#TownBC1
+@choice "청혈산 (은자 3) — 피를 맑게 한다" if:mn>=3&&buycx!=day goto:#TownBC1
+@choice "자하단(紫霞丹) (은자 22) — 사술의 뿌리를 깊이 누른다" if:mn>=22&&day>=36&&f_jaha<1 goto:#TownBC7
 @choice "정심단 (은자 6) — 저주의 뿌리를 누른다" if:mn>=6&&curse>=20 goto:#TownBC2
 @choice "돌아선다" goto:#TownBC3
 @stop
 # TownBC0
+@set buyhx=day
 @fx mn:-3 hp:4
 @goto #TownB
 # TownBC4
@@ -1389,7 +1424,17 @@
 @set taint=0
 @goto #TownB
 # TownBC1
-@fx mn:-3 curse:-4
+@set buycx=day
+@fx mn:-3 curse:-3
+"하루 한 첩이다. 두 첩이면 피가 묽어진다."
+@goto #TownB
+# TownBC7
+할멈이 약궤 맨 아래 칸에서 보라빛 환약 한 알을 꺼낸다. 손이 잠깐 멈춘다.
+"마지막 남은 거다. 청운이 망하던 해에 지어 둔 것이지. 그해엔 쓸 사람이 다 죽었다."
+삼키자 가슴의 문양이 얼음물에 덴 듯 오그라든다. 한참 숨을 쉬지 못한다.
+@vfx kind:curse
+@fx mn:-22 curse:-12
+@set f_jaha=1
 @goto #TownB
 # TownBC2
 @gosub MolakEvents#H_Jsd
@@ -1418,6 +1463,7 @@
 @choice "날을 벼린다 (은자 8) — 이번 생에 한 번, 검술 +1" if:mn>=8&&f_honed<1 goto:#TownMC1
 @choice "가죽 호완을 맞춘다 (은자 12) — 체력 상한 +1" if:mn>=12&&f_bracer<1 goto:#TownMC4
 @choice "철편 덧댄 조끼를 산다 (은자 25) — 체력 상한 +2" if:mn>=25&&f_vest<1 goto:#TownMC5
+@choice "벼린 날을 다시 세운다 (은자 24) — 이번 생에 한 번, 검술 +2" if:mn>=24&&day>=30&&f_honed>0&&f_reforge<1 goto:#TownMC6
 @choice "돌아선다" goto:#TownMC2
 @stop
 # TownMC0
@@ -1444,6 +1490,14 @@
 @set hpmax=hpmax+2
 @fx hp:2
 @set f_vest=1
+@goto #TownM
+# TownMC6
+무고가 처음으로 망치를 내려놓는다. 날을 불빛에 비춰 보고, 오래 본다.
+"한 번 벼린 날을 또 세우면 칼이 얇아지오. 얇은 칼은 한 번은 무엇이든 벤다. 그다음은 장담 못 하오."
+이레 밤, 대장간 불이 꺼지지 않는다.
+@vfx kind:clash
+@fx mn:-24 sw:2
+@set f_reforge=1
 @goto #TownM
 # TownMC2
 @goto #Town1

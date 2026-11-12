@@ -9,6 +9,7 @@
 @set b_chain=0
 @set b_depart=0
 @set b_fame=0
+@set b_frost=0
 @set b_hajin=0
 @set b_hajin2x=0
 @set b_herb2=0
@@ -57,6 +58,8 @@
 @set b_soatrain=0
 @set b_wanted=0
 @set b_yong2=0
+@set buycx=0
+@set buyhx=0
 @set cancurse=0
 @set canflee=0
 @set cansense=0
@@ -163,6 +166,7 @@
 @set f_inkcord=0
 @set f_ipmafight=0
 @set f_ipmaknow=0
+@set f_jaha=0
 @set f_jangfinger=0
 @set f_jangfriend=0
 @set f_janginfo=0
@@ -215,6 +219,7 @@
 @set f_poisonswap=0
 @set f_raidprep=0
 @set f_rankplate=0
+@set f_reforge=0
 @set f_relicinfo=0
 @set f_relicpae=0
 @set f_ringclosed=0
@@ -291,6 +296,8 @@
 @set f_yongkilled=0
 @set f_yongsold=0
 @set f_yongspared=0
+@set gaefed=0
+@set gaefedday=0
 @set grudge=0
 @set grudgeday=0
 @set grudgewarn=0
@@ -334,6 +341,7 @@
 @set nmul=0
 @set nrand=0
 @set odds10=0
+@set pass=0
 @set pw=0
 @set r=0
 @set raidday=0
@@ -367,6 +375,7 @@
 @set vowc=0
 @set wr=0
 @set wrand=0
+@set wsnow=0
 @set yonglost=0
 @set deathcause="none"
 @set deathtip="none"

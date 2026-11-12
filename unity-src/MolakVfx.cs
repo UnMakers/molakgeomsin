@@ -50,7 +50,38 @@ public class MolakVfx : MonoBehaviour
     public static void Blood () { Flash(new Color(0.62f, 0.08f, 0.05f, 0.5f), 0.7f); Shake(14f); }
     public static void Gold () { Flash(new Color(0.85f, 0.68f, 0.18f, 0.32f), 0.6f); }
     public static void CursePulse () { Flash(new Color(0.42f, 0.22f, 0.58f, 0.4f), 0.9f); }
-    public static void Shake (float amp) { if (instance != null) { instance.shakeAmp = amp; instance.shakeT = 0f; } }
+    public static void Shake (float amp) { if (instance != null && (instance.shakeT < 0f || amp >= instance.shakeAmp)) { instance.shakeAmp = amp; instance.shakeT = 0f; } }
+    /// <summary>칼이 부딪는 순간: 흰 섬광 한 번 + 짧은 흔들림 + 칼 소리</summary>
+    public static void Clash (bool heavy) { Flash(new Color(1f, 0.97f, 0.9f, heavy ? 0.55f : 0.35f), heavy ? 0.35f : 0.22f); Shake(heavy ? 16f : 9f); MolakSfx.Draw(); }
+
+    // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
+    float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
+    public static void Stamp (string hanja, string line, bool big) { if (instance == null) return; instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; }
+    GUIStyle sStamp, sStampLine; Font gowun; float stampU = -1f;
+    static Texture2D vig;
+    /// <summary>가장자리만 짙은 둥근 비네트(심장 박동·사술의 숨결에 쓴다)</summary>
+    static Texture2D Vig
+    {
+        get
+        {
+            if (vig != null) return vig;
+            int S = 128; vig = new Texture2D(S, S, TextureFormat.RGBA32, false); vig.filterMode = FilterMode.Bilinear; vig.wrapMode = TextureWrapMode.Clamp;
+            for (int y = 0; y < S; y++) for (int x = 0; x < S; x++)
+            {
+                float dx = (x + 0.5f) / S - 0.5f, dy = (y + 0.5f) / S - 0.5f;
+                float d = Mathf.Sqrt(dx*dx + dy*dy) * 2f;     // 0 가운데 · 1 가장자리 · 1.41 모서리
+                vig.SetPixel(x, y, new Color(1, 1, 1, Mathf.Clamp01((d - 0.55f) / 0.75f)));
+            }
+            vig.Apply(); return vig;
+        }
+    }
+    /// <summary>심장 박동 곡선: 쿵-쿵 두 번 뛰고 쉰다(분당 약 일흔, 숨이 가쁠수록 빨라진다).</summary>
+    static float Beat (float t, float bpm)
+    {
+        float ph = (t * bpm / 60f) % 1f;
+        float a = Mathf.Exp(-Mathf.Pow((ph - 0.05f) / 0.05f, 2f)), b = Mathf.Exp(-Mathf.Pow((ph - 0.24f) / 0.06f, 2f)) * 0.6f;
+        return Mathf.Clamp01(a + b);
+    }
     public static void Rain (bool on) { Weather(on ? "rain" : ""); }
     /// <summary>날씨: "rain" 비, "bloodrain" 핏빛 비, "snow" 눈, "petals" 꽃잎, "embers" 불티, "" 갬</summary>
     public static void Weather (string kind)
@@ -117,6 +148,24 @@ public class MolakVfx : MonoBehaviour
     void OnGUI ()
     {
         float w = Screen.width, h = Screen.height;
+        // 몸과 사술의 상태를 화면 가장자리에: 체력이 바닥이면 붉은 맥이 뛰고, 저주가 깊으면 보랏빛이 숨을 쉰다
+        if (Event.current.type == EventType.Repaint && Engine.Initialized && !MolakMenu.IsOpen)
+        {
+            float hp = MolakStats.Get("hp"), hpm = Mathf.Max(1f, MolakStats.Get("hpmax")), cu = MolakStats.Get("curse");
+            float r = hp / hpm;
+            if (hp > 0f && r <= 0.3f)
+            {
+                float k = Mathf.InverseLerp(0.3f, 0.05f, r);                       // 낮을수록 짙고 빠르게
+                float a = (0.12f + 0.20f * k) * (0.35f + 0.65f * Beat(Time.time, 64f + 40f * k));
+                var g = GUI.color; GUI.color = new Color(0.55f, 0.04f, 0.03f, a); GUI.DrawTexture(new Rect(0, 0, w, h), Vig); GUI.color = g;
+            }
+            if (cu >= 75f)
+            {
+                float k = Mathf.InverseLerp(75f, 100f, cu);
+                float a = (0.08f + 0.14f * k) * (0.5f + 0.5f * Mathf.Sin(Time.time * (0.9f + 0.8f * k)));
+                var g = GUI.color; GUI.color = new Color(0.36f, 0.16f, 0.48f, Mathf.Max(0f, a)); GUI.DrawTexture(new Rect(0, 0, w, h), Vig); GUI.color = g;
+            }
+        }
         // 플래시(비네트 느낌: 중앙은 옅고 가장자리 진하게 — 상/하/좌/우 밴드)
         if (flashT >= 0f)
         {
@@ -133,6 +182,37 @@ public class MolakVfx : MonoBehaviour
                 Box(new Rect(w * 0.90f, band, w * 0.10f, h - 2*band), c);
                 var cc = new Color(c.r, c.g, c.b, c.a * 0.45f);
                 Box(new Rect(0, 0, w, h), cc);
+            }
+        }
+        // 승부수 인장
+        if (stampT >= 0f)
+        {
+            stampT += Time.deltaTime;
+            const float Dur = 1.5f;
+            if (stampT > Dur) stampT = -1f;
+            else
+            {
+                float u = MolakTheme.U;
+                if (sStamp == null || !Mathf.Approximately(stampU, u))
+                {
+                    stampU = u; if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+                    sStamp = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(120 * u), alignment = TextAnchor.MiddleCenter };
+                    sStampLine = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(28 * u), alignment = TextAnchor.MiddleCenter };
+                    if (gowun != null) { sStamp.font = gowun; sStampLine.font = gowun; }
+                }
+                float a = stampT < 0.12f ? stampT / 0.12f : (stampT > Dur - 0.5f ? (Dur - stampT) / 0.5f : 1f);
+                bool ok = stampHanja == "通";
+                var col = ok ? MolakTheme.Gold : MolakTheme.Blood;
+                float sc = 1f + Mathf.Clamp01(1f - stampT / 0.18f) * (stampBig ? 0.6f : 0.3f);   // 찍히는 순간 크게 → 제자리
+                var piv = new Vector2(w * 0.5f, h * 0.22f);
+                var m = GUI.matrix; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), piv);
+                sStamp.normal.textColor = new Color(col.r, col.g, col.b, 0.9f * a);
+                GUI.Label(new Rect(piv.x - 120 * u, piv.y - 80 * u, 240 * u, 160 * u), stampHanja, sStamp);
+                GUI.matrix = m;
+                sStampLine.normal.textColor = new Color(0.95f, 0.91f, 0.84f, 0.95f * a);
+                var sh = GUI.color; GUI.color = new Color(0f, 0f, 0f, 0.45f * a);
+                GUI.DrawTexture(new Rect(w * 0.5f - 200 * u, piv.y + 78 * u, 400 * u, 44 * u), Px); GUI.color = sh;
+                GUI.Label(new Rect(w * 0.5f - 200 * u, piv.y + 78 * u, 400 * u, 44 * u), stampLine, sStampLine);
             }
         }
         // 날씨

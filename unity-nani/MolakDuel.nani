@@ -131,27 +131,39 @@
 ; ---------- 초식 ----------
 # StFront
 호흡 하나, 반 보. 칼이 먼저 나간 쪽이 이긴다.
+@vfx kind:clash
+@wait 0.35
 @duel style:front
 @goto #Result
 # StKiller
 살기가 먼저 상대의 목을 조른다. 검은 그다음이다.
+@vfx kind:heavy
+@wait 0.35
 @duel style:killer
 @goto #Result
 # StGuard
 받고, 흘리고, 기다린다. 조급한 쪽이 먼저 빈틈을 보인다.
+@vfx kind:clash
+@wait 0.35
 @duel style:guard
 @goto #Result
 # StSense
 막지 않는다. 푸른 날이 닿지 않는 자리에 먼저 가 있는다.
+@vfx kind:clash
+@wait 0.35
 @duel style:sense
 @goto #Result
 # StCurse
 문양이 차갑게 타오른다. 세상이 반 박자 느려지고, 빈틈만 밝게 보인다.
+@vfx kind:clash
+@wait 0.35
 @duel style:curse
 @goto #Result
 # StCurse2
 손이 먼저 나간다. 제 손이 아닌 것처럼.
 문양이 <color=#C03434>스스로</color> 타오른다. 빈틈이 아니라 상대의 목숨 줄이 보인다.
+@vfx kind:heavy
+@wait 0.35
 @duel style:curse2
 @goto #Result
 

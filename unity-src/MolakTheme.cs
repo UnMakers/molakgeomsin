@@ -378,6 +378,7 @@ public class MolakTheme : MonoBehaviour
             string rawLabel = lblTx != null ? lblTx.text : "";
             int hintAt = rawLabel.IndexOf("\n<size=62%>");
             if (hintAt >= 0) rawLabel = rawLabel.Substring(0, hintAt);
+            rawLabel = MolakChoiceMeta.StripRisk(rawLabel);   // 승부수 표시 〔검술+2〕 는 주석으로 옮겨 적는다
             var meta = MolakChoiceMeta.Get(cidx, rawLabel);
             if (lblTx != null)
             {
