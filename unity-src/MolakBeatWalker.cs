@@ -16,6 +16,7 @@ public class MolakBeatWalker : MonoBehaviour
     public static void Walk (string[] refs, int pick)
     {
         if (inst == null) { var go = new GameObject("MolakBeatWalker"); DontDestroyOnLoad(go); inst = go.AddComponent<MolakBeatWalker>(); }
+        MolakBlackout.Auto = true;
         inst.StopAllCoroutines(); inst.StartCoroutine(inst.Run(refs, pick));
     }
 

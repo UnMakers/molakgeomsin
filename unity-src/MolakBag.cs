@@ -49,7 +49,7 @@ public class MolakBag : MonoBehaviour
     };
     public static readonly Entry[] Lore = {
         new Entry("f_jinlure", "북쪽 고개의 횃불", "정예를 북으로 끌고 간 맨 앞의 횃불.", "혈랑대와 겨룰 때 유리하다"),
-        new Entry("g_oldsister", "셋째 잔", "노인이 사매 몫으로 따라 둔 잔. 둘이 한 검을 쓰던 시절이 있었다.", "되감기지 않는다"),
+        new Entry("g_oldsister", "셋째 잔", "노인이 사매 몫으로 따라 둔 잔. 둘이 한 검을 쓰던 시절이 있었다.", "회귀해도 남는다"),
         new Entry("f_northstep", "북두를 거꾸로", "요광에서 천추로. 다섯째 별에서 숨을 쉬지 않는다.", "교주와 겨룰 때 유리하다"),
         new Entry("f_storylore", "이야기꾼의 대목", "열 번째 산문, 청운산장에서 장문인은 검을 뽑지 않고 서 있었다고 한다.", ""),
         new Entry("f_herbpulse", "두 개의 맥", "백초 할멈이 짚었다. 하나는 네 것이 아니라고.", ""),
@@ -72,7 +72,7 @@ public class MolakBag : MonoBehaviour
         new Entry("f_relicinfo", "북쪽 짐", "보름에 한 번 북쪽에서 짐이 내려온다. 끌려간 사람만 빼고.", ""),
         new Entry("f_beggarnet", "거지의 눈", "담 밑을 세는 붉은 끈. 뒷문 담은 낮다.", ""),
         new Entry("f_deadrumor", "사망 도장", "수배서에 '死' 자가 찍혔다. 며칠은 조용할 것이다.", ""),
-        new Entry("g_redverse", "적운의 구결 · 전생", "우물 속에서 백 번 들은 말. 죽어서도 잃어버리지 말라 했다.", "되감기지 않는다"),
+        new Entry("g_redverse", "적운의 구결 · 전생", "우물 속에서 백 번 들은 말. 죽어서도 잃어버리지 말라 했다.", "회귀해도 남는다"),
         new Entry("f_gaeknot", "꼬지의 매듭", "하나는 낯선 칼, 둘은 관아, 셋은 늑대. 엎어 둔 그릇은 이 길로 다니지 말라는 뜻.", ""),
         new Entry("f_maengdeal", "맹의 거래", "진백의 목과 청운의 현판. 백리휘의 장부에 적혔다.", ""),
         new Entry("f_platefake", "별 매듭의 패 끈", "강에 떠오른 표사의 패 끈. 서열각 장부의 얼굴 칸은 남의 이름이다.", ""),

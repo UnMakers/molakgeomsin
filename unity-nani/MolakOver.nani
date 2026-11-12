@@ -149,7 +149,7 @@
 # DeadV0
 @knownew
 @goto #DeadK0 if:knownewc<1
-<color=#9A70C4>되감기지 않는 것</color> — {knownew}
+<color=#9A70C4>다음 생에도 남는 것</color> — {knownew}
 # DeadK0
 @goto #DeadK1 if:g_redverse<1||g_hapdone>0||f_hapbyeok>0
 <color=#9A70C4>'사당은 비무 대회가 끝나고 열린다. 불타기 전에 가거라. 이번엔 반쪽을 들고 가거라.'</color>
@@ -250,7 +250,7 @@
 교주는 살아 있다. 다시 베어야 한다. 소아는 아직 그 대전에 가 본 적이 없다. 셋째 잔을 지붕 끝에 놓아둔 적도 없다.
 베어 놓고 되감은 첫 번째 아침이다. 아무도 모른다. 이 몸만 안다.
 # RgSacT
-가슴 한쪽이 무겁다. 되감기지 않는 것이 하나 늘었다. 이번엔 받지 못한 인사 하나다.
+가슴 한쪽이 무겁다. 다음 생으로 가져갈 것이 하나 늘었다. 이번엔 받지 못한 인사 하나다.
 @goto #RgEnd
 # RgCurse
 가슴의 문양이 식어 있다. 식은 척하고 있다.

@@ -12,6 +12,7 @@ public class MolakSoakRunner : MonoBehaviour
     public static void Matrix (int[] policies, int lives, string tag)
     {
         if (inst == null) { var go = new GameObject("MolakSoakRunner"); DontDestroyOnLoad(go); inst = go.AddComponent<MolakSoakRunner>(); }
+        MolakBlackout.Auto = true;
         inst.StopAllCoroutines(); inst.StartCoroutine(inst.Run(policies, lives, tag));
     }
 

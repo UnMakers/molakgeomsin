@@ -207,7 +207,7 @@ public class MolakMenu : MonoBehaviour
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
             string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록" };
-            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "되감기지 않는 것", "문파와 사람들" };
+            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎", "문파와 사람들" };
             float tw = (bw - gap) / 2f;
             for (int i = 0; i < t.Length; i++)
             {

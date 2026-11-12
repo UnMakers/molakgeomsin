@@ -152,6 +152,7 @@ public class MolakVfx : MonoBehaviour
 
     void OnGUI ()
     {
+        GUI.depth = -50;   // 0.4.27: 행낭 띠·HUD 위까지 물들게(설정 -200, 인장 -2500, 먹 화면 -3000 보다는 아래)
         float w = Screen.width, h = Screen.height;
         // 몸과 사술의 상태를 화면 가장자리에: 체력이 바닥이면 붉은 맥이 뛰고, 저주가 깊으면 보랏빛이 숨을 쉰다
         if (Event.current.type == EventType.Repaint && Engine.Initialized && !MolakMenu.IsOpen)
@@ -179,14 +180,11 @@ public class MolakVfx : MonoBehaviour
             if (k <= 0f) flashT = -1f;
             else
             {
-                var c = new Color(flashC.r, flashC.g, flashC.b, flashC.a * k);
-                float band = h * 0.22f;
-                Box(new Rect(0, 0, w, band), c);
-                Box(new Rect(0, h - band, w, band), c);
-                Box(new Rect(0, band, w * 0.10f, h - 2*band), c);
-                Box(new Rect(w * 0.90f, band, w * 0.10f, h - 2*band), c);
-                var cc = new Color(c.r, c.g, c.b, c.a * 0.45f);
-                Box(new Rect(0, 0, w, h), cc);
+                // 0.4.27: 네모 띠 대신 화면 전체를 고르게 물들이고, 가장자리는 둥근 비네트로 조금 더 짙게(본문 창 자리만 빠져 보이던 문제)
+                var g = GUI.color;
+                GUI.color = new Color(flashC.r, flashC.g, flashC.b, flashC.a * k * 0.75f); GUI.DrawTexture(new Rect(0, 0, w, h), Px);
+                GUI.color = new Color(flashC.r, flashC.g, flashC.b, Mathf.Min(1f, flashC.a * k * 1.3f)); GUI.DrawTexture(new Rect(0, 0, w, h), Vig);
+                GUI.color = g;
             }
         }
         // 마디 이름

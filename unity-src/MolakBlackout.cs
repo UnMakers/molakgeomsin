@@ -11,6 +11,8 @@ public class MolakBlackout : MonoBehaviour
 {
     static MolakBlackout inst;
     public static bool Busy { get { return inst != null && inst.busy; } }
+    /// <summary>0.4.27: 줄은 눌러야 넘어간다. 자동 시험(소크·대본 걷기) 중에만 hold 초 뒤 저절로 넘긴다.</summary>
+    public static bool Auto;
 
     string[] lines = new string[0];
     float hold = 1.8f;
@@ -61,11 +63,12 @@ public class MolakBlackout : MonoBehaviour
             case 0: if (e >= 0.9f) { Next(1, t); } break;
             case 1:
                 if (idx >= lines.Length) { Next(3, t); busy = false; break; }
-                if (e >= 0.6f + hold || (e >= 0.4f && Pressed()))
-                {
-                    if (stack && idx < lines.Length - 1) { idx++; Next(1, t); }
-                    else Next(2, t);
-                }
+                // 홑줄: 떠오른 뒤 눌러야 넘어간다. 쌓기: 고른 것들은 저절로 차례로 쌓이고(누르면 바로 다음), 다 쌓인 뒤엔 눌러야 닫힌다.
+                bool last = !stack || idx >= lines.Length - 1;
+                bool timeUp = e >= 0.6f + hold;
+                bool tap = e >= 0.4f && Pressed();
+                if (stack && !last) { if (timeUp || tap) { idx++; Next(1, t); } }
+                else if (tap || (Auto && timeUp)) Next(2, t);
                 break;
             case 2:
                 if (e >= (stack ? 0.7f : 0.4f)) { idx = stack ? lines.Length : idx + 1; Next(idx < lines.Length ? 1 : 3, t); if (phase == 3) busy = false; }
@@ -104,6 +107,14 @@ public class MolakBlackout : MonoBehaviour
             {
                 style.normal.textColor = col;
                 GUI.Label(new Rect(w * 0.08f, h * 0.42f, w * 0.84f, 170 * u), lines[idx], style);
+            }
+            // 누르라는 표시: 마지막 줄까지 다 떠오르면 아래쪽에 ▼ 가 천천히 숨 쉰다
+            if (phase == 1 && e >= 0.6f && (!stack || idx >= lines.Length - 1))
+            {
+                float pa = Mathf.Clamp01((e - 0.6f) / 0.5f) * (0.35f + 0.3f * Mathf.Sin((e - 0.6f) * 3.2f));
+                var hs = new GUIStyle(style) { fontSize = Mathf.RoundToInt(30 * u) };
+                hs.normal.textColor = red ? new Color(0.92f, 0.72f, 0.66f, pa) : new Color(0.88f, 0.82f, 0.72f, pa);
+                GUI.Label(new Rect(0, h * 0.80f, w, 60 * u), "▼", hs);
             }
             else
             {
@@ -158,7 +169,8 @@ public class BlackCommand : Command
             stackMode = true;
         }
         MolakBlackout.Play(lines, hold, Assigned(Red) && Red.Value, stackMode);
-        float limit = Time.realtimeSinceStartup + 2f + lines.Length * (hold + 1.2f);   // 안전판: 무슨 일이 있어도 대본은 이어진다
+        // 눌러야 넘어가므로 시간 안전판은 자동 시험 때만 둔다
+        float limit = MolakBlackout.Auto ? Time.realtimeSinceStartup + 2f + lines.Length * (hold + 1.2f) : float.MaxValue;
         while (MolakBlackout.Busy && Time.realtimeSinceStartup < limit) await Awaitable.NextFrameAsync();
     }
 }
