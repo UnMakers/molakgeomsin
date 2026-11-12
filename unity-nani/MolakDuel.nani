@@ -39,15 +39,12 @@
 @choice "정면으로 든다 — 곧장 벤다" goto:#ExA1
 @stop
 # ExA1
-@vfx kind:clash
 @duelx act:1
 @goto #ExRes
 # ExA2
-@vfx kind:clash
 @duelx act:2
 @goto #ExRes
 # ExA3
-@vfx kind:clash
 @duelx act:3
 # ExRes
 {dx_restext}

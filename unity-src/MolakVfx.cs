@@ -238,7 +238,7 @@ public class MolakVfx : MonoBehaviour
                     if (gowun != null) { sStamp.font = gowun; sStampLine.font = gowun; }
                 }
                 float a = stampT < 0.12f ? stampT / 0.12f : (stampT > Dur - 0.5f ? (Dur - stampT) / 0.5f : 1f);
-                bool ok = stampHanja == "通";
+                bool ok = stampHanja == "通" || stampHanja == "破" || stampHanja == "勢";   // 0.4.31: 합을 이긴 인장도 금빛
                 var col = ok ? MolakTheme.Gold : MolakTheme.Blood;
                 float sc = 1f + Mathf.Clamp01(1f - stampT / 0.18f) * (stampBig ? 0.6f : 0.3f);   // 찍히는 순간 크게 → 제자리
                 var piv = new Vector2(w * 0.5f, h * 0.22f);
