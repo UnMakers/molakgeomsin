@@ -78,7 +78,7 @@ public class MolakArt : MonoBehaviour
     public static bool IsNight;
     static readonly Dictionary<string, string> SceneWeather = new Dictionary<string, string>
     {
-        {"rain","rain"},{"flood","rain"},{"snow","snow"},{"manorfire","embers"},{"herbfire","embers"},{"bloodroof","bloodrain"},{"raid","bloodrain"},
+        {"rain","rain"},{"flood","rain"},{"snow","snow"},{"manorfire","inferno"},{"herbfire","embers"},{"bloodroof","bloodrain"},{"raid","bloodrain"},
     };
 
     public static void Char (string id)

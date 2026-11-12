@@ -26,6 +26,7 @@ public class VfxCommand : Command
             case "snow": MolakVfx.Weather("snow"); break;
             case "petals": MolakVfx.Weather("petals"); break;
             case "embers": MolakVfx.Weather("embers"); break;
+            case "inferno": MolakVfx.Weather("inferno"); MolakVfx.Shake(8f); break;   // 불타는 산장 — 불티의 두 배와 아래에서 치솟는 열기
             case "clear": MolakVfx.Weather(""); break;
         }
         await Awaitable.NextFrameAsync();

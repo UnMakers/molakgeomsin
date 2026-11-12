@@ -118,7 +118,7 @@ public class MolakVfx : MonoBehaviour
         rain = on;
         if (on && rx == null)
         {
-            int n = 90;
+            int n = 120;
             rx = new float[n]; ry = new float[n]; rs = new float[n]; rr = new float[n];
             for (int i = 0; i < n; i++) { rx[i] = Random.value; ry[i] = Random.value; rs[i] = 0.7f + Random.value*0.8f; rr[i] = Random.value * 360f; }
         }
@@ -259,7 +259,17 @@ public class MolakVfx : MonoBehaviour
         {
             float u = w / 1080f, dt = Time.deltaTime, t = Time.time;
             string k = WeatherKind;
-            int n = k == "snow" ? 80 : k == "petals" ? 34 : k == "embers" ? 40 : k == "bloodrain" ? 90 : 70;
+            int n = k == "snow" ? 80 : k == "petals" ? 34 : k == "embers" ? 40 : k == "inferno" ? 110 : k == "bloodrain" ? 90 : 70;
+            if (k == "inferno")
+            {   // 0.4.22 불타는 산장: 아래에서 치솟는 열기(흔들리는 붉은 빛) + 화면 전체가 불빛에 일렁인다
+                float fl0 = 0.75f + 0.25f * Mathf.Sin(t * 7.3f) * Mathf.Sin(t * 3.1f + 1f);
+                Box(new Rect(0, 0, w, h), new Color(0.55f, 0.12f, 0.02f, 0.07f * fl0));
+                for (int b = 0; b < 8; b++)
+                {
+                    float bh = h * (0.06f + 0.05f * b);
+                    Box(new Rect(0, h - bh, w, bh), new Color(0.90f, 0.30f, 0.06f, 0.045f * fl0));
+                }
+            }
             for (int i = 0; i < n && i < rx.Length; i++)
             {
                 if (k == "rain" || k == "bloodrain")
@@ -288,6 +298,18 @@ public class MolakVfx : MonoBehaviour
                     var m = GUI.matrix; GUIUtility.RotateAroundPivot(rr[i], piv);
                     var g = GUI.color; GUI.color = new Color(0.94f, 0.62f, 0.70f, 0.85f);
                     GUI.DrawTexture(new Rect(piv.x - sw/2f, piv.y - sh/2f, sw, sh), Dot); GUI.color = g; GUI.matrix = m;
+                }
+                else if (k == "inferno")
+                {   // 불티의 두 배: 더 많이, 더 크게, 더 빨리. 셋에 하나는 길게 늘어진 불꽃 혀.
+                    ry[i] -= dt * 0.17f * rs[i]; rx[i] += Mathf.Sin(t * 2.6f + i) * dt * 0.05f;
+                    if (ry[i] < -0.04f) { ry[i] = 1.03f; rx[i] = Random.value; }
+                    float fl = 0.55f + 0.45f * Mathf.Sin(t * 11f + i * 3f);
+                    float hot = (i % 4 == 0) ? 1f : 0f;
+                    var col = Color.Lerp(new Color(0.95f, 0.38f, 0.08f, 1f), new Color(1f, 0.80f, 0.35f, 1f), hot);
+                    var g = GUI.color; GUI.color = new Color(col.r, col.g, col.b, 0.9f * fl * Mathf.Clamp01(ry[i] * 1.4f));
+                    if (i % 3 == 0) { float fw = (6f + 6f * rs[i]) * u; GUI.DrawTexture(new Rect(rx[i] * w, ry[i] * h, fw, fw * 3.2f), Dot); }
+                    else { float sz = (7f + 10f * rs[i]) * u; GUI.DrawTexture(new Rect(rx[i] * w, ry[i] * h, sz, sz), Dot); }
+                    GUI.color = g;
                 }
                 else if (k == "embers")
                 {
