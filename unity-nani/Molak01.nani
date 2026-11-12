@@ -312,6 +312,7 @@
 @set f_simma=0
 @set f_smithwait=0
 @set f_soa3=0
+@set f_soaatlord=0
 @set f_soablades=0
 @set f_soabond=0
 @set f_soachild=0
@@ -502,6 +503,7 @@
 @goto #RbAmh if:g_lastend=="muhyang"
 @goto #RbCm if:g_lastend=="hwansok"
 @goto #RbKneel if:g_lastend=="ipma"
+@goto #RbSac if:g_lastend=="huisaeng"
 @goto #RbCommon
 # RbSoa
 @set g_soalast=0
@@ -540,6 +542,10 @@
 # RbKneel
 무릎이 저리다. 지난 생에 교 앞에 꿇었던 무릎이다. 이번 생은 아직 아무에게도 꿇지 않았다.
 @goto #RbCommon
+# RbSac
+손을 펴 본다. 갈라졌던 자리도, 검게 물들었던 자리도 없다. 몸은 아무것도 내주지 않은 몸이다.
+지난 생 하나가 당신 없이 흘러갔다. 그 생의 사람들은 그 생 안에서 살아 있다. 이 아침엔 없는 생이다.
+@goto #RbCommon
 # RbCommon
 @goto #RbSameA if:g_samecount==2
 @goto #RbSameB if:g_samecount>=3
@@ -555,6 +561,11 @@
 # RbCommonV
 "…깨어나셨소!"
 하진무의 그 목소리.
+@goto #RbHj0 if:g_sac_hajin!=1
+그의 손목부터 본다. 성하다. 당연하다. 이번 생엔 아무도 그 손목을 비틀지 않았다.
+하진무가 당신 눈길을 따라 제 손목을 내려다본다. "……손목이 왜 그러시오?" 아무것도 아니라고 한다. 아무것도 아니게 된 일이니까.
+@set g_sac_hajin=2
+# RbHj0
 # RbCommon2
 전낭에는 은자 서른 냥. 모든 것이 그 아침 그대로다. 당신의 기억과 <color=#9A70C4>가슴의 문양</color>만 빼고.
 @fx mn:30
