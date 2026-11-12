@@ -1059,6 +1059,8 @@
 @gosub MolakEvents#E_HerbCm if:nextevent=="E_HerbCm"
 @gosub MolakEvents#E_SoaJin if:nextevent=="E_SoaJin"
 @gosub MolakEvents#E_GwakSoa if:nextevent=="E_GwakSoa"
+@gosub MolakEvents#E_OldSoa if:nextevent=="E_OldSoa"
+@gosub MolakEvents#E_HajinAmh if:nextevent=="E_HajinAmh"
 @gosub MolakEvents#E_Hostage if:nextevent=="E_Hostage"
 @gosub MolakEvents#E_Flood if:nextevent=="E_Flood"
 @gosub MolakEvents#E_Maeng1 if:nextevent=="E_Maeng1"

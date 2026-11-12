@@ -36,6 +36,8 @@ public static class MolakEventDefs
             new Def("E_HerbCm", 30, 50, 'd', "b_cm1&b_herb2&!f_herbout", null, 0, 18),
             new Def("E_SoaJin", 28, 40, 'n', "f_soamet&!f_soadead&b_r4x&!f_jinbaekdead", null, 0, 22),
             new Def("E_GwakSoa", 30, 50, 'd', "f_soamet&!f_soadead&f_rivalfriend&!f_gwakwifedied", null, 0, 16),
+            new Def("E_OldSoa", 38, 55, 'n', "f_soamet&!f_soadead&f_oldseen", null, 0, 20),
+            new Def("E_HajinAmh", 38, 50, 'd', "b_am1&!f_amhdead&!f_hajindead", null, 0, 16),
             new Def("E_Hostage", 14, 0, 'd', "!f_hajindead", null, 0, 12),
             new Def("E_JinSister", 20, 40, 'd', "g_jbtruth&!f_jinbaekdead&!f_jbsister", null, 0, 30),
             new Def("E_HajinNight", 24, 40, 'n', "!f_hajindead&!f_hajinbond", null, 0, 22),
