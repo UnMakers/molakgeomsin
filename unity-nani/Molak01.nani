@@ -939,4 +939,26 @@
 객잔으로 돌아온다. 하진무가 마당을 쓸다 말고 고개만 끄덕인다.
 서열록 맨 위에는 혈마교주가 있다. 그보다 더 위에, 당신에게 사술을 건 노인이 있다.
 당신의 이름은 아직 서열록에 없다. 맨 아래부터 올라가야 한다.
+@goto Molak02#Night if:g_runs<1||g_bestday<10
+@choice "오늘 밤부터 한 걸음씩 걷는다" goto:Molak02#Night
+@choice "기억대로 흘려보낸다 — 아는 날들을 건너뛴다 (아흐레)" goto:#FF
+@stop
+# FF
+@art scene:morning
+@art char:none
+아는 날들이다. 몇 번을 지나온 길이다.
+비무판의 첫 상대가 왼발을 먼저 딛는다는 것을 안다. 날품 자리가 어느 부두에서 먼저 나는지 안다. 쥐눈이 장이 첫 소식을 얼마에 부를지도.
+@goto #FF1 if:g_soalast<1&&f_soamet<1
+국밥집 맞은편 자리는 이번에도 비워 둔다. 그 외눈은 이번에도 그 자리에 앉을 것이다. 처음 보는 얼굴로.
+# FF1
+몸이 먼저 움직이고 생각이 뒤따른다. 아흐레가 책장 한 장처럼 넘어간다.
+@daytick n:3
+@daytick n:3
+@daytick n:3
+@fx sw:2 ng:1 mn:10
+@set g_ffcount=g_ffcount+1
+<color=#9A70C4>건너뛴 날들은 앎으로 넘겼다. 그러나 문양은 날마다 자랐다.</color>
+@goto #FF2 if:g_ffcount<3
+되감은 날을 또 건너뛴다. 몇 번째인지 세지 않는다. 건너뛸수록 사는 것이 가벼워진다. 그게 무섭다.
+# FF2
 @goto Molak02#Night
