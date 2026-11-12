@@ -126,7 +126,7 @@ public class MolakBag : MonoBehaviour
 
     static MolakBag inst;
     static Texture2D px;
-    Font gowun; GUIStyle sHead, sName, sDesc, sEff, sSec, sHint, sHintName, sTab; float builtU = -1f;
+    Font gowun; GUIStyle sHead, sName, sDesc, sEff, sSec, sHint, sHintName, sTab, sChip; float builtU = -1f, chipU = -1f;
     int tab = -1;   // 펼친 행낭의 탭(0 물건 · 1 비방·소식 · 2 인연), -1 이면 가장 최근에 얻은 쪽
     float openT; bool open;
     // 목록 스크롤 (직접 구현: 손가락 드래그 + 관성)
@@ -258,27 +258,56 @@ public class MolakBag : MonoBehaviour
             // 하단 띠: 손잡이 + '행낭' + 최근 획득 + 개수 — 위로 쓸어 올리면 열림
             var hintCol = night ? new Color(0.86f,0.82f,0.75f,1f) : new Color(0.20f,0.16f,0.13f,1f);
             var subCol = night ? "#B8AE9E" : "#5C5046";
-            string latest = order.Count > 0 ? order[order.Count - 1] : null;
-            var le = latest != null ? Find(latest) : null;
-            sHint.normal.textColor = hintCol; sHintName.normal.textColor = hintCol;
-            float bandH = MolakLayout.BagStripH*u, by0 = h - bandH;   // 띠 아래 절반은 기기 막대 여백, 글은 위 절반
-            Box(new Rect(0, by0, w, bandH), night ? new Color(0.10f,0.09f,0.085f,0.94f) : new Color(0.93f,0.90f,0.84f,0.94f));
+            MolakGui.Ink(sHint, hintCol); MolakGui.Ink(sHintName, hintCol);
+            float bandH = MolakLayout.BagStripH*u, by0 = h - bandH;   // 띠 아래쪽 100단위쯤은 기기 막대 자리로 비워 둔다
+            Box(new Rect(0, by0, w, bandH), night ? new Color(0.10f,0.09f,0.085f,0.96f) : new Color(0.93f,0.90f,0.84f,0.96f));
             Box(new Rect(0, by0, w, Mathf.Max(1f, 2*u)), night ? new Color(0.45f,0.40f,0.35f,0.9f) : new Color(0.55f,0.48f,0.40f,0.7f));
             Box(new Rect(w/2f - 56*u, by0 + 12*u, 112*u, 7*u), night ? new Color(0.7f,0.65f,0.58f,0.9f) : new Color(0.35f,0.30f,0.25f,0.75f));
             int nI = 0, nL = 0, nB = 0;
             foreach (var e0 in Items) if (Get(e0.Flag) > 0f) nI++;
             foreach (var e0 in Lore) if (Get(e0.Flag) > 0f) nL++;
             foreach (var e0 in Bonds) if (Get(e0.Flag) > 0f) nB++;
-            string head = "<b>행낭</b>";
-            string body;
-            if (le.HasValue)
+            // 0.4.28: 띠가 커진 만큼 채운다 — ① 제목과 개수 ② 최근에 얻은 셋(아직 지닌 것만) ③ 이번 생의 날과 뜻
+            int sz = Mathf.RoundToInt(28*u);
+            GUI.Label(new Rect(0, by0 + 26*u, w, 58*u), "<b>행낭</b>   <size=" + sz + "><color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + "</color></size>", sHintName);
+            var recent = new List<Entry>(); var recentKind = new List<int>();
+            for (int i = order.Count - 1; i >= 0 && recent.Count < 3; i--)
             {
-                var e = le.Value;
-                body = head + "   <color=" + subCol + ">최근</color>  " + e.Name + (string.IsNullOrEmpty(e.Effect) ? "" : "  <color=#B08A1E>" + e.Effect + "</color>");
+                if (Get(order[i]) <= 0f) continue;   // 잃은 것은 '최근'에 띄우지 않는다
+                for (int k = 0; k < 3; k++) { var tb = k == 0 ? Items : k == 1 ? Lore : Bonds; foreach (var e0 in tb) if (e0.Flag == order[i]) { recent.Add(e0); recentKind.Add(k); } }
             }
-            else body = head + "   <color=" + subCol + ">비어 있다</color>";
-            GUI.Label(new Rect(0, by0 + 26*u, w, 64*u), body, sHintName);
-            GUI.Label(new Rect(0, by0 + 88*u, w, 44*u), "<color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + "      위로 올려 열기</color>", sHint);
+            float rowY = by0 + 94*u, chipH = 50*u;
+            if (recent.Count == 0)
+            {
+                GUI.Label(new Rect(0, rowY, w, chipH), "<color=" + subCol + ">'빈 행낭이 가장 가볍다.' 사형이 하던 말이다.</color>", sHint);
+            }
+            else
+            {
+                if (sChip == null || !Mathf.Approximately(chipU, u)) { sChip = new GUIStyle(sHint) { fontSize = Mathf.RoundToInt(26*u), alignment = TextAnchor.MiddleCenter, wordWrap = false, clipping = TextClipping.Clip }; chipU = u; }
+                MolakGui.Ink(sChip, hintCol);
+                float gap = 14*u, maxW = (w - 80*u - gap*(recent.Count - 1)) / recent.Count;
+                var widths = new float[recent.Count]; float tot = 0f;
+                for (int i = 0; i < recent.Count; i++) { widths[i] = Mathf.Min(maxW, sChip.CalcSize(new GUIContent(recent[i].Name)).x + 40*u); tot += widths[i]; }
+                tot += gap * (recent.Count - 1);
+                float x = (w - tot) / 2f;
+                var chipAcc = new[] { MolakTheme.Blood, new Color(0.36f, 0.48f, 0.66f, 1f), MolakTheme.Gold };
+                var face = night ? new Color(0.16f,0.14f,0.13f,1f) : new Color(0.985f,0.97f,0.94f,1f);
+                var chipEdge = night ? new Color(0.40f,0.36f,0.32f,0.8f) : new Color(0.55f,0.48f,0.40f,0.45f);
+                for (int i = 0; i < recent.Count; i++)
+                {
+                    var r = new Rect(x, rowY, widths[i], chipH);
+                    Box(r, face);
+                    float l = Mathf.Max(1f, 1*u);
+                    Box(new Rect(r.x, r.y, r.width, l), chipEdge); Box(new Rect(r.x, r.yMax - l, r.width, l), chipEdge); Box(new Rect(r.xMax - l, r.y, l, r.height), chipEdge);
+                    Box(new Rect(r.x, r.y, 5*u, r.height), chipAcc[recentKind[i]]);
+                    GUI.Label(new Rect(r.x + 8*u, r.y, r.width - 12*u, r.height), recent[i].Name, sChip);
+                    x += widths[i] + gap;
+                }
+            }
+            int vow = Mathf.RoundToInt(Get("vow"));
+            string vowS = vow == 1 ? "복수" : vow == 2 ? "인연" : vow == 3 ? "생존" : "";
+            string status = Mathf.RoundToInt(day) + "일째" + (vowS.Length > 0 ? "  ·  이번 생의 뜻 — " + vowS : "") + "      위로 올려 열기";
+            GUI.Label(new Rect(0, by0 + 156*u, w, 40*u), "<size=" + Mathf.RoundToInt(25*u) + "><color=" + subCol + ">" + status + "</color></size>", sHint);
             return;
         }
 
@@ -299,7 +328,7 @@ public class MolakBag : MonoBehaviour
         var ink = night ? new Color(0.92f, 0.89f, 0.84f, 1f) : new Color(0.13f, 0.10f, 0.08f, 1f);
         var ink3 = night ? new Color(0.74f, 0.70f, 0.64f, 1f) : new Color(0.30f, 0.26f, 0.22f, 1f);
         var effC = night ? new Color(0.88f, 0.72f, 0.36f, 1f) : new Color(0.52f, 0.36f, 0.05f, 1f);
-        sHead.normal.textColor = ink; sSec.normal.textColor = MolakTheme.Blood; sName.normal.textColor = ink; sDesc.normal.textColor = ink3; sEff.normal.textColor = effC;
+        MolakGui.Ink(sHead, ink); MolakGui.Ink(sSec, MolakTheme.Blood); MolakGui.Ink(sName, ink); MolakGui.Ink(sDesc, ink3); MolakGui.Ink(sEff, effC);
         GUI.Label(new Rect(0, y + 30*u, w, 64*u), "— 행낭(行囊) —", sHead);
         var xr = new Rect(w - 130*u, y + 20*u, 110*u, 84*u);
         var xs = new GUIStyle(sHead){ fontSize = Mathf.RoundToInt(44*u) };
@@ -327,7 +356,7 @@ public class MolakBag : MonoBehaviour
             bool on = s == tab, empty = have[s].Count == 0;
             if (on) { Box(new Rect(tr.x + 4*u, tr.y, tr.width - 8*u, tr.height), night ? new Color(0.16f,0.14f,0.13f,1f) : new Color(0.91f,0.88f,0.82f,1f)); Box(new Rect(tr.x + 4*u, tr.yMax - 4*u, tr.width - 8*u, 4*u), accents[s]); }
             var c = on ? ink : new Color(ink3.r, ink3.g, ink3.b, empty ? 0.4f : 0.9f);
-            sTab.normal.textColor = c;
+            MolakGui.Ink(sTab, c);
             GUI.Label(tr, sections[s] + "  <size=" + Mathf.RoundToInt(24*u) + ">" + have[s].Count + "</size>", sTab);
             if (ev.type == EventType.MouseDown && tr.Contains(ev.mousePosition) && !empty) { if (tab != s) { tab = s; listScroll = 0f; listVel = 0f; } ev.Use(); }
         }
@@ -383,7 +412,7 @@ public class MolakBag : MonoBehaviour
         Box(new Rect(0, listY + listH, w, h - (listY + listH)), paper);
         if (listScroll < listMax - 2f)
         {
-            sTab.normal.textColor = new Color(ink3.r, ink3.g, ink3.b, 0.9f);
+            MolakGui.Ink(sTab, new Color(ink3.r, ink3.g, ink3.b, 0.9f));
             GUI.Label(new Rect(cx, listY + listH + 4*u, cw, 44*u), "<size=" + Mathf.RoundToInt(25*u) + ">▾ 아래에 더 있다</size>", sTab);
         }
     }

@@ -58,7 +58,7 @@ public class MolakMenu : MonoBehaviour
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=an,richText=true};
             if (gowun != null) s.font = gowun;
-            s.normal.textColor = col; return s;
+            MolakGui.Ink(s, col); return s;
         };
         sBtn = mk(34, MolakTheme.Ink, TextAnchor.MiddleCenter);
         sBtnOn = mk(34, MolakTheme.Gold, TextAnchor.MiddleCenter);
@@ -86,7 +86,7 @@ public class MolakMenu : MonoBehaviour
     void MenuSection (float x, ref float y, float wd, float hgt, string title)
     {
         var st = new GUIStyle(sHead) { alignment = TextAnchor.LowerLeft, fontSize = Mathf.RoundToInt(28 * builtU) };
-        st.normal.textColor = MolakTheme.Gold;
+        MolakGui.Ink(st, MolakTheme.Gold);
         GUI.Label(new Rect(x + 6 * builtU, y, wd, hgt - 10 * builtU), title, st);
         Box(new Rect(x, y + hgt - 6 * builtU, wd, Mathf.Max(1f, 1 * builtU)), MolakTheme.Gold * new Color(1, 1, 1, 0.45f));
         y += hgt;
@@ -276,7 +276,7 @@ public class MolakMenu : MonoBehaviour
             {
                 string vt = vw == 1 ? "복수 — 서열록 천 위 안" : vw == 2 ? "인연 — 등을 맡길 사람" : "생존 — 그물이 조여 올 때까지";
                 var vs = new GUIStyle(sBtn){alignment=TextAnchor.MiddleCenter, fontSize=Mathf.RoundToInt(28*u), richText=true};
-                vs.normal.textColor = MolakTheme.Ink3;
+                MolakGui.Ink(vs, MolakTheme.Ink3);
                 GUI.Label(new Rect(bx, by - 14*u, bw, 44*u), "이번 생의 뜻 · " + vt, vs);
                 by += 40*u;
             }
@@ -304,7 +304,7 @@ public class MolakMenu : MonoBehaviour
             Box(new Rect(r.x,r.yMax-Mathf.Max(1f,1*u),r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
             var nameStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(32*u)};
             var stStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleRight, fontSize=Mathf.RoundToInt(27*u), richText=true};
-            stStyle.normal.textColor = MolakTheme.Ink3;
+            MolakGui.Ink(stStyle, MolakTheme.Ink3);
             GUI.Label(new Rect(r.x+28*u, r.y, r.width*0.62f, r.height), names[i], nameStyle);
             GUI.Label(new Rect(r.x+r.width*0.5f, r.y, r.width*0.5f-28*u, r.height), states[i], stStyle);
         }
@@ -328,7 +328,7 @@ public class MolakMenu : MonoBehaviour
         if (rows.Count == 0)
         {
             var em = new GUIStyle(sBtn){alignment=TextAnchor.UpperCenter, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
-            em.normal.textColor = MolakTheme.Ink3;
+            MolakGui.Ink(em, MolakTheme.Ink3);
             GUI.Label(new Rect(bx, y2, bw, 90*u), "아직 아무도 적히지 않았다. 생이 끝날 때마다, 벤 자와 살린 자와 나 때문에 죽은 자가 여기 남는다.", em);
         }
         else
@@ -407,12 +407,12 @@ public class MolakMenu : MonoBehaviour
         facScroll = GUI.BeginScrollView(view, facScroll, new Rect(0, 0, cw, total));
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=false, richText=true};
         var mottoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(26*u), wordWrap=true, fontStyle=FontStyle.Italic};
-        mottoS.normal.textColor = MolakTheme.Ink3;
+        MolakGui.Ink(mottoS, MolakTheme.Ink3);
         var lineS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true, richText=true};
         var whoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperRight, fontSize=Mathf.RoundToInt(21*u)};
-        whoS.normal.textColor = MolakTheme.Ink3;
+        MolakGui.Ink(whoS, MolakTheme.Ink3);
         var repS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(24*u)};
-        repS.normal.textColor = MolakTheme.Night ? new Color(0.28f,0.44f,0.60f,1f) : new Color(0.20f,0.33f,0.47f,1f);
+        MolakGui.Ink(repS, MolakTheme.Night ? new Color(0.28f,0.44f,0.60f,1f) : new Color(0.20f,0.33f,0.47f,1f));
         float y = 0;
         for (int i = 0; i < MolakFaction.All.Length; i++)
         {
@@ -424,7 +424,7 @@ public class MolakMenu : MonoBehaviour
             float x0 = r.x + 28*u, iw = r.width - 56*u;
             if (!met)
             {
-                var ghost = new GUIStyle(nameS); ghost.normal.textColor = new Color(0.42f,0.37f,0.32f,1f);
+                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, new Color(0.42f,0.37f,0.32f,1f));
                 var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
                 GUI.Label(new Rect(x0, r.y+14*u, iw, 48*u), sb.ToString(), ghost);
                 GUI.Label(new Rect(x0, r.y+62*u, iw, 40*u), "아직 만나지 못했다 · " + e.Where, mottoS);
@@ -467,9 +467,9 @@ public class MolakMenu : MonoBehaviour
         knowScroll = GUI.BeginScrollView(view, knowScroll, content);
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=true};
         var descS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
-        descS.normal.textColor = MolakTheme.Ink3;
+        MolakGui.Ink(descS, MolakTheme.Ink3);
         var whereS = new GUIStyle(sBtn){alignment=TextAnchor.UpperRight, fontSize=Mathf.RoundToInt(23*u)};
-        whereS.normal.textColor = MolakTheme.Night ? new Color(0.62f,0.50f,0.78f,1f) : new Color(0.42f,0.27f,0.58f,1f);
+        MolakGui.Ink(whereS, MolakTheme.Night ? new Color(0.62f,0.50f,0.78f,1f) : new Color(0.42f,0.27f,0.58f,1f));
         for (int i = 0; i < MolakKnow.All.Length; i++)
         {
             var e = MolakKnow.All[i];
@@ -485,7 +485,7 @@ public class MolakMenu : MonoBehaviour
             }
             else
             {
-                var ghost = new GUIStyle(nameS); ghost.normal.textColor = new Color(0.42f,0.37f,0.32f,1f);
+                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, new Color(0.42f,0.37f,0.32f,1f));
                 var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
                 GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), sb.ToString(), ghost);
                 GUI.Label(new Rect(r.x+r.width*0.45f, r.y+18*u, r.width*0.55f-24*u, 40*u), e.Where, whereS);
@@ -514,10 +514,10 @@ public class MolakMenu : MonoBehaviour
         codexScroll = TouchScroll(4, view, codexScroll, content.height);
         codexScroll = GUI.BeginScrollView(view, codexScroll, content);
         var hj = new GUIStyle(sBtn){alignment=TextAnchor.MiddleCenter, fontSize=Mathf.RoundToInt(46*u)};
-        hj.normal.textColor = MolakTheme.Blood;
+        MolakGui.Ink(hj, MolakTheme.Blood);
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(34*u)};
         var hintS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(26*u)};
-        hintS.normal.textColor = MolakTheme.Ink3;
+        MolakGui.Ink(hintS, MolakTheme.Ink3);
         for (int i = 0; i < MolakEnd.All.Length; i++)
         {
             var e = MolakEnd.All[i];
@@ -535,11 +535,11 @@ public class MolakMenu : MonoBehaviour
             else
             {
                 // 실루엣: 한자 인장을 먹 그림자처럼, 제목은 글자 수만 남긴 빈칸
-                var dim = new GUIStyle(hj); dim.normal.textColor = new Color(0.30f,0.26f,0.23f,1f); dim.fontSize = Mathf.RoundToInt(52*u);
+                var dim = new GUIStyle(hj); MolakGui.Ink(dim, new Color(0.30f,0.26f,0.23f,1f)); dim.fontSize = Mathf.RoundToInt(52*u);
                 GUI.Label(new Rect(r.x+16*u, r.y, 130*u, r.height), e.Hanja, dim);
                 var sb = new System.Text.StringBuilder();
                 foreach (var ch in e.Title) sb.Append(ch == ' ' ? ' ' : '□');
-                var ghost = new GUIStyle(nameS); ghost.normal.textColor = new Color(0.42f,0.37f,0.32f,1f);
+                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, new Color(0.42f,0.37f,0.32f,1f));
                 GUI.Label(new Rect(r.x+160*u, r.y+8*u, r.width-180*u, r.height*0.55f), sb.ToString() + "   <size=" + Mathf.RoundToInt(20*u) + ">아직 보지 못한 말로</size>", ghost);
                 GUI.Label(new Rect(r.x+160*u, r.y+r.height*0.52f, r.width-180*u, r.height*0.42f), e.Hint, hintS);
             }

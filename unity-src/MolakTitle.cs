@@ -75,7 +75,7 @@ public class MolakTitle : MonoBehaviour
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=an,richText=true,wordWrap=false,clipping=TextClipping.Overflow};
             if (gowun != null) s.font = gowun;
-            s.normal.textColor = col; return s;
+            MolakGui.Ink(s, col); return s;
         };
         sHanja = mk(104, new Color(0.94f,0.91f,0.85f,1f), TextAnchor.MiddleCenter);
         sSub = mk(26, new Color(0.80f,0.68f,0.42f,1f), TextAnchor.MiddleCenter);
@@ -127,10 +127,10 @@ public class MolakTitle : MonoBehaviour
         }
         else Tex(br, tex, new Color(ink.r, ink.g, ink.b, a));
         var st = new GUIStyle(enabled ? sItem : sItemDim){ alignment = TextAnchor.MiddleCenter };
-        st.normal.textColor = enabled ? new Color(0.96f, 0.93f, 0.87f, 1f) : new Color(0.80f, 0.77f, 0.72f, 0.8f);
+        MolakGui.Ink(st, enabled ? new Color(0.96f, 0.93f, 0.87f, 1f) : new Color(0.80f, 0.77f, 0.72f, 0.8f));
         // 글씨는 먹이 짙은 앞쪽(획의 왼쪽 60%) 가운데에
         var lr = new Rect(r.x, r.y + (down ? 2*u : 0), r.width * 0.78f, r.height);
-        var sh = new GUIStyle(st); sh.normal.textColor = new Color(0, 0, 0, 0.35f);
+        var sh = new GUIStyle(st); MolakGui.Ink(sh, new Color(0, 0, 0, 0.35f));
         GUI.Label(new Rect(lr.x + 1.5f*u, lr.y + 2*u, lr.width, lr.height), label, sh);
         GUI.Label(lr, label, st);
         bool hit = enabled && GUI.Button(r, GUIContent.none, GUIStyle.none);
@@ -300,7 +300,7 @@ public class MolakTitle : MonoBehaviour
         for (int i = 0; i < han.Length; i++)
         {
             var r = new Rect(colX - 60*u, cy + i * ch, 120*u, ch);
-            var sh = new GUIStyle(sHanja); sh.normal.textColor = new Color(0, 0, 0, 0.45f);
+            var sh = new GUIStyle(sHanja); MolakGui.Ink(sh, new Color(0, 0, 0, 0.45f));
             GUI.Label(new Rect(r.x + 2*u, r.y + 3*u, r.width, r.height), han[i].ToString(), sh);
             GUI.Label(r, han[i].ToString(), sHanja);
         }
@@ -361,7 +361,7 @@ public class MolakTitle : MonoBehaviour
         {
             float k = Mathf.Clamp01((t - wakeAt) / 1.1f);
             Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, Mathf.SmoothStep(0, 1, k)));
-            var ws = new GUIStyle(sWake); ws.normal.textColor = new Color(0.88f, 0.82f, 0.72f, Mathf.Clamp01((t - wakeAt - 0.6f) / 0.6f));
+            var ws = new GUIStyle(sWake); MolakGui.Ink(ws, new Color(0.88f, 0.82f, 0.72f, Mathf.Clamp01((t - wakeAt - 0.6f) / 0.6f)));
             GUI.Label(new Rect(0, h * 0.45f, w, 60*u), "눈을 뜬다.", ws);
             if (!wakeFired && t - wakeAt > 1.7f)
             {

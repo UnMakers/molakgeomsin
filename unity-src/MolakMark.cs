@@ -82,10 +82,10 @@ public class MolakMark : MonoBehaviour
         GUI.color = new Color(0.05f, 0.03f, 0.03f, a * 0.9f);
         GUI.DrawTexture(new Rect(seal.x + 6 * u, seal.y + 6 * u, seal.width - 12 * u, seal.height - 12 * u), px);
         GUI.color = g0;
-        sSeal.normal.textColor = new Color(0.86f, 0.24f, 0.2f, a);
+        MolakGui.Ink(sSeal, new Color(0.86f, 0.24f, 0.2f, a));
         GUI.Label(seal, "岐", sSeal);
-        sMain.normal.textColor = new Color(0.95f, 0.9f, 0.8f, a);
-        sSub.normal.textColor = new Color(0.9f, 0.76f, 0.66f, a);
+        MolakGui.Ink(sMain, new Color(0.95f, 0.9f, 0.8f, a));
+        MolakGui.Ink(sSub, new Color(0.9f, 0.76f, 0.66f, a));
         float tx = seal.xMax + 30 * u, tw = bx + bw - 40 * u - tx;
         if (string.IsNullOrEmpty(sub)) GUI.Label(new Rect(tx, by, tw, bh), line, sMain);   // 한 줄이면 띠 가운데에
         else

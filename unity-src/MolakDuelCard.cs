@@ -69,10 +69,10 @@ public class MolakDuelCard : MonoBehaviour
         Box(new Rect(cx,cy,cw,ch), new Color(0.05f,0.04f,0.035f,0.94f));
         Box(new Rect(cx,cy,cw,3*u), accent);
         Box(new Rect(cx,cy+ch-3*u,cw,3*u), accent);
-        sName.normal.textColor = MolakTheme.Ink3;
-        sHanja.normal.textColor = accent;
-        sLine.normal.textColor = new Color(0.90f,0.86f,0.80f,1f);
-        sSub.normal.textColor = MolakTheme.Gold;
+        MolakGui.Ink(sName, MolakTheme.Ink3);
+        MolakGui.Ink(sHanja, accent);
+        MolakGui.Ink(sLine, new Color(0.90f,0.86f,0.80f,1f));
+        MolakGui.Ink(sSub, MolakTheme.Gold);
         GUI.Label(new Rect(cx,cy+22*u,cw,52*u), "— " + cName + " —", sName);
         // 인장: 획이 번지듯 살짝 커지는 입장
         float sc = cWin ? 1f : 1f + Mathf.Clamp01(1f - cT/0.3f) * 0.25f;

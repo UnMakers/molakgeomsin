@@ -196,12 +196,13 @@ public class MolakArt : MonoBehaviour
         float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Clamp01(sceneT));
         // 그림은 한 번에 하나: 인물이 서 있으면 장면은 가린다(인물이 빠지면 다시 떠오른다)
         // 0.4.9: 인물이 서면 장면을 지우지 않고 옅게 깔아 둔다 — 인물 뒤에 그 자리의 풍경이 보인다
-        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0.45f : 1f, Time.deltaTime * 2.4f);
+        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0.7f : 1f, Time.deltaTime * 2.4f);   // 인물이 불투명해졌으니 뒤 풍경은 덜 지운다
         sA *= sceneVis;
         float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Clamp01(charT));
         if (sceneCur == null && sceneT >= 1f) sceneR.sprite = null;
         if (charCur == null && charT >= 1f) charR.sprite = null;
-        var wantMat = MolakTheme.Night ? matAlpha : mat;
+        // 0.4.28: 인물은 곱하기가 아니라 보통 알파로 — 곱하기면 얼굴·흰 옷 같은 밝은 데로 뒤 배경이 비쳤다(인물 그림도 안쪽을 채워 다시 오렸다)
+        var wantMat = MolakTheme.Night ? matAlpha : matScene;
         if (charR.sharedMaterial != wantMat) charR.sharedMaterial = wantMat;
         bool hide = MolakMenu.IsOpen;
         sceneR.enabled = !hide; charR.enabled = !hide;
@@ -209,7 +210,7 @@ public class MolakArt : MonoBehaviour
         // 야간(먹색) 모드: 종이색 장면 패널이 하얗게 떠 보이지 않도록 어둡게 눌러 그린다
         float sg = MolakTheme.Night ? 0.62f : 1f;
         sceneR.color = new Color(sg, sg, sg, sA*(MolakTheme.Night ? 0.80f : 0.88f)*colT);
-        charR.color = new Color(1f, 1f, 1f, cA*0.95f*colT);
+        charR.color = new Color(1f, 1f, 1f, cA*colT);
 
         // 배치: 카메라 뷰 기준 캔버스(900×1600) 좌표 → 월드
         float camH = cam.orthographic ? cam.orthographicSize*2f : 20f;

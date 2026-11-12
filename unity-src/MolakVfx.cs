@@ -215,9 +215,9 @@ public class MolakVfx : MonoBehaviour
                 }
                 GUI.color = g0;
                 float slide = (1f - Mathf.Clamp01(chapT / 0.5f)) * 24f * u;
-                sChapSub.normal.textColor = new Color(MolakTheme.Gold.r, MolakTheme.Gold.g, MolakTheme.Gold.b, 0.95f * a);
+                MolakGui.Ink(sChapSub, new Color(MolakTheme.Gold.r, MolakTheme.Gold.g, MolakTheme.Gold.b, 0.95f * a));
                 if (chapSub.Length > 0) GUI.Label(new Rect(0, cy - 54 * u, w, 34 * u), chapSub, sChapSub);
-                sChap.normal.textColor = new Color(0.96f, 0.92f, 0.85f, a);
+                MolakGui.Ink(sChap, new Color(0.96f, 0.92f, 0.85f, a));
                 GUI.Label(new Rect(slide, cy - 28 * u, w, 80 * u), chapText, sChap);
             }
         }
@@ -243,10 +243,10 @@ public class MolakVfx : MonoBehaviour
                 float sc = 1f + Mathf.Clamp01(1f - stampT / 0.18f) * (stampBig ? 0.6f : 0.3f);   // 찍히는 순간 크게 → 제자리
                 var piv = new Vector2(w * 0.5f, h * 0.22f);
                 var m = GUI.matrix; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), piv);
-                sStamp.normal.textColor = new Color(col.r, col.g, col.b, 0.9f * a);
+                MolakGui.Ink(sStamp, new Color(col.r, col.g, col.b, 0.9f * a));
                 GUI.Label(new Rect(piv.x - 120 * u, piv.y - 80 * u, 240 * u, 160 * u), stampHanja, sStamp);
                 GUI.matrix = m;
-                sStampLine.normal.textColor = new Color(0.95f, 0.91f, 0.84f, 0.95f * a);
+                MolakGui.Ink(sStampLine, new Color(0.95f, 0.91f, 0.84f, 0.95f * a));
                 var sh = GUI.color; GUI.color = new Color(0f, 0f, 0f, 0.45f * a);
                 GUI.DrawTexture(new Rect(w * 0.5f - 200 * u, piv.y + 78 * u, 400 * u, 44 * u), Px); GUI.color = sh;
                 GUI.Label(new Rect(w * 0.5f - 200 * u, piv.y + 78 * u, 400 * u, 44 * u), stampLine, sStampLine);

@@ -111,7 +111,7 @@ public class MolakAutoSave : MonoBehaviour
             var f = Resources.Load<Font>("GowunBatang"); if (f != null) st.font = f;
         }
         float a = toastT < 0.25f ? toastT / 0.25f : toastT > 1.3f ? (1.8f - toastT) / 0.5f : 1f;
-        st.normal.textColor = new Color(MolakTheme.Ink3.r, MolakTheme.Ink3.g, MolakTheme.Ink3.b, 0.85f * a);
+        MolakGui.Ink(st, new Color(MolakTheme.Ink3.r, MolakTheme.Ink3.g, MolakTheme.Ink3.b, 0.85f * a));
         GUI.Label(new Rect(Screen.width - 260 * u, 52 * u, 230 * u, 36 * u), "— 기록했다", st);
     }
 }

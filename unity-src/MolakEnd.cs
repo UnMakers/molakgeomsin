@@ -127,7 +127,7 @@ public class MolakEnd : MonoBehaviour
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=TextAnchor.MiddleCenter,richText=true};
             if (gowun != null) s.font = gowun;
-            s.normal.textColor = col; return s;
+            MolakGui.Ink(s, col); return s;
         };
         sHanja = mk(110, MolakTheme.Ink);
         sTitle = mk(36, MolakTheme.Ink3); sTitle.font = MolakTypography.Heading(sTitle.font);   // 말로의 이름은 송명
@@ -225,19 +225,19 @@ public class MolakEnd : MonoBehaviour
         GUI.color = new Color(1, 1, 1, a);
         var sH = new GUIStyle(sHanja) { fontSize = Mathf.RoundToInt(150 * u) };
         if (hanjaFont != null) sH.font = hanjaFont;
-        sH.normal.textColor = new Color(0.95f, 0.84f, 0.55f, 1f);
-        var sT = new GUIStyle(sTitle); sT.normal.textColor = new Color(0.93f, 0.88f, 0.78f, 1f);
+        MolakGui.Ink(sH, new Color(0.95f, 0.84f, 0.55f, 1f));
+        var sT = new GUIStyle(sTitle); MolakGui.Ink(sT, new Color(0.93f, 0.88f, 0.78f, 1f));
         Shadowed(new Rect(0, cy - er / 2f - 90 * u, w, 60 * u), "— 진(眞) 말로 · " + cKor + " —", sT, u, a);
         Shadowed(new Rect(0, cy - 110 * u, w, 220 * u), cHanja, sH, u, a);
         Shadowed(new Rect(0, cy + er / 2f + 30 * u, w, 56 * u), cTitle, sT, u, a);
         float b = Mathf.Clamp01((cT - 2.6f) / 1.0f) * (cT > dur - 0.7f ? (dur - cT) / 0.7f : 1f);
         GUI.color = new Color(1, 1, 1, b);
         var sE = new GUIStyle(sTitle) { fontSize = Mathf.RoundToInt(28 * u) };
-        sE.normal.textColor = new Color(0.98f, 0.94f, 0.86f, 0.95f);
+        MolakGui.Ink(sE, new Color(0.98f, 0.94f, 0.86f, 0.95f));
         Shadowed(new Rect(w * 0.06f, cy + er / 2f + 100 * u, w * 0.88f, 50 * u), "죽음이 스승이었다. 이번에는 살아남은 것이 가르친다.", sE, u, b);
         if (cNew)
         {
-            var sN = new GUIStyle(sNew); sN.normal.textColor = new Color(0.98f, 0.90f, 0.66f, 1f);
+            var sN = new GUIStyle(sNew); MolakGui.Ink(sN, new Color(0.98f, 0.90f, 0.66f, 1f));
             Shadowed(new Rect(0, cy + er / 2f + 160 * u, w, 42 * u), "처음 보는 말로 — 말로록 맨 끝 칸이 채워졌다", sN, u, b);
         }
         GUI.color = g;
@@ -246,7 +246,7 @@ public class MolakEnd : MonoBehaviour
     static void Shadowed (Rect r, string text, GUIStyle st, float u, float alpha)
     {
         var keep = st.normal.textColor;
-        var sh = new GUIStyle(st); sh.normal.textColor = new Color(0.05f, 0.03f, 0.02f, 0.55f);
+        var sh = new GUIStyle(st); MolakGui.Ink(sh, new Color(0.05f, 0.03f, 0.02f, 0.55f));
         var g = GUI.color; GUI.color = new Color(1, 1, 1, alpha);
         GUI.Label(new Rect(r.x + 2f * u, r.y + 3f * u, r.width, r.height), text, sh);
         GUI.Label(r, text, st);

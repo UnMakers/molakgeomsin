@@ -89,7 +89,7 @@ public class MolakScroll : MonoBehaviour
             pressing = true; pressPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false;
             // 화면 맨 아래 띠(선택지 아래 150캔버스단위)에서 시작한 누름 → 위로 쓸면 행낭
             float zone = (MolakTheme.ChoiceCount > 0 ? MolakLayout.BagSwipeZoneWithChoices : MolakLayout.BagSwipeZone) * CanvasScale();
-            pressInBottomZone = pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen;
+            pressInBottomZone = pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
         }
         else if (down && pressing)
         {
@@ -223,7 +223,7 @@ public class MolakScroll : MonoBehaviour
             builtU = u;
             st = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(24 * u), alignment = TextAnchor.MiddleCenter };
             var gowun = Resources.Load<Font>("GowunBatang"); if (gowun != null) st.font = gowun;
-            st.normal.textColor = MolakTheme.Ink3;
+            MolakGui.Ink(st, MolakTheme.Ink3);
         }
         if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); }
         // 뷰포트 하단 중앙(스크린 좌표)
@@ -234,9 +234,9 @@ public class MolakScroll : MonoBehaviour
         float w = 220 * u, h = 44 * u;
         var r = new Rect(cx - w/2f, gy - h - 6*u, w, h);
         var g = GUI.color; GUI.color = new Color(0.06f, 0.05f, 0.045f, 0.78f); GUI.DrawTexture(r, px); GUI.color = g;
-        var tc = st.normal.textColor; st.normal.textColor = new Color(0.93f, 0.9f, 0.85f, 1f);
+        var tc = st.normal.textColor; MolakGui.Ink(st, new Color(0.93f, 0.9f, 0.85f, 1f));
         GUI.Label(r, "▽ 최신 대사로", st);
-        st.normal.textColor = tc;
+        MolakGui.Ink(st, tc);
         MolakInputGuard.Guard(r);
         if (Event.current.type == EventType.MouseDown && r.Contains(Event.current.mousePosition)) { userScroll = 0f; Event.current.Use(); }
     }

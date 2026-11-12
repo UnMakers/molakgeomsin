@@ -83,7 +83,7 @@ public class MolakSettings : MonoBehaviour
         {
             var s = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(size * u), alignment = an, richText = true, wordWrap = false };
             if (gowun != null) s.font = gowun;
-            s.normal.textColor = col; return s;
+            MolakGui.Ink(s, col); return s;
         };
         sHead = mk(40, MolakTheme.Ink, TextAnchor.MiddleCenter);
         sSection = mk(28, MolakTheme.Gold, TextAnchor.MiddleLeft);
@@ -277,7 +277,7 @@ public class MolakSettings : MonoBehaviour
         Box(rDec, new Color(0.17f, 0.14f, 0.12f, 1f)); Box(rInc, new Color(0.17f, 0.14f, 0.12f, 1f));
         GUI.Label(rDec, "－", sBtn); GUI.Label(rInc, "＋", sBtn);
         var vS = new GUIStyle(sValue) { alignment = TextAnchor.MiddleCenter };
-        vS.normal.textColor = MolakTheme.Ink;
+        MolakGui.Ink(vS, MolakTheme.Ink);
         GUI.Label(new Rect(rDec.xMax, r.y, 140 * u, r.height), value, vS);
         if (GUI.Button(rDec, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); dec(); }
         if (GUI.Button(rInc, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); inc(); }

@@ -50,7 +50,7 @@ public class MolakErrorOverlay : MonoBehaviour
         {
             builtU = u;
             st = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(22*u), wordWrap = true, richText = false, alignment = TextAnchor.UpperLeft };
-            st.normal.textColor = new Color(1f, 0.55f, 0.5f, 1f);
+            MolakGui.Ink(st, new Color(1f, 0.55f, 0.5f, 1f));
         }
         string text = string.Join("\n", lines.ToArray());
         float w = Screen.width - 24*u;

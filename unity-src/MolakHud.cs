@@ -75,7 +75,7 @@ public class MolakHud : MonoBehaviour
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=an,richText=true};
             if (gowun != null) s.font = gowun;
-            s.normal.textColor = col; return s;
+            MolakGui.Ink(s, col); return s;
         };
         sDay = mk(32, InkD, TextAnchor.MiddleLeft);
         sStat = mk(31, InkD, TextAnchor.MiddleCenter);
@@ -180,7 +180,7 @@ public class MolakHud : MonoBehaviour
             float alpha = k < 0.15f ? k/0.15f : (k > 0.7f ? (1f-k)/0.3f : 1f);
             float fy = y + lh + 18*u + (expanded ? 60*u : 0f) + (1f-Mathf.Pow(1f-k,2f))*26*u;
             var g = GUI.color; GUI.color = new Color(1,1,1,alpha);
-            var st = new GUIStyle(sStat); st.normal.textColor = f.col; st.alignment = TextAnchor.MiddleLeft;
+            var st = new GUIStyle(sStat); MolakGui.Ink(st, f.col); st.alignment = TextAnchor.MiddleLeft;
             GUI.Label(new Rect(X0+W*f.x, fy, 260*u, 40*u), f.text, st);
             GUI.color = g;
         }

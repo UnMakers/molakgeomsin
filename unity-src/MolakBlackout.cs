@@ -67,8 +67,9 @@ public class MolakBlackout : MonoBehaviour
                 bool last = !stack || idx >= lines.Length - 1;
                 bool timeUp = e >= 0.6f + hold;
                 bool tap = e >= 0.4f && Pressed();
+                bool auto = Auto || AutoPlaying();   // 자동 진행을 켜 둔 플레이어에게는 예전처럼 저절로 넘긴다
                 if (stack && !last) { if (timeUp || tap) { idx++; Next(1, t); } }
-                else if (tap || (Auto && timeUp)) Next(2, t);
+                else if (tap || (auto && timeUp)) Next(2, t);
                 break;
             case 2:
                 if (e >= (stack ? 0.7f : 0.4f)) { idx = stack ? lines.Length : idx + 1; Next(idx < lines.Length ? 1 : 3, t); if (phase == 3) busy = false; }
@@ -78,6 +79,11 @@ public class MolakBlackout : MonoBehaviour
 
     void Next (int p, float t) { phase = p; phaseT = t; }
 
+    static bool AutoPlaying ()
+    {
+        try { var sp = Engine.GetService<IScriptPlayer>(); return sp != null && sp.AutoPlaying; } catch { return false; }
+    }
+
     void OnGUI ()
     {
         float t = Time.realtimeSinceStartup, e = t - phaseT;
@@ -86,7 +92,13 @@ public class MolakBlackout : MonoBehaviour
         GUI.depth = -3000;
         if (px == null) { px = new Texture2D(1, 1); px.SetPixel(0, 0, Color.white); px.Apply(); }
         float w = Screen.width, h = Screen.height;
-        if (busy) MolakInputGuard.Guard(new Rect(0, 0, w, h));
+        if (busy)
+        {
+            MolakInputGuard.Guard(new Rect(0, 0, w, h));
+            // 먹이 덮인 동안 뒤에 깔린 ☰·행낭 같은 IMGUI 단추가 눌리지 않게 마우스·터치 이벤트를 여기서 먹는다(넘기기는 입력 시스템으로 따로 읽는다)
+            var ev = Event.current;
+            if (ev != null && (ev.type == EventType.MouseDown || ev.type == EventType.MouseUp || ev.type == EventType.MouseDrag)) ev.Use();
+        }
         var g0 = GUI.color;
         var ink = red ? new Color(0.10f, 0.015f, 0.012f, 1f) : new Color(0.02f, 0.018f, 0.016f, 1f);
         GUI.color = new Color(ink.r, ink.g, ink.b, cover); GUI.DrawTexture(new Rect(0, 0, w, h), px);
@@ -105,7 +117,7 @@ public class MolakBlackout : MonoBehaviour
             var col = red ? new Color(0.92f, 0.72f, 0.66f, a) : new Color(0.88f, 0.82f, 0.72f, a);
             if (!stack)
             {
-                style.normal.textColor = col;
+                MolakGui.Ink(style, col);
                 GUI.Label(new Rect(w * 0.08f, h * 0.42f, w * 0.84f, 170 * u), lines[idx], style);
             }
             // 누르라는 표시: 마지막 줄까지 다 떠오르면 아래쪽에 ▼ 가 천천히 숨 쉰다
@@ -113,7 +125,7 @@ public class MolakBlackout : MonoBehaviour
             {
                 float pa = Mathf.Clamp01((e - 0.6f) / 0.5f) * (0.35f + 0.3f * Mathf.Sin((e - 0.6f) * 3.2f));
                 var hs = new GUIStyle(style) { fontSize = Mathf.RoundToInt(30 * u) };
-                hs.normal.textColor = red ? new Color(0.92f, 0.72f, 0.66f, pa) : new Color(0.88f, 0.82f, 0.72f, pa);
+                MolakGui.Ink(hs, red ? new Color(0.92f, 0.72f, 0.66f, pa) : new Color(0.88f, 0.82f, 0.72f, pa));
                 GUI.Label(new Rect(0, h * 0.80f, w, 60 * u), "▼", hs);
             }
             else
@@ -126,7 +138,7 @@ public class MolakBlackout : MonoBehaviour
                 {
                     float ai = (i == idx && phase == 1) ? Mathf.Clamp01(e / 0.6f) : all;
                     float y = i == 0 ? top : top + 70f * u + (i - 1) * 84f * u + 30f * u;
-                    style.normal.textColor = i == 0 ? new Color(0.79f, 0.64f, 0.3f, ai) : new Color(0.9f, 0.85f, 0.76f, ai);
+                    MolakGui.Ink(style, i == 0 ? new Color(0.79f, 0.64f, 0.3f, ai) : new Color(0.9f, 0.85f, 0.76f, ai));
                     GUI.Label(new Rect(w * 0.08f, y, w * 0.84f, 80 * u), lines[i], style);
                     if (i == 0)
                     {
