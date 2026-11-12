@@ -86,7 +86,8 @@ public class MolakSettings : MonoBehaviour
             s.normal.textColor = col; return s;
         };
         sHead = mk(40, MolakTheme.Ink, TextAnchor.MiddleCenter);
-        sSection = mk(26, MolakTheme.Gold, TextAnchor.MiddleLeft);
+        sSection = mk(28, MolakTheme.Gold, TextAnchor.MiddleLeft);
+        sHead.font = MolakTypography.Heading(sHead.font); sSection.font = MolakTypography.Heading(sSection.font);
         sLabel = mk(32, MolakTheme.Ink, TextAnchor.MiddleLeft);
         sValue = mk(28, MolakTheme.Ink3, TextAnchor.MiddleRight);
         sBtn = mk(32, MolakTheme.Ink, TextAnchor.MiddleCenter);

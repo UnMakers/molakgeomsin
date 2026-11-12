@@ -297,7 +297,21 @@
 @choice "옷깃을 풀어 문양을 보인다 — 직접 재 보라" goto:#SoaN7B
 @choice "검을 뽑아 그 목에 댄다 — 먼저 속인 쪽은 너다" goto:#SoaN7C
 @choice "장부를 덮고 방을 나간다" goto:#SoaN7D
+@choice "\"둘째 장부터 넘겨 보시오. 끼니가 적혀 있을 거요.\"" if:g_soaledger>0 goto:#SoaN7L
 @stop
+# SoaN7L
+소아의 손이 장부 모서리에서 멎는다.
+<color=#9A70C4>지난 생, 우물가에서 이 장부를 끝까지 넘겼다. 마지막 장은 꿈 이야기였다.</color>
+"……둘째 장은 아직 비어 있다."
+"곧 찰 거요. 국밥, 거지 그릇, 지붕의 달. 줄 끝마다 '빚'이라 썼다가 지울 거요."
+소아가 장부를 덮는다. 손바닥이 표지 위에 오래 머문다.
+"……그런 걸 왜 지우지."
+"빚이 아니니까."
+그녀가 첫 장을 찢어 등잔불에 댄다. 사부의 글씨가 오그라든다. 이번엔 망설임이 없다.
+@set aff=aff+3
+@set f_soatruth=1
+@fx curse:-2
+@goto Molak02#AfterChapter
 # SoaN7A
 @goto #SoaN7A2 if:curse>=60
 "……아직은 아니다."
@@ -429,6 +443,7 @@
 아직 발소리는 없다. 시간이 조금 남았다.
 @choice "계단에 등잔 기름을 붓고, 하진무와 점소이를 아궁이 뒤에 숨긴다" goto:#SoaN8P1
 @choice "소아의 방문을 두드린다 — 이번엔 먼저 말한다" goto:#SoaN8P2
+@choice "그녀 방 앞 계단에 먼저 앉는다 — 이번엔 계단보다 먼저" if:g_soavow>0 goto:#SoaN8P3
 @choice "그대로 누워 기다린다 — 같은 밤을 다시 본다" goto:#SoaN8C
 @stop
 # SoaN8P1
@@ -443,6 +458,18 @@
 "……그럼 이번엔 계단에 둘이 서지."
 @set aff=aff+1
 @set f_raidprep=1
+@goto #SoaN8C
+# SoaN8P3
+<color=#9A70C4>지난 생, 비 맞은 술병 앞에서 약조했다. 이번엔 계단보다 먼저 가겠다고.</color>
+등잔 기름 한 동이를 들고 그녀 방 앞 계단 셋째 칸에 앉는다. 칼은 무릎 위에.
+문이 열린다. 소아가 쌍검을 쥔 채 당신을 내려다본다.
+"……여기서 뭐 하지."
+"기다리오. 열넷을."
+그녀가 말없이 당신 옆, 둘째 칸에 앉는다. 어깨가 닿는다.
+"계단이 좁군."
+"둘이 서기엔 넓소."
+@set f_raidprep=1
+@set aff=aff+2
 @goto #SoaN8C
 # SoaN8C
 @gosub #SoaN8Allies
@@ -1097,6 +1124,7 @@
 @choice "문양을 손톱으로 파낸다 — 차라리 썩겠다" goto:#RipeC
 @choice "\"거절한 청운의 아이가 누구였소.\"" if:g_end_seongsa>0&&g_know_ripe<1 goto:#RipeK
 @choice "검을 뽑지 않고 선다 — 장문인이 그랬듯이" if:g_know_ripe>0 goto:#RipeD
+@choice "느티나무 아래 셋째 잔을 비운다 — 사매 몫으로" if:g_oldsister>0 goto:#RipeS
 @stop
 # RipeA
 @vfx kind:curse
@@ -1140,6 +1168,20 @@
 눈을 깜빡인 사이 마당이 비어 있다. 익은 것은 사라지지 않고, 따이지 않은 채 남았다.
 @fx curse:-10
 @set f_ripedenied=1
+@goto Molak02#AfterChapter
+# RipeS
+@vfx kind:curse
+느티나무 아래 그 술상이 그대로 있다. 셋째 잔에 달 대신 새벽빛이 떠 있다.
+잔을 든다. 노인의 손바닥이 허공에서 멎는다.
+"……그 잔은."
+"사매 몫이라 했소. 그 사람이 옳았다면, 이 잔은 내가 비워야 하오."
+비운다. 술이 아니라 맹물이다. 차고, 아무 맛도 없다.
+노인이 한참 빈 잔을 본다. 복면 아래 무엇이 지나가는지 보이지 않는다.
+"……반쪽은 반쪽을 알아보는 법이로구나. 노부는 그 아이에게 그 말을 못 했느니라."
+노인이 등을 돌린다. 이번엔 사라지지 않고, 걸어서 문을 나간다. 늙은 걸음이다.
+@fx curse:-12
+@set f_ripedenied=1
+@set g_know_ripe=1
 @goto Molak02#AfterChapter
 # RipeC
 손톱이 살을 판다. 문양은 파이지 않는다. 더 깊은 곳에 있다.

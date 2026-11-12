@@ -62,7 +62,8 @@ public class MolakMenu : MonoBehaviour
         };
         sBtn = mk(34, MolakTheme.Ink, TextAnchor.MiddleCenter);
         sBtnOn = mk(34, MolakTheme.Gold, TextAnchor.MiddleCenter);
-        sHead = mk(28, MolakTheme.Ink3, TextAnchor.MiddleCenter);
+        sHead = mk(30, MolakTheme.Ink3, TextAnchor.MiddleCenter);
+        sHead.font = MolakTypography.Heading(gowun);   // 묶음 머리·제목은 송명
         sToast = mk(28, MolakTheme.Ink, TextAnchor.MiddleCenter);
         sBurger = mk(58, new Color(0.28f,0.23f,0.18f,1f), TextAnchor.MiddleCenter);
     }
@@ -80,6 +81,16 @@ public class MolakMenu : MonoBehaviour
     }
 
     void Toast (string msg) { toastMsg = msg; toastT = 0f; }
+
+    /// <summary>메뉴 묶음 머리: 왼쪽에 작은 제목, 그 아래 가는 금빛 선.</summary>
+    void MenuSection (float x, ref float y, float wd, float hgt, string title)
+    {
+        var st = new GUIStyle(sHead) { alignment = TextAnchor.LowerLeft, fontSize = Mathf.RoundToInt(28 * builtU) };
+        st.normal.textColor = MolakTheme.Gold;
+        GUI.Label(new Rect(x + 6 * builtU, y, wd, hgt - 10 * builtU), title, st);
+        Box(new Rect(x, y + hgt - 6 * builtU, wd, Mathf.Max(1f, 1 * builtU)), MolakTheme.Gold * new Color(1, 1, 1, 0.45f));
+        y += hgt;
+    }
 
     bool Btn (Rect r, string label, bool highlight, float u)
     {
@@ -156,7 +167,7 @@ public class MolakMenu : MonoBehaviour
 
         // ===== 메뉴 오버레이 =====
         MolakInputGuard.Guard(new Rect(0,0,w,h));
-        Box(new Rect(0,0,w,h), new Color(0f,0f,0f,0.72f));
+        Box(new Rect(0,0,w,h), new Color(0.055f,0.045f,0.038f,0.95f));   // 뒤의 본문이 비치지 않게 거의 덮는다
         if (ledger) { DrawLedger(w, h, u); return; }
         if (codex) { DrawCodex(w, h, u); return; }
         if (knowTab) { DrawKnow(w, h, u); return; }
@@ -165,95 +176,87 @@ public class MolakMenu : MonoBehaviour
         var state = Engine.GetService<IStateManager>();
         var ui = Engine.GetService<IUIManager>();
 
-        float bw = Mathf.Min(w*0.84f, 860*u), bh = 104*u, gap = 18*u;
+        // 0.4.12: 메뉴를 네 묶음으로 정리한다 — 진행 · 기록 · 저장 · (환경 설정 / 처음으로).
+        // 글자 크기·배경음·먹색·효과음은 '환경 설정' 한 곳에만 둔다(예전엔 여기와 환경 설정 두 곳에 있어 메뉴가 열다섯 줄이었다).
+        float bw = Mathf.Min(w*0.84f, 860*u), gap = 16*u;
         float bx = (w-bw)/2f;
-        string[] labels = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록", "빠른 저장", "저장 / 불러오기", "환경 설정", "읽은 글 넘기기  ▶▶" };
-        float totalH = 100*u + 4*(bh+gap) + labels.Length*(bh+gap) + 40*u + 84*u;
-        float by = Mathf.Max(60*u, (h-totalH)/2f);
+        float rowH = 96*u, tileH = 128*u, secH = 50*u;
+        float totalH = 96*u + (secH + rowH + gap) + (secH + 3*(tileH+gap)) + (secH + rowH + gap) + (rowH + 24*u);
+        float by = Mathf.Max(48*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
-        // ✕ 닫기
         if (GUI.Button(new Rect(bx+bw-70*u, by-6*u, 70*u, 70*u), "×", sHead)) { open = false; SetProcessInput(true); return; }
-        by += 100*u;
-        // 토글 두 개: 자동 진행 · 빨리 넘기기
-        float hw = (bw-gap)/2f;
-        bool auto = sp != null && sp.AutoPlaying, skip = sp != null && sp.Skipping;
-        if (Btn(new Rect(bx, by, hw, bh), "자동 진행 " + (auto ? "●" : "○"), auto, u) && sp != null) sp.SetAutoPlay(!auto);
-        if (Btn(new Rect(bx+hw+gap, by, hw, bh), "빨리 넘기기 " + (skip ? "●" : "○"), skip, u) && sp != null) sp.SetSkip(!skip);
-        by += bh + gap;
-        // 표시 설정: 먹색 화면 · 효과음
-        if (Btn(new Rect(bx, by, hw, bh), "먹색 " + (MolakTheme.Night ? "●" : "○"), MolakTheme.Night, u)) { MolakTheme.Night = !MolakTheme.Night; }
-        if (Btn(new Rect(bx+hw+gap, by, hw, bh), "효과음 " + (MolakSfx.Muted ? "○" : "●"), !MolakSfx.Muted, u)) { MolakSfx.Muted = !MolakSfx.Muted; }
-        by += bh + gap;
-        // 글자 크기: [ − ]  글자 크기 100%  [ + ]  (80%~140%)
+        by += 96*u;
+
+        // ── 진행
+        MenuSection(bx, ref by, bw, secH, "진행");
         {
-            float sw2 = 150*u;
-            int fs = MolakTheme.FontStep;
-            if (Btn(new Rect(bx, by, sw2, bh), "－", false, u) && fs > MolakTheme.FontMin) MolakTheme.FontStep = fs - 1;
-            Box(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), MolakTheme.Raise);
-            var mid = new GUIStyle(sBtn){ alignment = TextAnchor.MiddleCenter, richText = true };
-            GUI.Label(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), "글자 크기  <b>" + Mathf.RoundToInt(MolakTheme.FontScale*100f) + "%</b>", mid);
-            if (Btn(new Rect(bx+bw-sw2, by, sw2, bh), "＋", false, u) && fs < MolakTheme.FontMax) MolakTheme.FontStep = fs + 1;
+            float tw = (bw - 2*gap) / 3f;
+            bool auto = sp != null && sp.AutoPlaying, skip = sp != null && sp.Skipping;
+            if (Btn(new Rect(bx, by, tw, rowH), "자동 " + (auto ? "●" : "○"), auto, u) && sp != null) sp.SetAutoPlay(!auto);
+            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "빨리 " + (skip ? "●" : "○"), skip, u) && sp != null) sp.SetSkip(!skip);
+            if (Btn(new Rect(bx+2*(tw+gap), by, tw, rowH), "읽은 글 ▶▶", false, u))
+            {   // 이미 본 글은 빠르게 — 처음 보는 글과 선택지에서 멈춘다(나니노벨 읽은 글 넘기기)
+                open = false; SetProcessInput(true);
+                if (sp != null) { sp.SkipMode = PlayerSkipMode.ReadOnly; sp.SetSkip(true); Toast("읽은 글을 넘긴다 — 처음 보는 글에서 멈춘다."); }
+            }
+            by += rowH + gap;
         }
-        by += bh + gap;
-        // 배경음: [ − ]  배경음 50%  [ + ]  (0%~100%, 10% 단위 · 나니노벨 BGM 음량과 같은 값)
+
+        // ── 기록 (두 줄 카드)
+        MenuSection(bx, ref by, bw, secH, "기록");
         {
-            float sw2 = 150*u;
-            int bv = Mathf.RoundToInt(MolakBgm.Volume * 10f);
-            if (Btn(new Rect(bx, by, sw2, bh), "－", false, u) && bv > 0) MolakBgm.Volume = (bv - 1) / 10f;
-            Box(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), MolakTheme.Raise);
-            var mid = new GUIStyle(sBtn){ alignment = TextAnchor.MiddleCenter, richText = true };
-            GUI.Label(new Rect(bx+sw2+gap, by, bw-2*(sw2+gap), bh), "배경음  <b>" + (bv == 0 ? "끔" : (bv * 10) + "%") + "</b>", mid);
-            if (Btn(new Rect(bx+bw-sw2, by, sw2, bh), "＋", false, u) && bv < 10) MolakBgm.Volume = (bv + 1) / 10f;
-        }
-        by += bh + gap;
-        for (int i = 0; i < labels.Length; i++)
-        {
-            var r = new Rect(bx, by + i*(bh+gap), bw, bh);
-            if (!Btn(r, labels[i], false, u)) continue;
-            switch (i)
+            int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
+            string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록" };
+            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "되감기지 않는 것", "문파와 사람들" };
+            float tw = (bw - gap) / 2f;
+            for (int i = 0; i < t.Length; i++)
             {
-                case 0:
+                var r = new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), i == 4 ? bw : tw, tileH);
+                if (!Btn(r, t[i] + "\n<size=" + Mathf.RoundToInt(22*u) + "><color=#8C8378>" + sub[i] + "</color></size>", false, u)) continue;
+                switch (i)
                 {
-                    open = false; SetProcessInput(true);
-                    var blog = ui != null ? ui.GetUI<Naninovel.UI.IBacklogUI>() as Naninovel.UI.IManagedUI : null;
-                    if (blog != null) blog.ChangeVisibility(true, 0.15f);
-                    break;
-                }
-                case 1: ledger = true; break;
-                case 2: codex = true; break;
-                case 3: knowTab = true; break;
-                case 4: facTab = true; break;
-                case 5: if (state != null) { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); } break;
-                case 6:
-                {
-                    open = false; SetProcessInput(true);
-                    var sl = ui != null ? ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI : null;
-                    if (sl != null) sl.ChangeVisibility(true, 0.15f);
-                    break;
-                }
-                case 7:
-                {
-                    open = false;
-                    MolakSettings.Open();
-                    break;
-                }
-                case 8:   // 이미 본 글은 빠르게 — 처음 보는 글과 선택지에서 멈춘다(나니노벨 읽은 글 넘기기)
-                {
-                    open = false; SetProcessInput(true);
-                    var pl = Engine.GetService<IScriptPlayer>();
-                    if (pl != null) { pl.SkipMode = PlayerSkipMode.ReadOnly; pl.SetSkip(true); Toast("읽은 글을 넘긴다 — 처음 보는 글에서 멈춘다."); }
-                    break;
+                    case 0:
+                    {
+                        open = false; SetProcessInput(true);
+                        var blog = ui != null ? ui.GetUI<Naninovel.UI.IBacklogUI>() as Naninovel.UI.IManagedUI : null;
+                        if (blog != null) blog.ChangeVisibility(true, 0.15f);
+                        break;
+                    }
+                    case 1: ledger = true; break;
+                    case 2: codex = true; break;
+                    case 3: knowTab = true; break;
+                    case 4: facTab = true; break;
                 }
             }
+            by += 3 * (tileH + gap);
         }
-        // 처음 화면으로: 아래쪽, 두 번 탭 확인
-        float ry = by + labels.Length*(bh+gap) + 40*u;
-        if (confirmT > 0f) confirmT -= Time.deltaTime;
-        string rl = confirmT > 0f ? "정말 처음으로? — 다시 탭" : "처음 화면으로";
-        if (Btn(new Rect(bx+bw*0.15f, ry, bw*0.7f, 84*u), rl, confirmT > 0f, u))
+
+        // ── 저장
+        MenuSection(bx, ref by, bw, secH, "저장");
         {
-            if (confirmT > 0f) { confirmT = 0f; open = false; SetProcessInput(true); if (state != null) state.ResetState(); }
-            else confirmT = 3f;
+            float tw = (bw - gap) / 2f;
+            if (Btn(new Rect(bx, by, tw, rowH), "빠른 저장", false, u) && state != null) { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); }
+            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "저장 · 불러오기", false, u))
+            {
+                open = false; SetProcessInput(true);
+                var sl = ui != null ? ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI : null;
+                if (sl != null) sl.ChangeVisibility(true, 0.15f);
+            }
+            by += rowH + gap;
+        }
+
+        // ── 아래 줄: 환경 설정 · 처음 화면으로(두 번 탭 확인)
+        {
+            by += 8*u;
+            float tw = (bw - gap) / 2f;
+            if (Btn(new Rect(bx, by, tw, rowH), "환경 설정", false, u)) { open = false; MolakSettings.Open(); }
+            if (confirmT > 0f) confirmT -= Time.deltaTime;
+            string rl = confirmT > 0f ? "다시 탭하면 처음으로" : "처음 화면으로";
+            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), rl, confirmT > 0f, u))
+            {
+                if (confirmT > 0f) { confirmT = 0f; open = false; SetProcessInput(true); if (state != null) state.ResetState(); }
+                else confirmT = 3f;
+            }
         }
         // 바깥 탭 → 닫기
         if (Event.current.type == EventType.MouseDown) { open = false; SetProcessInput(true); }

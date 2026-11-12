@@ -65,7 +65,7 @@ public class MolakArt : MonoBehaviour
     {
         {"granny","herbshop"},{"hajinmu","innhall"},{"gwaksan","market"},{"yonggae","crossroad"},{"amhyang","teahouse"},
         {"soa","innhall"},{"soa_smile","market"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},{"kyona","valley"},
-        {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},
+        {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},{"cheongmyo","temple"},
     };
     static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
     {

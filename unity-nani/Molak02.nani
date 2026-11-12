@@ -68,6 +68,22 @@
 @goto #BKnot if:day>=raidday-3&&b_knot<1&&f_gaeknot>0&&f_gaesold<1&&rep_gae>=2
 @goto #BKnotK if:day>=raidday-3&&b_knot<1&&g_know_gaeknot>0&&f_gaeknot<1
 @goto #BS8 if:day>=raidday&&f_soamet>0&&f_soadead<1&&aff>=2&&b_s8<1
+@goto #BS9 if:day>=raidday+2&&f_soamet>0&&f_soadead<1&&b_s8>0&&b_s9<1
+@goto #BS10 if:day>=46&&f_soamet>0&&f_soadead<1&&f_soareq>0&&f_soadone<1&&b_s10<1
+@goto #BS11 if:day>=52&&f_soamet>0&&f_soadead<1&&aff>=4&&b_s11<1
+@goto #BG1 if:day>=30&&f_soamet>0&&f_soadead>0&&b_g1<1
+@goto #BG2 if:day>=50&&f_soadead>0&&b_g1>0&&b_g2<1
+@goto #BAm1 if:day>=37&&f_amhyangknown>0&&f_amhdead<1&&b_am1<1
+@goto #BAm2 if:day>=43&&f_amhyangknown>0&&f_amhdead<1&&b_am1>0&&b_am2<1
+@goto #BAm3 if:day>=50&&f_amhdead<1&&amhaff>=5&&f_leftwithsoa<1&&b_am3<1
+@goto #BCm1 if:day>=24&&f_jbsister>0&&b_cm1<1
+@goto #BCm2 if:day>=36&&f_jbsister>0&&b_cm1>0&&b_cm2<1
+@goto #BCm3 if:day>=50&&cmaff>=4&&b_cm3<1
+@goto #BR6A if:day>=40&&f_jinally>0&&f_jinbaekdead<1&&b_r6<1
+@goto #BR6L if:day>=44&&f_jinleft>0&&f_jinbaekdead<1&&b_r6<1
+@goto #BR6D if:day>=40&&f_jinbaekdead>0&&b_r5x>0&&b_r6<1
+@goto #BR6N if:day>=40&&b_r5x>0&&f_jinally<1&&f_jinleft<1&&f_jinbaekdead<1&&f_jinbaektruth<1&&b_r6<1
+@goto #BOld3 if:day>=46&&f_oldseen>0&&f_old2>0&&curse<88&&b_old3<1
 @goto #BH1 if:day>=45&&f_wolfdown<1&&b_hunt1<1
 @goto #BH2 if:day>=50&&f_wolfdown<1&&b_hunt2<1
 @goto #BH3 if:day>=55&&f_wolfdown<1&&b_hunt3x<1
@@ -1233,6 +1249,54 @@
 # BS8
 @set b_s8=1
 @goto Molak06#SoaN8
+# BS9
+@set b_s9=1
+@goto Molak07#SoaN9
+# BS10
+@set b_s10=1
+@goto Molak07#SoaN10
+# BS11
+@set b_s11=1
+@goto Molak07#SoaN11
+# BG1
+@set b_g1=1
+@goto Molak07#SoaG1
+# BG2
+@set b_g2=1
+@goto Molak07#SoaG2
+# BAm1
+@set b_am1=1
+@goto Molak08#Am1
+# BAm2
+@set b_am2=1
+@goto Molak08#Am2
+# BAm3
+@set b_am3=1
+@goto Molak08#Am3
+# BCm1
+@set b_cm1=1
+@goto Molak08#Cm1
+# BCm2
+@set b_cm2=1
+@goto Molak08#Cm2
+# BCm3
+@set b_cm3=1
+@goto Molak08#Cm3
+# BR6A
+@set b_r6=1
+@goto Molak09#Rev6A
+# BR6L
+@set b_r6=1
+@goto Molak09#Rev6L
+# BR6D
+@set b_r6=1
+@goto Molak09#Rev6D
+# BR6N
+@set b_r6=1
+@goto Molak09#Rev6N
+# BOld3
+@set b_old3=1
+@goto Molak09#Old3
 # BHintShr
 @set b_hintshr=1
 @page

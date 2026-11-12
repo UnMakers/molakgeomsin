@@ -2,14 +2,23 @@
 # RunStart
 ; (자동 생성) 변수 선초기화
 @set aff=0
+@set amhaff=0
+@set b_am1=0
+@set b_am2=0
+@set b_am3=0
 @set b_amh2=0
 @set b_amhyang=0
 @set b_bilok=0
 @set b_capture=0
 @set b_chain=0
+@set b_cm1=0
+@set b_cm2=0
+@set b_cm3=0
 @set b_depart=0
 @set b_fame=0
 @set b_frost=0
+@set b_g1=0
+@set b_g2=0
 @set b_hajin=0
 @set b_hajin2x=0
 @set b_herb2=0
@@ -30,6 +39,7 @@
 @set b_ochi=0
 @set b_old=0
 @set b_old2x=0
+@set b_old3=0
 @set b_plate=0
 @set b_r1=0
 @set b_r1x=0
@@ -40,9 +50,12 @@
 @set b_r4=0
 @set b_r4x=0
 @set b_r5x=0
+@set b_r6=0
 @set b_ripe=0
 @set b_rival2=0
 @set b_s1=0
+@set b_s10=0
+@set b_s11=0
 @set b_s2=0
 @set b_s3=0
 @set b_s4=0
@@ -50,6 +63,7 @@
 @set b_s6=0
 @set b_s7=0
 @set b_s8=0
+@set b_s9=0
 @set b_shrfire=0
 @set b_simk=0
 @set b_soa=0
@@ -65,6 +79,7 @@
 @set cansense=0
 @set cansl=0
 @set chain=0
+@set cmaff=0
 @set collapsed=0
 @set cost_body=0
 @set cost_coin=0
@@ -98,8 +113,12 @@
 @set f_amhally=0
 @set f_amhdead=0
 @set f_amhdeal=0
+@set f_amhgone=0
+@set f_amhname=0
 @set f_amhowe=0
 @set f_amhtalk=0
+@set f_amhturn=0
+@set f_amhwait=0
 @set f_amhwarn=0
 @set f_amhyangknown=0
 @set f_antidote=0
@@ -113,7 +132,12 @@
 @set f_breath=0
 @set f_breath2=0
 @set f_chaininfo=0
+@set f_chainroute=0
 @set f_cheonggang=0
+@set f_cmally=0
+@set f_cmform=0
+@set f_cmsword=0
+@set f_cmwait=0
 @set f_deadrumor=0
 @set f_dojuroute=0
 @set f_dokad=0
@@ -180,7 +204,11 @@
 @set f_jinbaekdead=0
 @set f_jinbaektruth=0
 @set f_jinheld=0
+@set f_jinhint=0
 @set f_jinleft=0
+@set f_jinlure=0
+@set f_jinspared=0
+@set f_jinstep=0
 @set f_kyonadown=0
 @set f_lawdoubt=0
 @set f_leftwithsoa=0
@@ -210,6 +238,7 @@
 @set f_northstep=0
 @set f_ochisaved=0
 @set f_old2=0
+@set f_old3=0
 @set f_oldface=0
 @set f_oldhint=0
 @set f_oldseen=0
@@ -241,9 +270,11 @@
 @set f_soa3=0
 @set f_soablades=0
 @set f_soabond=0
+@set f_soachild=0
 @set f_soadead=0
 @set f_soadone=0
 @set f_soakilled=0
+@set f_soaledger=0
 @set f_soaleft=0
 @set f_soamet=0
 @set f_soaposter=0
@@ -251,6 +282,7 @@
 @set f_soarift=0
 @set f_soasaved=0
 @set f_soaseal=0
+@set f_soastitch=0
 @set f_soatrain=0
 @set f_soatruth=0
 @set f_soaverse=0
@@ -411,6 +443,8 @@
 @goto #RbBlade if:g_lastend=="hoengsa"||g_lastend=="hyeolcheon"||g_lastend=="sahyeong"||g_lastend=="dokni"||g_lastend=="gyeona"
 @goto #RbBody if:g_lastend=="gwaro"||g_lastend=="gongbok"
 @goto #RbLeave if:g_lastend=="wonhaeng"
+@goto #RbAmh if:g_lastend=="muhyang"
+@goto #RbCm if:g_lastend=="hwansok"
 @goto #RbKneel if:g_lastend=="ipma"
 @goto #RbCommon
 # RbSoa
@@ -438,6 +472,14 @@
 @goto #RbCommon
 # RbLeave
 강물 소리가 귓가에 남아 있다. 지난 생, 그녀와 함께 닿았던 강가. 창밖은 다시 운락이다.
+@goto #RbCommon
+# RbAmh
+손목이 차다. 지난 생 마지막 밤, 누가 이 손목을 짚고 맥이 하나가 됐다고 했다.
+베개에서 쓰고 맑은 냄새가 나는 것 같다. 침향이다. 아무것도 꽂혀 있지 않다.
+@goto #RbCommon
+# RbCm
+손바닥에 장작 가르던 굳은살이 없다. 그런데 허리가 횡소의 끝을 기억한다. 아홉째, 운해.
+그 초막의 마당은 지금 아무도 쓸지 않는다.
 @goto #RbCommon
 # RbKneel
 무릎이 저리다. 지난 생에 교 앞에 꿇었던 무릎이다. 이번 생은 아직 아무에게도 꿇지 않았다.

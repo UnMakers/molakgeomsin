@@ -39,6 +39,8 @@ public class MolakEnd : MonoBehaviour
         new Entry("hapbyeok",  "合璧", "합벽", "두 검이 하나로",        "그 밤 그녀에게 받은 열두 줄을 들고, 다음 생의 사당으로"),
         new Entry("doju",      "逃走", "도주", "그물 밖으로",           "관아의 그물이 닫히기 전, 운락을 빠져나갔을 때"),
         new Entry("jaegeon",   "再建", "재건", "맹의 깃발 아래",        "무림맹 밀사와 거래하고, 대사형의 목을 벤 뒤에"),
+        new Entry("muhyang",   "無香", "무향", "향 없는 곳",            "향의 주인과 그 동생을 데리고, 나루에서 배에 올랐을 때"),
+        new Entry("hwansok",   "還俗", "환속", "산문 밖의 봄",          "승복을 벗은 사저와 함께, 사부의 위패를 모시러 갔을 때"),
     };
 
     public static string Resolve ()
@@ -69,6 +71,8 @@ public class MolakEnd : MonoBehaviour
         if (cause == "합벽") return "hapbyeok";
         if (cause == "재건") return "jaegeon";
         if (cause == "도주") return "doju";
+        if (cause == "무향") return "muhyang";
+        if (cause == "환속") return "hwansok";
         if (cause == "비무 패배")
         {
             if (kind == "hochi") return "dokni";
@@ -124,7 +128,7 @@ public class MolakEnd : MonoBehaviour
             s.normal.textColor = col; return s;
         };
         sHanja = mk(110, MolakTheme.Ink);
-        sTitle = mk(34, MolakTheme.Ink3);
+        sTitle = mk(36, MolakTheme.Ink3); sTitle.font = MolakTypography.Heading(sTitle.font);   // 말로의 이름은 송명
         sNew = mk(24, MolakTheme.Gold);
     }
 

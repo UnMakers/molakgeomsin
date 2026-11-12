@@ -11,6 +11,8 @@ public class MolakBag : MonoBehaviour
     public struct Entry { public string Flag, Name, Desc, Effect; public Entry (string f, string n, string d, string e) { Flag = f; Name = n; Desc = d; Effect = e; } }
 
     public static readonly Entry[] Items = {
+        new Entry("f_soaledger", "적운의 장부", "줄마다 끼니가 적혀 있다. 끝마다 '빚'이라 썼다가 지웠다.", ""),
+        new Entry("f_cmform", "아홉째 초식 · 운해(雲海)", "횡소가 끝나는 자리에서 시작하는 검. 사저가 장작으로 가르쳤다.", "검술 +2"),
         new Entry("f_rankplate", "무명의 쇠패", "서열각 감찰사가 내준 쇠패. 숫자 자리가 비어 있다. 패를 찬 자는 서열각의 것이다.", "혈마교 무리가 함부로 칼을 대지 못한다"),
         new Entry("f_hat", "죽립과 잿빛 장포", "첫날 옷전에서 산 것. 챙을 내리면 이마에서 콧날까지 그늘이 진다.", "얼굴을 가린다"),
         new Entry("f_whetstone", "청석 숫돌", "눈먼 숫돌 장수의 청석. 일 년 묵은 녹이 한 시간 만에 벗겨졌다.", "검술 +1"),
@@ -39,6 +41,9 @@ public class MolakBag : MonoBehaviour
         new Entry("f_janginfo", "혈천진 보법 서찰", "혈마곡 입구 진법의 틈. 왼, 왼, 오른.", "교주와 겨룰 때 유리하다"),
     };
     public static readonly Entry[] Lore = {
+        new Entry("f_jinlure", "북쪽 고개의 횃불", "정예를 북으로 끌고 간 맨 앞의 횃불.", "혈랑대와 겨룰 때 유리하다"),
+        new Entry("g_oldsister", "셋째 잔", "노인이 사매 몫으로 따라 둔 잔. 둘이 한 검을 쓰던 시절이 있었다.", "되감기지 않는다"),
+        new Entry("f_northstep", "북두를 거꾸로", "요광에서 천추로. 다섯째 별에서 숨을 쉬지 않는다.", "교주와 겨룰 때 유리하다"),
         new Entry("f_storylore", "이야기꾼의 대목", "열 번째 산문, 청운산장에서 장문인은 검을 뽑지 않고 서 있었다고 한다.", ""),
         new Entry("f_herbpulse", "두 개의 맥", "백초 할멈이 짚었다. 하나는 네 것이 아니라고.", ""),
         new Entry("f_breath", "토탁(吐濁) 구결", "거지 중의 숨법. 들숨 여섯, 날숨 아홉.", "운기할 때 저주가 덜 오른다"),
@@ -69,6 +74,13 @@ public class MolakBag : MonoBehaviour
         new Entry("f_wangsam", "왕삼의 장부", "빚쟁이들을 마당에 눕혔다. 장부는 아직 어딘가에 있다.", ""),
     };
     public static readonly Entry[] Bonds = {
+        new Entry("f_soastitch", "소아 · 꿰맨 자리", "삐뚤게 꿰맨 일곱 땀. 그녀 장부의 첫 '빚 아님'.", ""),
+        new Entry("f_soachild", "적운의 아이", "사슬 창고에서 데려온 아이. 그녀 그릇을 통째로 받았다.", "혈쇄문주와 겨룰 때 유리하다"),
+        new Entry("f_amhname", "설(雪)", "루에서 부르는 이름 말고. 그 이름을 부르는 사람은 동생 하나였다.", ""),
+        new Entry("f_amhturn", "침향 한 대", "매화는 오늘 갈 손님, 침향은 살려 보낼 손님.", ""),
+        new Entry("f_amhwait", "남쪽의 약조", "기다리는 건 잘해요. 루에서 평생 그것만 했으니까요.", "교주와 겨룰 때 한 번 돕는다"),
+        new Entry("f_cmsword", "막내의 목검", "입문하던 날 대사형이 깎아 준 것. 그 밤 그가 품에 넣고 문을 열었다.", ""),
+        new Entry("f_cmally", "초막의 약조", "목은 올리지 마세요. 대신 살아서 오세요.", "교주와 겨룰 때 유리하다"),
         new Entry("f_maengvow", "백리휘의 약조", "'이번엔 늦지 않겠소. 내 이름으로.'", "그 밤 야습에 원군이 온다"),
         new Entry("f_maenglord", "맹의 칼 셋", "혈천진의 세 눈에 하나씩 들겠다고 했다.", "혈천진을 함께 뚫는다"),
         new Entry("f_namgungdoor", "남궁현의 측문", "'그날 내가 문 앞에 서 있다면, 그건 그대를 막으려는 게 아니오.'", "교주와 겨룰 때 한 번 돕는다"),

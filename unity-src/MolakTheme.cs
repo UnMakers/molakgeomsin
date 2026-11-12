@@ -426,6 +426,7 @@ public class MolakTheme : MonoBehaviour
             {
                 if (tx.gameObject.name == "Num") continue;
                 if (tx.color != inkDark) tx.color = inkDark;
+                { var sf = MolakTypography.SongTMP(GowunTMP()); if (sf != null && tx.font != sf) tx.font = sf; }   // 선택지는 송명(붓 명조)
                 float cfs = Mathf.Round(tier.Font * FontScale);
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
                 if (tx.textWrappingMode != TMPro.TextWrappingModes.Normal) tx.textWrappingMode = TMPro.TextWrappingModes.Normal;
@@ -476,12 +477,14 @@ public class MolakTheme : MonoBehaviour
         {
             foreach (var img in panel.GetComponentsInChildren<Image>(true))
                 if (img.color.a > 0.001f) img.color = new Color(0f,0f,0f,0f); // 상자 없음 — 종이에 바로 쓴다
-            var inkTxt = InkText;
+            var inkTxt = MolakTypography.Narration;   // 서술은 한 톤 옅게, 대사는 전처리기가 짙게 감싼다
             float bfs = Mathf.Round(MolakLayout.BodyFont * FontScale);
             foreach (var tx in panel.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (tx.color != inkTxt) tx.color = inkTxt;
-                if (tx.gameObject.name == "DialogueText" && Mathf.Abs(tx.fontSize - bfs) > 0.5f) tx.fontSize = bfs;
+                if (tx.gameObject.name != "DialogueText") continue;
+                if (Mathf.Abs(tx.fontSize - bfs) > 0.5f) tx.fontSize = bfs;
+                MolakTypography.ApplyBody(tx);
             }
         }
     }
