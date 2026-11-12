@@ -31,6 +31,15 @@ def nukki(src, dst, flip=False):
         hs = ndi.sum(holes, hl, range(1, hn + 1))
         small = np.zeros(hn + 1, bool); small[1:] = hs < 2500
         a = np.where(small[hl], 1.0, a)
+    # 1.5) 바깥에서부터 흰 테두리 벗기기: 투명한 곳에 맞닿은 '거의 흰' 픽셀을 한 겹씩 지운다(최대 10겹).
+    #      검은 윤곽선을 만나면 멈추므로 흰 옷 안쪽은 남는다. 스티커처럼 둘린 흰 띠를 없앤다.
+    lum = rgb.mean(-1); sat = rgb.max(-1) - rgb.min(-1)
+    whiteish = (lum > 0.86) & (sat < 0.12)
+    for _ in range(10):
+        outside = a < 0.35
+        touch = ndi.binary_dilation(outside, iterations=1) & ~outside & whiteish
+        if not touch.any(): break
+        a = np.where(touch, 0.0, a)
     # 2) 알파 1px 깎고 살짝 흐림
     a = ndi.grey_erosion(a, size=(3, 3))
     a = ndi.gaussian_filter(a, 0.6)

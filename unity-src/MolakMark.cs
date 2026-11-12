@@ -65,7 +65,7 @@ public class MolakMark : MonoBehaviour
         float a = e < 0.35f ? e / 0.35f : e > Dur - 0.7f ? (Dur - e) / 0.7f : 1f;
         a = Mathf.Clamp01(a);
         float drop = (1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(e / 0.35f))) * -14f * u;
-        float bw = 960 * u, bh = 160 * u, bx = (w - bw) / 2f, by = h * 0.17f + drop;
+        float bw = 960 * u, bh = 160 * u, bx = (w - bw) / 2f, by = h - MolakLayout.BagStripH * u - bh - 40 * u + drop;   // 0.4.29: 삽화를 가리지 않게 아래쪽(행낭 띠 위)으로
         var g0 = GUI.color;
         // 먹띠(가운데 짙고 양끝 옅게)
         for (int i = 0; i < 12; i++)
