@@ -127,6 +127,7 @@
 @set f_amhgone=0
 @set f_amhname=0
 @set f_amhnames=0
+@set f_amholdman=0
 @set f_amhowe=0
 @set f_amhpaper=0
 @set f_amhroute=0
