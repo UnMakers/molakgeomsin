@@ -55,6 +55,7 @@
 @set b_r3=0
 @set b_r3x=0
 @set b_r4=0
+@set b_r45=0
 @set b_r4x=0
 @set b_r5x=0
 @set b_r6=0
@@ -77,6 +78,7 @@
 @set b_soa3=0
 @set b_soa4=0
 @set b_soatrain=0
+@set b_stairs=0
 @set b_wanted=0
 @set b_yong2=0
 @set b_yong3=0
@@ -223,6 +225,9 @@
 @set f_jangsaved=0
 @set f_jangsold=0
 @set f_jangtaken=0
+@set f_jbasked=0
+@set f_jbheard=0
+@set f_jbrice=0
 @set f_jbsister=0
 @set f_jbsisterhate=0
 @set f_jinally=0
@@ -272,6 +277,10 @@
 @set f_orphan=0
 @set f_platefake=0
 @set f_poisonswap=0
+@set f_r2shrine=0
+@set f_r2soa=0
+@set f_r3truth=0
+@set f_r4wait=0
 @set f_raidprep=0
 @set f_rankplate=0
 @set f_reforge=0
@@ -345,6 +354,7 @@
 @set f_wanted=0
 @set f_whetstone=0
 @set f_wolfally=0
+@set f_wolfboy=0
 @set f_wolfdown=0
 @set f_wolfedge=0
 @set f_wolfintro=0

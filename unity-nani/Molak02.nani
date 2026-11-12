@@ -64,6 +64,7 @@
 @goto #BS4 if:day>=24&&f_soamet>0&&f_soadead<1&&b_s4<1&&dice<=95
 @goto #BR4 if:day>=27&&b_r3x>0&&b_r4x<1&&dice>=5
 @goto #BS5 if:day>=30&&aff>=4&&f_soasaved>0&&f_soadead<1&&b_s5<1
+@goto #BR45 if:day>=30&&b_r4x>0&&f_r4wait>0&&b_r45<1&&b_r5x<1
 @goto #BR5 if:day>=34&&b_r4x>0&&b_r5x<1
 @goto #BS1 if:day>=9&&f_soamet>0&&f_soadead<1&&b_s1<1
 @goto #BR1 if:day>=10&&b_r1x<1
@@ -1452,6 +1453,10 @@
 @chapter text:"이름" sub:"복수"
 @set b_r4x=1
 @goto Molak06#Rev4
+# BR45
+@chapter text:"보름의 사당" sub:"복수"
+@set b_r45=1
+@goto Molak13#Rev45
 # BR5
 @chapter text:"대사형" sub:"복수"
 @set b_r5x=1
