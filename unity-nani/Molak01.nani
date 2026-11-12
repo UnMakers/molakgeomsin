@@ -86,6 +86,10 @@
 @set b_yong3=0
 @set buycx=0
 @set buyhx=0
+@set c_qi=0
+@set c_rest=0
+@set c_sw=0
+@set c_work=0
 @set cancurse=0
 @set canflee=0
 @set cansense=0
@@ -118,6 +122,11 @@
 @set dstake=0
 @set dtaint=0
 @set duelwin=0
+@set dx_i=0
+@set dx_momtext=0
+@set dx_n=0
+@set dx_restext=0
+@set dx_telltext=0
 @set endhanja=0
 @set endtitle=0
 @set f_acupgone=0
@@ -391,6 +400,8 @@
 @set gaefedday=0
 @set grudge=0
 @set grudgeday=0
+@set grudgename=0
+@set grudgevisit=0
 @set grudgewarn=0
 @set grudgewarned=0
 @set hajinaff=0
@@ -406,7 +417,11 @@
 @set lostonce=0
 @set lrand=0
 @set luck=0
+@set lv_qi=0
+@set lv_rest=0
+@set lv_sw=0
 @set lv_vigor=0
+@set lv_work=0
 @set max_body=0
 @set max_coin=0
 @set max_core=0
@@ -455,6 +470,7 @@
 @set thday=0
 @set theme=0
 @set tierup=0
+@set tn_nvhj=0
 @set tn_oldvoice=0
 @set tn_qi1=0
 @set tn_qi2=0
