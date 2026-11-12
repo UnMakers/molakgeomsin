@@ -5,6 +5,7 @@
 @set amhaff=0
 @set b_am1=0
 @set b_am2=0
+@set b_am25=0
 @set b_am3=0
 @set b_amh2=0
 @set b_amhyang=0
@@ -13,15 +14,20 @@
 @set b_chain=0
 @set b_cm1=0
 @set b_cm2=0
+@set b_cm25=0
 @set b_cm3=0
 @set b_depart=0
+@set b_eve=0
 @set b_fame=0
 @set b_frost=0
 @set b_g1=0
 @set b_g2=0
+@set b_gwak3=0
 @set b_hajin=0
 @set b_hajin2x=0
+@set b_hajin3=0
 @set b_herb2=0
+@set b_herb3=0
 @set b_hintshr=0
 @set b_hm=0
 @set b_hunt1=0
@@ -30,6 +36,7 @@
 @set b_ipma=0
 @set b_jang=0
 @set b_jang2=0
+@set b_jang3=0
 @set b_knot=0
 @set b_ldhap=0
 @set b_ldjin=0
@@ -72,6 +79,7 @@
 @set b_soatrain=0
 @set b_wanted=0
 @set b_yong2=0
+@set b_yong3=0
 @set buycx=0
 @set buyhx=0
 @set cancurse=0
@@ -111,11 +119,15 @@
 @set f_acupgone=0
 @set f_alms=0
 @set f_amhally=0
+@set f_amhcomb=0
+@set f_amhdagger=0
 @set f_amhdead=0
 @set f_amhdeal=0
+@set f_amheve=0
 @set f_amhgone=0
 @set f_amhname=0
 @set f_amhowe=0
+@set f_amhpaper=0
 @set f_amhseen=0
 @set f_amhtalk=0
 @set f_amhturn=0
@@ -136,9 +148,12 @@
 @set f_chainroute=0
 @set f_cheonggang=0
 @set f_cmally=0
+@set f_cmaxe=0
+@set f_cmeve=0
 @set f_cmform=0
 @set f_cmglimpse=0
 @set f_cmsword=0
+@set f_cmtablet=0
 @set f_cmwait=0
 @set f_deadrumor=0
 @set f_dojuroute=0
@@ -161,6 +176,7 @@
 @set f_guardgrudge=0
 @set f_guardsword=0
 @set f_gwakally=0
+@set f_gwakdinner=0
 @set f_gwakexposed=0
 @set f_gwakhelped=0
 @set f_gwakwifedied=0
@@ -168,6 +184,7 @@
 @set f_hajinbond=0
 @set f_hajincold=0
 @set f_hajindead=0
+@set f_hajindot=0
 @set f_hajinfree=0
 @set f_hajinhurt=0
 @set f_halfhap=0
@@ -182,6 +199,7 @@
 @set f_herbmarked=0
 @set f_herbout=0
 @set f_herbpulse=0
+@set f_herbrecipe=0
 @set f_herbsafe=0
 @set f_hmfailed=0
 @set f_hmleft=0
@@ -196,6 +214,7 @@
 @set f_jangfinger=0
 @set f_jangfriend=0
 @set f_janginfo=0
+@set f_janglast=0
 @set f_jangsaved=0
 @set f_jangsold=0
 @set f_jangtaken=0
@@ -275,6 +294,7 @@
 @set f_soachild=0
 @set f_soadead=0
 @set f_soadone=0
+@set f_soaeve=0
 @set f_soakilled=0
 @set f_soaledger=0
 @set f_soaleft=0
@@ -288,6 +308,7 @@
 @set f_soatrain=0
 @set f_soatruth=0
 @set f_soaverse=0
+@set f_soawait=0
 @set f_soawatch=0
 @set f_soawell=0
 @set f_sparedally=0
@@ -322,9 +343,12 @@
 @set f_wolfinvite=0
 @set f_wolfnear=0
 @set f_wolfseal=0
+@set f_yeonknow=0
+@set f_yeonsaved=0
 @set f_yongally=0
 @set f_yongambush=0
 @set f_yongbetray=0
+@set f_yongcrew=0
 @set f_yongfam=0
 @set f_yongfamsaved=0
 @set f_yongkilled=0
@@ -336,6 +360,7 @@
 @set grudgeday=0
 @set grudgewarn=0
 @set grudgewarned=0
+@set hajinaff=0
 @set hp=0
 @set hpmax=0
 @set injury=0

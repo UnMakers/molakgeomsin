@@ -11,7 +11,7 @@
 @goto MolakOver#Exhaust if:hp<=0
 ; --- 장(章)·비트 --- (며칠 한 바퀴에 이야기 마디는 셋까지)
 # BeatCheck
-@goto Molak04#Ld0 if:f_wolfdown>0&&rank>0&&rank<=10||f_wolfdown>0&&f_hapbyeok>0&&rank>0&&rank<=30
+@goto Molak12#Eve if:f_wolfdown>0&&rank>0&&rank<=10||f_wolfdown>0&&f_hapbyeok>0&&rank>0&&rank<=30
 @goto Molak06#Ripe1 if:curse>=88&&f_oldseen>0&&b_ripe<1
 @goto Molak06#Capture if:day>=60&&b_capture<1
 @goto #KDebt if:debt>0&&day>=debtday
@@ -40,6 +40,11 @@
 @goto #A27 if:day>=27&&seen_E_Rival>0&&b_rival2<1
 @goto #A28 if:day>=28&&f_soamet>0&&f_soadead<1&&b_soa4<1
 @goto #A33 if:day>=33&&f_amhyangknown>0&&b_amh2<1
+@goto #AYong3 if:day>=33&&b_yong2>0&&b_yong3<1
+@goto #AHerb3 if:day>=35&&b_herb2>0&&f_herbout<1&&b_herb3<1
+@goto #AGwak3 if:day>=40&&b_rival2>0&&f_rivalfriend>0&&b_gwak3<1
+@goto #AHajin3 if:day>=44&&b_depart>0&&f_hajindead<1&&b_hajin3<1
+@goto #AJang3 if:day>=41&&b_jang2>0&&f_jangtaken<1&&b_jang3<1
 @goto #A34 if:day>=34&&f_hmsaved>0&&f_ochisaved<1&&b_ochi<1
 @goto #A40 if:day>=40&&f_oldseen>0&&b_old2x<1
 @goto #BShrFire if:day>=28&&f_shrseen>0&&b_shrfire<1
@@ -75,9 +80,11 @@
 @goto #BG2 if:day>=50&&f_soadead>0&&b_g1>0&&b_g2<1
 @goto #BAm1 if:day>=37&&f_amhyangknown>0&&f_amhdead<1&&b_am1<1
 @goto #BAm2 if:day>=43&&f_amhyangknown>0&&f_amhdead<1&&b_am1>0&&b_am2<1
+@goto #BAm25 if:day>=46&&f_amhdead<1&&b_am2>0&&b_am25<1
 @goto #BAm3 if:day>=50&&f_amhdead<1&&amhaff>=5&&f_leftwithsoa<1&&b_am3<1
 @goto #BCm1 if:day>=24&&f_jbsister>0&&b_cm1<1
 @goto #BCm2 if:day>=36&&f_jbsister>0&&b_cm1>0&&b_cm2<1
+@goto #BCm25 if:day>=42&&b_cm2>0&&b_cm25<1
 @goto #BCm3 if:day>=50&&cmaff>=4&&b_cm3<1
 @goto #BR6A if:day>=40&&f_jinally>0&&f_jinbaekdead<1&&b_r6<1
 @goto #BR6L if:day>=44&&f_jinleft>0&&f_jinbaekdead<1&&b_r6<1
@@ -1038,6 +1045,9 @@
 @gosub MolakEvents#E_AmhShop if:nextevent=="E_AmhShop"
 @gosub MolakEvents#E_AmhSpill if:nextevent=="E_AmhSpill"
 @gosub MolakEvents#E_TempleBell if:nextevent=="E_TempleBell"
+@gosub MolakEvents#E_AmhLetter if:nextevent=="E_AmhLetter"
+@gosub MolakEvents#E_CmSweep if:nextevent=="E_CmSweep"
+@gosub MolakEvents#E_YeonMarket if:nextevent=="E_YeonMarket"
 @gosub MolakEvents#E_Hostage if:nextevent=="E_Hostage"
 @gosub MolakEvents#E_Flood if:nextevent=="E_Flood"
 @gosub MolakEvents#E_Maeng1 if:nextevent=="E_Maeng1"
@@ -1309,6 +1319,10 @@
 @chapter text:"해약이 떨어진 달" sub:"암향"
 @set b_am2=1
 @goto Molak08#Am2
+# BAm25
+@chapter text:"연의 머리" sub:"암향"
+@set b_am25=1
+@goto Molak10#Am25
 # BAm3
 @chapter text:"향 없는 곳" sub:"암향"
 @set b_am3=1
@@ -1321,6 +1335,10 @@
 @chapter text:"보름의 쌀" sub:"청묘"
 @set b_cm2=1
 @goto Molak08#Cm2
+# BCm25
+@chapter text:"곳간의 문" sub:"청묘"
+@set b_cm25=1
+@goto Molak10#Cm25
 # BCm3
 @chapter text:"산문 밖의 봄" sub:"청묘"
 @set b_cm3=1
@@ -1441,6 +1459,26 @@
 @chapter text:"사당의 향" sub:"소아"
 @set b_soa3=1
 @goto Molak05#Soa3
+# AYong3
+@chapter text:"나루의 지게꾼들" sub:"용개"
+@set b_yong3=1
+@goto Molak11#Yong3
+# AHerb3
+@chapter text:"운검사태의 처방" sub:"백초 할멈"
+@set b_herb3=1
+@goto Molak11#Herb3
+# AGwak3
+@chapter text:"창잡이의 집" sub:"곽산"
+@set b_gwak3=1
+@goto Molak11#Gwak3
+# AHajin3
+@chapter text:"장부의 빈칸" sub:"객잔"
+@set b_hajin3=1
+@goto Molak11#Hajin3
+# AJang3
+@chapter text:"쥐의 마지막 소식" sub:"쥐눈이 장"
+@set b_jang3=1
+@goto Molak11#Jang3
 # A23
 @chapter text:"할멈의 약궤" sub:"백초 할멈"
 @set b_herb2=1

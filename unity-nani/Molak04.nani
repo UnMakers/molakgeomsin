@@ -596,7 +596,26 @@
 @goto #EpiJinAlly if:f_jinally>0&&f_jinbaekdead<1
 @goto #EpiJinTruth if:f_jinbaektruth>0
 @goto #EpiJinDead if:f_jinbaekdead>0
+@goto #EpiAmh if:f_amhdead<1&&f_amheve>0||f_amhdead<1&&f_amhwait>0
+@goto #EpiCm if:f_cmeve>0||f_cmally>0
 @goto #EpiOchi if:f_ochisaved>0
+@goto #EpiTail
+# EpiAmh
+@art char:amhyang_soft
+남쪽에서 기별이 온다. 기별이라기보다 꾸러미다. 기름종이를 풀자 찻잎 한 줌, 그리고 침향 한 대.
+쪽지는 없다. 그녀는 글을 써서 남기는 법을 루에서 배우지 않았다. 남긴 글은 장부가 된다고.
+침향에 불을 붙인다. 쓰고 맑은 냄새. 살려 보낼 손님 몫.
+@goto #EpiAmhC if:f_amhcomb<1
+품 속의 빗이 아직 있다. 이가 두 개 빠진. 돌려주러 가야 한다. 남쪽으로 보름.
+# EpiAmhC
+@goto #EpiTail
+# EpiCm
+@art char:cheongmyo_robe
+골짜기 초막에서 사람이 온다. 승복이 아니라 짧은 무복 차림. 머리가 한 치쯤 자랐다.
+"막내. 위패 자리, 아직 왼쪽 비어 있어요."
+그녀가 장작 하나를 세운다. 허리로 긋는다. 장작이 소리 없이 둘로 갈라진다.
+"이제 저도 아홉째까지 다 쓸 수 있어요. 막내 덕분에. 근데 쓸 데가 장작밖에 없네요."
+그게 좋다고, 그녀가 웃는다. 산문 밖의 봄이다.
 @goto #EpiTail
 # EpiOchi
 문득 회목촌의 형제가 떠오른다. 말없이 오래 부둥켜안고 있던 두 사람.

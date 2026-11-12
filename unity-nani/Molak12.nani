@@ -1,0 +1,155 @@
+; ===== 몰락검신 — 떠나기 전 밤 (0.4.14) =====
+; 검은 산으로 떠나기 전, 이번 생에 쌓은 인연이 한 사람씩 다녀간다. 쌓지 않은 인연은 오지 않는다.
+; 진입: Molak02 BeatCheck(교주에게 가는 길 조건). 끝나면 Molak04#Ld0.
+
+# Eve
+@goto Molak04#Ld0 if:b_eve>0
+@set b_eve=1
+@chapter text:"떠나기 전 밤" sub:"종장"
+@scene id:night
+@art scene:innroom
+@art char:none
+@deja text:"떠나기 전 밤. 지난 생에도 이 방에서 짐을 쌌다. 누가 문을 두드렸는지, 누가 오지 않았는지 안다."
+{dejapre}
+내일 새벽, 북쪽으로 떠난다. 검은 산까지 닷새.
+짐이라야 봇짐 하나다. 칼, 상비약, 마른 육포. 쌀 때마다 줄었다. 이번 생엔 더 줄었다.
+창밖으로 운락의 지붕들이 어둡다. 이 고을에서 몇 번을 죽었는지 세다가 그만둔다.
+문을 두드리는 소리. 이 밤엔 사람이 온다.
+
+@goto #EveH0 if:f_hajindead>0
+@art scene:innhall
+@art char:hajinmu
+하진무가 술상을 들고 올라온다. 잔이 둘이다. 처음 그 밤처럼.
+"한잔하시겠소. 이번엔 방값에서 빼지 않겠소."
+잔을 부딪친다. 그가 술을 다 비우고 잔을 엎는다.
+@goto #EveHDot if:f_hajindot>0
+"객. 장부는 덮어 두겠소. 셈은 객이 돌아와서 하시오."
+@goto #EveH1
+# EveHDot
+"점 찍은 칸이 하나 있소. 그 칸을 내가 지우게 하지 마시오."
+# EveH1
+그가 계단을 내려간다. 셋째 칸이 삐걱인다. 그 소리를 오래 듣는다.
+# EveH0
+
+@goto #EveG0 if:f_gwakally<1&&f_gwakdinner<1
+@art scene:yard
+@art char:gwaksan
+창 끝이 창살을 두드린다. 곽산이 마당에서 올려다본다.
+@goto #EveGW if:f_gwakwifedied>0
+"집사람이 국을 끓여 놨다. 둘이 와야 준대서, 데리러 왔다가 그냥 간다. 갔다 와서 먹자."
+@goto #EveG1
+# EveGW
+"혼자 먹는 밥은 맛이 없다고 했지. 갔다 와서 둘이 먹자. 국은 내가 끓이마. 짜게."
+# EveG1
+"북쪽 고개까지는 내 창이 길을 연다. 그 뒤는 네 검이다."
+@set f_gwakally=1
+# EveG0
+
+@goto #EveY0 if:f_yongcrew<1
+@art scene:alley
+@art char:yonggae
+담 밑에서 지게 멜빵 고치는 소리. 용개다. 지게꾼 일곱이 골목 어귀에 줄지어 앉아 있다.
+"나리. 새벽 나루는 저희가 지킵니다요. 배는 맨 앞 거 타십쇼. 바닥에 구멍 없는 놈으로 골라 놨습죠."
+"가난한 짐은 삯을 안 받는다 하지 않았소."
+"나리 짐은 가난하잖습니까요."
+일곱이 한꺼번에 웃는다. 산채 마당 소리다.
+# EveY0
+
+@goto #EveB0 if:f_herbrecipe<1&&f_herbfriend<1
+@art scene:herbshop
+@art char:granny
+창틀에 기름종이 꾸러미 하나가 놓여 있다. 끈 매듭이 할멈 솜씨다.
+펼치자 환약 셋. 그리고 쪽지. 처방지와 같은 종이, 다른 글씨. 할멈 손이 떨렸다.
+「반 알씩. 온 알은 독이다.」
+사부가 쓰던 말을 할멈이 베껴 썼다. 그 쪽지를 처방지와 겹쳐 품에 넣는다.
+@fx hp:2
+# EveB0
+
+@goto #EveJ0 if:f_janglast<1
+품 속의 장부를 꺼내 본다. 쥐눈이 장이 두고 간 것이다. 마지막 줄의 이름이 마르지 않은 것처럼 짙다.
+그 아래 빈 줄에 붓으로 한 줄을 적는다. 「검은 산. 왼 소매를 볼 것.」
+장이라면 이 소식을 얼마에 팔았을까. 공짜라고 했을 것이다.
+# EveJ0
+
+@art scene:night
+@art char:none
+@goto #EveSoa if:f_soamet>0&&f_soadead<1&&aff>=4
+@goto #EveAmh if:f_amhdead<1&&amhaff>=5&&f_amhturn>0
+@goto #EveCm if:cmaff>=4
+@goto #EveAlone
+
+# EveSoa
+@art scene:roofmoon
+@art char:soa_smile
+"올라와라."
+지붕 위. 소아가 기와에 누워 있다. 술병은 없다. 오늘은 맨정신이다.
+"내일 간다며."
+"가오."
+"나도 간다."
+"그대는—"
+"묻지 마라. 적운의 마지막 눈이 청운의 마지막 검 하나 못 지키면, 장부에 뭐라고 적겠냐."
+그녀가 외눈으로 달을 본다. 같은 달이다. 몇 번을 되감아도.
+@choice "\"같이 갑시다.\"" goto:#EveSoaA
+@choice "\"그대는 여기 남으시오. 돌아올 데가 있어야 하오.\"" goto:#EveSoaB
+@stop
+# EveSoaA
+소아가 손을 내민다. 손을 잡는다. 굳은살이 굳은살에 닿는다.
+"좋다. 같은 달 아래, 이번엔 같은 길로."
+@set f_soaeve=1
+@set aff=aff+1
+@fx curse:-3
+@goto #EveEnd
+# EveSoaB
+소아가 오래 말이 없다. 그러다 웃는다. 처음 만나던 날의 웃음이다. 반쯤 비웃는.
+"……돌아올 데라. 그 말은 처음 듣는다. 좋다. 객잔 지붕에서 기다리마. 늦으면 술은 내가 다 마신다."
+@set f_soawait=1
+@fx curse:-4
+@goto #EveEnd
+
+# EveAmh
+@art scene:innroom
+@art char:amhyang_soft
+창틀에 그녀가 앉아 있다. 이번엔 기침 소리가 없다. 머리를 풀었다.
+"침향 한 대 피워 드릴까요. 살려 보낼 손님 몫."
+"그대가 피우는 향은 늘 그 향이오."
+"네. 이제 매화는 안 사요."
+그녀가 향에 불을 붙이고, 당신 손목을 짚는다. 묻지 않고. 버릇이다.
+"……맥이 하나네요. 오늘은. 공자 것으로."
+@goto #EveAmhC if:f_amhcomb<1
+품에서 이 빠진 빗을 꺼낸다. 그녀의 눈이 커진다.
+"갔다 와서 돌려주겠소. 연이 머리는 그대가 빗으시오."
+"……그 빗, 꼭 들고 오세요. 안 들고 오시면 연이가 울어요. 저도요."
+# EveAmhC
+@set f_amheve=1
+@fx curse:-3
+@goto #EveEnd
+
+# EveCm
+@art scene:temple
+@art char:cheongmyo
+새벽보다 이른 시각. 객잔 문 앞에 청묘가 서 있다. 승복 위에 짧은 무복 저고리를 걸쳤다. 반쯤만 환속한 차림이다.
+"막내. 경을 외어 드리려고 왔는데, 생각해 보니 산 사람한테 외는 경은 없더라고요."
+"그럼 무엇을."
+그녀가 소매에서 무언가를 꺼낸다. 마른 대추 한 줌. 막내 시절 그대로.
+"배고프면 칼이 흔들려요. 사부님이 늘 그러셨어요."
+@goto #EveCmT if:f_cmtablet<1
+"위패는 초막에 모셨어요. 막내 자리는 왼쪽이에요. 대사형 자리는 오른쪽이고요. 둘 다 비워 뒀어요."
+# EveCmT
+@set f_cmeve=1
+@fx hp:1 curse:-3
+@goto #EveEnd
+
+# EveAlone
+아무도 오지 않는다. 이번 생엔 그런 인연을 쌓지 못했다.
+가슴의 문양이 낮게 운다. 뼛속에서 노인의 목소리가 묻는다.
+<color=#9A70C4>혼자 가는구나. 처음부터 그랬지. 노부도 그랬느니라.</color>
+대답하지 않는다. 칼을 닦는다. 칼은 대답을 하지 않아서 좋다.
+@fx curse:2
+@goto #EveEnd
+
+# EveEnd
+@page
+@art char:none
+새벽. 객잔 문을 나선다. 운락의 지붕들이 등 뒤에서 희어진다.
+돌아보지 않는다. 돌아보면 작아진다는 것을, 이 고개에서 몇 번이나 배웠다.
+@goto Molak04#Ld0
