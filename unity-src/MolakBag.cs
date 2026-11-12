@@ -11,6 +11,8 @@ public class MolakBag : MonoBehaviour
     public struct Entry { public string Flag, Name, Desc, Effect; public Entry (string f, string n, string d, string e) { Flag = f; Name = n; Desc = d; Effect = e; } }
 
     public static readonly Entry[] Items = {
+        new Entry("f_proknot", "청운 매듭", "하산 패에 달려 있던 푸른 매듭. 끝이 그을렸다. '너도 하산할 때 달아라. 삼십 년쯤 뒤에.'", ""),
+        new Entry("f_projujube", "사저의 대추", "돌처럼 굳은 마른 대추 둘. '밤에 먹을 거면 둘은 있어야죠.'", ""),
         new Entry("f_soaledger", "적운의 장부", "줄마다 끼니가 적혀 있다. 끝마다 '빚'이라 썼다가 지웠다.", ""),
         new Entry("f_cmform", "아홉째 초식 · 운해(雲海)", "횡소가 끝나는 자리에서 시작하는 검. 사저가 장작으로 가르쳤다.", "검술 +2"),
         new Entry("f_rankplate", "무명의 쇠패", "서열각 감찰사가 내준 쇠패. 숫자 자리가 비어 있다. 패를 찬 자는 서열각의 것이다.", "혈마교 무리가 함부로 칼을 대지 못한다"),

@@ -82,6 +82,7 @@
 고개 아래로 구른다. 정신을 차리니 바위 그늘이다. 진백이 당신 위에 엎드려 있다. 등에 화살이 셋.
 "……막내 잘못 아니다. 이번엔, 내 셈이, 맞았다."
 @vfx kind:beat
+@black text:"……|이번엔, 내 셈이, 맞았다." red:true hold:1.8
 @set f_jinbaekdead=1
 @set f_jinlure=1
 @fx curse:5 hp:-2

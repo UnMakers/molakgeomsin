@@ -590,6 +590,7 @@
 @vfx kind:beat
 "……셈이…… 이제 맞소. 장문인께…… 진 빚, 객한테…… 다 갚았으니."
 상복들이 물러난다. 저희도 이걸 바란 건 아니었다는 얼굴로. 주판알 몇 개가 피 웅덩이로 굴러간다.
+@black text:"……|셈이, 이제 맞소." red:true hold:1.8
 @set f_hajindead=1
 @set g_hajindied=1
 @fx curse:5 sl:1

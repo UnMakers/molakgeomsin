@@ -340,6 +340,7 @@
 @goto #ShrStoneSoa if:f_soamet>0&&f_soadead<1
 함을 품에 안고 나선다. 이 검의 나머지 반쪽은 이 생에서 아직 당신을 모른다.
 @set f_hapbyeok=1
+@mark text:"검보 반쪽을 홀로 품었다" note:"나머지 반은 아직 누구의 손에도 없다."
 @set g_hapbo=1
 @fx curse:-4
 @goto #ShrAfter2
@@ -353,6 +354,7 @@
 그녀가 젖은 외눈을 보이지 않으려 고개를 돌린다.
 "이번엔, 네가 먼저 죽지 마라."
 @set f_hapbyeok=1
+@mark text:"검보를 소아와 나눠 쥐었다" note:"둘이 하나를 막고, 하나가 들어간다."
 @set g_hapbo=1
 @set aff=aff+2
 @fx curse:-4

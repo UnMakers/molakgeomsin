@@ -154,6 +154,7 @@
 @choice "같이 문을 향해 구른다" goto:#SoaN10L2
 @stop
 # SoaN10S
+@mark text:"사슬을 맨손으로 붙들었다" note:"너는 잊겠지만, 나는 기억한다."
 셋째 사슬을 맨손으로 붙잡는다. 손바닥이 찢긴다. 사슬을 팔에 감는다. 한 바퀴, 두 바퀴.
 사슬잡이가 당긴다. 몸이 끌려간다. 끌려간 만큼 문이 비워진다.
 "뭐 하는—"
@@ -167,6 +168,7 @@
 사슬이 조인다. 숨이 갈비뼈 사이에서 멎는다.
 너는 이 밤을 잊는다. 다음 생의 너는 처음 보는 얼굴로 내 손목과 어깨를 잴 것이다.
 그래도 된다. 이 밤은 내가 들고 간다. 죽어서도.
+@black text:"숨이 멎는다." red:true hold:1.6
 @page
 @art scene:roofmoon
 @art char:soa_grief
@@ -227,6 +229,7 @@
 "북쪽 짐 수레 바닥에 떨어져 있었소. 수레는 이미 떠났고."
 칼집을 쥔다. 칼은 없다. 그녀가 쥐고 갔으니까.
 @vfx kind:beat
+@black text:"칼은 없다.|그녀가 쥐고 갔으니까." red:true hold:1.7
 @set f_soadead=1
 @set g_soadied=1
 @set g_soalast=1
@@ -262,6 +265,7 @@
 "그럼 둘 다 처음이군. 길 잃으면 네 탓이다."
 @vfx kind:petals
 @set f_soabond=1
+@mark text:"소아와 한 길을 골랐다" note:"이번엔 둘이 올라온다."
 @set aff=aff+2
 @goto Molak02#AfterChapter
 # SoaN11B
@@ -294,6 +298,7 @@
 "같이 가자. 이번엔 둘이 올라오자."
 @vfx kind:petals
 @set f_soabond=1
+@mark text:"소아와 한 길을 골랐다" note:"이번엔 둘이 올라온다."
 @set aff=aff+3
 @fx curse:-3
 @goto Molak02#AfterChapter

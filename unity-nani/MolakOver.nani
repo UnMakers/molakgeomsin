@@ -98,6 +98,7 @@
 하진무가 무릎으로 기어 온다. 그 손목은 무사하다. 그거면 됐다고, 말이 나오지 않는다.
 협(俠)이란 셈이 맞지 않는 일을 하는 것이라고 사부는 말했다. 셈은 맞지 않았다. 사부 말이 맞았다.
 @set g_sac_hajin=1 if:g_sac_hajin<1
+@black text:"숨이 멎는다." red:true hold:1.6
 @page
 되감기기 직전, 가슴의 문양이 처음으로 앞을 보여 준다. 되감기는 쪽이 아니라, 당신 없이 흘러가는 쪽을.
 이튿날 아침, 하진무가 객잔 문을 연다. 손목에 감은 천이 희다. 주판을 놓는 손은 성하다.
@@ -130,6 +131,8 @@
 @goto #Dead
 # Dead
 @gosub #LastFace
+@black text:"숨이 끊긴다." red:true hold:1.4 if:deathcause!="희생"
+@black marks:true
 @vfx kind:beat
 @ending
 @vfx kind:bloodrain
@@ -216,7 +219,9 @@
 # Regress
 @vfx kind:rewind
 시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
-눈을 뜨면, 그날 아침이다.
+@black text:"눈을 뜬다." hold:1.3
+@page
+그날 아침이다.
 @goto #RgSac if:deathcause=="희생"
 @goto #RgCurse if:deathcause=="사술 폭주"
 @goto #RgBody if:deathcause=="탈진"||deathcause=="아사"
@@ -368,11 +373,13 @@
 @goto Molak01#RunStart
 
 # RipeAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 노인의 검로가 손에 남아 있다. 떨쳐지지 않는다. 떨칠 생각도 없다.
 가슴의 문양이 낮게 열을 낸다. 이번엔 그 열이 먼저 당신을 알아본다.
 @goto #Shop
 # IpmaAfter
+@black marks:true
 …그런데.
 눈을 뜨면, 그날 아침이다.
 뜯겨 나갔을 자리에서 노인의 목소리가 울린다.
@@ -380,33 +387,39 @@
 문양이 있다. 처음부터 그 자리에 있었다는 듯.
 @goto #Shop
 # LeaveAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 강가의 달도, 옆자리의 온기도 없다. 운락객잔의 천장.
 문양이 낮게 열을 낸다. '멀리 가 봐야 소용없다. 이제 알겠느냐.'
 @goto #Shop
 # MuhyangAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 찻잎 냄새는 없다. 운락객잔의 천장. 손목에 누가 짚던 자리가 아직 차다.
 문양이 낮게 열을 낸다. '향을 끈다고 열매가 안 익더냐. 이제 알겠느냐.'
 @goto #Shop
 # HwansokAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 초막도 위패도 없다. 산 너머 산사에서 장작 패는 소리가 아주 멀리 들린다. 허리로 긋는 소리.
 문양이 낮게 열을 낸다. '산문 밖에도 노부의 밭은 있느니라. 이제 알겠느냐.'
 @goto #Shop
 # SungeomAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 교주는 죽지 않았다. 아직 베지 않았으니.
 그러나 손이 베는 법을 기억한다. 그것만은 되감기지 않는다.
 @goto #Shop
 
 # JaegeonAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 현판은 없다. 장부의 줄도 없다. 그 줄 밑의 이름들이 아직 살아 있다.
 문양이 낮게 열을 낸다. '걸린 현판보다 산 사람이 무겁더냐. 이제 알겠느냐.'
 @goto #Shop
 
 # DojuAfter
+@black marks:true
 눈을 뜨면, 그날 아침이다.
 그물 밖은 넓었다. 넓기만 했다.
 문양이 낮게 열을 낸다. '달아난 열매도 익는다. 이제 알겠느냐.'
