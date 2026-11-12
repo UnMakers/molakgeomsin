@@ -48,6 +48,7 @@ public class MolakMark : MonoBehaviour
     {
         float e = Time.realtimeSinceStartup - t0;
         if (e < 0f || e > Dur) return;
+        if (MolakBag.IsOpen || MolakMenu.IsOpen) return;   // 행낭·메뉴를 펼친 동안엔 가리지 않는다
         GUI.depth = -2500;
         if (px == null) { px = new Texture2D(1, 1); px.SetPixel(0, 0, Color.white); px.Apply(); }
         float w = Screen.width, h = Screen.height, u = Mathf.Min(w / 1080f, h / 1920f);

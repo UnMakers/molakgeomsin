@@ -126,7 +126,8 @@ public class MolakBag : MonoBehaviour
 
     static MolakBag inst;
     static Texture2D px;
-    Font gowun; GUIStyle sHead, sName, sDesc, sEff, sSec, sHint, sHintName; float builtU = -1f;
+    Font gowun; GUIStyle sHead, sName, sDesc, sEff, sSec, sHint, sHintName, sTab; float builtU = -1f;
+    int tab = -1;   // 펼친 행낭의 탭(0 물건 · 1 비방·소식 · 2 인연), -1 이면 가장 최근에 얻은 쪽
     float openT; bool open;
     // 목록 스크롤 (직접 구현: 손가락 드래그 + 관성)
     float listScroll, listVel, listMax; bool listDragging; float lastDragY; float lastDragT;
@@ -140,7 +141,7 @@ public class MolakBag : MonoBehaviour
     public static bool ListAtTop => inst == null || inst.listScroll <= 2f;
     public static float PanelTopPx => inst == null ? Screen.height : inst.panelTopPx;
     float panelTopPx;
-    public static void Open () { if (inst != null && !MolakMenu.IsOpen) { inst.open = true; inst.listScroll = 0f; inst.listVel = 0f; } }
+    public static void Open () { if (inst != null && !MolakMenu.IsOpen) { inst.open = true; inst.listScroll = 0f; inst.listVel = 0f; inst.tab = -1; } }
     public static void Close () { if (inst != null) inst.open = false; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -163,9 +164,10 @@ public class MolakBag : MonoBehaviour
         System.Func<int, TextAnchor, GUIStyle> mk = (size, an) => { var s = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(size*u), alignment = an, richText = true, wordWrap = true }; if (gowun != null) s.font = gowun; return s; };
         sHead = mk(40, TextAnchor.MiddleCenter);
         sSec = mk(26, TextAnchor.MiddleLeft);
-        sName = mk(32, TextAnchor.UpperLeft);
-        sDesc = mk(25, TextAnchor.UpperLeft);
-        sEff = mk(23, TextAnchor.UpperRight);
+        sName = mk(36, TextAnchor.UpperLeft);
+        sDesc = mk(28, TextAnchor.UpperLeft);
+        sEff = mk(27, TextAnchor.UpperLeft);
+        sTab = mk(30, TextAnchor.MiddleCenter);
         sHint = mk(28, TextAnchor.MiddleCenter);
         sHintName = mk(40, TextAnchor.MiddleCenter);
     }
@@ -280,83 +282,119 @@ public class MolakBag : MonoBehaviour
             return;
         }
 
-        // ---- 열림 ----
+        // ---- 열림 ---- (0.4.25: 거의 온 화면, 물건/비방·소식/인연 탭, 항목마다 카드 한 장)
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
-        float panelH = h * 0.66f;
+        float panelH = h * 0.84f;
         float y = h - panelH * Mathf.SmoothStep(0f, 1f, openT);
         panelTopPx = y;
-        Box(new Rect(0, 0, w, h), new Color(0f, 0f, 0f, 0.35f * openT));
+        Box(new Rect(0, 0, w, h), new Color(0f, 0f, 0f, 0.45f * openT));
         var panel = new Rect(0, y, w, panelH);
         var ev = Event.current;
         if (ev.type == EventType.MouseDown && !panel.Contains(ev.mousePosition)) { open = false; ev.Use(); }
 
-        Box(panel, night ? new Color(0.09f, 0.08f, 0.075f, 0.98f) : new Color(0.965f, 0.945f, 0.905f, 0.98f));
-        Box(new Rect(0, y, w, 2*u), MolakTheme.Blood);
-        Box(new Rect(w/2f - 60*u, y + 14*u, 120*u, 5*u), night ? new Color(0.6f,0.55f,0.5f,0.8f) : new Color(0.35f,0.3f,0.25f,0.6f));
-        var ink = night ? new Color(0.9f, 0.87f, 0.82f, 1f) : new Color(0.14f, 0.11f, 0.09f, 1f);
-        var ink3 = night ? new Color(0.68f, 0.64f, 0.58f, 1f) : new Color(0.36f, 0.31f, 0.26f, 1f);
-        sHead.normal.textColor = ink; sSec.normal.textColor = MolakTheme.Blood; sName.normal.textColor = ink; sDesc.normal.textColor = ink3; sEff.normal.textColor = MolakTheme.Gold;
-        GUI.Label(new Rect(0, y + 28*u, w, 60*u), "— 행낭(行囊) —", sHead);
-        var xr = new Rect(w - 120*u, y + 22*u, 96*u, 72*u);
-        var xs = new GUIStyle(sHead){ fontSize = Mathf.RoundToInt(34*u) };
+        var paper = night ? new Color(0.09f, 0.08f, 0.075f, 1f) : new Color(0.965f, 0.945f, 0.905f, 1f);
+        Box(panel, paper);
+        Box(new Rect(0, y, w, 3*u), MolakTheme.Blood);
+        Box(new Rect(w/2f - 60*u, y + 14*u, 120*u, 6*u), night ? new Color(0.6f,0.55f,0.5f,0.8f) : new Color(0.35f,0.3f,0.25f,0.6f));
+        var ink = night ? new Color(0.92f, 0.89f, 0.84f, 1f) : new Color(0.13f, 0.10f, 0.08f, 1f);
+        var ink3 = night ? new Color(0.74f, 0.70f, 0.64f, 1f) : new Color(0.30f, 0.26f, 0.22f, 1f);
+        var effC = night ? new Color(0.88f, 0.72f, 0.36f, 1f) : new Color(0.52f, 0.36f, 0.05f, 1f);
+        sHead.normal.textColor = ink; sSec.normal.textColor = MolakTheme.Blood; sName.normal.textColor = ink; sDesc.normal.textColor = ink3; sEff.normal.textColor = effC;
+        GUI.Label(new Rect(0, y + 30*u, w, 64*u), "— 행낭(行囊) —", sHead);
+        var xr = new Rect(w - 130*u, y + 20*u, 110*u, 84*u);
+        var xs = new GUIStyle(sHead){ fontSize = Mathf.RoundToInt(44*u) };
         GUI.Label(xr, "×", xs);
         if (ev.type == EventType.MouseDown && xr.Contains(ev.mousePosition)) { open = false; ev.Use(); return; }
 
-        // ---- 목록 (최근 획득 순) ----
-        float cx = Mathf.Max(40*u, (w - Mathf.Min(w*0.9f, 920*u))/2f), cw = w - 2*cx;
-        float listY = y + 104*u, listH = panelH - 124*u - (MolakLayout.BagStripH - MolakLayout.BagStripContentH)*u;   // 펼친 목록도 기기 막대 위에서 끝난다
+        float cx = Mathf.Max(36*u, (w - Mathf.Min(w*0.92f, 960*u))/2f), cw = w - 2*cx;
+        // ---- 탭 ----
         var sections = new[] { "물건", "비방 · 소식", "인연" };
         var tables = new[] { Items, Lore, Bonds };
-        var rows = new List<object>(); float total = 0f; int shown = 0;
+        var accents = new[] { MolakTheme.Blood, new Color(0.36f, 0.48f, 0.66f, 1f), MolakTheme.Gold };
+        var have = new List<Entry>[3]; int newest = -1, newestIdx = -1;
         for (int s = 0; s < 3; s++)
         {
-            var have = new List<Entry>();
-            foreach (var e in tables[s]) if (Get(e.Flag) > 0f) have.Add(e);
-            if (have.Count == 0) continue;
-            have.Sort((a, b) => order.IndexOf(b.Flag).CompareTo(order.IndexOf(a.Flag)));   // 최근이 위
-            rows.Add(sections[s]); total += 52*u;
-            foreach (var e in have) { rows.Add(e); total += RowH(e, cw, u); shown++; }
+            have[s] = new List<Entry>();
+            foreach (var e in tables[s]) if (Get(e.Flag) > 0f) { have[s].Add(e); int oi = order.IndexOf(e.Flag); if (oi > newestIdx) { newestIdx = oi; newest = s; } }
+            have[s].Sort((a, b) => order.IndexOf(b.Flag).CompareTo(order.IndexOf(a.Flag)));   // 최근이 위
         }
-        if (shown == 0)
+        if (tab < 0 || have[tab].Count == 0) { tab = newest >= 0 ? newest : 0; if (have[tab].Count == 0) for (int s = 0; s < 3; s++) if (have[s].Count > 0) { tab = s; break; } }
+        float ty = y + 108*u, th = 78*u, tw = cw / 3f;
+        Box(new Rect(cx, ty + th, cw, Mathf.Max(1f, 2*u)), new Color(ink3.r, ink3.g, ink3.b, 0.3f));
+        for (int s = 0; s < 3; s++)
+        {
+            var tr = new Rect(cx + tw*s, ty, tw, th);
+            bool on = s == tab, empty = have[s].Count == 0;
+            if (on) { Box(new Rect(tr.x + 4*u, tr.y, tr.width - 8*u, tr.height), night ? new Color(0.16f,0.14f,0.13f,1f) : new Color(0.91f,0.88f,0.82f,1f)); Box(new Rect(tr.x + 4*u, tr.yMax - 4*u, tr.width - 8*u, 4*u), accents[s]); }
+            var c = on ? ink : new Color(ink3.r, ink3.g, ink3.b, empty ? 0.4f : 0.9f);
+            sTab.normal.textColor = c;
+            GUI.Label(tr, sections[s] + "  <size=" + Mathf.RoundToInt(24*u) + ">" + have[s].Count + "</size>", sTab);
+            if (ev.type == EventType.MouseDown && tr.Contains(ev.mousePosition) && !empty) { if (tab != s) { tab = s; listScroll = 0f; listVel = 0f; } ev.Use(); }
+        }
+
+        // ---- 목록 (최근 획득 순, 카드) ----
+        float listY = ty + th + 18*u;
+        float bottomPad = (MolakLayout.BagStripH - MolakLayout.BagStripContentH)*u;   // 기기 막대 여백
+        float listH = y + panelH - bottomPad - 12*u - listY;
+        var list = have[tab];
+        if (list.Count == 0)
         {
             sDesc.alignment = TextAnchor.MiddleCenter;
-            GUI.Label(new Rect(cx, listY, cw, 120*u), "아직 아무것도 없다.\n'빈 행낭이 가장 가볍다.' 사형이 하던 말이다.", sDesc);
+            GUI.Label(new Rect(cx, listY + 40*u, cw, 140*u), "아직 아무것도 없다.\n'빈 행낭이 가장 가볍다.' 사형이 하던 말이다.", sDesc);
             sDesc.alignment = TextAnchor.UpperLeft;
+            listMax = 0f; viewValid = false;
             return;
         }
-        listMax = Mathf.Max(0f, total + 20*u - listH);
+        float total = 0f;
+        foreach (var e in list) total += RowH(e, cw, u) + 14*u;
+        listMax = Mathf.Max(0f, total + 24*u - listH);
         var view = new Rect(cx, listY, cw, listH);
         listViewGui = view; viewValid = true;   // 드래그는 Update(ScrollStep)에서 입력 시스템으로 처리
+        var card = night ? new Color(0.135f, 0.12f, 0.11f, 1f) : new Color(0.995f, 0.985f, 0.96f, 1f);
+        var edge = new Color(ink3.r, ink3.g, ink3.b, night ? 0.25f : 0.22f);
+        string newestFlag = newestIdx >= 0 ? order[newestIdx] : null;
         GUI.BeginGroup(view);
-        float ry = -listScroll;
-        foreach (var o in rows)
+        float ry = -listScroll, pad = 26*u, inW = cw - pad*2 - 8*u;
+        foreach (var e in list)
         {
-            if (o is string)
-            {
-                GUI.Label(new Rect(0, ry + 10*u, cw, 36*u), "· " + (string)o, sSec);
-                Box(new Rect(0, ry + 48*u, cw, Mathf.Max(1f, 1*u)), new Color(ink3.r, ink3.g, ink3.b, 0.35f));
-                ry += 52*u; continue;
-            }
-            var e = (Entry)o;
             float rh = RowH(e, cw, u);
             if (ry + rh > 0 && ry < listH)
             {
-                GUI.Label(new Rect(0, ry + 10*u, cw*0.62f, 40*u), e.Name, sName);
-                if (!string.IsNullOrEmpty(e.Effect)) GUI.Label(new Rect(cw*0.55f, ry + 14*u, cw*0.45f, 34*u), e.Effect, sEff);
-                if (!string.IsNullOrEmpty(e.Desc)) GUI.Label(new Rect(0, ry + 50*u, cw, rh - 54*u), e.Desc, sDesc);
+                var r = new Rect(0, ry, cw, rh);
+                Box(r, card);
+                Box(new Rect(r.x, r.y, r.width, Mathf.Max(1f, 1*u)), edge); Box(new Rect(r.x, r.yMax - Mathf.Max(1f, 1*u), r.width, Mathf.Max(1f, 1*u)), edge);
+                Box(new Rect(r.x, r.y, 6*u, r.height), accents[tab]);
+                float yy = ry + 18*u, xx = pad + 8*u;
+                bool isNew = e.Flag == newestFlag;
+                GUI.Label(new Rect(xx, yy, inW, 48*u), e.Name + (isNew ? "  <size=" + Mathf.RoundToInt(22*u) + "><color=#B03030>· 새로</color></size>" : ""), sName);
+                yy += 50*u;
+                if (!string.IsNullOrEmpty(e.Effect)) { float eh = sEff.CalcHeight(new GUIContent("▸ " + e.Effect), inW); GUI.Label(new Rect(xx, yy, inW, eh), "▸ " + e.Effect, sEff); yy += eh + 6*u; }
+                if (!string.IsNullOrEmpty(e.Desc)) GUI.Label(new Rect(xx, yy, inW, ry + rh - yy), e.Desc, sDesc);
             }
-            ry += rh;
+            ry += rh + 14*u;
         }
         GUI.EndGroup();
-        // 위/아래 페이드로 잘림 표시
-        var fadeC = night ? new Color(0.09f, 0.08f, 0.075f, 1f) : new Color(0.965f, 0.945f, 0.905f, 1f);
-        if (listScroll > 2f) for (int i = 0; i < 6; i++) Box(new Rect(cx, listY + i*4*u, cw, 4*u), new Color(fadeC.r, fadeC.g, fadeC.b, 1f - i/6f));
-        if (listScroll < listMax - 2f) for (int i = 0; i < 6; i++) Box(new Rect(cx, listY + listH - (i+1)*4*u, cw, 4*u), new Color(fadeC.r, fadeC.g, fadeC.b, 1f - i/6f));
+        // 위/아래 페이드: 잘린 게 아니라 더 있다는 표시
+        int steps = 14; float fh = 64*u / steps;
+        if (listScroll > 2f) for (int i = 0; i < steps; i++) Box(new Rect(cx, listY + i*fh, cw, fh + 1f), new Color(paper.r, paper.g, paper.b, 1f - (float)i/steps));
+        if (listScroll < listMax - 2f)
+        {
+            for (int i = 0; i < steps; i++) Box(new Rect(cx, listY + listH - (i+1)*fh, cw, fh + 1f), new Color(paper.r, paper.g, paper.b, 1f - (float)i/steps));
+        }
+        // 목록 아래(기기 막대 자리)는 종이로 덮어 경계를 깔끔하게, 더 있으면 그 자리에 한 줄
+        Box(new Rect(0, listY + listH, w, h - (listY + listH)), paper);
+        if (listScroll < listMax - 2f)
+        {
+            sTab.normal.textColor = new Color(ink3.r, ink3.g, ink3.b, 0.9f);
+            GUI.Label(new Rect(cx, listY + listH + 4*u, cw, 44*u), "<size=" + Mathf.RoundToInt(25*u) + ">▾ 밀어 올리면 더 있다</size>", sTab);
+        }
     }
 
     float RowH (Entry e, float cw, float u)
     {
-        float dh = string.IsNullOrEmpty(e.Desc) ? 0f : sDesc.CalcHeight(new GUIContent(e.Desc), cw);
-        return 58*u + dh + 14*u;
+        float inW = cw - 26*u*2 - 8*u;
+        float eh = string.IsNullOrEmpty(e.Effect) ? 0f : sEff.CalcHeight(new GUIContent("▸ " + e.Effect), inW) + 6*u;
+        float dh = string.IsNullOrEmpty(e.Desc) ? 0f : sDesc.CalcHeight(new GUIContent(e.Desc), inW);
+        return 18*u + 50*u + eh + dh + 22*u;
     }
 }
