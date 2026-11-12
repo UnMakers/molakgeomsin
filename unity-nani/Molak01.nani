@@ -126,8 +126,10 @@
 @set f_amheve=0
 @set f_amhgone=0
 @set f_amhname=0
+@set f_amhnames=0
 @set f_amhowe=0
 @set f_amhpaper=0
+@set f_amhroute=0
 @set f_amhseen=0
 @set f_amhtalk=0
 @set f_amhturn=0
@@ -161,6 +163,7 @@
 @set f_dokinfo=0
 @set f_dreamvow=0
 @set f_ferryfree=0
+@set f_ferrysafe=0
 @set f_finger=0
 @set f_floodchild=0
 @set f_freedmen=0
@@ -187,6 +190,7 @@
 @set f_hajindot=0
 @set f_hajinfree=0
 @set f_hajinhurt=0
+@set f_hajinsoa=0
 @set f_halfhap=0
 @set f_haodone=0
 @set f_haoowe=0
@@ -295,6 +299,7 @@
 @set f_soadead=0
 @set f_soadone=0
 @set f_soaeve=0
+@set f_soajin=0
 @set f_soakilled=0
 @set f_soaledger=0
 @set f_soaleft=0
@@ -328,6 +333,7 @@
 @set f_taxroute=0
 @set f_tea=0
 @set f_thiefkid=0
+@set f_twoledgers=0
 @set f_unjudone=0
 @set f_unjuhint=0
 @set f_valleyroute=0
