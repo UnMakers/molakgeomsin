@@ -1052,6 +1052,8 @@
 @gosub MolakEvents#E_YeonMarket if:nextevent=="E_YeonMarket"
 @gosub MolakEvents#E_YongNight if:nextevent=="E_YongNight"
 @gosub MolakEvents#E_GwakKids if:nextevent=="E_GwakKids"
+@gosub MolakEvents#E_GwakYong if:nextevent=="E_GwakYong"
+@gosub MolakEvents#E_HajinHerb if:nextevent=="E_HajinHerb"
 @gosub MolakEvents#E_SoaCm if:nextevent=="E_SoaCm"
 @gosub MolakEvents#E_SoaAmh if:nextevent=="E_SoaAmh"
 @gosub MolakEvents#E_AmhCm if:nextevent=="E_AmhCm"
@@ -1975,6 +1977,7 @@
 # S_Jang_v3
 밤. 부엌 아궁이 앞에서 쥐눈이 장이 손을 쬐고 있다.
 # S_Jang_vm
+@art char:jang
 "지나던 길이오."
 "…누가 객의 얼굴값을 묻더군. 붉은 끈이었소. 은자 서른 냥을 부르기에……"
 "안 팔았소. 아직은."

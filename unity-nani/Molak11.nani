@@ -130,7 +130,7 @@
 # Jang3
 @scene id:night
 @art scene:alley
-@art char:none
+@art char:jang
 @deja text:"뒷골목 끝, 봇짐 하나. 지난 생에도 장은 이 밤 운락을 떴다. 마지막으로 무엇을 팔았는지 안다."
 {dejapre}
 밤. 전당포 뒷골목 끝. 쥐눈이 장이 봇짐 하나를 메고 서 있다. 처음 보는 차림이다. 길 떠나는 차림.

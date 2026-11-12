@@ -195,6 +195,7 @@
 @set f_hajindead=0
 @set f_hajindot=0
 @set f_hajinfree=0
+@set f_hajingrave=0
 @set f_hajinhurt=0
 @set f_hajinsoa=0
 @set f_halfhap=0
@@ -380,6 +381,7 @@
 @set f_yongkilled=0
 @set f_yongsold=0
 @set f_yongspared=0
+@set f_yongspear=0
 @set gaefed=0
 @set gaefedday=0
 @set grudge=0
@@ -434,6 +436,7 @@
 @set rep_gae=0
 @set rep_heuk=0
 @set rep_maeng=0
+@set sackind=0
 @set seen_E_Childplay=0
 @set seen_E_Rival=0
 @set sl=0

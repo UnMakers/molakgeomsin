@@ -27,6 +27,8 @@ public static class MolakEventDefs
             new Def("E_YeonMarket", 47, 56, 'd', "f_yeonsaved&!f_amhdead", null, 0, 16),
             new Def("E_YongNight", 35, 55, 'n', "f_yongcrew", null, 0, 14),
             new Def("E_GwakKids", 42, 56, 'd', "f_gwakdinner", null, 0, 14),
+            new Def("E_GwakYong", 44, 57, 'd', "f_yongcrew&f_gwakdinner", "E_GwakKids", 2, 16),
+            new Def("E_HajinHerb", 24, 50, 'd', "f_herbfriend&!f_hajindead&!f_herbdead", null, 0, 12),
             new Def("E_SoaCm", 30, 55, 'd', "f_soamet&!f_soadead&b_cm1", null, 0, 18),
             new Def("E_SoaAmh", 34, 52, 'n', "f_soamet&!f_soadead&f_amhyangknown&!f_amhdead", null, 0, 20),
             new Def("E_AmhCm", 38, 55, 'd', "b_am1&b_cm1&!f_amhdead", null, 0, 20),

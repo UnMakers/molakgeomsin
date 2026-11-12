@@ -230,6 +230,7 @@ public class DuelCommand : Command
         if (kind == "hunt3" && MolakStats.Get("f_janglast") > 0) bonus += 1.5f;   // 쥐의 마지막 소식: 집법전주는 오른손으로 법을 쓴다
         if (kind == "lord" && (MolakStats.Get("f_soaeve") > 0 || MolakStats.Get("f_soawait") > 0 || MolakStats.Get("f_amheve") > 0 || MolakStats.Get("f_cmeve") > 0)) bonus += 1f;   // 떠나기 전 밤에 누군가 다녀갔다
         if ((kind == "raid" || kind == "hunt2") && MolakStats.Get("f_yongcrew") > 0) bonus += 1f;   // 나루의 지게꾼들이 골목 어귀를 막는다
+        if ((kind == "raid" || kind == "hunt2") && MolakStats.Get("f_yongspear") > 0) bonus += 0.5f;   // 곽산에게 배운 작대기 — 둘을 엇대면 골목이 막힌다
         float odds = MolakDuel.Odds(foe, bonus);
         bool win = Random.Range(1, 101) <= odds;
         float oldRank = MolakStats.Get("rank");

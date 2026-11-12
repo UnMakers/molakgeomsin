@@ -260,6 +260,10 @@
 @page
 @art char:none
 다섯째 날. 새소리가 없더니, 이제 바람 소리도 없다.
+@goto #N5J0 if:f_jinally<1||f_jinbaekdead>0
+마지막 고개 밑, 길 한가운데 돌 일곱 개가 놓여 있다. 북두 모양이다. 요광이 앞에, 천추가 뒤에. 거꾸로.
+대사형은 먼저 가 있다. 문을 여는 쪽에.
+# N5J0
 @goto #N5Soa if:f_soaeve>0&&f_soadead<1
 돌아보지 않고 걷는다. 혼자 걷는 길은 발소리가 하나라서 셈하기 쉽다.
 @goto #N5End

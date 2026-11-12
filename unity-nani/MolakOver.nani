@@ -155,6 +155,7 @@
 @goto #FirstDeath if:g_runs==1
 @goto #Regress
 # LastFace
+@goto #LFNone if:deathcause=="희생"
 @goto #LFSoa if:f_soamet>0&&f_soadead<1&&aff>=4&&deathcause!="소아의 검"
 @goto #LFAmh if:f_amhdead<1&&amhaff>=5
 @goto #LFCm if:cmaff>=4
@@ -177,6 +178,8 @@
 # LFHajin
 마지막으로 떠오르는 것은 주판알 소리다. 객잔 일층, 등잔 하나.
 장부의 '운객' 칸이 오늘도 빈칸으로 남을 것이다.
+@return
+# LFNone
 @return
 # LFGwak
 @goto #LFGwakW if:f_gwakwifedied>0
@@ -209,6 +212,7 @@
 @vfx kind:rewind
 시간이 거꾸로 흐른다. 뽑히지 않은 칼이 칼집으로 돌아가고, 흘린 피가 상처 속으로 기어든다.
 눈을 뜨면, 그날 아침이다.
+@goto #RgSac if:deathcause=="희생"
 @goto #RgCurse if:deathcause=="사술 폭주"
 @goto #RgBody if:deathcause=="탈진"||deathcause=="아사"
 @goto #RgPoison if:deathcause=="독"||deathcause=="곪은 상처"
@@ -216,6 +220,15 @@
 @goto #RgSoa if:deathcause=="소아의 검"
 @goto #RgTown if:deathcause=="빚"||deathcause=="협"||deathcause=="자객"||deathcause=="원수"
 @goto #RgSword
+# RgSac
+@goto #RgSacA if:sackind==2
+소아는 아직 아무 일도 겪지 않았다. 고마워할 일도, 울 일도 없다. 아무도 모른다. 이 몸만 안다.
+@goto #RgSacT
+# RgSacA
+설은 아직 다락에서 동생의 머리를 빗기다 멈추고 있을 것이다. 그 새벽은 오지 않았다. 아무도 모른다. 이 몸만 안다.
+# RgSacT
+가슴 한쪽이 무겁다. 되감기지 않는 것이 하나 늘었다. 이번엔 앎이 아니라, 받지 못한 인사 하나.
+@goto #RgEnd
 # RgCurse
 가슴의 문양이 식어 있다. 식은 척하고 있다.
 @goto #RgEnd

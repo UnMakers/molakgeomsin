@@ -629,16 +629,20 @@
 "그 아이가 떠난 뒤, 노부는 그 말을 증명할 길을 찾아다녔다. 청운과 적운, 운검의 마지막 아이들에게 노부가 남길 것은 이것뿐이었느니라."
 이 저주가 유산이었다는 말인가.
 "교주도 한때 노부의 돌이었다. 다 익기 전에 썩었지만."
+@gosub #EpiSoaG
+@gosub #EpiJinG
+@goto #EpiTail
+# EpiSoaG
 @goto #EpiSoaDead if:f_soadead>0
 @goto #EpiSoaBond if:f_soabond>0
+@return
+# EpiJinG
 @goto #EpiJinAlly if:f_jinally>0&&f_jinbaekdead<1
 @goto #EpiJinTruth if:f_jinbaektruth>0
 @goto #EpiJinDead if:f_jinbaekdead>0
-@goto #EpiAmh if:f_amhdead<1&&f_amheve>0||f_amhdead<1&&f_amhwait>0
-@goto #EpiCm if:f_cmeve>0||f_cmally>0
-@goto #EpiOchi if:f_ochisaved>0
-@goto #EpiTail
+@return
 # EpiAmh
+@page
 @art char:amhyang_soft
 남쪽에서 기별이 온다. 기별이라기보다 꾸러미다. 기름종이를 풀자 찻잎 한 줌, 그리고 침향 한 대.
 쪽지는 없다. 그녀는 글을 써서 남기는 법을 루에서 배우지 않았다. 남긴 글은 장부가 된다고.
@@ -646,57 +650,75 @@
 @goto #EpiAmhC if:f_amhcomb<1
 품 속의 빗이 아직 있다. 이가 두 개 빠진. 돌려주러 가야 한다. 남쪽으로 보름.
 # EpiAmhC
-@goto #EpiTail
+찻잎을 우린다. 첫 잔은 쓰다. 둘째 잔부터 단맛이 돈다. 루에서 내던 차는 첫 잔부터 달았을 것이다. 손님이 둘째 잔을 기다리지 않으니까.
+그녀는 이제 둘째 잔을 기다리는 곳에 산다.
+@return
 # EpiCm
+@page
 @art scene:hut
 @art char:cheongmyo_robe
 골짜기 초막에서 사람이 온다. 승복이 아니라 짧은 무복 차림. 머리가 한 치쯤 자랐다.
 "막내. 위패 자리, 아직 왼쪽 비어 있어요."
+@goto #EpiCmJ0 if:f_jinally<1||f_jinbaekdead>0||f_jinheld>0
+"오른쪽 자리는 이제 안 비워 둬도 돼요. 그 사람, 초막 안에 누워서 사흘째 죽 타령이에요. 짜다고."
+# EpiCmJ0
 그녀가 장작 하나를 세운다. 허리로 긋는다. 장작이 소리 없이 둘로 갈라진다.
 "이제 저도 아홉째까지 다 쓸 수 있어요. 막내 덕분에. 근데 쓸 데가 장작밖에 없네요."
 그게 좋다고, 그녀가 웃는다. 산문 밖의 봄이다.
-@goto #EpiTail
+@return
 # EpiOchi
+@page
 문득 회목촌의 형제가 떠오른다. 말없이 오래 부둥켜안고 있던 두 사람.
 서열로는 칠 수 없는 것이다. 노인의 사술이 무엇이었든, 그 길에서 주운 것만은 거짓이 아니다.
-@goto #EpiTail
+@return
 # EpiSoaBond
+@page
 @art char:soa_smile
 객잔 지붕 위의 약속을 지켰다. 다 벤 다음에도 살아 있다.
 소아는 아무 말 없이 술 석 잔을 따랐다. 한 잔은 몸에. 한 잔은 검에. 한 잔은—이제는 이름을 불러도 되는 자들에게.
-@goto #EpiTail
+그녀가 셋째 잔을 기울이며 이름을 하나씩 부른다. 적운의 사형들. 우물 속의 아이들. 길다. 다 부르는 데 술 한 병이 든다.
+다 부르고 나서 그녀가 당신을 본다.
+"청운 쪽은 네가 불러라. 나는 모른다."
+부른다. 사부. 대사형. 사형들, 하나씩. 일곱째 사형의 패. 사저의 대추. 마당을 쓸던 새벽.
+목이 멘다. 소아가 잔을 채워 준다. 아무 말도 하지 않는다. 그게 고맙다.
+@return
 # EpiSoaDead
+@page
 @goto #EpiSoaHalf if:f_halfhap>0
 다 벤 다음에도 살아 있으라던 지붕 위의 약속. 살아 있다. 약속한 사람만 없다.
 술 석 잔을 따른다. 한 잔은 몸에. 한 잔은 검에. 한 잔은 연(蓮)에게. 셋째 잔을 비울 사람이 없다.
-@goto #EpiTail
+@return
 # EpiSoaHalf
 왼손이 저리다. 그녀의 검을 쥐었던 손이. 반쪽의 합벽으로도 교주는 베어졌다. 그 반쪽이 무엇으로 채워졌는지, 손은 안다.
 "……이번에도, 반쪽이구나."
 노인이 쌍검 한 자루를 내려다본다.
 "노부도 그랬느니라."
-@goto #EpiTail
+@return
 # EpiJinAlly
+@page
+@art char:jinbaek
 @goto #EpiJinHeld if:f_jinheld>0
 옆문 앞에 칼잡이 열이 누워 있다. 그 한가운데 진백이 문설주에 기대 앉아 있다. 숨은 붙어 있다.
 "……늦었구나, 막내야. 사부는 늘 네가 늦는다고 하셨지."
-사흘 뒤, 산사에서 기별이 온다. 비구니 청묘가 환속했다고. 대사형을 업고 남쪽으로 갔다고.
-@goto #EpiTail
+사흘 뒤, 산사에서 기별이 온다. 비구니 청묘가 환속했다고. 대사형을 업고 골짜기 초막으로 갔다고.
+@return
 # EpiJinHeld
 옆문 앞에 칼잡이 열이 누워 있다. 그 한가운데, 진백이 검을 거꾸로 쥔 채 기대 앉아 있다. 숨이 없다.
 문은 끝까지 열리지 않았다. 반대쪽에서 연 문은, 이번엔 닫힌 채로 지켜졌다.
 산사에 기별을 넣는다. 보름날 사당에 쌀자루가 더는 놓이지 않을 거라고.
-@goto #EpiTail
+@return
 # EpiJinTruth
+@page
 혈천진의 눈이 뒤집히던 순간, 북두를 거꾸로 밟았다. 대사형이 마지막으로 가르친 일곱 걸음이 당신을 살렸다.
 어딘가에서 그도 이 소식을 들으리라. 용서는 없다. 다만 셈은 끝났다.
-@goto #EpiTail
+@return
 # EpiJinDead
+@page
 사당 먼지 위에 그은 먹줄이 떠오른다. 대사형이 고마워한 것은 죽음이 아니었다. 산문 안쪽의 일을 묻지 않은 것이었다.
 노인이 그것을 안다는 듯 당신을 본다.
 "열지 않은 문 뒤에 무엇이 있었는지, 궁금하지 않으냐."
 궁금하다. 궁금해서 오히려 묻지 않는다. 대답이 두렵다.
-@goto #EpiTail
+@return
 # EpiTail
 회귀 {g_runs}회. 그 생들의 아침과 밤 전부가 이 하루에 닿았다.
 "네 안의 사술이 다 익거든."
@@ -704,6 +726,9 @@
 "노부를 찾을 수 있으리라."
 눈을 한 번 깜빡인 사이 노인은 없다. 공기가 풀리고, 그제야 무릎을 꿇으며 숨을 토한다.
 @gosub #EpiRoad
+@gosub #EpiCm if:f_cmeve>0||f_cmally>0
+@gosub #EpiAmh if:f_amhdead<1&&f_amheve>0||f_amhdead<1&&f_amhwait>0
+@gosub #EpiOchi if:f_ochisaved>0
 @vfx kind:dawn
 복수는 끝났다.<br>이야기는, 끝나지 않았다.
 \[ 제一부 完 \]
@@ -728,6 +753,10 @@
 "오셨습죠. 거 보십쇼. 아직 다 못 갚았으니 오실 줄 알았습니다요."
 # EpiRoadY
 운락의 지붕들이 보인다. 객잔 처마 밑 등잔에 불이 켜져 있다. 낮인데도.
+@goto #EpiRoadEnd if:f_hajindead>0
+문을 민다. 계산대 뒤에서 하진무가 주판에서 고개를 든다. 한참 본다. 주판알 하나를 튕긴다.
+"……셈이 또 틀렸소. 방값 받을 날이 하루 늘었으니."
+계단 셋째 칸이 삐걱인다. 그 소리가 집 같다.
 # EpiRoadEnd
 @return
 # H_Tavernluck
