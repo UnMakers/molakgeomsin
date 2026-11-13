@@ -34,6 +34,18 @@ public static class MolakBuild
 
     public static string Android (string version, int code) { return Build(version, code, false); }
 
+    /// <summary>0.4.45: 기기에서 그림을 미리 읽어 두도록 Resources/MolakArt 의 그림 이름을 _index.txt 에 적는다(빌드 때마다 다시).</summary>
+    public static void WriteArtIndex ()
+    {
+        var dir = Path.Combine(Application.dataPath, "Resources", "MolakArt");
+        if (!Directory.Exists(dir)) return;
+        var names = Directory.GetFiles(dir).Where(f => { var e = Path.GetExtension(f).ToLowerInvariant(); return e == ".png" || e == ".jpg" || e == ".jpeg"; })
+            .Select(f => Path.GetFileNameWithoutExtension(f)).OrderBy(n => n).ToArray();
+        var file = Path.Combine(dir, "_index.txt");
+        var text = string.Join("\n", names);
+        if (!File.Exists(file) || File.ReadAllText(file) != text) { File.WriteAllText(file, text, new System.Text.UTF8Encoding(false)); AssetDatabase.ImportAsset("Assets/Resources/MolakArt/_index.txt"); }
+    }
+
     /// <summary>스토어용 AAB. 타깃 API는 36으로 고정한다(2026-08-31부터 새 앱·업데이트 요구 수준).
     /// 업로드 키스토어(Publishing Settings)가 없으면 디버그 서명이라 스토어가 거절한다 — 결과 줄에 표시한다.</summary>
     public static string Bundle (string version, int code) { return Build(version, code, true); }
@@ -41,6 +53,7 @@ public static class MolakBuild
     static string Build (string version, int code, bool aab)
     {
         if (File.Exists(ResultFile)) File.Delete(ResultFile);
+        WriteArtIndex();
         // 보조: .nani 전부 재임포트(커맨드 컴파일 이후 상태 보장)
         foreach (var f in Directory.GetFiles(Path.Combine(Application.dataPath, "Scenario"), "*.nani"))
             AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
@@ -165,6 +178,7 @@ public static class MolakBuild
     public static string IOS (string version, int code)
     {
         if (File.Exists(IosResultFile)) File.Delete(IosResultFile);
+        WriteArtIndex();
         string res = "";
         if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.iOS, BuildTarget.iOS))
         {

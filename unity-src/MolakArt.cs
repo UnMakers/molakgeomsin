@@ -116,7 +116,8 @@ public class MolakArt : MonoBehaviour
 
     /// <summary>0.4.41: 그림이 바뀌는 중인가(새 장면·인물이 아직 다 떠오르지 않았다). @art 가 이게 끝나길 잠깐 기다린 뒤 글로 넘어간다.</summary>
     public static bool Settling { get { return inst != null && (inst.sceneT < 0.7f || inst.charT < 0.7f); } }
-    const float FadeIn = 0.22f, FadeFrom = 0.35f;
+    // 0.4.45: 옅게(35%)에서 0.22초 → 60%에서 0.15초. 새 그림이 바뀌는 순간부터 거의 다 보인다.
+    const float FadeIn = 0.15f, FadeFrom = 0.6f;
 
     /// <summary>0.4.42: 장면 없이 시작하는 사건(우연 사건의 절반 남짓)은 앞 사건 그림이 그대로 남아 있었다 — 하루의 바탕(낮/밤) 그림으로 되돌린다.</summary>
     /// <summary>0.4.44: 하루의 바탕 그림(낮/밤)으로. 이미 바탕이고 인물도 없으면 아무것도 안 한다(깜박임 방지). 비무 중엔 건드리지 않는다.</summary>
@@ -139,6 +140,31 @@ public class MolakArt : MonoBehaviour
     public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); }
 
     static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
+
+    // ---- 0.4.45 미리 읽기 ----
+    // 그림을 처음 부르는 순간 Resources.Load 로 그 자리에서 읽으면, 기기에서는 그 프레임이 길게 멈춘 뒤에야 그림이 뜬다
+    // (장면이 바뀔 때 그림이 한 박자 늦게 뜨던 것). 게임이 켜지면 MolakArt/_index(빌드 때 MolakBuild 가 만든다)에 적힌
+    // 그림을 한 장씩 비동기로 읽어 둔다. 하루의 바탕(낮·밤)부터. 목록에 없는 그림은 예전처럼 부를 때 읽는다.
+    bool preloadStarted;
+    System.Collections.IEnumerator Preload ()
+    {
+        var idx = Resources.Load<TextAsset>("MolakArt/_index");
+        if (idx == null) yield break;
+        var names = new List<string> { "scene_morning", "scene_night" };
+        foreach (var raw in idx.text.Split('\n')) { var n = raw.Trim(); if (n.Length > 0 && !names.Contains(n)) names.Add(n); }
+        foreach (var n in names)
+        {
+            string path = "MolakArt/" + n;
+            Sprite have;
+            if ((cache.TryGetValue(path, out have) && have != null) || missing.Contains(path)) continue;
+            var rq = Resources.LoadAsync<Texture2D>(path);
+            yield return rq;
+            var tex = rq.asset as Texture2D;
+            if (tex == null) continue;
+            if (cache.TryGetValue(path, out have) && have != null) continue;   // 기다리는 사이 대본이 먼저 불렀다
+            cache[path] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+        }
+    }
     static readonly HashSet<string> missing = new HashSet<string>();
     static Sprite Load (string path)
     {
@@ -207,6 +233,7 @@ public class MolakArt : MonoBehaviour
     {
         Ensure();
         HookReset();
+        if (!preloadStarted) { preloadStarted = true; StartCoroutine(Preload()); }
         var cam = PaperCam();
         if (cam == null) return;
 
