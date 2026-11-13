@@ -161,7 +161,7 @@ public class MolakBag : MonoBehaviour
         if (sName != null && Mathf.Approximately(builtU, u)) return;
         builtU = u;
         if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
-        System.Func<int, TextAnchor, GUIStyle> mk = (size, an) => { var s = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(size*u), alignment = an, richText = true, wordWrap = true }; if (gowun != null) s.font = gowun; return s; };
+        System.Func<int, TextAnchor, GUIStyle> mk = (size, an) => { var s = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(size*u), alignment = an, richText = true, wordWrap = true, clipping = TextClipping.Overflow }; if (gowun != null) s.font = gowun; return s; };
         sHead = mk(40, TextAnchor.MiddleCenter);
         sSec = mk(26, TextAnchor.MiddleLeft);
         sName = mk(36, TextAnchor.UpperLeft);
@@ -393,8 +393,10 @@ public class MolakBag : MonoBehaviour
                 Box(new Rect(r.x, r.y, r.width, Mathf.Max(1f, 1*u)), edge); Box(new Rect(r.x, r.yMax - Mathf.Max(1f, 1*u), r.width, Mathf.Max(1f, 1*u)), edge);
                 Box(new Rect(r.x, r.y, 6*u, r.height), accents[tab]);
                 float yy = ry + 18*u, xx = pad + 8*u;
-                GUI.Label(new Rect(xx, yy, inW, 48*u), e.Name, sName);
-                yy += 50*u;
+                // 0.4.36: 고운바탕은 줄 높이가 커서 48u 칸이면 받침 아래가 잘렸다 → 실제 높이로
+                float nh = NameH(e, inW);
+                GUI.Label(new Rect(xx, yy, inW, nh), e.Name, sName);
+                yy += nh + 4*u;
                 if (!string.IsNullOrEmpty(e.Effect)) { float eh = sEff.CalcHeight(new GUIContent("▸ " + e.Effect), inW); GUI.Label(new Rect(xx, yy, inW, eh), "▸ " + e.Effect, sEff); yy += eh + 6*u; }
                 if (!string.IsNullOrEmpty(e.Desc)) GUI.Label(new Rect(xx, yy, inW, ry + rh - yy), e.Desc, sDesc);
             }
@@ -422,6 +424,8 @@ public class MolakBag : MonoBehaviour
         float inW = cw - 26*u*2 - 8*u;
         float eh = string.IsNullOrEmpty(e.Effect) ? 0f : sEff.CalcHeight(new GUIContent("▸ " + e.Effect), inW) + 6*u;
         float dh = string.IsNullOrEmpty(e.Desc) ? 0f : sDesc.CalcHeight(new GUIContent(e.Desc), inW);
-        return 18*u + 50*u + eh + dh + 22*u;
+        return 18*u + NameH(e, inW) + 4*u + eh + dh + 22*u;
     }
+
+    float NameH (Entry e, float inW) { return Mathf.Max(sName.CalcHeight(new GUIContent(e.Name), inW), sName.fontSize * 1.45f); }
 }
