@@ -19,7 +19,7 @@ public class MolakArt : MonoBehaviour
     static readonly Dictionary<string, string> SceneAlias = new Dictionary<string, string>
     {
         {"day","morning"},{"morning","morning"},{"night","night"},{"shrine","shrine"},{"blood","blood"},
-        {"valley","valley"},{"rain","rain"},{"market","market"},{"crossroad","crossroad"},{"roofmoon","roofmoon"},{"duel","duel"},
+        {"valley","valley"},{"rain","rain"},{"market","market"},{"crossroad","crossroad"},{"roofmoon","roofmoon"},{"roof","roofmoon"},{"duel","duel"},
     };
 
     SpriteRenderer sceneR, charR;
