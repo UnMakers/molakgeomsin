@@ -48,6 +48,22 @@ public class MolakInputGuard : MonoBehaviour
         return new Vector2(p.x, Screen.height - p.y);
     }
 
+    static readonly List<UnityEngine.EventSystems.RaycastResult> hits = new List<UnityEngine.EventSystems.RaycastResult>();
+    static bool OverButton (Vector2 gui)
+    {
+        var es = UnityEngine.EventSystems.EventSystem.current;
+        if (es == null) return false;
+        var ped = new UnityEngine.EventSystems.PointerEventData(es) { position = new Vector2(gui.x, Screen.height - gui.y) };
+        hits.Clear(); es.RaycastAll(ped, hits);
+        foreach (var h in hits)
+        {
+            if (h.gameObject == null) continue;
+            var sel = h.gameObject.GetComponentInParent<UnityEngine.UI.Selectable>();
+            if (sel != null && sel.isActiveAndEnabled && sel.interactable) return true;
+        }
+        return false;
+    }
+
     bool wasDownInside;
     bool wasDown;            // 직전 프레임 포인터 눌림
     bool pressBlocked;       // 이번 누름은 '계속'으로 처리하지 않음(보호 영역에서 시작 / 드래그)
@@ -69,7 +85,9 @@ public class MolakInputGuard : MonoBehaviour
         // 합성 탭 해제(한 프레임 뒤)
         if (releaseFrame >= 0 && Time.frameCount >= releaseFrame) { if (cont != null) cont.Activate(Vector2.zero); releaseFrame = -1; }
 
-        if (down && !wasDown) { pressBlocked = inside; wasDownInside = inside; }
+        // 0.4.38: 선택지 카드(uGUI 단추) 위에서 시작한 누름은 '계속'으로 보내지 않는다 — 고르는 탭이 선택지 뒤 첫 문단까지
+        //         한꺼번에 다 찍어 버려(한 글자씩 나오지 않고 통째로 뜨던 것) 생기던 일.
+        if (down && !wasDown) { bool onBtn = OverButton(gp); pressBlocked = inside || onBtn; wasDownInside = inside; }
         if (down && inside) wasDownInside = true;
         if (down && MolakScroll.DraggedThisPress) pressBlocked = true;
 
