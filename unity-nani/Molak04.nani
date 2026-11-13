@@ -431,7 +431,7 @@
 <color=#8A7A66>저잣거리의 노점 할멈</color> — 좌판 구석에 주먹밥 하나를 늘 남겨 둔다. 임자는 안 와도 된다고 한다. 오면 더 좋고.
 # ERl9
 @goto #ERlA if:f_insulted<1||f_paidback<1
-<color=#8A7A66>{insultname}</color> — 비무판에서 진 상대의 턱을 다시는 들지 않는다. 누가 그 몸짓을 하면 먼저 고개를 돌린다.
+그 뒤로 <color=#8A7A66>{insultname}</color>은(는) 비무판에서 진 상대의 턱을 다시는 들지 않는다. 누가 그 몸짓을 하면 먼저 고개를 돌린다.
 # ERlA
 @return
 

@@ -327,6 +327,8 @@ public class MolakFlow : MonoBehaviour
         try
         {
             if (pt == null || pt.Text == null || !pt.Text.HasValue) return "";
+            // 0.4.52: 아직 실행 전인 줄의 {변수} 를 미리 풀면 나니노벨이 'Unexpected parameter value part' 오류를 낸다 → 어림에는 날 글을 쓴다
+            if (pt.Text.DynamicValue) return pt.Text.ToString() ?? "";
             var loc = Engine.GetService<ITextLocalizer>();
             return (loc != null ? loc.Resolve(pt.Text.Value) : pt.Text.Value.ToString()) ?? "";
         }

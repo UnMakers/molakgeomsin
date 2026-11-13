@@ -179,7 +179,7 @@
 ; ---------- 초식 ----------
 # StKeep
 @duelx do:keep
-<color=#9A70C4>{dx_keeptext}</color>
+@print "<color=#9A70C4>{dx_keeptext}</color>"
 @goto #StFront
 # StFront
 호흡 하나, 반 보. 칼이 먼저 나간 쪽이 이긴다.
