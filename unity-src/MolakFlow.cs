@@ -131,7 +131,7 @@ public class MolakFlow : MonoBehaviour
         LastDecision = spot.ScriptPath + ":" + spot.LineNumber + " reset=" + reset + " break=" + breakNext + " ovf=" + ovf + " hasValue=" + pt.ResetPrinter.HasValue;
 
 
-        if (afterChoice) MolakInputGuard.MuteFor(0.45f);   // 0.4.39: 고르는 탭의 여파가 첫 문단의 타자 효과를 건너뛰지 않게
+        if (afterChoice) MolakInputGuard.MuteFor(0.22f);   // 0.4.43: 0.45→0.22초(언메이커: 너무 안 넘어간다). 0.4.39: 고르는 탭의 여파가 첫 문단의 타자 효과를 건너뛰지 않게
         pt.ResetPrinter = reset;
         if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); if (buf.Count > 0) MolakPageTurn.Play(); } }   // 글이 있던 쪽을 넘긴다
         MolakScroll.ResetToBottom();

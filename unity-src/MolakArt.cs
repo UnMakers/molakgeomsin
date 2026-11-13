@@ -115,7 +115,17 @@ public class MolakArt : MonoBehaviour
     }
 
     /// <summary>0.4.41: 그림이 바뀌는 중인가(새 장면·인물이 아직 다 떠오르지 않았다). @art 가 이게 끝나길 잠깐 기다린 뒤 글로 넘어간다.</summary>
-    public static bool Settling { get { return inst != null && (inst.sceneT < 0.8f || inst.charT < 0.8f); } }
+    public static bool Settling { get { return inst != null && (inst.sceneT < 0.7f || inst.charT < 0.7f); } }
+    const float FadeIn = 0.22f, FadeFrom = 0.35f;
+
+    /// <summary>0.4.42: 장면 없이 시작하는 사건(우연 사건의 절반 남짓)은 앞 사건 그림이 그대로 남아 있었다 — 하루의 바탕(낮/밤) 그림으로 되돌린다.</summary>
+    public static void ResetForEvent (string eventId)
+    {
+        if (inst == null || string.IsNullOrEmpty(eventId) || eventId == "none") return;
+        string sc;
+        if (MolakBridgeData.EventScene.TryGetValue(eventId, out sc) && !string.IsNullOrEmpty(sc)) return;   // 사건이 제 장면을 깐다
+        Scene(IsNight ? "night" : "morning");
+    }
 
     public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); }
 
@@ -191,17 +201,19 @@ public class MolakArt : MonoBehaviour
         var cam = PaperCam();
         if (cam == null) return;
 
-        // 페이드
-        sceneT = Mathf.Min(1f, sceneT + Time.deltaTime*1.6f);
-        charT = Mathf.Min(1f, charT + Time.deltaTime*1.6f);
-        if (sceneR.sprite != sceneCur && (sceneR.sprite == null || sceneT >= 0.5f || sceneCur == null)) sceneR.sprite = sceneCur;
-        if (charR.sprite != charCur && (charR.sprite == null || charT >= 0.5f || charCur == null)) charR.sprite = charCur;
-        float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Clamp01(sceneT));
+        // 페이드 — 0.4.42: 새 그림은 그 자리에서 바로 바꾸고(옛 그림이 꺼졌다 다시 비치다 반쯤에서 바뀌던 0.6초짜리 교차를 없앴다),
+        //         옅게(35%)에서 0.22초 만에 또렷해진다. 그림을 불러오느라 한 프레임이 길어져도 단계를 건너뛰지 않게 dt 를 묶는다.
+        float fdt = Mathf.Min(Time.unscaledDeltaTime, 0.05f) / FadeIn;
+        sceneT = Mathf.Min(1f, sceneT + fdt);
+        charT = Mathf.Min(1f, charT + fdt);
+        if (sceneCur != null && sceneR.sprite != sceneCur) sceneR.sprite = sceneCur;
+        if (charCur != null && charR.sprite != charCur) charR.sprite = charCur;
+        float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Lerp(FadeFrom, 1f, sceneT));
         // 그림은 한 번에 하나: 인물이 서 있으면 장면은 가린다(인물이 빠지면 다시 떠오른다)
         // 0.4.9: 인물이 서면 장면을 지우지 않고 옅게 깔아 둔다 — 인물 뒤에 그 자리의 풍경이 보인다
         sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0.7f : 1f, Time.deltaTime * 2.4f);   // 인물이 불투명해졌으니 뒤 풍경은 덜 지운다
         sA *= sceneVis;
-        float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Clamp01(charT));
+        float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Lerp(FadeFrom, 1f, charT));
         if (sceneCur == null && sceneT >= 1f) sceneR.sprite = null;
         if (charCur == null && charT >= 1f) charR.sprite = null;
         // 0.4.28: 인물은 곱하기가 아니라 보통 알파로 — 곱하기면 얼굴·흰 옷 같은 밝은 데로 뒤 배경이 비쳤다(인물 그림도 안쪽을 채워 다시 오렸다)

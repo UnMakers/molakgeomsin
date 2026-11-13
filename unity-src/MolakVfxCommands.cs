@@ -59,11 +59,11 @@ public class ArtCommand : Command
         if (Assigned(SceneId)) MolakArt.Scene(SceneId.Value);
         if (Assigned(CharId)) MolakArt.Char(CharId.Value);
         await Awaitable.NextFrameAsync();
-        // 0.4.41: 그림이 먼저 — 새 그림이 거의 다 떠오를 때까지(최대 0.6초) 글을 붙들어 둔다.
+        // 0.4.41: 그림이 먼저 — 새 그림이 거의 다 떠오를 때까지(0.4.42부터 최대 0.3초) 글을 붙들어 둔다.
         //         예전엔 글이 바로 찍히기 시작해 그림이 대사 뒤에 바뀌는 것처럼 보였다. 읽은 글 넘기기·자동 시험 중엔 기다리지 않는다.
         var sp = Engine.GetService<IScriptPlayer>();
         bool skip = (sp != null && sp.Skipping) || MolakBlackout.Auto;
-        float until = Time.realtimeSinceStartup + 0.6f;
+        float until = Time.realtimeSinceStartup + 0.3f;
         while (!skip && MolakArt.Settling && Time.realtimeSinceStartup < until)
             await Awaitable.NextFrameAsync();
     }

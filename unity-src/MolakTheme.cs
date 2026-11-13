@@ -301,7 +301,8 @@ public class MolakTheme : MonoBehaviour
             }
         }
         // 삽화 띠 접기: 선택지 4개 이상이거나, 띠를 펼치면 본문이 선택지 위 공간에 다 안 들어갈 때만
-        MolakArt.Collapsed = choiceCount >= 4 || (choiceCount >= 1 && !BandFits(choiceCount));   // 0.4.25: 선택지가 넷 이상이거나, 그림을 둔 채로는 본문이 선택지 위에 다 안 들어가면 접는다(선택지 수와 무관하게 같은 기준)
+        // 0.4.42(언메이커 결정): 선택지가 둘 이상이면 개수와 상관없이 그림 띠를 접고 본문을 선택지 바로 위까지 올린다. 하나뿐이면 그대로 둔다.
+        MolakArt.Collapsed = choiceCount >= 2;
         EnsureCardSprite();
         // 선택지 멈춤 감시: 고른 뒤 2.5초가 지나도 같은 선택지(같은 Id 묶음)가 그대로면 기록한다(시험자 보고 '골랐는데 안 사라짐' 추적)
         if (clickT >= 0f && Time.unscaledTime - clickT > 2.5f)
