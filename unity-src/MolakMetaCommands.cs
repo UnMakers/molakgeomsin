@@ -3,7 +3,7 @@ using System.Linq;
 using Naninovel;
 using UnityEngine;
 
-/// <summary>@initrun — 회차 시작: 일반 변수 전부 리셋 후 깨달음(전역 g_up_*) 반영 시작치 설정.</summary>
+/// <summary>@initrun — 회차 시작: 일반 변수 전부 리셋 후 몸에 남은 것(MolakMemory)을 반영해 시작치를 정한다.</summary>
 [Alias("initrun")]
 public class InitRunCommand : Command
 {
@@ -11,6 +11,8 @@ public class InitRunCommand : Command
     static readonly string[] CodeGlobals = {
         "g_pts", "g_runs", "g_clears", "g_lastday", "g_bestday", "g_bestrank", "g_hapbo", "g_samecount", "g_lasttheme",
         "g_next_bond", "g_next_item", "g_redo", "g_lk_nameless", "g_ls_nameless",
+        "g_bestsw", "g_bestng", "g_vow_rev", "g_vow_bond", "g_vow_live", "g_cursedeaths", "g_memv", "g_membuy", "g_up_mem",
+        "g_up_sword", "g_up_body", "g_up_core", "g_up_coin", "g_up_seal", "g_up_tea", "g_up_lodge", "g_up_vigor",
     };
 
     /// <summary>전역(g_) 기본값 보장 — 회차 시작과 옛 저장 불러오기 때 모두 쓴다.
@@ -20,7 +22,9 @@ public class InitRunCommand : Command
     {
         foreach (var n in MolakVarList.Globals) MolakStats.EnsureNum(n);
         foreach (var n in CodeGlobals) MolakStats.EnsureNum(n);
-        foreach (var u in ShopInfoCommand.Ups) MolakStats.EnsureNum("g_up_" + u.key);                  // 깨달음 강화 단계
+        foreach (var f in MolakMemory.Forms) MolakStats.EnsureNum("g_form_" + f.Key);                    // 청운검결의 조각
+        foreach (var sg in MolakMemory.Sigs) MolakStats.EnsureNum("g_sig_" + sg.Kind);                    // 받아 본 필살 초식
+        MolakStats.EnsureStr("g_scars");                                                                   // 겪어 본 죽음
         foreach (var k in DuelCommand.BossKinds) { MolakStats.EnsureNum("g_know_" + k); MolakStats.EnsureNum("g_died_" + k); } // 진 상대의 검로·죽은 기억
         foreach (var e in MolakEnd.All) MolakStats.EnsureNum("g_end_" + e.Id);                            // 본 말로
         foreach (var le in MolakLedger.All)
@@ -40,16 +44,10 @@ public class InitRunCommand : Command
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)
             vars.SetVariableValue(n, ty == CustomVariableValueType.String ? new CustomVariableValue("none") : new CustomVariableValue(0f));
-        float up (string k) => MolakStats.Get("g_up_" + k);
-        float hp0 = MolakRules.BaseHp + MolakRules.HpPerBody * up("body") + MolakRules.HpPerVigor * up("vigor");
-        MolakStats.Set("hpmax", hp0);
-        MolakStats.Set("hp", hp0);
-        if (up("tea") > 0) MolakStats.Set("f_tea", 1f);      // 회귀 상점: 청심차 비방
-        if (up("lodge") > 0) MolakStats.Set("f_hajinfree", 1f); // 회귀 상점: 빈칸 방값
-        MolakStats.Set("ng", up("core") * MolakRules.CorePerLv);
-        MolakStats.Set("sw", MolakRules.BaseSword + up("sword") * MolakRules.SwordPerLv);
+        MolakMemory.Migrate();
+        MolakMemory.ApplyStart();   // 손이 기억한 검·겪어 본 죽음·터져 본 문양·뜻·앎
         MolakStats.Set("sl", 0);
-        MolakStats.Set("mn", MolakRules.BaseCoin + up("coin") * MolakRules.CoinPerLv);
+        MolakStats.Set("mn", MolakRules.BaseCoin);
         MolakStats.Set("curse", MolakRules.StartCurse);
         MolakStats.Set("day", 1);
         // 이번 생의 바람(회차 테마): 첫 생은 맑음. 그 뒤로는 다섯에 하나 맑음, 나머지 넷 중 하나 — 지난 생과 겹치지 않게.
@@ -65,20 +63,8 @@ public class InitRunCommand : Command
             MolakStats.Set("raidday", th == MolakRules.ThemeEarlyRaid ? MolakRules.RaidDayEarly : MolakRules.RaidDay);
             MolakStats.Set("thday", MolakRules.ThemeHintDay);
         }
-        // 이번 생의 채비: 상점에서 골라 둔 인연·물건을 첫 아침에 쥐여 주고 비운다
-        {
-            int b = Mathf.RoundToInt(MolakStats.Get("g_next_bond")), it = Mathf.RoundToInt(MolakStats.Get("g_next_item"));
-            if (b == 1) { MolakStats.Set("f_herbfriend", 1f); MolakStats.Set("f_herbpulse", 1f); }
-            if (b == 2) { MolakStats.Set("f_alms", 1f); MolakStats.Set("f_gaekid", 1f); MolakStats.Set("rep_gae", 1f); }
-            if (b == 3) { MolakStats.Set("f_jangfriend", 1f); }
-            if (it == 1) MolakStats.Set("f_hat", 1f);
-            if (it == 2) MolakStats.Set("f_salve", 1f);
-            if (it == 3) { MolakStats.Set("f_incense", 1f); MolakStats.Add("curse", -MolakRules.IncenseCurseCut); }
-            MolakStats.Set("g_next_bond", 0f); MolakStats.Set("g_next_item", 0f);
-        }
         MolakStats.Set("rank", 0);
         if (MolakStats.Get("g_hapbo") > 0) MolakStats.Set("f_hapbyeok", 1f);   // 0.4.9: 한 번 읽은 합벽 검보는 되감기지 않는다
-        MolakStats.Set("seallv", up("seal"));
         MolakKnow.Snapshot();   // 이번 생이 시작될 때 이미 아는 것 — 죽을 때 "되감기지 않는 것"을 가려낸다
         MolakStats.Set("runs", MolakStats.Get("g_runs"));
     }
@@ -128,7 +114,7 @@ public class DayTickCommand : Command
     }
 }
 
-/// <summary>@regress cause:\"사술\" — 사망 정산: 깨달음 계산, 전역 누적, 표시 변수 설정.</summary>
+/// <summary>@regress — 사망 정산: 몸에 남는 것을 셈하고(MolakMemory.OnLifeEnd) 회귀 횟수를 센다.</summary>
 [Alias("regress")]
 public class RegressCommand : Command
 {
@@ -136,13 +122,11 @@ public class RegressCommand : Command
 
     public override async Awaitable Execute (ExecutionContext ctx)
     {
-        float day = MolakStats.Get("day"), sw = MolakStats.Get("sw"), ng = MolakStats.Get("ng");
-        float gained = MolakRules.Enlightenment(day, sw, ng, MolakStats.Get("rank"));
-        MolakStats.Add("g_pts", gained);
+        if (MolakStats.Get("practice") > 0f) return;
+        MolakMemory.OnLifeEnd();
         MolakStats.Add("g_runs", 1f);
-        MolakStats.Set("gained", gained);
         MolakLedger.Accumulate();
-        MolakAutoSave.LogLife(gained);
+        MolakAutoSave.LogLife(MolakStats.Get("rm_c"));
         await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
     }
 }
@@ -153,69 +137,8 @@ public class ClearRunCommand : Command
 {
     public override async Awaitable Execute (ExecutionContext ctx)
     {
-        float gained = MolakRules.ClearPoints(MolakStats.Get("day"));
-        MolakStats.Add("g_pts", gained);
+        MolakMemory.OnLifeEnd();
         MolakStats.Add("g_clears", 1f);
-        MolakStats.Set("gained", gained);
-        await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
-    }
-}
-
-/// <summary>@shopinfo — 깨달음 상점 표시 변수(cost_*, lv_*) 갱신.</summary>
-[Alias("shopinfo")]
-public class ShopInfoCommand : Command
-{
-    public static readonly (string key, int baseCost, int step, int max)[] Ups = {
-        ("sword", 3, 2, 5), ("body", 3, 2, 5), ("core", 4, 2, 5), ("coin", 2, 1, 4), ("seal", 5, 3, 4), ("mem", 6, 4, 3),
-        ("tea", 10, 0, 1), ("lodge", 8, 0, 1), ("vigor", 6, 2, 10)
-    };
-
-#pragma warning disable CS1998
-    public override async Awaitable Execute (ExecutionContext ctx)
-#pragma warning restore CS1998
-    {
-        foreach (var u in Ups)
-        {
-            float lv = MolakStats.Get("g_up_" + u.key);
-            MolakStats.Set("lv_" + u.key, lv);
-            MolakStats.Set("cost_" + u.key, u.baseCost + lv * u.step);
-            MolakStats.Set("max_" + u.key, lv >= u.max ? 1f : 0f);
-        }
-        var bonds = MolakRules.PrepBondNames; var items = MolakRules.PrepItemNames;
-        MolakStats.SetStr("prepbond", bonds[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_bond")), 0, bonds.Length - 1)]);
-        MolakStats.SetStr("prepitem", items[Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_next_item")), 0, items.Length - 1)]);
-    }
-}
-
-/// <summary>@buyup kind:sword — 깨달음 소모 강화. buyok 변수로 결과 보고.</summary>
-[Alias("buyup")]
-public class BuyUpCommand : Command
-{
-    [RequiredParameter] public StringParameter Kind;
-
-    public override async Awaitable Execute (ExecutionContext ctx)
-    {
-        // 이번 생의 채비(한 생에 하나씩) · 되묻기(한 번)
-        string k = Kind.Value;
-        if (k.StartsWith("bond") || k.StartsWith("item") || k == "redo")
-        {
-            int pcost = k.StartsWith("bond") ? MolakRules.PrepBondCost : k.StartsWith("item") ? MolakRules.PrepItemCost : MolakRules.RedoCost;
-            string slot = k.StartsWith("bond") ? "g_next_bond" : k.StartsWith("item") ? "g_next_item" : "g_redo";
-            if (MolakStats.Get(slot) > 0 || MolakStats.Get("g_pts") < pcost) { MolakStats.Set("buyok", 0f); return; }
-            MolakStats.Add("g_pts", -pcost);
-            MolakStats.Set(slot, k == "redo" ? 1f : float.Parse(k.Substring(4)));
-            MolakStats.Set("buyok", 1f);
-            await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
-            return;
-        }
-        var u = ShopInfoCommand.Ups.FirstOrDefault(x => x.key == Kind.Value);
-        if (u.key == null) { MolakStats.Set("buyok", 0f); return; }
-        float lv = MolakStats.Get("g_up_" + u.key);
-        float cost = u.baseCost + lv * u.step;
-        if (lv >= u.max || MolakStats.Get("g_pts") < cost) { MolakStats.Set("buyok", 0f); return; }
-        MolakStats.Add("g_pts", -cost);
-        MolakStats.Set("g_up_" + u.key, lv + 1);
-        MolakStats.Set("buyok", 1f);
         await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
     }
 }
@@ -357,7 +280,7 @@ public class PickFlavorCommand : Command
     }
 }
 
-/// <summary>@lifenote — 0.4.8 말로 직후 한 장: 이번 생의 기록(버틴 날·서열·깨달음), 지난 생과 견줌,
+/// <summary>@lifenote — 0.4.8 말로 직후 한 장: 이번 생의 기록(버틴 날·서열), 지난 생과 견줌,
 /// 같은 사인으로 두 번 죽었을 때 노인의 한 마디, 몇 생째 진말로에 닿지 못할 때 길의 다음 조각.
 /// 표시 변수: lifesum · lifecmp/lifecmpc · deathtip/deathtipc · truehint/truehintc</summary>
 [Alias("lifenote")]
@@ -381,28 +304,23 @@ public class LifeNoteCommand : Command
 
     public override async Awaitable Execute (ExecutionContext ctx)
     {
-        float day = MolakStats.Get("day"), rank = MolakStats.Get("rank"), gained = MolakStats.Get("gained");
+        float day = MolakStats.Get("day"), rank = MolakStats.Get("rank");
         string cause = MolakStats.Str("deathcause");
-        // 이번 생의 뜻(회귀 아침에 고른 것): 이루면 깨달음 +4
+        // 이번 생의 뜻(회귀 아침에 고른 것): 이루면 그 뜻이 몸에 남는다(MolakMemory.OnLifeEnd 가 정산)
         int vow = Mathf.RoundToInt(MolakStats.Get("vow"));
         string vowline = "";
         if (vow > 0)
         {
-            bool ok = vow == 1 ? (rank > 0f && rank <= MolakRules.VowRevengeRank)
-                    : vow == 2 ? (MolakStats.Get("aff") >= MolakRules.VowBondAff || System.Array.Exists(MolakRules.VowBondFlags, f => MolakStats.Get(f) > 0f))
-                    : day >= MolakRules.VowSurviveDay;
+            bool ok = MolakMemory.VowOk();
             string name = vow == 1 ? "복수" : vow == 2 ? "인연" : "생존";
             if (ok)
-            {
-                MolakStats.Add("g_pts", MolakRules.VowReward); gained += MolakRules.VowReward; MolakStats.Set("gained", gained);
-                vowline = "이번 생의 뜻(" + name + ")을 이루었다 — 깨달음 +" + MolakRules.VowReward.ToString("0");
-            }
+                vowline = "이번 생의 뜻(" + name + ")을 이루었다 — " + (vow == 1 ? "칼에 실은 뜻이 손에 남는다" : vow == 2 ? "곁을 내준 사람의 숨이 단전에 남는다" : "버틴 날들이 몸에 남는다") + ".";
             else vowline = "이번 생의 뜻(" + name + ")은 이루지 못했다.";
         }
         MolakStats.SetStr("vowline", vowline);
         MolakStats.Set("vowc", vowline.Length > 0 ? 1f : 0f);
         // 이번 생의 기록
-        string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 && rank <= MolakDuel.ListEdge ? "서열 " + MolakDuel.RankText(rank) : "서열록에 이름 없음") + " · 깨달음 +" + gained.ToString("0");
+        string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 && rank <= MolakDuel.ListEdge ? "서열 " + MolakDuel.RankText(rank) : "서열록에 이름 없음");
         MolakStats.SetStr("lifesum", sum);
         // 지난 생과 견줌(두 번째 생부터)
         float lastDay = MolakStats.Get("g_lastday"), bestDay = MolakStats.Get("g_bestday"), bestRank = MolakStats.Get("g_bestrank");

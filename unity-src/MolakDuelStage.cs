@@ -15,7 +15,7 @@ public class MolakDuelStage : MonoBehaviour
     static int tell; static float tellT = -1f;
     static int act, res; static float strikeT = -1f;
     static bool guideOpen; static float guideT;
-    const string GuidePref = "molak.duelguide";
+    const string GuidePref = "molak.duelguide2";   // 0.4.55 필살·검결 줄이 붙어서 한 번 더 보여 준다
 
     public static bool GuideOpen { get { return guideOpen; } }
 
@@ -27,7 +27,8 @@ public class MolakDuelStage : MonoBehaviour
         inst = go.AddComponent<MolakDuelStage>();
     }
 
-    public static void Tell (int shown) { tell = Mathf.Clamp(shown, 1, 3); tellT = 0f; strikeT = -1f; MolakArt.Pose(tell); }
+    /// <summary>shown 0 = 읽히지 않는 수(처음 보는 필살 초식).</summary>
+    public static void Tell (int shown) { tell = Mathf.Clamp(shown, 0, 3); tellT = 0f; strikeT = -1f; MolakArt.Pose(tell); }
     public static void Strike (int a, int r) { act = a; res = r; strikeT = 0f; tellT = -1f; MolakArt.Pose(0); }
     public static void Clear () { tellT = -1f; strikeT = -1f; MolakArt.Pose(0); }
 
@@ -42,8 +43,8 @@ public class MolakDuelStage : MonoBehaviour
     }
     public static void OpenGuide () { guideOpen = true; guideT = 0f; }
 
-    static readonly string[] TellHanja = { "", "攻", "守", "虛" };
-    static readonly string[] TellName = { "", "찌르러 온다", "굳게 받는다", "허초로 흔든다" };
+    static readonly string[] TellHanja = { "絶", "攻", "守", "虛" };
+    static readonly string[] TellName = { "읽히지 않는다", "찌르러 온다", "굳게 받는다", "허초로 흔든다" };
 
     GUIStyle sSeal, sSealSub, sHead, sRow, sRowH, sHint, sBtn; float builtU = -1f;
     void Styles (float u)
@@ -102,7 +103,19 @@ public class MolakDuelStage : MonoBehaviour
         float t = tellT, a = Mathf.Clamp01(t / 0.18f);
         var g0 = GUI.color;
         var c = band.center;
-        if (tell == 1)
+        if (tell == 0)
+        {   // 絶: 처음 보는 필살 — 띠 전체가 어두워지고, 칼빛 세 줄이 어디서 올지 모르게 번쩍인다
+            GUI.color = new Color(0.03f, 0.02f, 0.02f, 0.45f * a); GUI.DrawTexture(band, MolakGui.Px); GUI.color = g0;
+            for (int i = 0; i < 3; i++)
+            {
+                float ph = (t * 1.3f + i * 0.33f) % 1f;
+                float fl = ph < 0.18f ? 1f - ph / 0.18f : 0f;
+                if (fl <= 0f) continue;
+                float y0 = band.y + band.height * (0.2f + 0.3f * ((i * 0.37f + Mathf.Floor(t * 1.3f + i * 0.33f) * 0.61f) % 1f));
+                Line(new Vector2(band.x + band.width * 0.08f, y0), new Vector2(band.xMax - band.width * 0.08f, y0 + band.height * 0.35f), Mathf.Max(2f, 5f * u), new Color(0.95f, 0.9f, 0.85f, 0.75f * fl * a));
+            }
+        }
+        else if (tell == 1)
         {   // 攻: 띠 가장자리에서 가운데로 모이는 붉은 속도선
             float ph = (t * 1.6f) % 1f;
             for (int i = 0; i < 14; i++)
@@ -138,7 +151,7 @@ public class MolakDuelStage : MonoBehaviour
         // 기세의 인장(왼쪽 위)
         var sr = new Rect(band.x + 34f * u, band.y + 16f * u, 110f * u, 110f * u);
         GUI.color = new Color(1f, 1f, 1f, a);
-        var box = new Color(0.55f, 0.1f, 0.07f, 0.88f);
+        var box = tell == 0 ? new Color(0.08f, 0.06f, 0.05f, 0.92f) : new Color(0.55f, 0.1f, 0.07f, 0.88f);
         var gc = GUI.color; GUI.color = box * gc; GUI.DrawTexture(sr, MolakGui.Px); GUI.color = gc;
         MolakGui.Ink(sSeal, new Color(0.98f, 0.94f, 0.86f, 1f));
         GUI.Label(sr, TellHanja[tell], sSeal);
@@ -152,6 +165,7 @@ public class MolakDuelStage : MonoBehaviour
 
     void DrawStrike (Rect band, float u)
     {
+        if (act == 0) return;   // 「관」: 칼을 섞지 않았다
         float t = strikeT;
         float draw = Mathf.Clamp01(t / 0.16f), fade = t < 0.45f ? 1f : Mathf.Clamp01(1f - (t - 0.45f) / 0.45f);
         Color ink = res > 0 ? new Color(0.98f, 0.96f, 0.9f, 0.95f * fade) : res < 0 ? new Color(0.62f, 0.07f, 0.05f, 0.9f * fade) : new Color(0.2f, 0.17f, 0.15f, 0.8f * fade);
@@ -215,7 +229,7 @@ public class MolakDuelStage : MonoBehaviour
         GUI.Label(new Rect(cx, y, cw, 120f * u), "마지막 한 칼 앞에 몇 번 칼을 섞는다. 이것을 <b>합(合)</b>이라 한다.\n합마다 상대의 기세가 보인다. 그 기세를 꺾는 수를 고른다.", sHint);
         y += 130f * u;
         string[,] rows = { { "攻", "찌르러 온다", "受", "받아친다" }, { "守", "굳게 받는다", "變", "칼끝을 흔든다" }, { "虛", "허초로 흔든다", "斬", "정면으로 벤다" } };
-        float rh = 120f * u;
+        float rh = 104f * u;
         for (int i = 0; i < 3; i++)
         {
             var row = new Rect(cx, y, cw, rh - 12f * u);
@@ -234,11 +248,15 @@ public class MolakDuelStage : MonoBehaviour
         }
         y += 14f * u;
         MolakGui.Ink(sHint, ink);
-        GUI.Label(new Rect(cx, y, cw, 230f * u),
+        GUI.Label(new Rect(cx, y, cw, 200f * u),
             "맞수를 고르면 <color=#D9B55A>기세 +1</color>, 상대가 노리던 수를 고르면 <color=#CC5544>기세 −1 · 체력 −1</color>.\n" +
             "쌓인 기세가 마지막 한 칼의 승산을 올린다(한 칸에 약 열에 하나).\n" +
             "기세는 가끔 거짓으로 보인다. 검술이 높을수록 잘 읽히고, 지난 생에 맞붙어 본 상대의 수는 <color=#B08CD8>보랏빛</color>으로 확실히 보인다.", sHint);
-        y += 240f * u;
+        y += 206f * u;
+        GUI.Label(new Rect(cx, y, cw, 200f * u),
+            "<color=#CC5544>필살 초식(絶)</color> — 이름난 칼잡이는 한 판에 한 번 제 초식을 낸다. 처음 받을 땐 읽히지 않고, 얻고 잃는 것이 두 배다. 한 번 받아 보면 다음 생부터 보인다.\n" +
+            "<color=#B08CD8>청운검결</color> — 죽음을 겪으며 몸에서 돌아오는 사형들의 수. 운보·관·연·낙, 넷이다.", sHint);
+        y += 206f * u;
         var br = new Rect(cx + cw * 0.25f, Mathf.Min(y, h - 140f * u), cw * 0.5f, 96f * u);
         GUI.color = new Color(0.45f, 0.13f, 0.1f, a); GUI.DrawTexture(br, MolakGui.Px); GUI.color = new Color(1f, 1f, 1f, a);
         MolakGui.Ink(sBtn, ink); GUI.Label(br, "칼을 뽑는다", sBtn);

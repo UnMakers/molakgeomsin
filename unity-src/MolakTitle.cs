@@ -315,7 +315,7 @@ public class MolakTitle : MonoBehaviour
         // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
         GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
         // 패 하나 = 손가락 한 마디(약 9mm)보다 크게. 나가기는 폰의 홈·뒤로 가기에 맡긴다.
-        float bh = 104*u, gap = 22*u, ih = bh + gap, n = 4;
+        float bh = 96*u, gap = 20*u, ih = bh + gap, n = 5;
         float my0 = Mathf.Min(h * 0.56f, h - 200*u - n * ih);
         float rx = w - 52*u, mw = Mathf.Min(w * 0.52f, 560*u);
         Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.25f : 0.35f));
@@ -336,7 +336,8 @@ public class MolakTitle : MonoBehaviour
         }
         string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>" : "말로록";
         if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();
-        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "환경 설정", !busy, u, t, false))
+        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "비무 연습", !busy, u, t, false) && !busy) MolakPractice.Start();   // 0.4.55 합만 겨뤄 보는 판
+        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "환경 설정", !busy, u, t, false))
         {
             MolakSettings.Open();
         }

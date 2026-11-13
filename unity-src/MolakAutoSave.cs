@@ -30,7 +30,7 @@ public class MolakAutoSave : MonoBehaviour
 
     static bool InGame ()
     {
-        try { return Engine.Initialized && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen; } catch { return false; }
+        try { return Engine.Initialized && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakPractice.Active; } catch { return false; }
     }
 
     void Update ()
@@ -83,7 +83,7 @@ public class MolakAutoSave : MonoBehaviour
             var line = string.Join(",", new[] {
                 System.DateTime.Now.ToString("yyyy-MM-dd HH:mm"), G("g_runs"), cause.Replace(",", " "), G("day"), G("rank"),
                 G("sw"), G("ng"), G("sl"), G("curse"), G("mn"), G("aff"), gained.ToString("0"), G("g_redverse"), G("f_hapbyeok") });
-            System.IO.File.AppendAllText(LogPath, (head ? "시각,회귀,사인,날,서열,검술,내공,살기,저주,은자,소아,깨달음,적운구결,합벽검보\n" : "") + line + "\n");
+            System.IO.File.AppendAllText(LogPath, (head ? "시각,회귀,사인,날,서열,검술,내공,살기,저주,은자,소아,남은것,적운구결,합벽검보\n" : "") + line + "\n");
         }
         catch (System.Exception e) { Debug.LogWarning("[MolakAutoSave] log " + e.Message); }
     }

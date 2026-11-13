@@ -76,7 +76,7 @@ public static class MolakStats
     /// <summary>체력 상한 재계산: 기본 + floor((sw+ng)/BodyGrowthDivisor). 상한이 오르면 그만큼 회복.</summary>
     public static void GrowBody ()
     {
-        var nm = MolakRules.BaseHp + Mathf.Floor((Get("sw") + Get("ng")) / MolakRules.BodyGrowthDivisor);
+        var nm = (Get("practice") > 0f ? MolakRules.BaseHp : MolakMemory.StartHp()) + Mathf.Floor((Get("sw") + Get("ng")) / MolakRules.BodyGrowthDivisor);   // 0.4.55 겪어 본 죽음·생존의 뜻만큼 바탕이 두텁다
         var cur = Get("hpmax");
         if (nm > cur)
         {

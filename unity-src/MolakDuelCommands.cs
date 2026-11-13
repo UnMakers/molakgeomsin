@@ -273,6 +273,7 @@ public class DuelCommand : Command
             MolakStats.Add("mn", reward);
             if (style == "killer" || style == "curse" || style == "curse2") MolakStats.Add("sl", 1f);
             MolakStats.Set("duelwin", 1f); MolakArt.EndDuel();
+            MolakStats.Add("lifewins", 1f);   // 0.4.55 이번 생에 이긴 판(셋이면 청운검결 「연」)
             MolakStats.Set("tierup", tierUp ? 1f : 0f);
             MolakStats.SetStr("oldrank", MolakDuel.RankText(oldRank));
             MolakStats.SetStr("newrank", MolakDuel.RankText(newRank));
@@ -305,7 +306,7 @@ public class DuelCommand : Command
                 if (sit == 12) { MolakStats.Add("sl", -1f); if (oldRank > 0) MolakStats.Set("rank", Mathf.Floor(oldRank * 1.15f)); }
             }
             MolakStats.Add("hp", -dmg);
-            if (IsBossKind(kind)) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다
+            if (IsBossKind(kind) && MolakStats.Get("practice") < 1f) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다
             MolakStats.Set("duelwin", 0f); MolakArt.EndDuel();
             MolakVfx.Blood(); MolakSfx.Hit(); MolakArt.Hurt();
             MolakStats.Set("tierup", 0f);

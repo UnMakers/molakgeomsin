@@ -19,7 +19,7 @@ public static class MolakRules
     /// <summary>귀띔하지 않음(바람이 생기기 전 저장을 불러왔을 때).</summary>
     public const float ThemeHintNever = 999f;
 
-    // ---- 시작 능력치 (깨달음 강화 g_up_* 한 단계당) ----
+    // ---- 시작 능력치 (기본값. *PerLv 는 옛 깨달음 강화를 몸의 기억으로 옮길 때만 쓴다) ----
     public const float BaseHp = 10f, HpPerBody = 2f, HpPerVigor = 1f;
     public const float CorePerLv = 3f;
     public const float BaseSword = 2f, SwordPerLv = 2f;
@@ -57,7 +57,7 @@ public static class MolakRules
     /// <summary>방값을 못 내면 굶는다 — 하루짜리 마감은 체력 -2, 며칠 마감은 -1(날마다).</summary>
     public const float StarveHpShort = 2f, StarveHpLong = 1f;
 
-    // ---- 깨달음(회귀 정산) ----
+    // ---- 깨달음(회귀 정산) — 0.4.55부터 쓰지 않는다. 회귀의 보상은 MolakMemory(몸에 남는 것) ----
     /// <summary>깨달음 = floor(날/3) + floor((검술+내공)/6) + (서열에 올랐으면 2), 최소 1.</summary>
     public const float PtsPerDays = 3f, PtsPerStats = 6f, PtsRanked = 2f;
     public static float Enlightenment (float day, float sw, float ng, float rank)
@@ -83,7 +83,7 @@ public static class MolakRules
     /// <summary>복수: 서열 이 안에 들면 이룬다.</summary>
     public const float VowRevengeRank = 1170f;   // 0.4.35: 보이는 서열 300위(= 안쪽 1,170)
     /// <summary>인연: 이 가운데 하나라도 맺었거나 소아 호감이 VowBondAff 이상이면 이룬다.</summary>
-    public static readonly string[] VowBondFlags = { "f_soabond", "f_hajinbond", "f_herbbond", "f_gwakally", "f_yongally", "f_amhally", "f_jinally" };
+    public static readonly string[] VowBondFlags = { "f_soabond", "f_hajinbond", "f_herbbond", "f_gwakally", "f_yongally", "f_amhally", "f_jinally", "f_chamally" };
     public const float VowBondAff = 3f;
     /// <summary>생존: 그물이 조여 오는 날까지 버티면 이룬다.</summary>
     public const float VowSurviveDay = NetWarnDay;

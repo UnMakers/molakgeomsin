@@ -206,12 +206,12 @@ public class MolakMenu : MonoBehaviour
         MenuSection(bx, ref by, bw, secH, "기록");
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
-            string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록" };
-            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎", "문파와 사람들" };
+            string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록", "길잡이" };
+            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀" };
             float tw = (bw - gap) / 2f;
             for (int i = 0; i < t.Length; i++)
             {
-                var r = new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), i == 4 ? bw : tw, tileH);
+                var r = new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), tw, tileH);
                 if (!Btn(r, t[i] + "\n<size=" + Mathf.RoundToInt(22*u) + "><color=#8C8378>" + sub[i] + "</color></size>", false, u)) continue;
                 switch (i)
                 {
@@ -226,6 +226,7 @@ public class MolakMenu : MonoBehaviour
                     case 2: codex = true; break;
                     case 3: knowTab = true; break;
                     case 4: facTab = true; break;
+                    case 5: open = false; SetProcessInput(true); MolakGuide.OpenList(); break;
                 }
             }
             by += 3 * (tileH + gap);
@@ -235,7 +236,7 @@ public class MolakMenu : MonoBehaviour
         MenuSection(bx, ref by, bw, secH, "저장");
         {
             float tw = (bw - gap) / 2f;
-            if (Btn(new Rect(bx, by, tw, rowH), "빠른 저장", false, u) && state != null) { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); }
+            if (Btn(new Rect(bx, by, tw, rowH), "빠른 저장", false, u) && state != null) { if (MolakPractice.Active) Toast("연습 판은 기록하지 않는다."); else { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); } }
             if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "저장 · 불러오기", false, u))
             {
                 open = false; SetProcessInput(true);

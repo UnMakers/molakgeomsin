@@ -60,7 +60,11 @@
 @choice "받아친다 — 상대가 찌르러 올 때 강하다" goto:#ExA2
 @choice "칼끝을 흔든다 — 상대가 굳게 받을 때 강하다" goto:#ExA3
 @choice "정면으로 벤다 — 상대가 허초를 쓸 때 강하다" goto:#ExA1
+@choice "칼 대신 눈을 낸다 — 이 합은 보기만 하고 다음 합의 수를 읽는다(관)" if:dx_caneye>0 goto:#ExA4
 @stop
+# ExA4
+@duelx act:4
+@goto #ExRes
 # ExA1
 @duelx act:1
 @goto #ExRes
@@ -77,6 +81,7 @@
 ; 0.4.51 기억의 물건: 품속의 물건을 쥐고 정면으로 벤다(기세 +1, 물건마다 생에 한 번)
 @duelx do:keepcheck
 @choice "끝을 낸다 — 정면으로 벤다" goto:#StFront
+@choice "낙(落) — 쌓은 기세를 두 배로 싣고 내려친다(셋까지). 저주 +4" if:dx_canfall>0 goto:#StFall
 @choice "품속의 {dx_keepname} 쥐고 벤다 — 기세 +1(이번 생에 한 번)" if:dx_keepok>0 goto:#StKeep
 @choice "끝을 낸다 — 살기를 실어 선공한다" if:cansl>0 goto:#StKiller
 @choice "버틴다 — 수를 아끼며 받아친다" if:cansense<1 goto:#StGuard
@@ -177,6 +182,11 @@
 @return
 
 ; ---------- 초식 ----------
+# StFall
+@duelx do:fall
+청운의 검보에 없는 길이다. 문양이 그 길을 먼저 그어 놓는다.
+{dx_momtext}
+@goto #Final
 # StKeep
 @duelx do:keep
 @print "<color=#9A70C4>{dx_keeptext}</color>"
@@ -221,6 +231,7 @@
 
 ; ---------- 패배 ----------
 # Result
+@goto #PracRes if:practice>0
 @goto #Win if:duelwin>0
 @set lrand=random(1,3)
 @goto #Lose2 if:lrand==2
@@ -511,3 +522,120 @@
 "판돈 판에서 물러난 칼은 판돈도 물러나오."
 열 냥은 돌아오지 않는다.
 @return
+
+; ---------- 0.4.55 비무 연습(타이틀) ----------
+; 목숨도 서열도 걸리지 않는다. 들어올 때의 전역 기록은 나갈 때 그대로 돌아간다(MolakPractice).
+# Practice
+@practice do:begin
+@art scene:duel
+<color=#C9A227>비무 연습</color> — 목숨도 서열도 걸리지 않는 판이다. 몸과 상대를 골라 합만 겨뤄 본다.<br><color=#8A7A66>여기서 지든 이기든 이야기에는 아무것도 남지 않는다. 청운검결 넷(운보·관·연·낙)은 모두 쓸 수 있다.</color>
+# PracBody
+몸을 고른다.
+@choice "갓 깨어난 몸 — 검술 8 · 내공 3 · 체력 12" goto:#PracB1
+@choice "한 달을 버틴 몸 — 검술 20 · 내공 10 · 체력 16" goto:#PracB2
+@choice "교주 앞에 선 몸 — 검술 34 · 내공 22 · 체력 20" goto:#PracB3
+@choice "「비무의 법」을 다시 읽는다" goto:#PracGuide
+@choice "연습을 마친다" goto:#PracEnd
+@stop
+# PracGuide
+@practice do:guide
+@goto #PracBody
+# PracB1
+@practice body:1
+@goto #PracFoe
+# PracB2
+@practice body:2
+@goto #PracFoe
+# PracB3
+@practice body:3
+# PracFoe
+상대를 고른다. <color=#8A7A66>몸 — 검술 {sw} · 내공 {ng} · 체력 {hp}/{hpmax}</color>
+@choice "거리의 칼 — 이름 없는 무사, 뒷골목 판, 자객, 야습조" goto:#PracG1
+@choice "이름난 칼잡이 — 호치, 곽산, 철산도, 남궁현, 소아" goto:#PracG2
+@choice "결전의 칼 — 견아, 진백, 혈쇄문주, 집법전주, 교주" goto:#PracG3
+@choice "몸을 바꾼다" goto:#PracBody
+@stop
+# PracG1
+@choice "떠돌이 무사 — 성미는 판마다 다르다" goto:#PF_street
+@choice "뒷골목 사설 판 — 합 둘, 더 센 상대" goto:#PF_back
+@choice "교의 자객 — 보이는 칼은 미끼다" goto:#PF_assassin
+@choice "혈랑대 야습조 — 어둠 속에서 먼저 찌른다" goto:#PF_raid
+@choice "돌아간다" goto:#PracFoe
+@stop
+# PracG2
+@choice "독아단 아장 호치 — 필살 「독아쇄」" goto:#PF_hochi
+@choice "창잡이 곽산 — 당신이 낸 수를 따라 한다 · 필살 「회마창」" goto:#PF_rival
+@choice "철산도 — 무거운 칼로 버틴다 · 필살 「철산고」" goto:#PF_cheolsan
+@choice "남궁현 — 정석대로 차례를 지킨다 · 필살 「천뢰일섬」" goto:#PF_namgung
+@choice "적운검파 소아 — 받아 흘리는 검 · 필살 「적운쌍영」" goto:#PF_soa
+@choice "돌아간다" goto:#PracFoe
+@stop
+# PracG3
+@choice "독아단주 견아 — 물어뜯듯 몰아친다 · 필살 「광견난무」" goto:#PF_kyona
+@choice "혈랑대주 진백 — 같은 수를 두 번 잇지 않는다 · 필살 「북두낙월」" goto:#PF_jinbaek
+@choice "혈쇄문주 — 사슬로 받아 놓고 기다린다 · 필살 「혈쇄망」" goto:#PF_wolf
+@choice "집법전주 — 앞 합의 틈을 본다 · 필살 「집법단죄」" goto:#PF_hunt3
+@choice "혈마교주 혈천마 — 당신이 방금 낸 수를 노린다 · 필살 「멸도벽」" goto:#PF_lord
+@choice "돌아간다" goto:#PracFoe
+@stop
+# PF_street
+@set dkind="street"
+@goto #PracGo
+# PF_back
+@set dkind="back"
+@goto #PracGo
+# PF_assassin
+@set dkind="assassin"
+@goto #PracGo
+# PF_raid
+@set dkind="raid"
+@goto #PracGo
+# PF_hochi
+@set dkind="hochi"
+@goto #PracGo
+# PF_rival
+@set dkind="rival"
+@goto #PracGo
+# PF_cheolsan
+@set dkind="cheolsan"
+@goto #PracGo
+# PF_namgung
+@set dkind="namgung"
+@goto #PracGo
+# PF_soa
+@set dkind="soa"
+@goto #PracGo
+# PF_kyona
+@set dkind="kyona"
+@goto #PracGo
+# PF_jinbaek
+@set dkind="jinbaek"
+@goto #PracGo
+# PF_wolf
+@set dkind="wolf"
+@goto #PracGo
+# PF_hunt3
+@set dkind="hunt3"
+@goto #PracGo
+# PF_lord
+@set dkind="lord"
+# PracGo
+@practice do:heal
+@gosub #Run
+@art scene:duel
+# PracAfter
+@choice "같은 상대와 다시 겨룬다" goto:#PracGo
+@choice "상대를 바꾼다" goto:#PracFoe
+@choice "몸을 바꾼다" goto:#PracBody
+@choice "연습을 마친다" goto:#PracEnd
+@stop
+# PracRes
+@goto #PracResW if:duelwin>0
+<color=#C03434>졌다.</color> 진짜 판이었다면 {foename}의 칼이 거기서 멈추지 않았을 것이다.
+@return
+# PracResW
+<color=#C9A227>이겼다.</color> {foename}의 칼이 땅에 떨어진다.
+@return
+# PracEnd
+@practice do:end
+@stop

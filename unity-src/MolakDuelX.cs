@@ -111,10 +111,16 @@ public static class MolakDuelX
         MolakStats.Set("dx_i", 0f);
         MolakStats.Set("dx_mom", 0f);
         MolakStats.Set("dx_true", 0f);
+        MolakStats.Set("dx_fallen", 0f);
         MolakStats.Set("dx_last", 0f);      // 내가 방금 낸 수
         MolakStats.Set("dx_lastres", 0f);   // 방금 합의 결과(+1 내가 이김)
         MolakStats.Set("dx_cyc", Random.Range(1, 4));
         MolakStats.Set("dx_temper", Habits.ContainsKey(kind) ? 0f : Random.Range(0, Tempers.Length));
+        // 0.4.55 청운검결·필살 초식
+        MolakStats.Set("dx_stepused", 0f); MolakStats.Set("dx_eyeused", 0f); MolakStats.Set("dx_eyenext", 0f);
+        MolakStats.Set("dx_caneye", 0f); MolakStats.Set("dx_canfall", 0f); MolakStats.Set("dx_sig", 0f);
+        MolakMemory.Sig sg0;
+        MolakStats.Set("dx_sigi", MolakMemory.TryGetSig(kind, out sg0) && Rounds(kind) >= 2 ? (Rounds(kind) >= 3 ? 2f + Random.Range(0, 2) : 2f) : 0f);
         // 버릇이 보이는가: 지난 생에 맞붙어 본 이름 있는 상대, 판이 무거워 숨길 수 없는 버릇, 혹은 검술로 읽어 내는 눈
         var h = Cur(kind);
         bool named = Habits.ContainsKey(kind) && !h.Always;
@@ -122,7 +128,7 @@ public static class MolakDuelX
         float sw = MolakStats.Get("sw");
         bool show = !string.IsNullOrEmpty(h.Label) && (h.Always || seen || (named ? sw >= 16 : sw >= 10));
         MolakStats.Set("dx_showhab", show ? 1f : 0f);
-        if (named) MolakStats.Set("g_seen_" + kind, 1f);
+        if (named && MolakStats.Get("practice") < 1f) MolakStats.Set("g_seen_" + kind, 1f);
     }
 
     static int Pick (Habit h)
@@ -170,6 +176,28 @@ public static class MolakDuelX
         int t = Pick(h);
         float sit = MolakStats.Get("dsit");
         bool sure = MolakStats.Get("memwarn") > 0;
+        bool eyed = MolakStats.Get("dx_eyenext") > 0;
+        MolakStats.Set("dx_eyenext", 0f);
+        if (eyed) sure = true;
+        int iNext = Mathf.RoundToInt(MolakStats.Get("dx_i")) + 1, nAll = Mathf.RoundToInt(MolakStats.Get("dx_n"));
+        MolakStats.Set("dx_caneye", MolakMemory.HasForm("eye") && MolakStats.Get("dx_eyeused") < 1 && iNext < nAll ? 1f : 0f);
+        MolakStats.Set("dx_sig", 0f);
+        MolakMemory.Sig sg;
+        if (iNext == Mathf.RoundToInt(MolakStats.Get("dx_sigi")) && MolakMemory.TryGetSig(kind, out sg))
+        {
+            // 필살 초식: 수는 늘 같다. 받아 본 적이 있거나 눈으로 먼저 읽었으면 보이고, 아니면 읽히지 않는다. 얻고 잃는 것이 두 배다.
+            MolakStats.Set("dx_sig", 1f);
+            MolakStats.Set("dx_true", sg.True);
+            bool known = MolakStats.Get("g_sig_" + kind) > 0 || eyed;
+            string sh = "<color=#8A7A66>" + Num(iNext) + " 합 · 기세</color> " + MomTxt() + " ";
+            string body = "<color=#C03434>필살 「" + sg.Name + "」</color> " + sg.Line;
+            body += known ? "<br><color=#9A70C4>" + (MolakStats.Get("g_sig_" + kind) > 0 ? "지난 생에 받아 본 초식이다. 어디로 오는지 몸이 안다." : "눈으로 먼저 읽었다. 어디로 오는지 보인다.") + "</color>"
+                          : "<br><color=#C03434>처음 보는 초식이다. 읽히지 않는다.</color> <color=#8A7A66>이 합은 얻는 것도 잃는 것도 두 배다.</color>";
+            MolakStats.SetStr("dx_telltext", sh + body);
+            MolakDuelStage.Tell(known ? sg.True : 0);
+            MolakVfx.Stamp("絶", "필살", true);
+            return;
+        }
         float p = Mathf.Clamp(0.58f + MolakStats.Get("sw") * 0.008f + (MolakStats.Get("g_up_mem") > 0 ? 0.05f : 0f), 0.58f, 0.86f);
         if (sit == 11) p = 0.34f;                     // 취한 걸음은 읽히지 않는다
         if (sit == 1) p -= 0.08f;                     // 빗속: 흐리다
@@ -194,7 +222,8 @@ public static class MolakDuelX
                 head = "<color=#8A7A66>" + Num(i) + " 합 · 기세</color> <color=" + mc + ">" + (mom > 0 ? "+" + mom : mom < 0 ? "−" + (-mom) : "0") + "</color> ";
             }
         }
-        if (sure) line = "<color=#9A70C4>지난 생에 본 수다.</color> " + line;
+        if (eyed) line = "<color=#9A70C4>어깨가 먼저 말한다.</color> " + line;
+        else if (sure) line = "<color=#9A70C4>지난 생에 본 수다.</color> " + line;
         if (i == 1 && MolakStats.Get("dx_showhab") > 0) line += "<br><color=#8A7A66>버릇 — " + h.Label + "</color>";
         MolakStats.SetStr("dx_telltext", head + line);
         MolakDuelStage.Tell(shown);
@@ -247,48 +276,76 @@ public static class MolakDuelX
     public static void Act (int a)
     {
         int t = Mathf.RoundToInt(MolakStats.Get("dx_true"));
+        bool sig = MolakStats.Get("dx_sig") > 0;
+        string kindA = MolakStats.Str("duelkind", "any");
+        if (sig && MolakStats.Get("practice") < 1) MolakStats.Set("g_sig_" + kindA, 1f);   // 한 번 받아 본 필살은 되감겨도 몸에 남는다
+        if (a == 4)
+        {   // 청운검결 「관(觀)」: 칼 대신 눈 — 기세는 그대로, 다음 합이 확실히 보인다
+            MolakStats.Add("dx_i", 1f);
+            MolakStats.Set("dx_eyeused", 1f); MolakStats.Set("dx_eyenext", 1f);
+            MolakStats.Set("dx_last", 0f); MolakStats.Set("dx_lastres", 0f);
+            MolakStats.SetStr("dx_restext", "<color=#9A70C4>관(觀)</color> — " + (sig ? "필살이 코앞을 지나간다. 칼을 섞지 않고 눈으로만 받아 낸다. 그 초식의 길이 눈에 새겨진다." : "칼을 거두고 상대의 어깨만 본다. 상대의 칼이 허공을 긋고 돌아간다. 한 합을 내준 대신, 다음 수가 먼저 보인다."));
+            MolakVfx.Stamp("觀", "다음 합이 보인다", false);
+            MolakDuelStage.Strike(0, 0);
+            return;
+        }
         int best = t == 1 ? 2 : t == 2 ? 3 : 1;     // 공세→받아치기, 수비→흔들기, 허초→정면
         int worst = t == 1 ? 3 : t == 2 ? 1 : 2;
         int res = a == best ? 1 : a == worst ? -1 : 0;
-        MolakStats.Add("dx_mom", res);
+        string extra = "";
+        bool stepped = false;
+        if (res < 0 && MolakMemory.HasForm("step") && MolakStats.Get("dx_stepused") < 1)
+        {   // 청운검결 「운보(雲步)」: 지는 수를 한 번 비켜선다
+            res = 0; stepped = true; MolakStats.Set("dx_stepused", 1f);
+            extra = "<br><color=#9A70C4>운보(雲步)</color> — 칼이 지나간 자리에 몸이 없다. 일곱째 사형의 목검이 정강이를 치던 그 자리다.";
+        }
+        int gain = sig ? res * 2 : res;
+        if (res > 0 && MolakStats.Get("dx_lastres") > 0 && MolakMemory.HasForm("chain"))
+        {   // 청운검결 「연(連)」: 내리 둘을 이기면 하나 더
+            gain += 1;
+            extra += "<br><color=#9A70C4>연(連)</color> — 들어간 칼을 물리지 않고 이어서 든다. 대사형이 손등을 치며 가르친 대로.";
+        }
+        MolakStats.Add("dx_mom", gain);
         MolakStats.Add("dx_i", 1f);
         MolakStats.Set("dx_last", a);
         MolakStats.Set("dx_lastres", res);
         string txt;
         int iN = Mathf.RoundToInt(MolakStats.Get("dx_i")), nN = Mathf.RoundToInt(MolakStats.Get("dx_n"));
         float momN = MolakStats.Get("dx_mom");
-        if (res > 0)
+        if (stepped)
         {
-            txt = WinT[t];
+            txt = "상대의 칼이 노리던 자리로 정확히 온다. 그런데 몸이 먼저 반 보 옆에 가 있다.";
+            MolakVfx.Clash(false); MolakVfx.Stamp("步", "비켜섰다 · 기세 그대로", false);
+        }
+        else if (res > 0)
+        {
+            txt = sig ? "필살의 길목을 먼저 막는다. 상대의 초식이 반쯤 펼쳐지다 꺾인다. 상대가 두 걸음 물러난다." : WinT[t];
             MolakVfx.Clash(true);                       // 흰 섬광, 크게 흔들림
             MolakArt.Hurt();                            // 상대가 밀려 흔들린다
             if (iN >= nN && nN > 1 && momN >= 2) { MolakVfx.Stamp("勢", "기세가 넘어왔다", true); MolakVfx.Gold(); }
-            else MolakVfx.Stamp("破", "기세 +1", false);
+            else MolakVfx.Stamp(sig ? "破" : "破", "기세 +" + gain, false);
         }
         else if (res < 0)
         {
-            txt = LoseT[t];
+            txt = sig ? "초식이 다 펼쳐진다. 막을 자리가 없다. 몸 두 군데가 한꺼번에 뜨겁다." : LoseT[t];
             float hp = MolakStats.Get("hp");
+            float cutN = sig ? 2f : 1f;
             bool cut = hp > 2f;
-            if (cut) MolakStats.Add("hp", -1f);          // 합에서 맞는 칼은 얕다. 목숨은 마지막 한 칼이 정한다
+            if (cut) MolakStats.Add("hp", -Mathf.Min(cutN, hp - 2f));   // 합에서 맞는 칼은 얕다. 목숨은 마지막 한 칼이 정한다
             MolakVfx.Blood(); MolakSfx.Hit();
-            MolakVfx.Stamp("傷", cut ? "기세 −1 · 체력 −1" : "기세 −1", false);
+            MolakVfx.Stamp("傷", (sig ? "기세 −2" : "기세 −1") + (cut ? " · 체력 −" + cutN.ToString("0") : ""), false);
         }
         else { txt = EvenT[Random.Range(0, EvenT.Length)]; MolakVfx.Clash(false); }
-        MolakStats.SetStr("dx_restext", txt);
+        MolakStats.SetStr("dx_restext", txt + extra);
         MolakDuelStage.Strike(a, res);
         int i = Mathf.RoundToInt(MolakStats.Get("dx_i")), n = Mathf.RoundToInt(MolakStats.Get("dx_n"));
         if (i >= n)
         {
             float mom = MolakStats.Get("dx_mom");
-            float mem = MolakStats.Get("memwarn") > 0 ? 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f) : 0f;
-            float odds = MolakDuel.Odds(MolakDuel.Pending, mom * MomBonus + mem);
-            int o10 = Mathf.Clamp(Mathf.RoundToInt(odds / 10f), 1, 9);
-            MolakStats.Set("odds10", o10);
             string m = mom >= 2 ? "기세가 완전히 넘어왔다." : mom >= 1 ? "기세를 잡았다." : mom <= -2 ? "기세를 다 내줬다. 몸이 반 박자씩 늦다." : mom <= -1 ? "기세가 상대 쪽으로 기운다." : "기세는 팽팽하다.";
             string[] tl; string kindN = MolakStats.Str("duelkind", "any");
             string turn = (Mathf.Abs(mom) >= 2 && Turn.TryGetValue(kindN, out tl)) ? tl[mom > 0 ? 0 : 1] + "<br>" : "";
-            MolakStats.SetStr("dx_momtext", turn + m + " 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.");
+            FinalText(turn + m);
         }
     }
 
@@ -328,17 +385,44 @@ public static class MolakDuelX
         MolakStats.SetStr("dx_pretext", t);
         MolakVfx.Clash(true); MolakArt.Hurt(); MolakVfx.Gold();
         MolakVfx.Stamp("先", "전생의 수 · 기세 +3", true);
-        float mem = 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f);
-        float odds = MolakDuel.Odds(MolakDuel.Pending, 3f * MomBonus + mem);
+        FinalText("기세가 통째로 넘어왔다.");
+    }
+
+    static string MomTxt ()
+    {
+        int mom = Mathf.RoundToInt(MolakStats.Get("dx_mom"));
+        string mc = mom > 0 ? "#C9A227" : mom < 0 ? "#B0443A" : "#8A7A66";
+        return "<color=" + mc + ">" + (mom > 0 ? "+" + mom : mom < 0 ? "−" + (-mom) : "0") + "</color>";
+    }
+
+    /// <summary>마지막 한 칼 앞: 승산 문장(dx_momtext)과 odds10, 「낙」을 쓸 수 있는가(dx_canfall).</summary>
+    static void FinalText (string lead)
+    {
+        float mom = MolakStats.Get("dx_mom");
+        float mem = MolakStats.Get("memwarn") > 0 ? 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f) : 0f;
+        float odds = MolakDuel.Odds(MolakDuel.Pending, mom * MomBonus + mem);
         int o10 = Mathf.Clamp(Mathf.RoundToInt(odds / 10f), 1, 9);
         MolakStats.Set("odds10", o10);
-        MolakStats.SetStr("dx_momtext", "기세가 통째로 넘어왔다. 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.");
+        MolakStats.Set("dx_canfall", MolakMemory.HasForm("fall") && mom >= 1f && MolakStats.Get("dx_fallen") < 1 ? 1f : 0f);
+        MolakStats.SetStr("dx_momtext", lead + " 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.");
+    }
+
+    /// <summary>청운검결 「낙(落)」: 쌓은 기세를 두 배로 싣는다. 저주 +4.</summary>
+    public static void Fall ()
+    {
+        float mom = MolakStats.Get("dx_mom");
+        float add = Mathf.Min(mom, 3f);                 // 두 배로 싣되, 더해지는 것은 셋까지
+        MolakStats.Set("dx_mom", mom + add);
+        MolakStats.Set("dx_fallen", 1f);
+        MolakStats.Add("curse", 4f);
+        MolakVfx.Stamp("落", "기세 +" + add.ToString("0") + " · 저주 +4", true); MolakVfx.Gold(); MolakVfx.Shake(8f);
+        FinalText("기세가 칼끝 하나로 모인다. 위에서 아래로, 떨어지는 길만 보인다.");
     }
 
     static string Num (int i) { return i == 1 ? "첫" : i == 2 ? "둘째" : i == 3 ? "셋째" : i + "째"; }
 }
 
-/// <summary>@duelx do:init|tell  /  @duelx act:1(정면)|2(받아치기)|3(흔들기)</summary>
+/// <summary>@duelx do:init|tell|pre|keepcheck|keep|fall  /  @duelx act:1(정면)|2(받아치기)|3(흔들기)|4(관 — 눈으로 본다)</summary>
 [Alias("duelx")]
 public class DuelXCommand : Command
 {
@@ -362,6 +446,7 @@ public class DuelXCommand : Command
         else if (d == "pre") MolakDuelX.Pre();
         else if (d == "keepcheck") MolakDuelX.KeepCheck();
         else if (d == "keep") MolakDuelX.KeepUse();
+        else if (d == "fall") MolakDuelX.Fall();
         else MolakDuelX.Tell();
     }
 }
