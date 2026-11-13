@@ -1,4 +1,5 @@
 # Soa1
+@art scene:innhall
 @art char:soa
 @set tr=random(1,3)
 @goto #Soa1v2 if:tr==2
@@ -159,6 +160,7 @@
 @goto Molak02#AfterChapter
 
 # Shr1
+@art scene:shrine
 ; ===== 제三장 사당 =====
 @set tr=random(1,3)
 @goto #Shr1_v2 if:tr==2
@@ -361,6 +363,7 @@
 @goto #ShrAfter2
 
 # Hm1
+@art scene:pass
 @art char:granny
 ; ===== 제四장 잿빛 나무 =====
 @deja text:"북쪽 산길. 지난 생에 이 길 끝의 마을이 어떻게 되었는지 안다. 걸음이 빨라진다."
@@ -536,6 +539,7 @@
 @goto #H_Hmbattle
 
 # Unju0
+@art scene:valley
 ; ===== 제二장 운주 들판 =====
 @set tr=random(1,3)
 @goto #Unju0_v2 if:tr==2
@@ -807,6 +811,7 @@
 @fx hp:3 curse:-2
 @goto Molak02#AfterChapter
 # H_Amhyang
+@art char:amhyang
 @goto #AmhyangSave if:sl>=6
 술이 달다. 달아서, 한 잔이 두 잔이 된다.
 그녀의 눈빛도, 목소리도, 손끝도 너무 자연스러웠다.

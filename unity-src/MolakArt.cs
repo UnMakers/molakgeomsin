@@ -119,6 +119,15 @@ public class MolakArt : MonoBehaviour
     const float FadeIn = 0.22f, FadeFrom = 0.35f;
 
     /// <summary>0.4.42: 장면 없이 시작하는 사건(우연 사건의 절반 남짓)은 앞 사건 그림이 그대로 남아 있었다 — 하루의 바탕(낮/밤) 그림으로 되돌린다.</summary>
+    /// <summary>0.4.44: 하루의 바탕 그림(낮/밤)으로. 이미 바탕이고 인물도 없으면 아무것도 안 한다(깜박임 방지). 비무 중엔 건드리지 않는다.</summary>
+    public static void ResetToBase ()
+    {
+        if (inst == null || (inst.sceneId != null && inst.sceneId.StartsWith("duel"))) return;
+        string b = IsNight ? "night" : "morning";
+        if (inst.sceneId == b && inst.charCur == null) return;
+        Scene(b);
+    }
+
     public static void ResetForEvent (string eventId)
     {
         if (inst == null || string.IsNullOrEmpty(eventId) || eventId == "none") return;

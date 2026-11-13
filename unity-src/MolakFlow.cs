@@ -18,8 +18,15 @@ public class MolakFlow : MonoBehaviour
     /// <summary>다음 문장부터 새 단락(화면 비움) — 장면/날짜 전환 시 호출</summary>
     public static void Break () { if (inst != null && !inst.holdPage) inst.breakNext = true; }
     /// <summary>0.4.41 이음 문장: 다음 본문(이음 문장)을 새 쪽 첫 줄로, 입력 없이 찍고, 그 뒤 사건 첫 글은 같은 쪽에 잇는다.</summary>
+    /// <summary>이음 문장(@bridge)이 그림을 직접 맞췄으니 맥락 전환 그림 되돌리기는 하지 않는다.</summary>
+    public static void CancelArtReset () { if (inst != null) inst.artResetPending = false; }
     public static void BridgeNext () { if (inst != null) { inst.breakNext = true; inst.bridgePending = true; } }
     bool bridgePending, holdPage;
+    // 0.4.44 그림도 글처럼: 맥락이 바뀌어(다른 대본으로·하루 흐름 라벨로·날 넘김) 글이 새 쪽이 될 때, 대본이 그림을 따로 정하지 않았으면
+    //        하루의 바탕 그림으로 되돌린다. 선택지 직후·쪽이 꽉 차서 넘길 때·같은 대본 안의 처리 루틴(gosub)은 같은 자리라 그대로 둔다.
+    bool artResetPending;
+    string lastPrintScript = "";
+    bool returning;
     IScriptPlayer player;
     string lastScript = "";
     int lastLine = -9999;
@@ -80,12 +87,25 @@ public class MolakFlow : MonoBehaviour
         if (cmd == null) return;
         var spot = cmd.PlaybackSpot;
         var tn = cmd.GetType().Name;
+        // 다른 대본으로 넘어간 첫 명령 = 맥락이 바뀌었다(그 대본이 곧 @art 를 부르면 거기서 취소된다)
+        //  (gosub 에서 돌아온 것은 원래 자리로 돌아온 것 — 비무를 마치고 사건으로 돌아오면 그 사건 그림이 맞다)
+        string cs = spot.ScriptPath ?? "";
+        if (lastPrintScript.Length > 0 && cs != lastPrintScript && !returning) artResetPending = true;
+        returning = cmd is Return;   // 바로 다음 명령이 돌아간 자리다
+        lastPrintScript = cs;
 
         // 맥락을 끊는 명령: 장면 전환·선택지 제시·정지·말로 카드
         if (tn.Contains("Ending")) breakNext = true;
         // 맥락 전환 = 본문 초기화: 장면 명령, 사건/서브루틴 진입·복귀, 다른 스크립트로 이동, 하루 허브 라벨로 이동
         if (tn == "SceneCommand" || tn == "DayTickCommand" || tn == "InitRunCommand" || tn == "PageCommand") breakNext = true;
-        if (cmd is ArtCommand) { var ac = (ArtCommand)cmd; if (Assigned(ac.SceneId)) breakNext = true; }
+        if (tn == "DayTickCommand" || tn == "InitRunCommand" || tn == "PageCommand") artResetPending = true;
+        if (tn == "SceneCommand") artResetPending = false;                 // @scene 이 그림을 정한다
+        if (cmd is ArtCommand)
+        {
+            var ac = (ArtCommand)cmd;
+            if (Assigned(ac.SceneId)) { breakNext = true; artResetPending = false; }            // 대본이 장면을 정했다
+            else if (artResetPending && Assigned(ac.CharId)) { artResetPending = false; MolakArt.ResetToBase(); }   // 인물만 정하면 바탕부터 깐 뒤 인물(그 사람 자리 그림이 깔린다)
+        }
         if (cmd is Gosub || cmd is Return) breakNext = true;
         if (cmd is Goto)
         {
@@ -96,7 +116,7 @@ public class MolakFlow : MonoBehaviour
             string gl = hi >= 0 ? pv.Substring(hi + 1) : null;
             string curPath = track.PlayedScript != null ? track.PlayedScript.Path : "";
             if (!string.IsNullOrEmpty(gs) && gs != curPath) breakNext = true;
-            else if (!string.IsNullOrEmpty(gl) && IsHubLabel(gl)) breakNext = true;
+            else if (!string.IsNullOrEmpty(gl) && IsHubLabel(gl)) { breakNext = true; artResetPending = true; }
         }
 
         // 새 선택지 묶음이 시작되면 처리되지 않은 옛 선택지를 정리 (뭉탱이 방지)
@@ -124,6 +144,8 @@ public class MolakFlow : MonoBehaviour
         // (컴파일러가 generic 라인에 reset을 미리 박아 두므로 항상 덮어쓴다)
 
         bool ovf = Overflow();
+        // 다른 대본에서 넘어와 찍는 첫 글이면 맥락이 바뀐 것
+        if (artResetPending) { artResetPending = false; if (!holdPage) MolakArt.ResetToBase(); }
         bool isBridge = bridgePending; bridgePending = false;
         if (holdPage && !isBridge) { breakNext = false; }      // 이음 문장 바로 뒤: 사건의 장면 전환·gosub 이 쪽을 넘기지 않는다
         bool held = holdPage && !isBridge; holdPage = false;

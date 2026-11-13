@@ -1,4 +1,5 @@
 # Wf1
+@art scene:smithy
 ; ===== 제五장 혈쇄문 =====
 고을 외곽의 폐철장(廢鐵場)으로 간다.
 간판도 없는 그곳이 혈쇄문(血鎖門)의 도장이다. 마당 가득 녹슨 사슬이 거미줄처럼 걸려, 바람이 지날 때마다 수백 개의 형구처럼 운다.
@@ -742,6 +743,8 @@
 문틈으로 보던 주모가 말없이 문을 닫는다.
 @goto #Ld1
 # LordAfter
+@art scene:valley
+@art char:lord
 @goto #Victory if:duelwin>0
 @goto #LordLose0 if:f_soaatlord<1||f_soadead>0
 멸도(滅道)의 벽이 당신을 기둥까지 날려 보낸다. 칼이 손에서 빠져 굴러간다.

@@ -166,7 +166,7 @@ public class BridgeCommand : Command
         string t = null;
         if (sp == null || !sp.Skipping) t = MolakBridge.Compose(kind, MolakStats.Str("nextevent", "none"));
         MolakStats.SetStr("bridgetext", string.IsNullOrEmpty(t) ? "none" : t);
-        if (kind != "dusk") MolakArt.ResetForEvent(MolakStats.Str("nextevent", "none"));   // 0.4.42: 앞 사건 그림이 남지 않게
+        if (kind != "dusk") { MolakFlow.CancelArtReset(); MolakArt.ResetForEvent(MolakStats.Str("nextevent", "none")); }   // 0.4.42: 앞 사건 그림이 남지 않게
         if (!string.IsNullOrEmpty(t)) MolakFlow.BridgeNext();
     }
 }
