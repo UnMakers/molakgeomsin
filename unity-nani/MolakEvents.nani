@@ -238,10 +238,19 @@
 지난 생, 이 골목에서 맞아 죽은 적이 있다. 그때 모퉁이 가게의 들창을 봐 두었다.
 싸우는 대신 들창을 넘는다. 주인 없는 돈궤 위에 은자 몇 닢이 놓여 있다.
 @fx mn:2
-@choice "은자를 소매에 쓸어 담는다" goto:#E_ThugsMC0
-@choice "\"도둑이야!\" 들창 밖으로 외친다" goto:#E_ThugsMX
-@choice "돈궤 뚜껑을 닫고 나간다" goto:#E_ThugsMC1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_ThugsM_au1 if:curse>=60
+@goto #E_ThugsM_au1 if:hp<=hpmax/3
+@goto #E_ThugsM_au0 if:vow==1
+@goto #E_ThugsM_au1 if:vow==2
+@goto #E_ThugsM_au1 if:vow==3
+@goto #E_ThugsM_au0
+# E_ThugsM_au0
+은자를 소매에 쓸어 담는다.
+@goto #E_ThugsMC0
+# E_ThugsM_au1
+"도둑이야!" 들창 밖으로 외친다.
+@goto #E_ThugsMX
 # E_ThugsMC0
 @fx mn:1 sl:1
 죽어서 얻은 눈으로 남의 돈궤를 턴다. 체면은 두 번째 죽음쯤에서 버렸다.
@@ -263,10 +272,19 @@
 혈마교 밑에 붙은 앞잡이들이다. 몸만 쓴 싸움이라 옆구리가 결린다.
 @fx hp:-2 sw:2 sl:1 mn:1
 @set f_dokad=1
-@choice "쓰러진 놈들의 전낭을 턴다" goto:#E_ThugsFC0
-@choice "\"통행세 모은 돈은 어디 묻었느냐.\"" if:sl>=3 goto:#E_ThugsFX
-@choice "그대로 떠난다" goto:#E_ThugsFC1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_ThugsF_au0 if:curse>=60
+@goto #E_ThugsF_au0 if:hp<=hpmax/3
+@goto #E_ThugsF_au0 if:vow==1
+@goto #E_ThugsF_au2 if:vow==2
+@goto #E_ThugsF_au0 if:vow==3
+@goto #E_ThugsF_au0
+# E_ThugsF_au0
+쓰러진 놈들의 전낭을 턴다.
+@goto #E_ThugsFC0
+# E_ThugsF_au2
+그대로 떠난다.
+@goto #E_ThugsFC1
 # E_ThugsFC0
 @fx mn:2 sl:1
 피 묻은 전낭 끈을 끊어 품에 넣는다. 사형이 봤다면 혀를 찼으리라.
@@ -334,7 +352,6 @@
 "들숨 여섯, 날숨 아홉. 그 순서만 바꿔도 탁기가 덜 쌓이지. 시줏돈은 마음 가는 대로."
 @choice "은자를 바가지에 넣는다" if:mn>=2 goto:#E_MonkC0
 @choice "\"스님이 어찌 토납법을 아시오.\"" goto:#E_MonkC1
-@choice "코 고는 중을 두고 지나친다" goto:#E_MonkC2
 @stop
 # E_MonkC0
 @set tr=random(1,100)
@@ -547,10 +564,22 @@
 요 며칠, 사람을 눕힐 때마다 가슴 어딘가가 <color=#C03434>시원했다</color>.
 심마(心魔), 마음에 든 마귀다.
 살기는 칼날과 같아서, 품고만 있어도 안쪽부터 벤다. 스승이 늘 하던 말이다.
-@choice "호흡을 골라 눌러 앉힌다" goto:#E_SimmaC0
-@choice "칼을 품고 그대로 잔다" goto:#E_SimmaC1
-@choice "밤새 목검을 휘두른다" goto:#E_SimmaC2
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Simma_au1 if:curse>=60
+@goto #E_Simma_au1 if:hp<=hpmax/3
+@goto #E_Simma_au2 if:vow==1
+@goto #E_Simma_au0 if:vow==2
+@goto #E_Simma_au1 if:vow==3
+@goto #E_Simma_au0
+# E_Simma_au0
+호흡을 골라 눌러 앉힌다.
+@goto #E_SimmaC0
+# E_Simma_au1
+칼을 품고 그대로 잔다.
+@goto #E_SimmaC1
+# E_Simma_au2
+밤새 목검을 휘두른다.
+@goto #E_SimmaC2
 # E_SimmaC0
 @fx sl:-3 curse:2
 들숨과 날숨 사이에 칼을 눕힌다. 살기가 가라앉고, 밀려난 탁기를 문양이 받아먹는다.
@@ -679,10 +708,19 @@
 {dejapre}
 반쯤 무너진 산사. 늙은 주지가 묻지도 않고 붓과 종이를 내민다.
 "불경 한 축 베껴 쓰면 마음 하나는 가라앉지요. 아미타불."
-@choice "반나절 경을 베낀다" goto:#E_SutraC0
-@choice "불목하니 일을 돕고 삯을 받는다" goto:#E_SutraC1
-@choice "합장만 하고 떠난다" goto:#E_SutraC2
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Sutra_au0 if:curse>=60
+@goto #E_Sutra_au0 if:hp<=hpmax/3
+@goto #E_Sutra_au1 if:vow==1
+@goto #E_Sutra_au0 if:vow==2
+@goto #E_Sutra_au0 if:vow==3
+@goto #E_Sutra_au0
+# E_Sutra_au0
+반나절 경을 베낀다.
+@goto #E_SutraC0
+# E_Sutra_au1
+불목하니 일을 돕고 삯을 받는다.
+@goto #E_SutraC1
 # E_SutraC0
 @fx curse:-3 sl:-2
 획 하나, 숨 하나. 손이 고요해지고 가슴도 따라 고요해진다.
@@ -700,10 +738,22 @@
 꿈을 꾼다. 불타는 산장을 등지고 복면의 백발이 서 있다.
 다가가려 하면 불이 길을 막는다. 노인의 입 모양만 읽힌다.
 <color=#9A70C4>'깨, 달, 았, 느, 냐.'</color>
-@choice "\"아직이다.\"" goto:#E_DreamC0
-@choice "안식향 냄새를 붙잡고 꿈 밖으로 나온다" if:f_incense>0 goto:#E_DreamX
-@choice "대답하지 않고 돌아선다" goto:#E_DreamC1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Dream_au1 if:f_incense>0
+@goto #E_Dream_au2 if:curse>=60
+@goto #E_Dream_au2 if:hp<=hpmax/3
+@goto #E_Dream_au0 if:vow==1
+@goto #E_Dream_au2 if:vow==2
+@goto #E_Dream_au2 if:vow==3
+@goto #E_Dream_au0
+# E_Dream_au0
+"아직이다."
+@goto #E_DreamC0
+# E_Dream_au1
+@goto #E_DreamX
+# E_Dream_au2
+대답하지 않고 돌아선다.
+@goto #E_DreamC1
 # E_DreamC0
 @fx curse:1
 눈을 뜬다. 식은땀에 젖은 가슴께에서 문양이 미지근하게 뛴다.
@@ -778,11 +828,21 @@
 @deja text:"곡소리가 낮다. 지난 생에 이 상여를 본 뒤로, 당신의 이름도 언젠가 이렇게 지워질 것을 안다."
 {dejapre}
 상여가 지나간다. 서열전에서 패해 죽은 떠돌이 무사라 한다. 곡소리가 낮다.
-서열록 맨 끝 줄의 이름 하나가 지워졌다. 아무도 번호를 기억하지 않는다.
-@choice "길을 비켜 고개를 숙인다" goto:#E_FuneralC0
-@choice "비틀대는 상여꾼 대신 상여채를 멘다" goto:#E_FuneralX
-@choice "행렬을 등지고 걷는다" goto:#E_FuneralC1
-@stop
+서열록 맨 끝 줄에서 이름 하나가 지워졌다. 그가 몇 위였는지 기억하는 사람은 없다.
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Funeral_au0 if:curse>=60
+@goto #E_Funeral_au0 if:hp<=hpmax/3
+@goto #E_Funeral_au2 if:vow==1
+@goto #E_Funeral_au1 if:vow==2
+@goto #E_Funeral_au0 if:vow==3
+@goto #E_Funeral_au0
+# E_Funeral_au0
+@goto #E_FuneralC0
+# E_Funeral_au1
+@goto #E_FuneralX
+# E_Funeral_au2
+행렬을 등지고 걷는다.
+@goto #E_FuneralC1
 # E_FuneralC0
 @fx sl:-1
 모르는 자의 상여에 고개를 숙인다. 요령 소리가 멀어질 때까지.
@@ -792,7 +852,7 @@
 등 뒤로 요령 소리가 멀어진다.
 @return
 # E_FuneralX
-늙은 상여꾼 하나가 무릎을 꺾는다. 말없이 그 자리에 어깨를 넣는다.
+앞에서 상여를 메던 늙은이 하나가 휘청이며 무릎을 꺾는다. 상여가 한쪽으로 기운다. 말없이 그 자리에 들어가 어깨로 상여를 받친다.
 묏자리까지 오 리. 상여채가 어깨를 파고든다.
 상주 노파가 당신 손을 붙잡는다.
 "…우리 애도 검을 쥐었더라오. 서열이 다 뭐라고."
@@ -1036,10 +1096,22 @@
 # T_Sw1
 천 번째 횡소(橫掃)에서 손바닥이 터진다. 피가 자루를 적신다.
 멈춰야 하는데, 무언가 반 치 앞에 잡힐 듯하다.
-@choice "피 묻은 손으로 계속한다" goto:#T_Sw1C0
-@choice "금창약을 바르고 손을 자루째 동여맨다" if:f_salve>0 goto:#T_Sw1X
-@choice "오늘은 여기서 멈춘다" goto:#T_Sw1C1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #T_Sw1_au1 if:f_salve>0
+@goto #T_Sw1_au2 if:curse>=60
+@goto #T_Sw1_au2 if:hp<=hpmax/3
+@goto #T_Sw1_au0 if:vow==1
+@goto #T_Sw1_au2 if:vow==2
+@goto #T_Sw1_au2 if:vow==3
+@goto #T_Sw1_au0
+# T_Sw1_au0
+피 묻은 손으로 계속한다.
+@goto #T_Sw1C0
+# T_Sw1_au1
+@goto #T_Sw1X
+# T_Sw1_au2
+오늘은 여기서 멈춘다.
+@goto #T_Sw1C1
 # T_Sw1C0
 @fx sw:2 hp:-2
 이백 번을 더 긋고서야 손에 들어온다. 손목이 아니라 허리로 긋는 감각이다.
@@ -1081,9 +1153,18 @@
 운기 도중 탁기가 거꾸로 치밀어 오른다.
 여기서 끊으면 오늘 수련이 날아가고, 밀어붙이면—
 가슴의 문양이 <color=#9A70C4>기다렸다는 듯 입을 벌린다</color>.
-@choice "이를 악물고 밀어붙인다" goto:#T_Qi1C0
-@choice "천천히 가라앉힌다" goto:#T_Qi1C1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #T_Qi1_au1 if:curse>=60
+@goto #T_Qi1_au0 if:hp<=hpmax/3
+@goto #T_Qi1_au0 if:vow==1
+@goto #T_Qi1_au1 if:vow==2
+@goto #T_Qi1_au1 if:vow==3
+@goto #T_Qi1_au0
+# T_Qi1_au0
+이를 악물고 밀어붙인다.
+@goto #T_Qi1C0
+# T_Qi1_au1
+@goto #T_Qi1C1
 # T_Qi1C0
 @fx ng:3 hp:1 curse:4
 거꾸로 오른 탁기를 문양이 삼키고, 빈자리로 진기가 밀려든다. 단전이 깊어진다. 문양도 짙어진다.
@@ -1097,9 +1178,19 @@
 오늘은 진기가 이상하게 <color=#C03434>잘</color> 돈다.
 이유를 더듬다가 소름이 돋는다.
 문양이 길을 <color=#9A70C4>열어주고 있다</color>. 제가 먹을 몫을 불리려고.
-@choice "열린 길로 그대로 돈다" goto:#T_Qi2C0
-@choice "길을 끊고 제 속도로 돈다" goto:#T_Qi2C1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #T_Qi2_au1 if:curse>=60
+@goto #T_Qi2_au0 if:hp<=hpmax/3
+@goto #T_Qi2_au0 if:vow==1
+@goto #T_Qi2_au1 if:vow==2
+@goto #T_Qi2_au1 if:vow==3
+@goto #T_Qi2_au0
+# T_Qi2_au0
+열린 길로 그대로 돈다.
+@goto #T_Qi2C0
+# T_Qi2_au1
+길을 끊고 제 속도로 돈다.
+@goto #T_Qi2C1
 # T_Qi2C0
 @fx ng:3 curse:3
 사술이 낸 길로 진기가 콸콸 흐른다. 빠르고 편하다. 문양이 배부른 짐승처럼 고요하다.
@@ -1112,10 +1203,19 @@
 # T_Wk1
 날품 일을 하던 관도변 창고. 혈마교 물자 수레가 반나절째 버려져 있다. 포장 틈으로 은자 궤짝이 보인다.
 손만 뻗으면 된다. 어차피 빼앗은 돈이다.
-@choice "궤짝에 손을 댄다" goto:#T_Wk1C0
-@choice "궤짝 대신 바퀴 쐐기를 뽑아 둔다" goto:#T_Wk1X
-@choice "제 일만 하고 삯을 받는다" goto:#T_Wk1C1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #T_Wk1_au1 if:curse>=60
+@goto #T_Wk1_au0 if:hp<=hpmax/3
+@goto #T_Wk1_au0 if:vow==1
+@goto #T_Wk1_au1 if:vow==2
+@goto #T_Wk1_au0 if:vow==3
+@goto #T_Wk1_au0
+# T_Wk1_au0
+궤짝에 손을 댄다.
+@goto #T_Wk1C0
+# T_Wk1_au1
+궤짝 대신 바퀴 쐐기를 뽑아 둔다.
+@goto #T_Wk1X
 # T_Wk1C0
 @fx mn:5 sl:1 curse:1
 은자 몇 닢이 소매로 들어온다. 그날 밤, 문양이 미지근하게 뛴다.
@@ -1134,9 +1234,18 @@
 낮잠. 꿈에 문파의 마당이 나온다.
 '막내야, 마당 쓸고 와서 삼식(三式)부터 다시.' 사형이 빗자루를 던져 주며 웃는다.
 꿈인 줄 알면서도 돌아본다.
-@choice "꿈속에서 삼식을 긋는다" goto:#T_Rest1C0
-@choice "사형의 얼굴을 눈에 담는다" goto:#T_Rest1C1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #T_Rest1_au1 if:curse>=60
+@goto #T_Rest1_au1 if:hp<=hpmax/3
+@goto #T_Rest1_au0 if:vow==1
+@goto #T_Rest1_au1 if:vow==2
+@goto #T_Rest1_au1 if:vow==3
+@goto #T_Rest1_au0
+# T_Rest1_au0
+@goto #T_Rest1C0
+# T_Rest1_au1
+사형의 얼굴을 눈에 담는다.
+@goto #T_Rest1C1
 # T_Rest1C0
 @fx sw:1 hp:1
 꿈속 마당에서 천 번을 긋는다. 깨어나니 손끝이 저릿하다.
@@ -1268,9 +1377,18 @@
 {dejapre}
 산자락의 검총(劍塚). 주인 잃은 부러진 검 수백 자루가 흙에 꽂혀 비석을 대신한다. 강호가 아직 강호였던 시절의 풍습이다.
 녹슨 검들 사이에 청운(靑雲)의 구름 문양이 보인다. 사형 중 누군가의 검이다.
-@choice "무릎 꿇어 참배한다" goto:#E_SwordgraveC0
-@choice "검을 뽑아 손질해 다시 묻는다" goto:#E_SwordgraveC1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Swordgrave_au0 if:curse>=60
+@goto #E_Swordgrave_au0 if:hp<=hpmax/3
+@goto #E_Swordgrave_au1 if:vow==1
+@goto #E_Swordgrave_au0 if:vow==2
+@goto #E_Swordgrave_au0 if:vow==3
+@goto #E_Swordgrave_au0
+# E_Swordgrave_au0
+무릎 꿇어 참배한다.
+@goto #E_SwordgraveC0
+# E_Swordgrave_au1
+@goto #E_SwordgraveC1
 # E_SwordgraveC0
 @set tr=random(1,100)
 @goto #E_SwordgraveC0_x1 if:tr<=17
@@ -1328,10 +1446,19 @@
 {dejapre}
 공터에서 아이들이 목검을 들고 서로 교주를 하겠다고 다툰다.
 대협 노릇을 하겠다는 아이는 없다. 혈마교 천하 십 년이면 아이들 꿈도 이렇게 자란다.
-@choice "목검 쥐는 법을 바로잡아 준다" goto:#E_ChildplayC0
-@choice "목검을 집어 들고 교주 역을 맡는다" goto:#E_ChildplayX
-@choice "목검 소리를 등지고 걷는다" goto:#E_ChildplayC1
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Childplay_au1 if:curse>=60
+@goto #E_Childplay_au0 if:hp<=hpmax/3
+@goto #E_Childplay_au0 if:vow==1
+@goto #E_Childplay_au1 if:vow==2
+@goto #E_Childplay_au0 if:vow==3
+@goto #E_Childplay_au0
+# E_Childplay_au0
+목검 쥐는 법을 바로잡아 준다.
+@goto #E_ChildplayC0
+# E_Childplay_au1
+목검을 집어 들고 교주 역을 맡는다.
+@goto #E_ChildplayX
 # E_ChildplayC0
 @fx sw:1 sl:-1
 "엄지는 이렇게. 어깨는 내리고."
@@ -1392,10 +1519,18 @@
 @deja text:"도랑가의 녹슨 검. 지난 생에도 이 매듭을 손끝으로 쓸었다."
 {dejapre}
 비 갠 도랑가에 녹슨 검 한 자루가 반쯤 묻혀 있다. 칼자루 매듭이 어느 표국의 양식이다.
-@choice "손질해서 저자에 판다" goto:#E_LostbladeC0
-@choice "검총(劍塚)에 묻어 준다" goto:#E_LostbladeC1
-@choice "매듭을 들고 표국 문을 두드린다" goto:#E_LostbladeX
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Lostblade_au1 if:curse>=60
+@goto #E_Lostblade_au1 if:hp<=hpmax/3
+@goto #E_Lostblade_au0 if:vow==1
+@goto #E_Lostblade_au1 if:vow==2
+@goto #E_Lostblade_au0 if:vow==3
+@goto #E_Lostblade_au0
+# E_Lostblade_au0
+손질해서 저자에 판다.
+@goto #E_LostbladeC0
+# E_Lostblade_au1
+@goto #E_LostbladeC1
 # E_LostbladeC0
 @fx mn:4
 녹을 벗기니 제값이 나온다. 죽은 자의 검으로 산 자가 밥을 먹는다.
@@ -1450,10 +1585,22 @@
 깊은 밤. 가슴의 문양이 <color=#9A70C4>말을 건다</color>.
 검결 비슷한 결이 핏줄을 타고 흘러든다. 사술이 삼킨 탁기가 안에서 무언가로 빚어지고 있다.
 받아 적으면 검이 늘리라.<br>받아 적은 만큼, 저것의 것이 되리라.
-@choice "흘러드는 결을 받아 적는다" goto:#E_EchoesC0
-@choice "호흡으로 밀어낸다" goto:#E_EchoesC1
-@choice "운검비록을 펼쳐 결을 대 본다" if:f_bilok>0 goto:#E_EchoesX
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Echoes_au2 if:f_bilok>0
+@goto #E_Echoes_au1 if:curse>=60
+@goto #E_Echoes_au0 if:hp<=hpmax/3
+@goto #E_Echoes_au0 if:vow==1
+@goto #E_Echoes_au1 if:vow==2
+@goto #E_Echoes_au1 if:vow==3
+@goto #E_Echoes_au0
+# E_Echoes_au0
+흘러드는 결을 받아 적는다.
+@goto #E_EchoesC0
+# E_Echoes_au1
+호흡으로 밀어낸다.
+@goto #E_EchoesC1
+# E_Echoes_au2
+@goto #E_EchoesX
 # E_EchoesC0
 @fx sw:2 curse:3
 손이 저절로 어둠에 획을 긋는다. 눈을 뜨니 벽에 손톱자국이 가득하다. 그 획이 읽힌다.
@@ -2104,10 +2251,22 @@
 "객! 지난번엔 반이 가짜였지 뭐요."
 먹선이 아주 깊은 부적 한 장을 내민다.
 "내 손으로 쓴 거요. 사죄의 뜻이오. 값은 없소."
-@choice "부적을 받아 품에 넣는다" goto:#E_Talisman2C0
-@choice "\"너도 반은 가짜였겠지.\"" goto:#E_Talisman2C1
-@choice "그 자리에서 태워 재를 물에 탄다" goto:#E_Talisman2X
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Talisman2_au2 if:curse>=60
+@goto #E_Talisman2_au0 if:hp<=hpmax/3
+@goto #E_Talisman2_au1 if:vow==1
+@goto #E_Talisman2_au0 if:vow==2
+@goto #E_Talisman2_au0 if:vow==3
+@goto #E_Talisman2_au0
+# E_Talisman2_au0
+부적을 받아 품에 넣는다.
+@goto #E_Talisman2C0
+# E_Talisman2_au1
+"너도 반은 가짜였겠지."
+@goto #E_Talisman2C1
+# E_Talisman2_au2
+그 자리에서 태워 재를 물에 탄다.
+@goto #E_Talisman2X
 # E_Talisman2C0
 @fx curse:-4
 @set f_talisman2=1
@@ -2398,10 +2557,22 @@
 검이 움직인다. 막내의 검이 아니라 살기의 검이다. 하나. 둘. 셋—
 @page
 눈을 뜬다. 뽑힌 검이 손에 쥐여 있다. 방 안에 베인 자국이 세 줄.
-@choice "검을 벽에 건다" goto:#E_Simma3C0
-@choice "검을 쥔 채 아침을 기다린다" goto:#E_Simma3C1
-@choice "안식향을 피우고 검을 무릎에 눕힌다" if:f_incense>0 goto:#E_Simma3X
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Simma3_au2 if:f_incense>0
+@goto #E_Simma3_au0 if:curse>=60
+@goto #E_Simma3_au0 if:hp<=hpmax/3
+@goto #E_Simma3_au1 if:vow==1
+@goto #E_Simma3_au0 if:vow==2
+@goto #E_Simma3_au0 if:vow==3
+@goto #E_Simma3_au0
+# E_Simma3_au0
+@goto #E_Simma3C0
+# E_Simma3_au1
+검을 쥔 채 아침을 기다린다.
+@goto #E_Simma3C1
+# E_Simma3_au2
+안식향을 피우고 검을 무릎에 눕힌다.
+@goto #E_Simma3X
 # E_Simma3C0
 @fx sl:-3 sw:-1
 검을 벽에 건다. 떨리는 손을 내려다본다. 검을 쥐지 않은 손이 아직 여기 있다.
@@ -2852,10 +3023,19 @@
 {dejapre}
 종일 비. 하진무가 장기판을 들고 온다.
 "셈은 끝났소. 손이 심심하구려."
-@choice "\"한 판 받겠소.\" — 장기를 둔다" goto:#E_Rain2C0
-@choice "검을 손질한다" goto:#E_Rain2C1
-@choice "방에 올라 빗소리에 운기한다" goto:#E_Rain2C2
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Rain2_au0 if:curse>=60
+@goto #E_Rain2_au0 if:hp<=hpmax/3
+@goto #E_Rain2_au1 if:vow==1
+@goto #E_Rain2_au0 if:vow==2
+@goto #E_Rain2_au0 if:vow==3
+@goto #E_Rain2_au0
+# E_Rain2_au0
+"한 판 받겠소." 장기를 둔다.
+@goto #E_Rain2C0
+# E_Rain2_au1
+검을 손질한다.
+@goto #E_Rain2C1
 # E_Rain2C0
 @fx hp:2 curse:-1
 세 판. 두 판을 진다. 하진무의 수는 셈처럼 정확하다.
@@ -3058,11 +3238,22 @@
 {dejapre}
 대낮의 저자. 밤도 아닌데 속삭임이 온다. 손이 저 혼자 검 자루를 쥔다.
 눈앞에 생선 장수와 아이 손을 잡은 아낙이 있다. 검이 반 치 뽑힌다.
-@choice "냉천으로 달려간다" goto:#E_Echoes2C0
-@choice "속삭임을 받아 적는다" goto:#E_Echoes2C1
-@choice "안식향을 사르고 골목에 주저앉는다" if:f_incense>0 goto:#E_Echoes2X
-@choice "칼집으로 제 손등을 내리친다" goto:#E_Echoes2Y
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Echoes2_au2 if:f_incense>0
+@goto #E_Echoes2_au0 if:curse>=60
+@goto #E_Echoes2_au1 if:hp<=hpmax/3
+@goto #E_Echoes2_au1 if:vow==1
+@goto #E_Echoes2_au0 if:vow==2
+@goto #E_Echoes2_au0 if:vow==3
+@goto #E_Echoes2_au0
+# E_Echoes2_au0
+냉천으로 달려간다.
+@goto #E_Echoes2C0
+# E_Echoes2_au1
+@goto #E_Echoes2C1
+# E_Echoes2_au2
+안식향을 사르고 골목에 주저앉는다.
+@goto #E_Echoes2X
 # E_Echoes2C0
 @fx hp:-2 curse:-4
 산기슭까지 달려 옷째 샘에 뛰어든다. 얼음물이 속삭임을 끊는다. 생선 장수는 그 손을 보았을 것이다.
@@ -3168,11 +3359,23 @@
 {dejapre}
 달이 붉다. 산장이 타던 밤의 색이다.
 가슴의 문양이 달빛에 답하듯 달아오른다.
-@choice "마당에 나가 검을 휘두른다" goto:#E_EclipseC0
-@choice "이불을 뒤집어쓰고 잔다" goto:#E_EclipseC1
-@choice "안식향을 사르고 창을 가린다" if:f_incense>0 goto:#E_EclipseX
-@choice "붉은 달을 마주하고 가부좌를 튼다" if:curse>=40 goto:#E_EclipseY
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Eclipse_au2 if:f_incense>0
+@goto #E_Eclipse_au1 if:curse>=60
+@goto #E_Eclipse_au1 if:hp<=hpmax/3
+@goto #E_Eclipse_au0 if:vow==1
+@goto #E_Eclipse_au1 if:vow==2
+@goto #E_Eclipse_au1 if:vow==3
+@goto #E_Eclipse_au0
+# E_Eclipse_au0
+마당에 나가 검을 휘두른다.
+@goto #E_EclipseC0
+# E_Eclipse_au1
+이불을 뒤집어쓰고 잔다.
+@goto #E_EclipseC1
+# E_Eclipse_au2
+안식향을 사르고 창을 가린다.
+@goto #E_EclipseX
 # E_EclipseC0
 @fx sw:1 curse:1
 붉은 달 아래서 천 번. 그날 밤 긋지 못한 검을 오늘 긋는다. 손바닥 물집이 터진다.
@@ -3197,11 +3400,22 @@
 {dejapre}
 관도로 붉은 가마가 온다. 붉은 끈을 맨 자가 마흔이다. 교주의 사신 행렬이다. 사람들이 일제히 엎드린다.
 엎드리지 않은 것은 당신뿐이다. 가마가 바로 앞에서 멎는다.
-@choice "무릎을 꿇고 이마를 흙에 댄다" goto:#E_CaravanC0
-@choice "선 채로 버틴다" goto:#E_CaravanC1
-@choice "골목으로 비킨다" goto:#E_CaravanC2
-@choice "죽립 챙을 내리고 한쪽 무릎만 꿇는다" if:f_hat>0 goto:#E_CaravanX
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Caravan_au3 if:f_hat>0
+@goto #E_Caravan_au1 if:curse>=60
+@goto #E_Caravan_au1 if:hp<=hpmax/3
+@goto #E_Caravan_au1 if:vow==1
+@goto #E_Caravan_au0 if:vow==2
+@goto #E_Caravan_au1 if:vow==3
+@goto #E_Caravan_au0
+# E_Caravan_au0
+무릎을 꿇고 이마를 흙에 댄다.
+@goto #E_CaravanC0
+# E_Caravan_au1
+선 채로 버틴다.
+@goto #E_CaravanC1
+# E_Caravan_au3
+@goto #E_CaravanX
 # E_CaravanC0
 @fx curse:2 sl:-1
 무릎이 흙에 닿는다. 가마가 다시 움직인다. 흙 묻은 무릎을 턴다.
@@ -3228,11 +3442,26 @@
 @deja text:"스승의 기일. 이 탁주를 몇 번째 사 드는지 센다. 스승은 매번 한 번도 오지 않는다."
 {dejapre}
 밤. 스승의 기일이다. 제사 지낼 사람은 당신뿐이다. 탁주 한 병을 사 들고 마당에 선다.
-@choice "술을 땅에 붓는다" goto:#E_WineC0
-@choice "스승 몫까지 병째 마신다" goto:#E_WineC1
-@choice "하진무를 불러 한 잔 권한다" goto:#E_WineX
-@choice "일곱째 사형의 패를 술병 옆에 세운다" if:f_relicpae>0 goto:#E_WineY
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Wine_au3 if:f_relicpae>0
+@goto #E_Wine_au0 if:curse>=60
+@goto #E_Wine_au2 if:hp<=hpmax/3
+@goto #E_Wine_au1 if:vow==1
+@goto #E_Wine_au0 if:vow==2
+@goto #E_Wine_au2 if:vow==3
+@goto #E_Wine_au0
+# E_Wine_au0
+술을 땅에 붓는다.
+@goto #E_WineC0
+# E_Wine_au1
+스승 몫까지 병째 마신다.
+@goto #E_WineC1
+# E_Wine_au2
+하진무를 불러 한 잔 권한다.
+@goto #E_WineX
+# E_Wine_au3
+일곱째 사형의 패를 술병 옆에 세운다.
+@goto #E_WineY
 # E_WineC0
 @fx curse:-2 sl:-1
 술을 흙에 붓고 이름을 부른다. 스승, 사형 스물셋. 다 부르고 나니 병이 비었다.
@@ -3377,10 +3606,22 @@
 밤. 하진무가 붓과 종이를 들고 올라온다.
 "객. 맡겨 둘 것이 있으면 지금 맡기시오. 돌아오면 돌려드리리다. 안 돌아오면……."
 셈 밝은 영감이 셈을 못 끝낸다.
-@choice "편지를 쓴다" goto:#E_LastletterC0
-@choice "\"맡길 게 없소.\"" goto:#E_LastletterC1
-@choice "\"외상값부터 장부에 적어 두시오.\"" if:f_hajinfree>0 goto:#E_LastletterX
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #E_Lastletter_au2 if:f_hajinfree>0
+@goto #E_Lastletter_au0 if:curse>=60
+@goto #E_Lastletter_au0 if:hp<=hpmax/3
+@goto #E_Lastletter_au1 if:vow==1
+@goto #E_Lastletter_au0 if:vow==2
+@goto #E_Lastletter_au0 if:vow==3
+@goto #E_Lastletter_au0
+# E_Lastletter_au0
+@goto #E_LastletterC0
+# E_Lastletter_au1
+"맡길 게 없소."
+@goto #E_LastletterC1
+# E_Lastletter_au2
+"외상값부터 장부에 적어 두시오."
+@goto #E_LastletterX
 # E_LastletterC0
 @fx curse:-2 hp:1
 @set f_letter=1
@@ -4547,7 +4788,6 @@
 @set f_haodone=1
 @choice "다락으로 올라간다" goto:#E_HaoA
 @choice "계단 밑에서 듣기만 한다" goto:#E_HaoB
-@choice "그냥 나간다 — 남의 문 안 일이다" goto:#E_HaoC
 @stop
 # E_HaoC
 남의 문 안 일이다. 주루를 나서는데, 다락에서 칼이 도마에 닿는 소리가 한 번 난다.
@@ -4751,7 +4991,6 @@
 꾸러미에서 독아단 쇠이 끝의 단내가 난다.
 @choice "등불이 꺼진 뒤 뒷문을 두드린다" goto:#E_HNA
 @choice "꾸러미를 받아 간 졸개를 따라간다" goto:#E_HNB
-@choice "못 본 것으로 한다" goto:#E_HNC
 @choice "\"백초당이 타던 밤을 안다.\" — 문을 두드린다" if:g_herbdied>0 goto:#E_HNK
 @stop
 # E_HNA

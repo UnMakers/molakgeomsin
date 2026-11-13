@@ -834,22 +834,22 @@
 가슴의 글자가 오늘도 하나 늘었다. 늘어난 만큼 검을 쥔다.
 @goto #NightChoice
 # NightChoice
-@choice "마당에서 검을 수련한다 — 검술이 오른다" if:day<10 goto:#NSw
-@choice "마당에서 검을 긋는다" if:day>=10 goto:#NSw
-@choice "앉아서 기를 돌린다(운기조식) — 내공이 오른다. 문양도 제 몫을 떼어 간다" if:day<10 goto:#NQi
-@choice "앉아서 기를 돌린다" if:day>=10 goto:#NQi
-@choice "저자로 나간다 — 품을 팔아 은자를 벌거나 물건을 산다" if:day<10 goto:#NightTown
-@choice "저자로 나간다" if:day>=10 goto:#NightTown
-@choice "비무판을 찾아간다 — 이기면 서열이 오른다" if:day>=4&&day<10&&f_ringclosed<1 goto:#NDuel
-@choice "비무판을 찾아간다" if:day>=10&&f_ringclosed<1 goto:#NDuel
-@choice "뒷골목 비무판 — 판돈 셋, 보는 눈 없음" if:f_ringclosed>0 goto:#NDuelBack
+@choice "검술을 수련한다 — 검술이 오른다" if:day<10 goto:#NSw
+@choice "검술을 수련한다" if:day>=10 goto:#NSw
+@choice "운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다" if:day<10 goto:#NQi
+@choice "운기조식으로 내공을 쌓는다" if:day>=10 goto:#NQi
+@choice "저잣거리로 나간다 — 일해서 은자를 벌거나 물건을 산다" if:day<10 goto:#NightTown
+@choice "저잣거리로 나간다 — 은자벌이·장보기" if:day>=10 goto:#NightTown
+@choice "비무판에 나간다 — 이기면 서열이 오른다" if:day>=4&&day<10&&f_ringclosed<1 goto:#NDuel
+@choice "비무판에 나간다 — 서열을 올린다" if:day>=10&&f_ringclosed<1 goto:#NDuel
+@choice "뒷골목 비무판에 나간다 — 이기면 서열과 은자 3, 더 위험하다" if:f_ringclosed>0 goto:#NDuelBack
 @choice "혈쇄문의 초대에 응한다" if:f_wolfinvite>0&&f_wolfdown<1 goto:#NWolf
 @choice "소아와 떠난다 — 강호를 등진다" if:f_soabond>0&&f_soadead<1&&day>=38&&b_leave<1 goto:#NLeave
 @choice "금창약을 덜어 덧난 상처를 다시 싸맨다" if:taint>0&&taintkind==2&&f_salve>0 goto:#NSalve
 @choice "해독환을 삼킨다" if:taint>0&&taintkind==1&&f_antidote>0 goto:#NAntidote
 @choice "몸을 쉰다 — 체력을 되찾는다" if:day<10 goto:#NRest
 @choice "몸을 쉰다 — 더 버티면 쓰러진다" if:day>=10&&hp<=hpmax/4 goto:#NRest
-@choice "몸을 쉰다" if:day>=10&&hp>hpmax/4 goto:#NRest
+@choice "몸을 쉰다 — 체력을 되찾는다" if:day>=10&&hp>hpmax/4 goto:#NRest
 @stop
 # NSalve
 무명을 풀자 고름 냄새가 찬다. 금창약을 상처에 눌러 채운다.
@@ -1091,7 +1091,8 @@
 # NightTown
 @art scene:nightmarket
 저녁 저자. 등불이 켜진다.
-@choice "날품을 판다 — 물지게와 장작" goto:#NWork
+@choice "날품을 판다 — 물지게·장작 일로 은자를 번다" goto:#NWork
+@choice "투전판에 앉는다 — 노름으로 은자를 걸어 본다" goto:#NGamble
 @choice "상점가를 둘러본다" goto:#Town1
 @choice "전당포 뒷방 — 고리대 왕삼에게 은자를 빌린다" if:debt<1&&mn<8 goto:#NLoan
 @choice "왕삼의 장부를 훔치러 전당포 뒷방에 든다" if:debt>0&&g_know_wangsam>0 goto:#NLedger
@@ -1134,6 +1135,76 @@
 @set debtday=day+7
 @set debtext=0
 @goto #NightEnd
+; ---------- 0.4.48 밤 투전판(은자벌이) ----------
+; 날품(3~4냥, 체력 −1)과 나란히. 살기로 판주의 손을 읽는 승부수. 크게 따고 크게 잃는다. 외상은 왕삼의 장부로 간다.
+# NGamble
+@art scene:cellar
+@set c_gamble=c_gamble+1
+@set seenday_E_Gamble=day if:seen_E_Gamble<1
+@set seen_E_Gamble=1
+@goto #NGambleV2 if:c_gamble==2
+@goto #NGambleV3 if:c_gamble>=3&&f_gambleshamed>0
+@goto #NGambleV4 if:c_gamble>=3
+주루 뒤 지하 투전판. 등잔 셋에 사람이 스물이다. 판주가 투전 패 묶음을 손바닥으로 툭툭 친다.
+"새 얼굴이로군. 앉으시오. 은자만 있으면 다 손님이오."
+@goto #NGambleC
+# NGambleV2
+지하 투전판. 판주가 당신을 알아보고 턱으로 빈자리를 가리킨다. 지난번 맞은편에 앉았던 사내는 오늘 안 보인다.
+@goto #NGambleC
+# NGambleV3
+지하 투전판. 판주가 당신을 보더니 패를 쥔 손을 탁자 위에 올려 둔다. 소매가 걷혀 있다. 오늘은 패를 숨길 생각이 없다는 뜻이다.
+@goto #NGambleC
+# NGambleV4
+지하 투전판. 판주가 당신 자리에 등잔 하나를 더 놓는다. 단골에게 하는 대접이다. 장부를 든 사내 하나가 계단 밑에서 당신 전낭을 오래 본다. 왕삼의 사람이다.
+# NGambleC
+@choice "두 냥을 건다 — 판주의 손을 읽는다 〔살기〕" if:mn>=2 goto:#NGamble2
+@choice "다섯 냥을 건다 — 크게 먹거나 크게 잃는다 〔살기+1〕" if:mn>=5 goto:#NGamble5
+@choice "외상으로 앉는다 — 지면 왕삼 빚 다섯 냥 〔살기〕" if:mn<2&&debt<1 goto:#NGambleD
+@choice "판 구경만 하고 계단을 오른다" goto:#NightTown
+@stop
+# NGamble2
+@fx mn:-2
+@risk on:sl need:0
+@goto #NGamble2L if:pass==0
+판주의 엄지가 패 끝을 두 번 쓰다듬을 때마다 좋은 패가 맞은편으로 간다. 그 박자에 맞춰 판돈을 거둔다. 석 판 만에 전낭이 묵직하다.
+@fx mn:6
+@goto #NightEnd
+# NGamble2L
+패가 손에 붙지 않는다. 판주의 손을 보다가 정작 제 패를 놓친다. 두 냥이 남의 앞으로 건너간다.
+@goto #NightEnd
+# NGamble5
+@fx mn:-5
+@risk on:sl need:+1
+@goto #NGamble5L if:pass==0
+판주가 소매로 밀어 넣으려던 패를 당신 눈길이 먼저 붙든다. 판주는 그 패를 도로 내놓는다. 그 뒤로 판이 정직해진다. 정직한 판에서는 셈이 빠른 쪽이 먹는다.
+새벽녘, 열다섯 냥을 쓸어 담는다. 판주가 웃지 않는다.
+@fx mn:15 sl:1
+@goto #NightEnd
+# NGamble5L
+@set tr=random(1,100)
+@goto #NGamble5LK if:tr<=30
+마지막 판에서 판주가 패를 뒤집는다. 다섯 냥이 한 번에 쓸려 간다. 판주가 은자를 세며 말한다.
+"객은 눈이 좋은데, 눈만 좋소."
+@goto #NightEnd
+# NGamble5LK
+다섯 냥을 잃은 사내 하나가 판주의 손목을 잡는다. 판주의 사람이 칼을 뽑는다. 판이 엎어지고 등잔이 깨진다. 당신은 계단으로 빠져나오다 어깨를 베인다.
+@fx hp:-2 sl:1
+@goto #NightEnd
+# NGambleD
+판주가 빈 전낭을 힐끗 보고 붓을 든다. 계단 밑의 사내가 장부를 펴고 다가온다.
+"외상이오? 이 판은 왕삼 어른 돈으로 돌아가오. 지면 그 장부에 이름이 올라가오."
+@risk on:sl need:0
+@goto #NGambleDL if:pass==0
+판주의 엄지를 지켜본다. 패가 맞은편으로 갈 때마다 판돈을 거둔다. 새벽녘, 장부의 이름에 줄이 그어지고 은자 다섯 냥이 남는다.
+@fx mn:5
+@goto #NightEnd
+# NGambleDL
+마지막 패가 넘어가고, 장부의 당신 이름 옆에 '五' 자가 적힌다.
+"닷새 뒤에 왕삼 어른 사람이 찾아갈 거요. 객잔이 어디인지는 다 아오."
+@set debtday=day+5 if:debt<1
+@set debt=debt+5
+@goto #NightEnd
+
 # NWork
 @set nmul=3
 @set c_work=c_work+1
@@ -2198,7 +2269,7 @@
 비가 그친 아침. 감찰사의 탁자에 젖은 쇠패가 쌓여 있다.
 @goto #S_PlM
 # S_PlV3
-늙은 표사가 쇠패의 숫자를 오래 본다. 지난해보다 이만이 밀렸다.
+늙은 표사가 허리에 찬 서열패를 오래 내려다본다. 지난해보다 서열이 이만 칸이나 밀려 있다.
 "다음."
 # S_PlM
 @set g_fac_gyo=1
@@ -2279,10 +2350,19 @@
 방을 붙인 건 포졸이 아니라 붉은 끈들이다. 현령의 도장은 교의 글씨 밑에 작게 찍혀 있다.
 @set f_wanted=1
 @set g_fac_gwan=1
-@choice "구경꾼 틈에 섞여 제 수배서를 흉본다" goto:#S_WantedC0
-@choice "밤에 몰래 찢으러 온다" goto:#S_WantedC1
-@choice "고개를 숙이고 지나간다" goto:#S_WantedC2
-@stop
+; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+@goto #S_WM_au0 if:curse>=60
+@goto #S_WM_au0 if:hp<=hpmax/3
+@goto #S_WM_au0 if:vow==1
+@goto #S_WM_au2 if:vow==2
+@goto #S_WM_au0 if:vow==3
+@goto #S_WM_au0
+# S_WM_au0
+구경꾼 틈에 섞여 제 수배서를 흉본다.
+@goto #S_WantedC0
+# S_WM_au2
+고개를 숙이고 지나간다.
+@goto #S_WantedC2
 # S_WantedC0
 @fx sl:1
 "영 못 그렸군. 이래서야 아무도 삼백 냥 못 받겠소."

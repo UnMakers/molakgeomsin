@@ -104,7 +104,7 @@ public static class MolakEventDefs
             new Def("E_Guard", 8, 20, 'd', null, null, 0, 12),
             new Def("E_Guard2", 18, 0, 'd', null, "E_Guard", 5, 12),
             new Def("E_Guard3", 30, 0, 'd', null, "E_Guard2", 6, 10),
-            new Def("E_Gamble", 3, 16, 'd', null, null, 0, 10),
+            // 0.4.48: E_Gamble(낮 투전판)은 밤 저자의 은자벌이(Molak02 #NGamble)로 옮겼다. 투전판에 앉으면 seen_E_Gamble 이 켜져 타짜 줄기(E_Gamble3·4)가 이어진다.
             new Def("E_Gamble3", 14, 0, 'n', null, "E_Gamble", 5, 12),
             new Def("E_Gamble4", 26, 0, 'd', null, "E_Gamble3", 6, 10),
             new Def("E_Nightmarket", 9, 20, 'n', null, null, 0, 10),
