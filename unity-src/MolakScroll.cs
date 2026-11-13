@@ -166,7 +166,15 @@ public class MolakScroll : MonoBehaviour
         userScroll = Mathf.Clamp(userScroll, 0f, contentOffset);
         float y = contentOffset - userScroll;     // 양수 = 위로 밀어 올림 (맨 아래 정렬)
         // 맨 위 줄이 반쯤 잘려 보이지 않게: 뷰포트 윗변에 걸친 줄은 통째로 위로 밀어 올린다(아래에 한 줄 미만의 빈자리가 남는다)
-        if (userScroll < 0.5f && contentOffset > 0.5f) y += TopLineCut(y);
+        // 0.4.54: 줄 잘림 보정은 본문 높이·뷰포트 높이가 바뀔 때만 다시 잰다. 매 프레임 직전 위치를 기준으로 다시 재면
+        // 두 자리 사이를 번갈아 오가며 글이 위아래로 떨렸다(언메이커: 글자 수가 많으면 위아래로 흔들린다).
+        if (userScroll < 0.5f && contentOffset > 0.5f)
+        {
+            int key = Mathf.RoundToInt(prH) * 10007 + Mathf.RoundToInt(vpH);
+            if (key != cutKey) { cutKey = key; cutVal = TopLineCut(contentOffset); }
+            y += cutVal;
+        }
+        else cutKey = -1;
         y -= over;   // 고무줄(줄 잘림 계산 뒤에 더해, 당기는 동안 줄 맞춤이 흔들리지 않게)
         if (Mathf.Abs(printer.anchoredPosition.y - y) > 0.01f || Mathf.Abs(printer.offsetMin.x) > 0.01f || Mathf.Abs(printer.offsetMax.x) > 0.01f)
         {
@@ -175,6 +183,7 @@ public class MolakScroll : MonoBehaviour
         }
     }
 
+    int cutKey = -1; float cutVal;
     TMPro.TMP_Text dlg;
     /// <summary>현재 배치(printer 가 y 만큼 올라간 상태)를 기준으로, 뷰포트 윗변에 걸친 줄을 완전히 가리려면 더 올려야 할 양(캔버스 단위).</summary>
     float TopLineCut (float y)

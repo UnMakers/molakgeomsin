@@ -367,7 +367,7 @@ public class MolakFlow : MonoBehaviour
         var m = Measurer(tx);
         if (m == null) return false;
         float h = m.GetPreferredValues(cur + "\n\n" + addition, w, 0f).y;
-        return h > vpH * 0.97f;
+        return h > vpH * 0.9f;   // 0.4.54: 어림이 모자라 넘치면 글이 밀려 올라가니 한 줄쯤 여유를 둔다
     }
 
     // 본문 칸(DialogueText)으로 GetPreferredValues 를 부르면 그 칸의 글자 정보가 바뀌어 글자 드러내기가 깨진다 → 같은 설정의 보이지 않는 칸으로 잰다
