@@ -352,18 +352,28 @@ public class MolakTitle : MonoBehaviour
             var le = MolakEnd.Find(lastEnd);
             if (!string.IsNullOrEmpty(le.Hanja)) GUI.Label(new Rect(rx - mw * 1.4f, fy, mw * 1.4f, 30*u), "지난 생 · 末路 " + le.Hanja + " — " + le.Title, sLastR);
         }
-        string foot = "제1부 · 운락객잔" + (runs > 0 ? "  ·  회귀 " + runs + "회" : "") + (clears > 0 ? "  ·  등극 " + clears + "회" : "");
+        string foot = "운락객잔" + (runs > 0 ? "  ·  회귀 " + runs + "회" : "") + (clears > 0 ? "  ·  등극 " + clears + "회" : "");
         GUI.Label(new Rect(rx - mw * 1.4f, fy + 32*u, mw * 1.4f, 28*u), foot, sFootR);
 
         // ---- 먹이 덮는다 → "눈을 뜬다." ----
         GUI.color = Color.white;
         if (wakeAt > 0f)
         {
+            MolakInputGuard.Guard(new Rect(0, 0, w, h));   // 깨어나는 탭이 첫 문단의 '계속'으로 새지 않게
             float k = Mathf.Clamp01((t - wakeAt) / 1.1f);
             Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, Mathf.SmoothStep(0, 1, k)));
             var ws = new GUIStyle(sWake); MolakGui.Ink(ws, new Color(0.88f, 0.82f, 0.72f, Mathf.Clamp01((t - wakeAt - 0.6f) / 0.6f)));
             GUI.Label(new Rect(0, h * 0.45f, w, 60*u), "눈을 뜬다.", ws);
-            if (!wakeFired && t - wakeAt > 1.7f)
+            // 0.4.39: 본편의 먹 연출처럼 눌러야 넘어간다(예전엔 1.7초 뒤 저절로 시작). ▼ 가 숨 쉬며 누르라고 알린다.
+            float wk = t - wakeAt - 1.2f;
+            if (!wakeFired && wk > 0f)
+            {
+                float pa = Mathf.Clamp01(wk / 0.5f) * (0.35f + 0.3f * Mathf.Sin(wk * 3.2f));
+                var hs = new GUIStyle(sWake){ fontSize = Mathf.RoundToInt(30*u) };
+                MolakGui.Ink(hs, new Color(0.88f, 0.82f, 0.72f, pa));
+                GUI.Label(new Rect(0, h * 0.80f, w, 60*u), "▼", hs);
+            }
+            if (!wakeFired && wk > 0f && (WakePressed() || MolakBlackout.Auto))
             {
                 wakeFired = true; grace = 6f;
                 var player = sp;
@@ -372,5 +382,15 @@ public class MolakTitle : MonoBehaviour
         }
         if (fadeIn < 1f) Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, 1f - fadeIn));
         GUI.color = g0;
+    }
+
+    static bool WakePressed ()
+    {
+        var ts = UnityEngine.InputSystem.Touchscreen.current;
+        if (ts != null && ts.primaryTouch.press.wasPressedThisFrame) return true;
+        var ms = UnityEngine.InputSystem.Mouse.current;
+        if (ms != null && ms.leftButton.wasPressedThisFrame) return true;
+        var kb = UnityEngine.InputSystem.Keyboard.current;
+        return kb != null && (kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame);
     }
 }

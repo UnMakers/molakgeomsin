@@ -64,6 +64,21 @@ public class MolakInputGuard : MonoBehaviour
         return false;
     }
 
+    float muteUntil = -1f;  // 막힌 누름을 뗀 뒤 잠깐 '계속' 음소거
+    /// <summary>0.4.39: 지금부터 s초 동안 '계속'을 받지 않는다(선택지 직후 첫 문단이 어떤 입력으로도 통째로 찍히지 않게).</summary>
+    public static void MuteFor (float s)
+    {
+        if (inst == null) return;
+        inst.muteUntil = Mathf.Max(inst.muteUntil, Time.unscaledTime + s);
+        try
+        {
+            var im = Engine.GetService<IInputManager>(); if (im == null) return;
+            var c = im.GetInput("Continue"); if (c != null) c.Muted = true;
+            var k = im.GetInput("Skip"); if (k != null) k.Muted = true;
+            inst.muted = true;
+        }
+        catch { }
+    }
     bool wasDownInside;
     bool wasDown;            // 직전 프레임 포인터 눌림
     bool pressBlocked;       // 이번 누름은 '계속'으로 처리하지 않음(보호 영역에서 시작 / 드래그)
@@ -92,7 +107,10 @@ public class MolakInputGuard : MonoBehaviour
         if (down && MolakScroll.DraggedThisPress) pressBlocked = true;
 
         // 포인터를 누르고 있는 동안은 항상 음소거 — '계속'은 뗄 때(드래그가 아니었을 때만) 합성으로 보낸다.
-        bool want = down || inside || wasDownInside;
+        // 0.4.39: 막힌 누름(선택지 카드 등)을 뗀 뒤에도 잠깐(0.35초) 더 음소거 — 기기에서는 나니노벨 자체 터치 입력이
+        //         손을 떼는 프레임에 '계속'을 읽어, 선택지 뒤 첫 문단이 통째로 찍히던 것.
+        if (!down && wasDown && pressBlocked) muteUntil = Time.unscaledTime + 0.35f;
+        bool want = down || inside || wasDownInside || Time.unscaledTime < muteUntil;
         if (want != muted)
         {
             muted = want;
