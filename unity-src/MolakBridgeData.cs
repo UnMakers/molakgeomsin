@@ -5,6 +5,9 @@ public static class MolakBridgeData
 {
     public static readonly Dictionary<string, string> EventChar = new Dictionary<string, string> {
         {"E_AmhCm","amhyang_soft"},
+        {"E_ChamRoof","chamsae"},
+        {"E_ChamTab","hajinmu"},
+        {"E_ChamRain","chamsae_serious"},
         {"E_AmhShop","amhyang"},
         {"E_AmhSpill","amhyang"},
         {"E_CmFire","cheongmyo"},
@@ -48,6 +51,9 @@ public static class MolakBridgeData
         {"E_YongSell","yonggae"},
     };
     public static readonly Dictionary<string, string> EventScene = new Dictionary<string, string> {
+        {"E_ChamRoof","roofmoon"},
+        {"E_ChamTab","innhall"},
+        {"E_ChamRain","rain"},
         {"E_Acup","alley"},
         {"E_AmhCm","temple"},
         {"E_AmhLetter","innroom"},

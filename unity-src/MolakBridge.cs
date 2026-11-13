@@ -58,7 +58,7 @@ public static class MolakBridge
     static readonly Dictionary<string, string> CharName = new Dictionary<string, string> {
         {"soa","소아"},{"soa_smile","소아"},{"soa_fierce","소아"},{"soa_grief","소아"},{"hajinmu","하진무"},{"granny","백초 할멈"},
         {"yonggae","용개"},{"gwaksan","곽산"},{"amhyang","암향"},{"amhyang_soft","암향"},{"amhyang_pain","암향"},{"cheongmyo","청묘"},
-        {"cheongmyo_robe","청묘"},{"jang","쥐눈이 장"},{"ggoji","꼬지"},{"jinbaek","진백"},{"oldman","노인"},
+        {"cheongmyo_robe","청묘"},{"jang","쥐눈이 장"},{"ggoji","꼬지"},{"jinbaek","진백"},{"oldman","노인"},{"chamsae","참새"},{"chamsae_serious","참새"},
     };
 
     static float G (string k) { return MolakStats.Get(k); }

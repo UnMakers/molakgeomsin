@@ -84,6 +84,10 @@
 @goto #BAm25 if:day>=46&&f_amhdead<1&&b_am2>0&&b_am25<1
 @goto #BAm3 if:day>=50&&f_amhdead<1&&amhaff>=5&&f_leftwithsoa<1&&b_am3<1
 @goto #BCm1 if:day>=24&&f_jbsister>0&&b_cm1<1
+@goto #BCh1 if:day>=12&&b_jang>0&&b_ch1<1
+@goto #BCh2 if:day>=22&&b_ch1>0&&chamaff>=1&&b_ch2<1
+@goto #BCh3 if:day>=34&&b_ch2>0&&b_ch3<1
+@goto #BCh4 if:day>=46&&b_ch3>0&&f_chamgone<1&&b_ch4<1
 @goto #BCm2 if:day>=36&&f_jbsister>0&&b_cm1>0&&b_cm2<1
 @goto #BCm25 if:day>=42&&b_cm2>0&&b_cm25<1
 @goto #BCm3 if:day>=50&&cmaff>=4&&b_cm3<1
@@ -1440,6 +1444,9 @@
 @bridge kind:{evkind}
 @print "{bridgetext}" if:bridgetext!="none"
 @gosub MolakEvents#E_Yong if:nextevent=="E_Yong"
+@gosub MolakEvents#E_ChamRoof if:nextevent=="E_ChamRoof"
+@gosub MolakEvents#E_ChamTab if:nextevent=="E_ChamTab"
+@gosub MolakEvents#E_ChamRain if:nextevent=="E_ChamRain"
 @gosub MolakEvents#E_Spared if:nextevent=="E_Spared"
 @gosub MolakEvents#E_JinSister if:nextevent=="E_JinSister"
 @gosub MolakEvents#E_HajinNight if:nextevent=="E_HajinNight"
@@ -1764,6 +1771,22 @@
 @chapter text:"산문 밖의 봄" sub:"청묘"
 @set b_cm3=1
 @goto Molak08#Cm3
+# BCh1
+@chapter text:"참새" sub:"참새"
+@set b_ch1=1
+@goto Molak15#Ch1
+# BCh2
+@chapter text:"소식의 값" sub:"참새"
+@set b_ch2=1
+@goto Molak15#Ch2
+# BCh3
+@chapter text:"이름을 판 날" sub:"참새"
+@set b_ch3=1
+@goto Molak15#Ch3
+# BCh4
+@chapter text:"참새의 이름" sub:"참새"
+@set b_ch4=1
+@goto Molak15#Ch4
 # BR6A
 @chapter text:"북두를 거꾸로" sub:"복수"
 @set b_r6=1

@@ -167,6 +167,7 @@
 @goto #LFSoa if:f_soamet>0&&f_soadead<1&&aff>=4&&deathcause!="소아의 검"
 @goto #LFAmh if:f_amhdead<1&&amhaff>=5
 @goto #LFCm if:cmaff>=4
+@goto #LFCham if:chamaff>=5&&f_chamgone<1
 @goto #LFHajin if:f_hajindead<1&&b_hajin2x>0
 @goto #LFGwak if:f_gwakdinner>0
 @goto #LFYong if:f_yongcrew>0
@@ -182,6 +183,10 @@
 # LFCm
 마지막으로 떠오르는 것은 마른 대추다. 막내는 늘 배가 고팠잖아요.
 산사 뒤뜰에서 장작 패는 소리가 들린다. 이번 생에도 그녀 혼자 남는다. 한 번이면 됐다고 했는데.
+@return
+# LFCham
+마지막으로 떠오르는 것은 남의 국밥에 꽂히던 숟가락이다. 콩 다섯 알.
+이 소식은 누가 팔까. 그녀는 딱 한 번만 팔 것이다. 그리고 그날 밤 지붕에서 혼자 울 것이다. 농 하나 없이.
 @return
 # LFHajin
 마지막으로 떠오르는 것은 주판알 소리다. 객잔 일층, 등잔 하나.
@@ -399,6 +404,12 @@
 눈을 뜨면, 그날 아침이다.
 찻잎 냄새는 없다. 운락객잔의 천장. 손목에 누가 짚던 자리가 아직 차다.
 문양이 낮게 열을 낸다. '향을 끈다고 열매가 안 익더냐. 이제 알겠느냐.'
+@goto #Shop
+# MumyeongAfter
+@black marks:true
+눈을 뜨면, 그날 아침이다.
+남쪽 장터의 소리는 없다. 운락객잔의 천장. 서열록 맨 끝 줄에서 지워졌던 이름이 다시 돌아와 있다.
+문양이 낮게 열을 낸다. '이름을 지우면 열매가 숨더냐. 이제 알겠느냐.'
 @goto #Shop
 # HwansokAfter
 @black marks:true

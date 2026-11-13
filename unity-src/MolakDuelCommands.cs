@@ -241,7 +241,9 @@ public class DuelCommand : Command
         if (kind == "raid" && MolakStats.Get("f_maengraid") > 0) bonus += 2f;      // 맹의 칼 셋이 지붕에서 뒤를 쳤다
         if ((kind == "raid" || kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_rivalfriend") > 0 && MolakStats.Get("f_gwakally") < 1) bonus += 1.5f; // 곽산이 등을 받친다(맹약까지는 아니어도)
         if (kind == "lord" && MolakStats.Get("f_namgungdoor") > 0) bonus += 1f;    // 남궁이 측문을 비웠다
-        if (kind == "lord" && MolakStats.Get("f_cmally") > 0) bonus += 1.5f;      // 사저가 가르친 아홉째, 운해
+        if (kind == "lord" && MolakStats.Get("f_cmally") > 0) bonus += 1.5f;
+        if ((kind == "lord" || kind == "raid") && MolakStats.Get("f_chamally") > 0) bonus += 1f;   // 0.4.50 참새가 먼저 걸어 본 길
+        if (MolakStats.Get("dlethal") > 0 && MolakStats.Get("f_chamfeather") > 0) { bonus += 2f; MolakStats.Set("f_chamfeather", 0f); }   // 참새 깃: 목숨 건 판에서 한 번, 상대의 버릇을 먼저 안다      // 사저가 가르친 아홉째, 운해
         if (kind == "lord") bonus += Mathf.Min(2.5f, MolakStats.Get("rallyn") * 0.5f);   // 0.4.34 마지막 계단을 함께 오른 자들
         if (kind == "lord" && MolakStats.Get("f_lordshaken") > 0) bonus += 1f;      // 교주가 할 말을 먼저 했다
         if (kind == "lord" && MolakStats.Get("f_namedcheongun") > 0) bonus += 0.5f; // 청운의 이름을 걸었다

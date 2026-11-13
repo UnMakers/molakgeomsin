@@ -886,6 +886,17 @@
 "이제 저도 아홉째까지 다 쓸 수 있어요. 막내 덕분에. 근데 쓸 데가 장작밖에 없네요."
 그게 좋다고, 그녀가 웃는다. 산문 밖의 봄이다.
 @return
+# EpiCham
+@page
+@art char:chamsae
+대전을 나서 사흘째, 관도 갈림길의 버드나무에 참새 깃 하나가 꽂혀 있다. 그 밑에서 그녀가 다리를 흔들고 앉아 있다.
+"형씨! 교주 목 땄다면서요! 그 소식, 제가 제일 먼저 팔았어요. 운락 전체에. 공짜로."
+그녀가 버드나무에서 뛰어내린다. 국밥 두 그릇 값이 든 전낭을 흔든다.
+"이제 국밥값 갚을게요. 콩 다섯 알 말고 은자로. 대신 이번엔 형씨가 제 국밥 뺏어 먹어요. 그래야 공평하죠."
+@goto #EpiChamN if:f_chamname<1
+"……희야, 하고 한 번만 불러 줘요. 그 소식은 안 팔아요. 평생."
+# EpiChamN
+@return
 # EpiOchi
 @page
 문득 회목촌의 형제가 떠오른다. 말없이 오래 부둥켜안고 있던 두 사람.
@@ -948,6 +959,7 @@
 @gosub #EpiRoad
 @gosub #EpiCm if:f_cmeve>0||f_cmally>0
 @gosub #EpiAmh if:f_amhdead<1&&f_amheve>0||f_amhdead<1&&f_amhwait>0
+@gosub #EpiCham if:f_chamally>0
 @gosub #EpiOchi if:f_ochisaved>0
 @gosub #EpiRoll
 @goto #EpiBoard if:f_namedcheongun>0||f_namedtown>0

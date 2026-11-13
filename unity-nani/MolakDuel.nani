@@ -20,6 +20,7 @@
 @goto #Sit12 if:dsit==12
 # Head
 <color=#C03434>{foename}</color> — 강호 서열 {foerank} · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
+@print "<color=#9A70C4>옷깃의 참새 깃이 흔들린다. 그녀가 미리 알아다 준 이 칼잡이의 버릇이 떠오른다.</color>" if:f_chamfeather>0&&dlethal>0
 @goto #HeadInj if:injury>0||taint>0
 @goto #RunChoices if:memwarn<1
 <color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 첫 수가 반 박자 일찍 보인다.

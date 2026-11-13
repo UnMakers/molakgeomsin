@@ -33,6 +33,10 @@ public static class MolakEventDefs
             new Def("E_SoaWhet", 10, 45, 'd', "f_soamet&!f_soadead", null, 0, 22),
             new Def("E_SoaBowl", 6, 50, 'd', "f_soamet&!f_soadead", null, 0, 22),
             new Def("E_AmhShop", 8, 26, 'd', null, null, 0, 14),
+            // 0.4.50 참새의 일상
+            new Def("E_ChamRoof", 15, 48, 'n', "b_ch1&!f_chamgone", null, 0, 18),
+            new Def("E_ChamTab", 16, 40, 'd', "b_ch1&!f_chamgone", "E_ChamRoof", 2, 16),
+            new Def("E_ChamRain", 24, 52, 'n', "b_ch2&!f_chamgone", null, 0, 16),
             new Def("E_AmhSpill", 16, 32, 'n', "f_amhseen&!f_amhdead", "E_AmhShop", 3, 22),
             new Def("E_TempleBell", 18, 50, 'd', null, null, 0, 12),
             new Def("E_AmhLetter", 38, 48, 'n', "b_am1&!f_amhdead", null, 0, 16),
