@@ -407,6 +407,7 @@
 @set f_yongspear=0
 @set gaefed=0
 @set gaefedday=0
+@set gdebt=0
 @set grudge=0
 @set grudgeday=0
 @set grudgename=0
@@ -414,6 +415,7 @@
 @set grudgewarn=0
 @set grudgewarned=0
 @set hajinaff=0
+@set herbbody=0
 @set hp=0
 @set hpmax=0
 @set injury=0
@@ -501,6 +503,7 @@
 @set wrand=0
 @set wsnow=0
 @set yonglost=0
+@set bridgetext="none"
 @set byeolho="none"
 @set deathcause="none"
 @set deathtip="none"
@@ -510,6 +513,7 @@
 @set dx_pretext="none"
 @set dx_restext="none"
 @set dx_telltext="none"
+@set evkind="none"
 @set foename="none"
 @set foerank="none"
 @set foetier="none"
@@ -948,6 +952,7 @@
 # MkTavernC
 @choice "쥐눈이 장에게 혈마교를 묻는다 (은자 10)" if:mn>=10&&f_janginfo<1 goto:#P4j
 @choice "투전판에 앉는다 (은자 5)" if:mn>=5&&mkgamble<1 goto:#MkGamble
+@choice "외상 장부에 이름을 올리고 투전판에 앉는다 — 지면 빚 다섯 냥" if:mn<5&&mkgamble<1 goto:#MkGambleD
 @choice "이야기꾼의 이야기를 듣는다 (은자 2)" if:mn>=2&&f_storylore<1 goto:#MkStory
 @choice "다른 데로 간다" goto:#P4b
 @stop
@@ -959,27 +964,66 @@
 @choice "판주의 손목을 내리누른다" goto:#MkGambleB
 @choice "패를 엎고 일어선다" goto:#MkGambleC
 @stop
+# MkGambleD
+@set mkgamble=1
+@set gdebt=1
+판주가 빈 전낭을 힐끗 보고 붓을 든다.
+"외상이오? 이 판은 왕삼 어른 돈으로 돌아가오. 지면 그 장부에 이름이 올라가는 거요."
+붓끝이 장부에 당신 이름을 적는다.
+판주가 투전목을 돌린다. 패를 쥐는 순간, 판주의 엄지가 패 하나를 소매로 밀어 넣는 게 보인다.
+@choice "모른 척 끝까지 친다" goto:#MkGambleA
+@choice "판주의 손목을 내리누른다" goto:#MkGambleB
+@choice "패를 엎고 일어선다" goto:#MkGambleC
+@stop
 # MkGambleA
 @set tr=random(1,100)
 @goto #MkGambleA2 if:tr<=35
+@goto #MkGambleAD if:gdebt>0
 마지막 패가 넘어가고, 맞은편 사내가 판돈을 쓸어 간다. 다섯 냥짜리 구경이었다.
+@goto #MkTavern
+# MkGambleAD
+마지막 패가 넘어가고, 판주가 장부의 당신 이름 옆에 '五' 자를 적는다. 먹이 마르기도 전에 장부가 덮인다.
+"닷새 뒤에 왕삼 어른 사람이 찾아갈 거요. 객잔이 어디인지는 다 아오."
+@set debtday=day+5 if:debt<1
+@set debt=debt+5
+@set gdebt=0
 @goto #MkTavern
 # MkGambleA2
 판주가 숨긴 패를 꺼낼 틈을 놓친다. 판돈 열다섯 냥이 당신 앞으로 온다.
 "운 좋은 양반이로군."
+@goto #MkGambleA2D if:gdebt>0
 @fx mn:15
+@goto #MkTavern
+# MkGambleA2D
+판주가 그중 다섯 냥을 떼어 내고 장부의 이름에 줄을 긋는다.
+@fx mn:10
+@set gdebt=0
 @goto #MkTavern
 # MkGambleB
 판주의 손목에 손바닥을 얹는다. 소매 속 패가 툭 떨어진다.
 판주가 이를 드러냈다가 당신 눈을 보고 다문다.
+@goto #MkGambleBD if:gdebt>0
 "……판돈은 돌려드리리다. 그냥 가시오."
 @fx mn:10 sl:1
 @set f_gambleshamed=1
+@goto #MkTavern
+# MkGambleBD
+"……장부에서 이름은 지우리다. 이건 입막음 값이오. 그냥 가시오."
+판주가 은자 다섯 냥을 탁자 너머로 민다.
+@fx mn:5 sl:1
+@set f_gambleshamed=1
+@set gdebt=0
 @goto #MkTavern
 # MkGambleC
 패를 엎고 일어선다.
 "보는 눈은 있는데 겁이 많군."
 겁이 아니다. 오늘은 칼부림할 날이 아니다.
+@goto #MkGambleCD if:gdebt>0
+@goto #MkTavern
+# MkGambleCD
+판주가 혀를 차며 장부의 이름에 줄을 긋는다.
+"앉았다 일어난 값은 안 받겠소. 다음엔 은자를 들고 오시오."
+@set gdebt=0
 @goto #MkTavern
 # MkStory
 @fx mn:-2

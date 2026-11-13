@@ -16,7 +16,10 @@ public class MolakFlow : MonoBehaviour
     static MolakFlow inst;
     public static string LastDecision = "";
     /// <summary>다음 문장부터 새 단락(화면 비움) — 장면/날짜 전환 시 호출</summary>
-    public static void Break () { if (inst != null) inst.breakNext = true; }
+    public static void Break () { if (inst != null && !inst.holdPage) inst.breakNext = true; }
+    /// <summary>0.4.41 이음 문장: 다음 본문(이음 문장)을 새 쪽 첫 줄로, 입력 없이 찍고, 그 뒤 사건 첫 글은 같은 쪽에 잇는다.</summary>
+    public static void BridgeNext () { if (inst != null) { inst.breakNext = true; inst.bridgePending = true; } }
+    bool bridgePending, holdPage;
     IScriptPlayer player;
     string lastScript = "";
     int lastLine = -9999;
@@ -121,6 +124,9 @@ public class MolakFlow : MonoBehaviour
         // (컴파일러가 generic 라인에 reset을 미리 박아 두므로 항상 덮어쓴다)
 
         bool ovf = Overflow();
+        bool isBridge = bridgePending; bridgePending = false;
+        if (holdPage && !isBridge) { breakNext = false; }      // 이음 문장 바로 뒤: 사건의 장면 전환·gosub 이 쪽을 넘기지 않는다
+        bool held = holdPage && !isBridge; holdPage = false;
         bool reset = breakNext || ovf || afterChoice;   // 선택지를 고른 뒤의 첫 본문은 새 화면
         LastDecision = spot.ScriptPath + ":" + spot.LineNumber + " reset=" + reset + " break=" + breakNext + " ovf=" + ovf + " hasValue=" + pt.ResetPrinter.HasValue;
 
@@ -132,7 +138,7 @@ public class MolakFlow : MonoBehaviour
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
         // 0.4.9: 대사 줄은 앞뒤로 한 줄 띄운다(서술과 대사가 붙어 있으면 읽기 어렵다)
         bool curDlg = IsDialogue(pt);
-        bool beat = lastPrintWaited || afterChoice || curDlg || prevDlg;
+        bool beat = lastPrintWaited || afterChoice || curDlg || prevDlg || held;
         // 0.4.37: 한 번에 쭉 나오는 서술이 길면 숨 쉴 자리를 둔다 — 빈 줄 없이 이어진 단락이 둘 이상이고 글자가 RunBreakChars 를 넘었으면
         //         다음 단락 앞에 빈 줄 하나(예: 첫 거리 장면 "…사람들이 길을 비킨다." 다음).
         int len = PlainLen(pt);
@@ -144,6 +150,7 @@ public class MolakFlow : MonoBehaviour
         afterChoice = false;
         // 같은 단락(연속된 서사 문장)은 한 번의 탭으로 쭉 출력: 다음 명령이 또 본문이면 입력 대기 없이 이어간다.
         bool wait = !NextIsText(track);
+        if (isBridge) { wait = false; holdPage = true; }   // 이음 문장은 기다리지 않고 바로 사건으로
         pt.WaitForInput = wait;
         lastPrintWaited = wait;
         breakNext = false;

@@ -8,6 +8,7 @@
 "스무 해 묵은 하수오다. 은자 넉 냥. 아니면 약초 감별 내기를 하든지. 맞히면 공짜, 틀리면 두 냥."
 @choice "산다" if:mn>=4 goto:#E_HerbC0
 @choice "감별 내기를 받는다" if:mn>=2 goto:#E_HerbC1
+@choice "\"은자는 없소. 틀리면 반나절 약연을 돌리겠소.\"" if:mn<2 goto:#E_HerbC4
 @choice "\"저주를 누르는 약은 없소?\"" if:curse>=30 goto:#E_HerbC2
 @choice "뿌리 냄새만 맡고 지나친다" goto:#E_HerbC3
 @stop
@@ -23,6 +24,13 @@
 @goto #H_Herbbet
 # E_HerbC2
 @goto #E_Herb3
+# E_HerbC4
+할멈이 약연 손잡이를 툭 친다.
+"반나절이면 허리가 끊어질 게다. 좋다."
+@set herbbody=1
+@gosub #H_Herbbet
+@set herbbody=0
+@return
 # E_HerbC3
 @return
 
@@ -3688,8 +3696,14 @@
 # HerbbetLose
 "하수오."
 "틀렸다. 박주가리 뿌리니라. 그걸로 여럿 속여 먹었지."
+@goto #HerbbetBody if:herbbody>0
 할멈이 손바닥을 내민다. 내기는 내기다.
 @fx mn:-2
+@return
+# HerbbetBody
+"반나절이다. 손잡이를 잡거라."
+해가 기울 때까지 약연을 돌린다. 어깨가 빠질 것 같은데, 할멈이 그사이 약재 이름 열두 개를 귀에 박아 넣는다.
+@fx hp:-1 ng:1
 @return
 # H_Peddlerbet
 @fx mn:-2

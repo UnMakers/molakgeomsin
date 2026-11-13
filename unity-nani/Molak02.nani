@@ -335,6 +335,7 @@
 @goto #Daytime
 
 # Daytime
+@set evkind="day"
 @pickevent chance:85 slot:day
 @gosub #RunEvent if:nextevent!="none"
 @pickevent chance:40 slot:day
@@ -731,6 +732,8 @@
 # Night
 @art char:none
 @scene id:night
+@bridge kind:dusk
+@print "{bridgetext}" if:bridgetext!="none"
 @goto #NvOld if:curse>=80&&curse<88&&f_oldseen>0&&tn_oldvoice<1
 @set tr=random(1,100)
 @goto #NvHj if:f_hajindead>0&&tn_nvhj<1
@@ -1357,11 +1360,14 @@
 @goto #Evening
 # Evening
 @art char:none
+@set evkind="night"
 @pickevent chance:55 slot:night
 @gosub #RunEvent if:nextevent!="none"
 @goto #DayLoop
 
 # RunEvent
+@bridge kind:{evkind}
+@print "{bridgetext}" if:bridgetext!="none"
 @gosub MolakEvents#E_Yong if:nextevent=="E_Yong"
 @gosub MolakEvents#E_Spared if:nextevent=="E_Spared"
 @gosub MolakEvents#E_JinSister if:nextevent=="E_JinSister"

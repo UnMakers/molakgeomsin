@@ -332,6 +332,7 @@
 @choice "꽂힌 창을 뽑아 던져 준다" goto:#Rival2A
 @choice "\"창이나 고치고 와라.\" — 미룬다" goto:#Rival2B
 @choice "\"판돈을 걸자. 지면 은자 다섯이다.\" (은자 5)" if:mn>=5 goto:#Rival2X
+@choice "\"은자는 없다. 지면 사흘, 네 창대를 깎아 주마.\"" if:mn<5 goto:#Rival2W
 @stop
 # Rival2X
 "내가 지면 은자 다섯. 네가 지면 북쪽 길 하나."
@@ -344,6 +345,19 @@
 곽산이 은자 다섯 냥의 무게를 단다.
 "판돈은 판돈이다. 북쪽 길은 다음 판에 다시 걸어라."
 @fx mn:-5
+@set f_rivalfriend=1
+@goto Molak02#AfterChapter
+# Rival2W
+"내가 지면 사흘, 네 창대를 깎고 날을 세워 주마. 네가 지면 북쪽 길 하나."
+곽산이 쪼개진 창대를 내려다본다.
+"……칼잡이가 창을 깎는다라. 그것도 구경거리군. 좋다."
+@set dkind="rival"
+@gosub MolakDuel#Run
+@goto #Rival2Y if:duelwin>0
+곽산이 창대를 당신 발치에 던진다.
+"사흘이다. 대패는 내가 빌려 오마."
+사흘 동안 나무를 깎는다. 손바닥에 물집이 잡히는 사이, 창이 어디서 힘을 받고 어디서 꺾이는지가 손에 들어온다.
+@fx day:2 sw:1
 @set f_rivalfriend=1
 @goto Molak02#AfterChapter
 # Rival2Y

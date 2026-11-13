@@ -35,6 +35,7 @@ public class InitRunCommand : Command
     {
         var vars = Engine.GetServiceOrErr<ICustomVariableManager>();
         EnsureGlobals();
+        MolakBridge.Reset();   // 0.4.41: 이음 문장의 '앞 사건' 기준점을 새 생에서 비운다
         // 전역(g_)이 아닌 변수 전부 제거 수준으로 0 초기화
         var snapshot = vars.Variables.Where(v => !v.Name.StartsWith("g_")).Select(v => (v.Name, v.Value.Type)).ToList();
         foreach (var (n, ty) in snapshot)

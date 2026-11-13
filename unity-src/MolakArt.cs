@@ -114,6 +114,9 @@ public class MolakArt : MonoBehaviour
         prevScene = null;
     }
 
+    /// <summary>0.4.41: 그림이 바뀌는 중인가(새 장면·인물이 아직 다 떠오르지 않았다). @art 가 이게 끝나길 잠깐 기다린 뒤 글로 넘어간다.</summary>
+    public static bool Settling { get { return inst != null && (inst.sceneT < 0.8f || inst.charT < 0.8f); } }
+
     public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); }
 
     static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();

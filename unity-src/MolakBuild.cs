@@ -131,4 +131,94 @@ public static class MolakBuild
         File.WriteAllText(WinResultFile, res + "\n");
         return res;
     }
+
+    // ---------------- iOS (0.4.41) ----------------
+    // 윈도우에서는 Xcode 프로젝트까지만 만든다(애플 정책상 앱으로 묶고 서명하는 마지막 단계는 macOS + Xcode 필요).
+    // 맥이 없으면: 이 프로젝트 zip 을 macOS 클라우드(깃허브 Actions 등)에서 서명 없이 .ipa 로 묶고,
+    // 윈도우의 Sideloadly 같은 도구로 무료 애플 ID 서명을 해 아이폰에 설치한다(7일마다 재서명). tools/ios/README 참고.
+    public const string IosBundleId = "com.unmakers.molakgeomsin";
+    public const string IosMinVersion = "15.0";
+    public static string IosDir { get { return Path.Combine(BuildDir, "iOS"); } }
+    public static string IosResultFile { get { return Path.Combine(BuildDir, "ios_build_result.txt"); } }
+
+    /// <summary>iOS 플레이어 설정(빌드 전에 매번 맞춘다 — 손으로 바뀐 값도 되돌린다).</summary>
+    public static void ApplyIosSettings (string version, int code)
+    {
+        var ios = UnityEditor.Build.NamedBuildTarget.iOS;
+        PlayerSettings.SetApplicationIdentifier(ios, IosBundleId);
+        PlayerSettings.bundleVersion = version;
+        PlayerSettings.iOS.buildNumber = code.ToString();
+        PlayerSettings.iOS.targetOSVersionString = IosMinVersion;
+        PlayerSettings.iOS.targetDevice = iOSTargetDevice.iPhoneAndiPad;
+        PlayerSettings.iOS.appleEnableAutomaticSigning = true;   // 팀 ID는 Xcode/클라우드에서 넣는다(여기선 비워 둠)
+        PlayerSettings.SetScriptingBackend(ios, ScriptingImplementation.IL2CPP);
+        PlayerSettings.SetArchitecture(ios, 1);                  // ARM64
+        PlayerSettings.iOS.hideHomeButton = false;
+        PlayerSettings.iOS.requiresPersistentWiFi = false;
+        PlayerSettings.iOS.appInBackgroundBehavior = iOSAppInBackgroundBehavior.Suspend;
+        PlayerSettings.iOS.statusBarStyle = iOSStatusBarStyle.Default;
+        PlayerSettings.statusBarHidden = true;
+        PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+    }
+
+    /// <summary>Xcode 프로젝트 출력 → Build\iOS\v{버전}\ , 그리고 zip. 결과 줄은 ios_build_result.txt.</summary>
+    public static string IOS (string version, int code)
+    {
+        if (File.Exists(IosResultFile)) File.Delete(IosResultFile);
+        string res = "";
+        if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.iOS, BuildTarget.iOS))
+        {
+            res = "EXC iOS Build Support 모듈이 설치돼 있지 않다(Unity Hub → 설치 → 모듈 추가)";
+            File.WriteAllText(IosResultFile, res + "\n"); return res;
+        }
+        foreach (var f in Directory.GetFiles(Path.Combine(Application.dataPath, "Scenario"), "*.nani"))
+            AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        ApplyIosSettings(version, code);
+        string outDir = Path.Combine(IosDir, "v" + version);
+        if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
+        Directory.CreateDirectory(outDir);
+        var opts = new BuildPlayerOptions {
+            scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
+            locationPathName = outDir, target = BuildTarget.iOS, options = BuildOptions.None
+        };
+        var building = typeof(Naninovel.BuildProcessor).GetProperty("Building");
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            building.SetValue(null, true, null);
+            Naninovel.BuildProcessor.PreprocessBuild(opts);
+            var report = BuildPipeline.BuildPlayer(opts);
+            res = "result=" + report.summary.result + " errors=" + report.summary.totalErrors + " warnings=" + report.summary.totalWarnings + " time=" + (int)sw.Elapsed.TotalSeconds + "s v=" + version + " build=" + code;
+            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            {
+                PatchInfoPlist(Path.Combine(outDir, "Info.plist"));
+                string zip = Path.Combine(IosDir, "몰락검신_v" + version + "_iOS_Xcode.zip");
+                if (File.Exists(zip)) File.Delete(zip);
+                System.IO.Compression.ZipFile.CreateFromDirectory(outDir, zip, System.IO.Compression.CompressionLevel.Optimal, false);
+                res += " | zip=" + (new FileInfo(zip).Length / (1024 * 1024)) + "MB";
+            }
+        }
+        catch (System.Exception ex) { res = "EXC " + ex.GetType().Name + ": " + ex.Message; }
+        finally
+        {
+            try { Naninovel.BuildProcessor.PostprocessBuild(); } catch (System.Exception ex2) { res += " | cleanupEXC " + ex2.Message; }
+            building.SetValue(null, false, null);
+        }
+        File.WriteAllText(IosResultFile, res + "\n");
+        return res;
+    }
+
+    /// <summary>앱스토어·테스트플라이트 제출 때 매번 묻는 '암호화 사용' 질문을 미리 답해 둔다(표준 HTTPS도 안 쓰므로 면제),
+    /// 표시 이름을 한글로. iOS 모듈 없이도 컴파일되게 plist 는 글자로 고친다.</summary>
+    static void PatchInfoPlist (string plist)
+    {
+        if (!File.Exists(plist)) return;
+        string s = File.ReadAllText(plist);
+        int end = s.LastIndexOf("</dict>");
+        if (end < 0) return;
+        var add = new System.Text.StringBuilder();
+        if (!s.Contains("ITSAppUsesNonExemptEncryption")) add.Append("\t<key>ITSAppUsesNonExemptEncryption</key>\n\t<false/>\n");
+        if (!s.Contains("CFBundleDisplayName")) add.Append("\t<key>CFBundleDisplayName</key>\n\t<string>몰락검신</string>\n");
+        if (add.Length > 0) File.WriteAllText(plist, s.Substring(0, end) + add + s.Substring(end), new System.Text.UTF8Encoding(false));
+    }
 }
