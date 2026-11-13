@@ -227,7 +227,7 @@ public class DuelCommand : Command
         if (kind == "raid" && MolakStats.Get("f_raidprep") > 0) bonus += 3f;     // 그 밤이 올 줄 알고 계단에 기름을 부었다
         if (kind == "raid" && MolakStats.Get("f_amhally") > 0) bonus += 1.5f;    // 암향이 미리 기별했다
         if (kind == "raid" && MolakStats.Get("f_hajinbond") > 0 && MolakStats.Get("f_hajindead") < 1) bonus += 2f; // 하진무가 혈랑대에게 계단 셋째 칸을 속였다
-        if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 반쪽의 합벽: 그녀의 검이 빈자리를 막는다
+        if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 암향과 손잡은 생(반쪽의 합벽은 f_halfhap)
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
         if (kind == "wolf" && MolakStats.Get("f_gwakally") > 0) bonus += 1.5f;    // 곽산이 폐철장 뒷길로 사슬잡이 절반을 끌고 갔다
         if (kind == "hunt2" && MolakStats.Get("f_gwakally") > 0) bonus += 1f;

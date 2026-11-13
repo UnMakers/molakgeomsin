@@ -12,6 +12,8 @@ public class MolakArt : MonoBehaviour
 {
     public static bool Collapsed;
     public static bool BandActive { get { return inst != null && !Collapsed && (inst.sceneCur != null || inst.charCur != null); } }
+    /// <summary>0.4.47: 띠에 그림이 있나(선택지 때문에 접혀 있어도). 본문 한 쪽의 높이를 어림할 때 쓴다.</summary>
+    public static bool HasArt { get { return inst != null && (inst.sceneCur != null || inst.charCur != null); } }
     public const float BandTop = 184f, BandH = 300f;   // 캔버스 단위(900×1600)
 
     static MolakArt inst;

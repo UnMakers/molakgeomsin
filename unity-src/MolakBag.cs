@@ -298,7 +298,8 @@ public class MolakBag : MonoBehaviour
             }
             int vow = Mathf.RoundToInt(Get("vow"));
             string vowS = vow == 1 ? "복수" : vow == 2 ? "인연" : vow == 3 ? "생존" : "";
-            string status = Mathf.RoundToInt(day) + "일째" + (vowS.Length > 0 ? "  ·  이번 생의 뜻 — " + vowS : "") + "      위로 올려 열기";
+            // 0.4.47: 날수(N일째)는 띄우지 않는다 — 날짜 대신 관아 그물로 알린다(0.4.9 원칙, 언메이커)
+            string status = (vowS.Length > 0 ? "이번 생의 뜻 — " + vowS + "      " : "") + "위로 올려 열기";
             GUI.Label(new Rect(0, by0 + 156*u, w, 40*u), "<size=" + Mathf.RoundToInt(25*u) + "><color=" + subCol + ">" + status + "</color></size>", sHint);
             return;
         }

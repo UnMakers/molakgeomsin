@@ -143,7 +143,10 @@ public class MolakFlow : MonoBehaviour
         EnsureParagraphBreaks();
         // (컴파일러가 generic 라인에 reset을 미리 박아 두므로 항상 덮어쓴다)
 
-        bool ovf = Overflow();
+        Overflow();   // 성능상 하드 캡
+        // 0.4.47 쪽 단위: 글이 내려가며 움직이면 읽기 흐트러진다(언메이커). 이 글까지 찍으면 한 쪽을 넘치겠으면 글만 비우고 새 쪽 맨 위부터(그림은 그대로).
+        bool willReset = breakNext || afterChoice;
+        bool ovf = !willReset && !(holdPage && !bridgePending) && PageWouldOverflow(TextOf(pt));
         // 다른 대본에서 넘어와 찍는 첫 글이면 맥락이 바뀐 것
         if (artResetPending) { artResetPending = false; if (!holdPage) MolakArt.ResetToBase(); }
         bool isBridge = bridgePending; bridgePending = false;
@@ -172,6 +175,17 @@ public class MolakFlow : MonoBehaviour
         afterChoice = false;
         // 같은 단락(연속된 서사 문장)은 한 번의 탭으로 쭉 출력: 다음 명령이 또 본문이면 입력 대기 없이 이어간다.
         bool wait = !NextIsText(track);
+        // 0.4.47: 탭 한 번에 이어 나올 다음 문단이 쪽을 넘기게 되면, 쪽을 넘기기 전에 한 번 기다린다(읽던 글이 바로 지워지지 않게)
+        if (!wait && !isBridge)
+        {
+            var nx = NextText(track);
+            if (nx != null)
+            {
+                var dt = DialogueText();
+                string cur = TextOf(pt), page = reset || dt == null ? cur : (dt.text ?? "") + "\n\n" + cur;
+                if (PageWouldOverflow(TextOf(nx), page)) wait = true;
+            }
+        }
         if (isBridge) { wait = false; holdPage = true; }   // 이음 문장은 기다리지 않고 바로 사건으로
         pt.WaitForInput = wait;
         lastPrintWaited = wait;
@@ -307,6 +321,77 @@ public class MolakFlow : MonoBehaviour
     }
 
     /// <summary>본문이 화면 영역을 넘치면 가장 오래된 문단부터 밀어낸다(서울2033식 흐름 유지). 넘치지 않으면 false.</summary>
+    /// <summary>번역 키·변수를 풀어 낸 본문(어림용).</summary>
+    static string TextOf (PrintText pt)
+    {
+        try
+        {
+            if (pt == null || pt.Text == null || !pt.Text.HasValue) return "";
+            var loc = Engine.GetService<ITextLocalizer>();
+            return (loc != null ? loc.Resolve(pt.Text.Value) : pt.Text.Value.ToString()) ?? "";
+        }
+        catch { return ""; }
+    }
+
+    /// <summary>다음 '의미 있는' 본문 출력 명령(NextIsText 와 같은 규칙). 없으면 null.</summary>
+    static PrintText NextText (IScriptTrack track)
+    {
+        if (!NextIsText(track)) return null;
+        var pl = track.Playlist;
+        for (int k = track.PlayedIndex + 1; k < pl.Count; k++) if (pl[k] is PrintText) return (PrintText)pl[k];
+        return null;
+    }
+
+    static TMPro.TMP_Text DialogueText ()
+    {
+        foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
+                if (t0.gameObject.name == "DialogueText") return t0;
+        return null;
+    }
+
+    /// <summary>지금 쪽의 글(existing, null 이면 화면의 글) 뒤에 addition 을 붙이면 한 쪽을 넘치나. 쪽이 비어 있으면 넘치지 않는다고 본다(긴 한 문단은 스크롤로).</summary>
+    static bool PageWouldOverflow (string addition, string existing = null)
+    {
+        if (string.IsNullOrEmpty(addition)) return false;
+        var tx = DialogueText();
+        if (tx == null) return false;
+        float vpH = MolakScroll.TargetBodyHeight();
+        if (vpH <= 0f) return false;
+        string cur = existing ?? tx.text ?? "";
+        if (cur.Trim().Length == 0) return false;
+        float w = tx.rectTransform.rect.width;
+        if (w <= 1f) return false;
+        var m = Measurer(tx);
+        if (m == null) return false;
+        float h = m.GetPreferredValues(cur + "\n\n" + addition, w, 0f).y;
+        return h > vpH * 0.97f;
+    }
+
+    // 본문 칸(DialogueText)으로 GetPreferredValues 를 부르면 그 칸의 글자 정보가 바뀌어 글자 드러내기가 깨진다 → 같은 설정의 보이지 않는 칸으로 잰다
+    static TMPro.TextMeshProUGUI measurer;
+    static TMPro.TextMeshProUGUI Measurer (TMPro.TMP_Text src)
+    {
+        if (measurer == null)
+        {
+            var go = new GameObject("MolakMeasure", typeof(RectTransform));
+            go.transform.SetParent(src.transform.parent, false);
+            measurer = go.AddComponent<TMPro.TextMeshProUGUI>();
+            measurer.raycastTarget = false;
+            measurer.color = new Color(0f, 0f, 0f, 0f);
+            measurer.text = "";
+        }
+        else if (measurer.transform.parent != src.transform.parent) measurer.transform.SetParent(src.transform.parent, false);
+        measurer.font = src.font; measurer.fontSharedMaterial = src.fontSharedMaterial;
+        measurer.fontSize = src.fontSize; measurer.fontStyle = src.fontStyle;
+        measurer.lineSpacing = src.lineSpacing; measurer.paragraphSpacing = src.paragraphSpacing;
+        measurer.characterSpacing = src.characterSpacing; measurer.wordSpacing = src.wordSpacing;
+        measurer.margin = src.margin; measurer.richText = src.richText;
+        measurer.textWrappingMode = src.textWrappingMode; measurer.textPreprocessor = src.textPreprocessor;
+        measurer.alignment = src.alignment;
+        return measurer;
+    }
+
     bool Overflow ()
     {
         var pr = Printer();

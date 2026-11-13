@@ -39,6 +39,18 @@ public class MolakScroll : MonoBehaviour
     /// <summary>새 본문 출력 시작 — 맨 아래로 복귀.</summary>
     public static void ResetToBottom () { if (inst != null) inst.userScroll = 0f; }
 
+    /// <summary>0.4.47: 선택지가 없을 때 본문 한 쪽의 높이(캔버스 단위). 그림 띠가 있으면 그 아래부터. 뷰포트가 아직 없으면 -1.</summary>
+    public static float TargetBodyHeight ()
+    {
+        if (inst == null || inst.viewport == null) return -1f;
+        float canvasH = MolakLayout.Canvas.y;
+        var root = inst.viewport.GetComponentInParent<Canvas>();
+        if (root != null && root.rootCanvas != null) canvasH = (root.rootCanvas.transform as RectTransform).rect.height;
+        float top = MolakArt.HasArt ? (MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand) : MolakLayout.BodyTop;
+        float bottom = Mathf.Min(MolakLayout.BodyBottom(0, 0f), canvasH - MolakLayout.BodyMinH);
+        return canvasH - bottom - top;
+    }
+
     static float CanvasScale () => Mathf.Min(Screen.width / MolakLayout.Canvas.x, Screen.height / MolakLayout.Canvas.y);
 
     bool Ensure ()
