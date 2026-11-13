@@ -55,9 +55,9 @@
 # ExLoop
 @duelx do:tell
 {dx_telltext}
-@choice "받아친다 — 들어오는 칼을 흘려 되친다" goto:#ExA2
-@choice "칼끝을 흔든다 — 허초로 빈틈을 끌어낸다" goto:#ExA3
-@choice "정면으로 든다 — 곧장 벤다" goto:#ExA1
+@choice "받아친다 — 상대가 찌르러 올 때 강하다" goto:#ExA2
+@choice "칼끝을 흔든다 — 상대가 굳게 받을 때 강하다" goto:#ExA3
+@choice "정면으로 벤다 — 상대가 허초를 쓸 때 강하다" goto:#ExA1
 @stop
 # ExA1
 @duelx act:1

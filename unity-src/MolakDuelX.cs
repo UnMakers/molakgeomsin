@@ -197,6 +197,7 @@ public static class MolakDuelX
         if (sure) line = "<color=#9A70C4>지난 생에 본 수다.</color> " + line;
         if (i == 1 && MolakStats.Get("dx_showhab") > 0) line += "<br><color=#8A7A66>버릇 — " + h.Label + "</color>";
         MolakStats.SetStr("dx_telltext", head + line);
+        MolakDuelStage.Tell(shown);
     }
 
     public static void Act (int a)
@@ -231,6 +232,7 @@ public static class MolakDuelX
         }
         else { txt = EvenT[Random.Range(0, EvenT.Length)]; MolakVfx.Clash(false); }
         MolakStats.SetStr("dx_restext", txt);
+        MolakDuelStage.Strike(a, res);
         int i = Mathf.RoundToInt(MolakStats.Get("dx_i")), n = Mathf.RoundToInt(MolakStats.Get("dx_n"));
         if (i >= n)
         {
@@ -305,6 +307,14 @@ public class DuelXCommand : Command
     {
         if (Assigned(Act)) { MolakDuelX.Act(Act.Value); return; }
         var d = Assigned(Do) ? Do.Value : "tell";
-        if (d == "init") MolakDuelX.Init(); else if (d == "pre") MolakDuelX.Pre(); else MolakDuelX.Tell();
+        if (d == "init")
+        {
+            MolakDuelX.Init();
+            // 0.4.49 첫 비무: 「비무의 법」을 읽고 닫을 때까지 기다린다(빨리 넘기기 중엔 띄우지 않는다)
+            var sp = Engine.GetService<IScriptPlayer>();
+            if ((sp == null || !sp.Skipping) && !MolakBlackout.Auto && MolakDuelStage.ShowGuideIfFirst())
+                while (MolakDuelStage.GuideOpen) await Awaitable.NextFrameAsync();
+        }
+        else if (d == "pre") MolakDuelX.Pre(); else MolakDuelX.Tell();
     }
 }

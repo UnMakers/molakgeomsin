@@ -13,6 +13,13 @@ public class MolakArt : MonoBehaviour
     public static bool Collapsed;
     public static bool BandActive { get { return inst != null && !Collapsed && (inst.sceneCur != null || inst.charCur != null); } }
     /// <summary>0.4.47: 띠에 그림이 있나(선택지 때문에 접혀 있어도). 본문 한 쪽의 높이를 어림할 때 쓴다.</summary>
+    /// <summary>0.4.49 비무 판인가(장면이 duel*).</summary>
+    public static bool InDuel { get { return inst != null && inst.sceneId != null && inst.sceneId.StartsWith("duel"); } }
+    /// <summary>지금 서 있는 인물 그림(비무의 잔상용).</summary>
+    public static Texture2D CharTexture { get { return inst != null && inst.charCur != null ? inst.charCur.texture : null; } }
+    static int pose; float poseK;
+    /// <summary>0.4.49 비무 기세: 1 덤벼든다(한 걸음 다가옴) 2 물러서 받는다 3 흔든다 0 제자리.</summary>
+    public static void Pose (int p) { pose = p; }
     public static bool HasArt { get { return inst != null && (inst.sceneCur != null || inst.charCur != null); } }
     public const float BandTop = 184f, BandH = 300f;   // 캔버스 단위(900×1600)
 
@@ -111,6 +118,7 @@ public class MolakArt : MonoBehaviour
     public static void EndDuel ()
     {
         if (inst == null || !inst.sceneId.StartsWith("duel")) return;
+        MolakDuelStage.Clear();
         if (string.IsNullOrEmpty(prevScene)) inst.SetScene(null, ""); else { var sp = Load("MolakArt/scene_" + prevScene); inst.SetScene(sp, prevScene); }
         MolakBgm.Mood(prevScene == "raid" || prevScene == "bloodroof" ? "raid" : "day");
         prevScene = null;
@@ -303,6 +311,10 @@ public class MolakArt : MonoBehaviour
             pushT = Mathf.Min(1f, pushT + Time.deltaTime / 0.7f);
             float ease = 1f - Mathf.Pow(1f - pushT, 3f);
             k *= Mathf.Lerp(0.93f, 1f, ease) * (1f + 0.006f * Mathf.Sin(Time.time * 1.15f));
+            float want = pose == 1 ? 1.1f : pose == 2 ? 0.94f : 1f;
+            poseK = Mathf.Lerp(poseK <= 0f ? 1f : poseK, want, 1f - Mathf.Pow(0.002f, Time.deltaTime));
+            k *= poseK;
+            if (pose == 3) jit += Mathf.Sin(Time.time * 9f) * 10f * unit;
             charR.transform.localScale = new Vector3(k, k, 1f);
             float x = cx + jit;   // 홀로 서니 띠 가운데
             float y = bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;

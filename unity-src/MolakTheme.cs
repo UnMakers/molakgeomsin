@@ -302,7 +302,7 @@ public class MolakTheme : MonoBehaviour
         }
         // 삽화 띠 접기: 선택지 4개 이상이거나, 띠를 펼치면 본문이 선택지 위 공간에 다 안 들어갈 때만
         // 0.4.42(언메이커 결정): 선택지가 둘 이상이면 개수와 상관없이 그림 띠를 접고 본문을 선택지 바로 위까지 올린다. 하나뿐이면 그대로 둔다.
-        MolakArt.Collapsed = choiceCount >= 2;
+        MolakArt.Collapsed = choiceCount >= 2 && !MolakArt.InDuel;   // 0.4.49 비무 중엔 그림(기세·수)을 보여야 하니 접지 않는다
         EnsureCardSprite();
         // 선택지 멈춤 감시: 고른 뒤 2.5초가 지나도 같은 선택지(같은 Id 묶음)가 그대로면 기록한다(시험자 보고 '골랐는데 안 사라짐' 추적)
         if (clickT >= 0f && Time.unscaledTime - clickT > 2.5f)
