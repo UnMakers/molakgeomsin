@@ -16,7 +16,7 @@ public class MolakSettings : MonoBehaviour
     Font gowun;
     GUIStyle sHead, sLabel, sValue, sSection, sBtn, sHint;
     float builtU = -1f;
-    static Texture2D px, disk;
+    static Texture2D disk;
 
     public static bool IsOpen { get { return inst != null && inst.open; } }
 
@@ -57,7 +57,7 @@ public class MolakSettings : MonoBehaviour
         catch { }
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1, 1); px.SetPixel(0, 0, Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     static Texture2D Disk
     {
         get
@@ -78,7 +78,7 @@ public class MolakSettings : MonoBehaviour
     {
         if (sHead != null && Mathf.Approximately(builtU, u)) return;
         builtU = u;
-        if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+        if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, Color, TextAnchor, GUIStyle> mk = (size, col, an) =>
         {
             var s = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(size * u), alignment = an, richText = true, wordWrap = false };
@@ -97,7 +97,7 @@ public class MolakSettings : MonoBehaviour
     void OnGUI ()
     {
         if (!open) return;
-        GUI.depth = -200;   // 타이틀·메뉴·인게임 위
+        GUI.depth = MolakGui.DepthSettings;   // 타이틀·메뉴·인게임 위
         float u = MolakTheme.U; Styles(u);
         float w = Screen.width, h = Screen.height;
         openT += Time.unscaledDeltaTime;

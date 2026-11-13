@@ -5,8 +5,6 @@ using UnityEngine;
 public class MolakVfx : MonoBehaviour
 {
     static MolakVfx instance;
-    static Texture2D px;
-
     // 플래시 상태
     float flashT = -1f; Color flashC; float flashDur = 0.5f;
     // 흔들림
@@ -38,7 +36,7 @@ public class MolakVfx : MonoBehaviour
         instance = go.AddComponent<MolakVfx>();
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     void Box (Rect r, Color c) { var g = GUI.color; GUI.color = c; GUI.DrawTexture(r, Px); GUI.color = g; }
 
     public static void Scene (string id)
@@ -152,7 +150,7 @@ public class MolakVfx : MonoBehaviour
 
     void OnGUI ()
     {
-        GUI.depth = -50;   // 0.4.27: 행낭 띠·HUD 위까지 물들게(설정 -200, 인장 -2500, 먹 화면 -3000 보다는 아래)
+        GUI.depth = MolakGui.DepthVfx;   // 0.4.27: 행낭 띠·HUD 위까지 물들게(설정 -200, 인장 -2500, 먹 화면 -3000 보다는 아래)
         float w = Screen.width, h = Screen.height;
         // 몸과 사술의 상태를 화면 가장자리에: 체력이 바닥이면 붉은 맥이 뛰고, 저주가 깊으면 보랏빛이 숨을 쉰다
         if (Event.current.type == EventType.Repaint && Engine.Initialized && !MolakMenu.IsOpen)
@@ -198,7 +196,7 @@ public class MolakVfx : MonoBehaviour
                 float u = MolakTheme.U;
                 if (sChap == null || !Mathf.Approximately(chapU, u))
                 {
-                    chapU = u; if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+                    chapU = u; if (gowun == null) gowun = MolakGui.Gowun;
                     sChap = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(64 * u), alignment = TextAnchor.MiddleCenter };
                     sChapSub = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(26 * u), alignment = TextAnchor.MiddleCenter };
                     sChap.font = MolakTypography.Heading(gowun); sChapSub.font = MolakTypography.Heading(gowun);
@@ -232,7 +230,7 @@ public class MolakVfx : MonoBehaviour
                 float u = MolakTheme.U;
                 if (sStamp == null || !Mathf.Approximately(stampU, u))
                 {
-                    stampU = u; if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+                    stampU = u; if (gowun == null) gowun = MolakGui.Gowun;
                     sStamp = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(120 * u), alignment = TextAnchor.MiddleCenter };
                     sStampLine = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(28 * u), alignment = TextAnchor.MiddleCenter };
                     if (gowun != null) { sStamp.font = gowun; sStampLine.font = gowun; }
@@ -255,7 +253,7 @@ public class MolakVfx : MonoBehaviour
         // 날씨
         if (rain && rx != null && Event.current.type == EventType.Repaint)
         {
-            float u = w / 1080f, dt = Time.deltaTime, t = Time.time;
+            float u = MolakGui.U, dt = Time.deltaTime, t = Time.time;
             string k = WeatherKind;
             int n = k == "snow" ? 80 : k == "petals" ? 34 : k == "embers" ? 40 : k == "inferno" ? 110 : k == "bloodrain" ? 90 : 70;
             if (k == "inferno")

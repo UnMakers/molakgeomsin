@@ -12,10 +12,10 @@ using UnityEngine;
 public class MolakTitle : MonoBehaviour
 {
     static MolakTitle instance;
-    static Texture2D px, dot, disk;
+    static Texture2D dot, disk;
     Texture2D night, enso, silSoa, silJin, silOld, silMourn;
     Font gowun, hanjaFont;
-    GUIStyle sHanja, sSub, sItem, sItemDim, sTag, sFoot, sLast, sSeal, sWake;
+    GUIStyle sHanja, sSub, sItem, sItemDim, sTag, sFoot, sLast, sSeal;
     float builtU = -1f;
     float grace;
     float shownAt = -1f, wakeAt = -1f;
@@ -40,7 +40,7 @@ public class MolakTitle : MonoBehaviour
         instance = go.AddComponent<MolakTitle>();
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     static Texture2D MakeRound (int n, bool soft)
     {
         var t = new Texture2D(n, n, TextureFormat.RGBA32, false); t.wrapMode = TextureWrapMode.Clamp;
@@ -63,8 +63,8 @@ public class MolakTitle : MonoBehaviour
     {
         if (sItem != null && Mathf.Approximately(builtU, u)) return;
         builtU = u;
-        if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
-        if (hanjaFont == null) hanjaFont = Resources.Load<Font>("MolakHanja");
+        if (gowun == null) gowun = MolakGui.Gowun;
+        if (hanjaFont == null) hanjaFont = MolakGui.Hanja;
         if (night == null) night = Resources.Load<Texture2D>("MolakTitleNight");
         if (enso == null) enso = Resources.Load<Texture2D>("MolakTitleEnso");
         if (silSoa == null) silSoa = Resources.Load<Texture2D>("MolakTitleSil_soa");
@@ -85,7 +85,6 @@ public class MolakTitle : MonoBehaviour
         sFoot = mk(21, new Color(0.22f,0.20f,0.19f,1f), TextAnchor.MiddleLeft);
         sLast = mk(22, new Color(0.55f,0.14f,0.11f,1f), TextAnchor.MiddleLeft);
         sSeal = mk(34, new Color(0.98f,0.94f,0.88f,1f), TextAnchor.MiddleCenter);
-        sWake = mk(36, new Color(0.88f,0.82f,0.72f,1f), TextAnchor.MiddleCenter);
         if (hanjaFont != null) { sHanja.font = hanjaFont; sSub.font = hanjaFont; sSeal.font = hanjaFont; }
     }
 
@@ -325,7 +324,7 @@ public class MolakTitle : MonoBehaviour
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
         bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable || state.AutoLoadAvailable;
-        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { wakeAt = t; MolakSfx.Rewind(); }
+        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) Wake(sp, state, t);
         if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
             // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록
@@ -356,41 +355,21 @@ public class MolakTitle : MonoBehaviour
         GUI.Label(new Rect(rx - mw * 1.4f, fy + 32*u, mw * 1.4f, 28*u), foot, sFootR);
 
         // ---- 먹이 덮는다 → "눈을 뜬다." ----
+        // 0.4.40: 예전엔 타이틀만 따로 먹·글자·▼ 를 그렸다(그래서 본편 먹 연출과 따로 놀았다). 이제 같은 MolakBlackout 을 쓴다.
         GUI.color = Color.white;
-        if (wakeAt > 0f)
-        {
-            MolakInputGuard.Guard(new Rect(0, 0, w, h));   // 깨어나는 탭이 첫 문단의 '계속'으로 새지 않게
-            float k = Mathf.Clamp01((t - wakeAt) / 1.1f);
-            Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, Mathf.SmoothStep(0, 1, k)));
-            var ws = new GUIStyle(sWake); MolakGui.Ink(ws, new Color(0.88f, 0.82f, 0.72f, Mathf.Clamp01((t - wakeAt - 0.6f) / 0.6f)));
-            GUI.Label(new Rect(0, h * 0.45f, w, 60*u), "눈을 뜬다.", ws);
-            // 0.4.39: 본편의 먹 연출처럼 눌러야 넘어간다(예전엔 1.7초 뒤 저절로 시작). ▼ 가 숨 쉬며 누르라고 알린다.
-            float wk = t - wakeAt - 1.2f;
-            if (!wakeFired && wk > 0f)
-            {
-                float pa = Mathf.Clamp01(wk / 0.5f) * (0.35f + 0.3f * Mathf.Sin(wk * 3.2f));
-                var hs = new GUIStyle(sWake){ fontSize = Mathf.RoundToInt(30*u) };
-                MolakGui.Ink(hs, new Color(0.88f, 0.82f, 0.72f, pa));
-                GUI.Label(new Rect(0, h * 0.80f, w, 60*u), "▼", hs);
-            }
-            if (!wakeFired && wk > 0f && (WakePressed() || MolakBlackout.Auto))
-            {
-                wakeFired = true; grace = 6f;
-                var player = sp;
-                state.ResetState(new string[0], () => Naninovel.ScriptTrackExtensions.LoadAndPlay(player.MainTrack, "Entry"));
-            }
-        }
-        if (fadeIn < 1f) Box(new Rect(0, 0, w, h), new Color(0.02f, 0.018f, 0.016f, 1f - fadeIn));
+        if (fadeIn < 1f) Box(new Rect(0, 0, w, h), new Color(MolakGui.InkBlack.r, MolakGui.InkBlack.g, MolakGui.InkBlack.b, 1f - fadeIn));
         GUI.color = g0;
     }
 
-    static bool WakePressed ()
+
+    /// <summary>「다시 그 아침으로」: 먹이 덮이고 "눈을 뜬다." — 누르면 새 생이 시작된다(본편 @black 과 같은 연출·같은 입력).</summary>
+    void Wake (IScriptPlayer sp, IStateManager state, float t)
     {
-        var ts = UnityEngine.InputSystem.Touchscreen.current;
-        if (ts != null && ts.primaryTouch.press.wasPressedThisFrame) return true;
-        var ms = UnityEngine.InputSystem.Mouse.current;
-        if (ms != null && ms.leftButton.wasPressedThisFrame) return true;
-        var kb = UnityEngine.InputSystem.Keyboard.current;
-        return kb != null && (kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame);
+        wakeAt = t; MolakSfx.Rewind();
+        MolakBlackout.Play(new[] { "눈을 뜬다." }, 1.8f, false, false, () =>
+        {
+            wakeFired = true; grace = 6f;
+            state.ResetState(new string[0], () => Naninovel.ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"));
+        });
     }
 }

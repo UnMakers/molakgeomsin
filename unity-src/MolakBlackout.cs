@@ -21,11 +21,11 @@ public class MolakBlackout : MonoBehaviour
     float phaseT;      // 지금 단계가 시작된 시각(실시간)
     int phase;         // 0 먹이 덮임, 1 줄 떠오름·머묾, 2 줄 짐, 3 먹이 걷힘
     float coverA;      // 먹 농도(걷힐 때 이어 쓰려고 기억)
-    GUIStyle style; Font font; float styleU = -1f;
-    static Texture2D px;
-
+    GUIStyle style; float styleU = -1f;
     /// <summary>stack:true — 첫 줄을 머리로 두고, 다음 줄들이 그 아래로 차례로 쌓인다(지우지 않음). 마지막 줄까지 머문 뒤 한꺼번에 진다.</summary>
-    public static void Play (string[] lines, float hold, bool red, bool stack = false)
+    System.Action onDone;   // 0.4.40: 줄이 다 지고 먹이 걷히기 시작할 때 한 번(타이틀의 "눈을 뜬다." → 게임 시작)
+
+    public static void Play (string[] lines, float hold, bool red, bool stack = false, System.Action onDone = null)
     {
         if (inst == null) { var go = new GameObject("MolakBlackout"); DontDestroyOnLoad(go); inst = go.AddComponent<MolakBlackout>(); }
         float now = Time.realtimeSinceStartup;
@@ -33,7 +33,7 @@ public class MolakBlackout : MonoBehaviour
         inst.lines = lines ?? new string[0];
         inst.hold = Mathf.Max(0.6f, hold);
         inst.red = red; inst.stack = stack;
-        inst.idx = 0; inst.phase = 0; inst.phaseT = now - 0.9f * c; inst.busy = true;
+        inst.idx = 0; inst.phase = 0; inst.phaseT = now - 0.9f * c; inst.busy = true; inst.onDone = onDone;
     }
 
     float CoverNow (float t)
@@ -44,15 +44,7 @@ public class MolakBlackout : MonoBehaviour
         return 1f;
     }
 
-    static bool Pressed ()
-    {
-        var ts = UnityEngine.InputSystem.Touchscreen.current;
-        if (ts != null && ts.primaryTouch.press.wasPressedThisFrame) return true;
-        var ms = UnityEngine.InputSystem.Mouse.current;
-        if (ms != null && ms.leftButton.wasPressedThisFrame) return true;
-        var kb = UnityEngine.InputSystem.Keyboard.current;
-        return kb != null && (kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame);
-    }
+    static bool Pressed () { return MolakGui.TapDown(); }
 
     void Update ()
     {
@@ -62,7 +54,7 @@ public class MolakBlackout : MonoBehaviour
         {
             case 0: if (e >= 0.9f) { Next(1, t); } break;
             case 1:
-                if (idx >= lines.Length) { Next(3, t); busy = false; break; }
+                if (idx >= lines.Length) { Next(3, t); Finish(); break; }
                 // 홑줄: 떠오른 뒤 눌러야 넘어간다. 쌓기: 고른 것들은 저절로 차례로 쌓이고(누르면 바로 다음), 다 쌓인 뒤엔 눌러야 닫힌다.
                 bool last = !stack || idx >= lines.Length - 1;
                 bool timeUp = e >= 0.6f + hold;
@@ -72,12 +64,19 @@ public class MolakBlackout : MonoBehaviour
                 else if (tap || (auto && timeUp)) Next(2, t);
                 break;
             case 2:
-                if (e >= (stack ? 0.7f : 0.4f)) { idx = stack ? lines.Length : idx + 1; Next(idx < lines.Length ? 1 : 3, t); if (phase == 3) busy = false; }
+                if (e >= (stack ? 0.7f : 0.4f)) { idx = stack ? lines.Length : idx + 1; Next(idx < lines.Length ? 1 : 3, t); if (phase == 3) Finish(); }
                 break;
         }
     }
 
     void Next (int p, float t) { phase = p; phaseT = t; }
+
+    void Finish ()
+    {
+        busy = false;
+        var cb = onDone; onDone = null;
+        if (cb != null) { try { cb(); } catch (System.Exception e) { Debug.LogException(e); } }
+    }
 
     static bool AutoPlaying ()
     {
@@ -89,8 +88,8 @@ public class MolakBlackout : MonoBehaviour
         float t = Time.realtimeSinceStartup, e = t - phaseT;
         float cover = CoverNow(t);
         if (phase == 3 && cover <= 0.001f) return;
-        GUI.depth = -3000;
-        if (px == null) { px = new Texture2D(1, 1); px.SetPixel(0, 0, Color.white); px.Apply(); }
+        GUI.depth = MolakGui.DepthBlackout;
+        
         float w = Screen.width, h = Screen.height;
         if (busy)
         {
@@ -100,21 +99,19 @@ public class MolakBlackout : MonoBehaviour
             if (ev != null && (ev.type == EventType.MouseDown || ev.type == EventType.MouseUp || ev.type == EventType.MouseDrag)) ev.Use();
         }
         var g0 = GUI.color;
-        var ink = red ? new Color(0.10f, 0.015f, 0.012f, 1f) : new Color(0.02f, 0.018f, 0.016f, 1f);
-        GUI.color = new Color(ink.r, ink.g, ink.b, cover); GUI.DrawTexture(new Rect(0, 0, w, h), px);
+        var ink = red ? MolakGui.InkBlood : MolakGui.InkBlack;
+        GUI.color = new Color(ink.r, ink.g, ink.b, cover); GUI.DrawTexture(new Rect(0, 0, w, h), MolakGui.Px);
         GUI.color = g0;
         if ((phase == 1 || phase == 2) && idx < lines.Length)
         {
-            float u = Mathf.Min(w / 1080f, h / 1920f);
+            float u = MolakGui.U;
             if (style == null || !Mathf.Approximately(styleU, u))
             {
-                if (font == null) font = Resources.Load<Font>("GowunBatang");
-                style = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(46 * u), alignment = TextAnchor.MiddleCenter, richText = true, wordWrap = true, clipping = TextClipping.Overflow };
-                if (font != null) style.font = font;
+                style = MolakGui.Label(46, u, TextAnchor.MiddleCenter);
                 styleU = u;
             }
             float a = phase == 1 ? Mathf.Clamp01(e / 0.6f) : 1f - Mathf.Clamp01(e / (stack ? 0.7f : 0.4f));
-            var col = red ? new Color(0.92f, 0.72f, 0.66f, a) : new Color(0.88f, 0.82f, 0.72f, a);
+            var col = red ? new Color(0.92f, 0.72f, 0.66f, a) : new Color(MolakGui.InkOnBlack.r, MolakGui.InkOnBlack.g, MolakGui.InkOnBlack.b, a);
             // 0.4.37: 쌓기 그림이 '▼ 표시' 조건의 else 에 매달려 있어서, 홑줄 모드에서도 ▼ 가 안 보이는 순간(떠오를 때·질 때)마다
             //         앞 줄들이 금빛 머리줄·붉은 밑줄과 함께 겹쳐 그려졌다(글자가 두 번 뜨던 것). 홑줄/쌓기를 먼저 가른다.
             if (!stack)
@@ -137,7 +134,7 @@ public class MolakBlackout : MonoBehaviour
                     if (i == 0)
                     {
                         GUI.color = new Color(0.72f, 0.2f, 0.18f, ai * 0.8f);
-                        GUI.DrawTexture(new Rect(w * 0.5f - 90 * u, y + 82 * u, 180 * u, 2 * u), px);
+                        GUI.DrawTexture(new Rect(w * 0.5f - 90 * u, y + 82 * u, 180 * u, 2 * u), MolakGui.Px);
                         GUI.color = g0;
                     }
                 }

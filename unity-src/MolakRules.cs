@@ -65,6 +65,19 @@ public static class MolakRules
         return Mathf.Max(1f, Mathf.Floor(day / PtsPerDays) + Mathf.Floor((sw + ng) / PtsPerStats) + (rank > 0f ? PtsRanked : 0f));
     }
 
+    // ---- 교주를 벤 생의 정산 ----
+    /// <summary>등극 정산 깨달음 = ClearPtsBase + floor(날 / ClearPtsPerDays).</summary>
+    public const float ClearPtsBase = 30f, ClearPtsPerDays = 2f;
+    public static float ClearPoints (float day) { return ClearPtsBase + Mathf.Floor(day / ClearPtsPerDays); }
+
+    // ---- 독·곪은 상처 ----
+    /// <summary>날마다 깎는 체력: 곪음이 TaintHeavy 이상이면 TaintHpHeavy, 아니면 TaintHpLight. 마감마다 곪음이 하루치면 +1, 며칠치면 +2.</summary>
+    public const float TaintHeavy = 4f, TaintHpHeavy = 2f, TaintHpLight = 1f, TaintGrowShort = 1f, TaintGrowLong = 2f;
+
+    // ---- 진엔딩(합벽) ----
+    /// <summary>검보를 품은 생이 교주전에 드는 서열. 대본(Molak02 첫 줄의 rank&lt;=30)과 같은 수여야 한다 — 노인의 귀띔 문장도 이 수를 쓴다.</summary>
+    public const float TrueEndRank = 30f;
+
     // ---- 이번 생의 뜻(회귀 아침에 고르는 맹세) ----
     public const float VowReward = 4f;
     /// <summary>복수: 서열 이 안에 들면 이룬다.</summary>

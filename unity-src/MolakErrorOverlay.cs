@@ -6,7 +6,6 @@ public class MolakErrorOverlay : MonoBehaviour
 {
     static MolakErrorOverlay instance;
     static readonly List<string> lines = new List<string>();
-    static Texture2D px;
     GUIStyle st;
     float builtU = -1f;
 
@@ -40,12 +39,12 @@ public class MolakErrorOverlay : MonoBehaviour
         try { System.IO.File.AppendAllText(System.IO.Path.Combine(Application.persistentDataPath, "molak_errors.txt"), System.DateTime.Now.ToString("HH:mm:ss ") + msg + "\n" + stack + "\n"); } catch { }
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
 
     void OnGUI ()
     {
         if (lines.Count == 0) return;
-        float u = Mathf.Min(Screen.width / 1080f, Screen.height / 1920f);
+        float u = MolakGui.U;
         if (st == null || !Mathf.Approximately(builtU, u))
         {
             builtU = u;

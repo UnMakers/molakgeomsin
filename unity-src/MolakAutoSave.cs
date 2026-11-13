@@ -108,7 +108,7 @@ public class MolakAutoSave : MonoBehaviour
         if (st == null || st.fontSize != Mathf.RoundToInt(24 * u))
         {
             st = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(24 * u), alignment = TextAnchor.MiddleRight };
-            var f = Resources.Load<Font>("GowunBatang"); if (f != null) st.font = f;
+            var f = MolakGui.Gowun; if (f != null) st.font = f;
         }
         float a = toastT < 0.25f ? toastT / 0.25f : toastT > 1.3f ? (1.8f - toastT) / 0.5f : 1f;
         MolakGui.Ink(st, new Color(MolakTheme.Ink3.r, MolakTheme.Ink3.g, MolakTheme.Ink3.b, 0.85f * a));

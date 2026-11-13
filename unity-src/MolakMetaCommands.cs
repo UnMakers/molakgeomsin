@@ -105,7 +105,7 @@ public class DayTickCommand : Command
             if (MolakStats.Get("f_ringclosed") > 0) MolakStats.Add("f_ringclosed", -1f); // 비무판 폐쇄 일수
             if (MolakStats.Get("injury") > 0) MolakStats.Add("injury", -1f);                 // 부상: 사흘이면 아문다
             if (MolakStats.Get("taint") > 0)                                                 // 독·곪은 상처: 날마다 몸을 깎는다
-                MolakStats.Add("hp", MolakStats.Get("taint") >= 4f ? -2f : -1f);
+                MolakStats.Add("hp", MolakStats.Get("taint") >= MolakRules.TaintHeavy ? -MolakRules.TaintHpHeavy : -MolakRules.TaintHpLight);
             float lodg = day >= MolakRules.LodgeLateDay ? MolakRules.LodgeLate : MolakRules.LodgeBase;
             if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f;                          // 하진무가 방값을 안 받기로 함
             if (MolakStats.Get("f_hajincold") > 0) lodg += MolakRules.LodgeColdExtra;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
@@ -118,7 +118,7 @@ public class DayTickCommand : Command
             else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", -(n >= 3 ? MolakRules.StarveHpLong : MolakRules.StarveHpShort)); MolakStats.Set("starved", 1f); }
         }
         // 독·곪은 상처는 마감마다 깊어진다(며칠 한 바퀴면 두 칸 — 손쓸 기회는 한두 바퀴)
-        if (MolakStats.Get("taint") > 0) MolakStats.Add("taint", n >= 3 ? 2f : 1f);
+        if (MolakStats.Get("taint") > 0) MolakStats.Add("taint", n >= 3 ? MolakRules.TaintGrowLong : MolakRules.TaintGrowShort);
         MolakStats.ClampAll();
 #if UNITY_EDITOR
         // 에디터 전용: 은자 흐름 기록(소크 분석용)
@@ -152,7 +152,7 @@ public class ClearRunCommand : Command
 {
     public override async Awaitable Execute (ExecutionContext ctx)
     {
-        float gained = 30f + Mathf.Floor(MolakStats.Get("day") / 2f);
+        float gained = MolakRules.ClearPoints(MolakStats.Get("day"));
         MolakStats.Add("g_pts", gained);
         MolakStats.Add("g_clears", 1f);
         MolakStats.Set("gained", gained);
@@ -434,7 +434,7 @@ public class LifeNoteCommand : Command
             if (MolakStats.Get("g_redverse") < 1f) hint = "'적운의 아이 곁에서 혈랑대의 밤을 맞거라. 지붕 위에 남는 것이 있느니라.'";
             else if (hap && !bond) hint = "'검보는 두 사람의 검이다. 그 아이가 등을 맡길 만큼 곁에 두거라.'";
             else if (hap && MolakStats.Get("f_wolfdown") < 1f) hint = "'교주의 산문은 혈쇄문의 사슬을 끊은 자에게만 열리느니라.'";
-            else if (hap && (rank <= 0f || rank > 30f)) hint = "'검보를 품었거든 서열은 서른 안이면 족하다.'";
+            else if (hap && (rank <= 0f || rank > MolakRules.TrueEndRank)) hint = "'검보를 품었거든 서열은 서른 안이면 족하다.'";
         }
         MolakStats.SetStr("truehint", hint);
         MolakStats.Set("truehintc", hint.Length > 0 ? 1f : 0f);

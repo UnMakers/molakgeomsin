@@ -4,7 +4,6 @@ using UnityEngine;
 public class MolakDuelCard : MonoBehaviour
 {
     static MolakDuelCard instance;
-    static Texture2D px;
     Font gowun;
     GUIStyle sHanja, sName, sLine, sSub;
     float builtU = -1f;
@@ -27,14 +26,14 @@ public class MolakDuelCard : MonoBehaviour
         cWin = win; cName = foe; cLine = line; cSub = sub ?? ""; cT = 0f;
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     void Box (Rect r, Color c) { var g = GUI.color; GUI.color = new Color(c.r, c.g, c.b, c.a * GUI.color.a); GUI.DrawTexture(r, Px); GUI.color = g; }
 
     void EnsureStyles (float u)
     {
         if (sHanja != null && Mathf.Approximately(builtU, u)) return;
         builtU = u;
-        if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+        if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, GUIStyle> mk = size =>
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=TextAnchor.MiddleCenter,richText=true};

@@ -91,7 +91,6 @@ public class MolakEnd : MonoBehaviour
 
     // ---------- 연출 ----------
     static MolakEnd instance;
-    static Texture2D px;
     Font gowun;
     GUIStyle sHanja, sTitle, sNew;
     float builtU = -1f;
@@ -115,14 +114,14 @@ public class MolakEnd : MonoBehaviour
     static bool cTrue;
     static Texture2D dawnTex, ensoTex, diskTex; static Font hanjaFont;
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     void Box (Rect r, Color c) { var g = GUI.color; GUI.color = c; GUI.DrawTexture(r, Px); GUI.color = g; }
 
     void EnsureStyles (float u)
     {
         if (sHanja != null && Mathf.Approximately(builtU, u)) return;
         builtU = u;
-        if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+        if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, Color, GUIStyle> mk = (size, col) =>
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=TextAnchor.MiddleCenter,richText=true};
@@ -190,7 +189,7 @@ public class MolakEnd : MonoBehaviour
             diskTex.Apply();
         }
         if (ensoTex == null) ensoTex = Resources.Load<Texture2D>("MolakTitleEnso");
-        if (hanjaFont == null) hanjaFont = Resources.Load<Font>("MolakHanja");
+        if (hanjaFont == null) hanjaFont = MolakGui.Hanja;
 
         float out0 = cT > dur ? Mathf.Clamp01((dur + tail - cT) / tail) : 1f;
         var g = GUI.color;

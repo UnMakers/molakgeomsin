@@ -80,10 +80,7 @@ public class MolakScroll : MonoBehaviour
 
     void HandleDrag ()
     {
-        bool down = false; Vector2 pos = Vector2.zero;
-        var ts = Touchscreen.current;
-        if (ts != null && ts.primaryTouch.press.isPressed) { down = true; pos = ts.primaryTouch.position.ReadValue(); }
-        else if (Mouse.current != null && Mouse.current.leftButton.isPressed) { down = true; pos = Mouse.current.position.ReadValue(); }
+        Vector2 pos; bool down = MolakGui.PointerScreen(out pos);
         if (down && !pressing)
         {
             pressing = true; pressPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false;
@@ -213,7 +210,7 @@ public class MolakScroll : MonoBehaviour
     }
 
     // 위로 올려 본 상태 표시 — 뷰포트 아래쪽에 '최신으로' 힌트
-    static Texture2D px; GUIStyle st; float builtU = -1f;
+    GUIStyle st; float builtU = -1f;
     void OnGUI ()
     {
         if (!ScrolledUp || viewport == null || MolakMenu.IsOpen) return;
@@ -222,10 +219,10 @@ public class MolakScroll : MonoBehaviour
         {
             builtU = u;
             st = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(24 * u), alignment = TextAnchor.MiddleCenter };
-            var gowun = Resources.Load<Font>("GowunBatang"); if (gowun != null) st.font = gowun;
+            var gowun = MolakGui.Gowun; if (gowun != null) st.font = gowun;
             MolakGui.Ink(st, MolakTheme.Ink3);
         }
-        if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); }
+        
         // 뷰포트 하단 중앙(스크린 좌표)
         var corners = new Vector3[4]; viewport.GetWorldCorners(corners);
         var cam = viewport.GetComponentInParent<Canvas>().rootCanvas.worldCamera;
@@ -233,7 +230,7 @@ public class MolakScroll : MonoBehaviour
         float cx = (b0.x + b3.x) / 2f, gy = Screen.height - b0.y;
         float w = 220 * u, h = 44 * u;
         var r = new Rect(cx - w/2f, gy - h - 6*u, w, h);
-        var g = GUI.color; GUI.color = new Color(0.06f, 0.05f, 0.045f, 0.78f); GUI.DrawTexture(r, px); GUI.color = g;
+        var g = GUI.color; GUI.color = new Color(0.06f, 0.05f, 0.045f, 0.78f); GUI.DrawTexture(r, MolakGui.Px); GUI.color = g;
         var tc = st.normal.textColor; MolakGui.Ink(st, new Color(0.93f, 0.9f, 0.85f, 1f));
         GUI.Label(r, "▽ 최신 대사로", st);
         MolakGui.Ink(st, tc);

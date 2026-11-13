@@ -33,7 +33,7 @@ public class MolakTheme : MonoBehaviour
     static string ChoiceSig () { var sb = new System.Text.StringBuilder(); foreach (var c in choiceBuf) sb.Append(c.Id).Append('|'); return sb.ToString(); }
     static float choiceShownAt = -9f; static int lastChoiceCount;
     /// <summary>화면 비율 무관 UI 스케일: 1080×1920 기준 폭·높이 중 작은 쪽</summary>
-    public static float U { get { return Mathf.Min(Screen.width/1080f, Screen.height/1920f); } }
+    public static float U { get { return MolakGui.U; } }
     public static readonly Color Bg = Hex("#100D0C");
     public static readonly Color Paper = Hex("#191411");
     public static readonly Color Raise = Hex("#221B17");

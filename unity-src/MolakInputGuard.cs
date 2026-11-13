@@ -30,23 +30,8 @@ public class MolakInputGuard : MonoBehaviour
         rects.Add(guiRect);
     }
 
-    static bool PointerDown ()
-    {
-        var ts = Touchscreen.current;
-        if (ts != null && ts.primaryTouch.press.isPressed) return true;
-        var ms = Mouse.current;
-        return ms != null && ms.leftButton.isPressed;
-    }
-
-    static Vector2 PointerGui ()
-    {
-        Vector2 p = new Vector2(-1f, -1f);
-        var ts = Touchscreen.current;
-        if (ts != null && ts.primaryTouch.press.isPressed) p = ts.primaryTouch.position.ReadValue();
-        else if (Mouse.current != null) p = Mouse.current.position.ReadValue();
-        else if (Pointer.current != null) p = Pointer.current.position.ReadValue();
-        return new Vector2(p.x, Screen.height - p.y);
-    }
+    static bool PointerDown () { Vector2 p; return MolakGui.PointerScreen(out p); }
+    static Vector2 PointerGui () { Vector2 g; MolakGui.PointerGui(out g); return g; }
 
     static readonly List<UnityEngine.EventSystems.RaycastResult> hits = new List<UnityEngine.EventSystems.RaycastResult>();
     static bool OverButton (Vector2 gui)

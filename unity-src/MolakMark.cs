@@ -18,8 +18,6 @@ public class MolakMark : MonoBehaviour
     float t0 = -100f;
     const float Dur = 3.2f;
     GUIStyle sMain, sSub, sSeal; Font font; float styleU = -1f;
-    static Texture2D px;
-
     public static List<string> Marks ()
     {
         var s = MolakStats.Str(Var);
@@ -49,12 +47,12 @@ public class MolakMark : MonoBehaviour
         float e = Time.realtimeSinceStartup - t0;
         if (e < 0f || e > Dur) return;
         if (MolakBag.IsOpen || MolakMenu.IsOpen) return;   // 행낭·메뉴를 펼친 동안엔 가리지 않는다
-        GUI.depth = -2500;
-        if (px == null) { px = new Texture2D(1, 1); px.SetPixel(0, 0, Color.white); px.Apply(); }
-        float w = Screen.width, h = Screen.height, u = Mathf.Min(w / 1080f, h / 1920f);
+        GUI.depth = MolakGui.DepthMark;
+        
+        float w = Screen.width, h = Screen.height, u = MolakGui.U;
         if (sMain == null || !Mathf.Approximately(styleU, u))
         {
-            if (font == null) font = Resources.Load<Font>("GowunBatang");
+            if (font == null) font = MolakGui.Gowun;
             sMain = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(38 * u), alignment = TextAnchor.MiddleLeft, richText = true, wordWrap = true, clipping = TextClipping.Overflow };
             sSub = new GUIStyle(sMain) { fontSize = Mathf.RoundToInt(27 * u) };
             sSeal = new GUIStyle(sMain) { fontSize = Mathf.RoundToInt(46 * u), alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
@@ -72,15 +70,15 @@ public class MolakMark : MonoBehaviour
         {
             float f = i / 11f, edge = 1f - Mathf.Abs(f - 0.5f) * 2f;
             GUI.color = new Color(0.04f, 0.03f, 0.03f, a * (0.55f + 0.4f * Mathf.Sqrt(edge)));
-            GUI.DrawTexture(new Rect(bx + bw * f - bw / 22f, by, bw / 11f + 1f, bh), px);
+            GUI.DrawTexture(new Rect(bx + bw * f - bw / 22f, by, bw / 11f + 1f, bh), MolakGui.Px);
         }
         GUI.color = new Color(0.75f, 0.2f, 0.18f, a * 0.85f);
-        GUI.DrawTexture(new Rect(bx + 40 * u, by + bh - 3 * u, bw - 80 * u, 2 * u), px);
+        GUI.DrawTexture(new Rect(bx + 40 * u, by + bh - 3 * u, bw - 80 * u, 2 * u), MolakGui.Px);
         // 붉은 인장 岐
         var seal = new Rect(bx + 46 * u, by + (bh - 92 * u) / 2f, 92 * u, 92 * u);
-        GUI.color = new Color(0.72f, 0.14f, 0.12f, a * 0.95f); GUI.DrawTexture(seal, px);
+        GUI.color = new Color(0.72f, 0.14f, 0.12f, a * 0.95f); GUI.DrawTexture(seal, MolakGui.Px);
         GUI.color = new Color(0.05f, 0.03f, 0.03f, a * 0.9f);
-        GUI.DrawTexture(new Rect(seal.x + 6 * u, seal.y + 6 * u, seal.width - 12 * u, seal.height - 12 * u), px);
+        GUI.DrawTexture(new Rect(seal.x + 6 * u, seal.y + 6 * u, seal.width - 12 * u, seal.height - 12 * u), MolakGui.Px);
         GUI.color = g0;
         MolakGui.Ink(sSeal, new Color(0.86f, 0.24f, 0.2f, a));
         GUI.Label(seal, "岐", sSeal);

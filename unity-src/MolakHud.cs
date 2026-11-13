@@ -5,7 +5,6 @@ using UnityEngine;
 public class MolakHud : MonoBehaviour
 {
     static MolakHud instance;
-    static Texture2D px;
     Font gowun;
     GUIStyle sDay, sStat, sRank, sBig, sGold, sTierC, sCurse, sWarn, sBody; bool bodyNight; static bool wasLow = true;
     float builtU = -1f;
@@ -62,7 +61,7 @@ public class MolakHud : MonoBehaviour
         if (tierUp) MolakSfx.Bell(); else MolakSfx.Confirm();
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     void Box (Rect r, Color c) { var g = GUI.color; GUI.color = c; GUI.DrawTexture(r, Px); GUI.color = g; }
     float U { get { return MolakTheme.U; } }
 
@@ -70,7 +69,7 @@ public class MolakHud : MonoBehaviour
     {
         if (sDay != null && Mathf.Approximately(builtU, u) && builtNight == MolakTheme.Night) return;
         builtU = u; builtNight = MolakTheme.Night;
-        if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+        if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, Color, TextAnchor, GUIStyle> mk = (size, col, an) =>
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=an,richText=true};

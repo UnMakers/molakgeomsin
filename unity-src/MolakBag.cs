@@ -125,7 +125,6 @@ public class MolakBag : MonoBehaviour
     };
 
     static MolakBag inst;
-    static Texture2D px;
     Font gowun; GUIStyle sHead, sName, sDesc, sEff, sSec, sHint, sHintName, sTab, sChip; float builtU = -1f, chipU = -1f;
     int tab = -1;   // 펼친 행낭의 탭(0 물건 · 1 비방·소식 · 2 인연), -1 이면 가장 최근에 얻은 쪽
     float openT; bool open;
@@ -152,7 +151,7 @@ public class MolakBag : MonoBehaviour
         inst = go.AddComponent<MolakBag>();
     }
 
-    static Texture2D Px { get { if (px == null) { px = new Texture2D(1,1); px.SetPixel(0,0,Color.white); px.Apply(); } return px; } }
+    static Texture2D Px { get { return MolakGui.Px; } }
     static void Box (Rect r, Color c) { var g = GUI.color; GUI.color = new Color(c.r, c.g, c.b, c.a * g.a); GUI.DrawTexture(r, Px); GUI.color = g; }
     static float Get (string n) { try { return MolakStats.Get(n); } catch { return 0f; } }
 
@@ -160,7 +159,7 @@ public class MolakBag : MonoBehaviour
     {
         if (sName != null && Mathf.Approximately(builtU, u)) return;
         builtU = u;
-        if (gowun == null) gowun = Resources.Load<Font>("GowunBatang");
+        if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, TextAnchor, GUIStyle> mk = (size, an) => { var s = new GUIStyle(GUI.skin.label){ fontSize = Mathf.RoundToInt(size*u), alignment = an, richText = true, wordWrap = true, clipping = TextClipping.Overflow }; if (gowun != null) s.font = gowun; return s; };
         sHead = mk(40, TextAnchor.MiddleCenter);
         sSec = mk(26, TextAnchor.MiddleLeft);
@@ -179,14 +178,7 @@ public class MolakBag : MonoBehaviour
     }
 
     Rect listViewGui; bool viewValid; float lastPY; bool wasDownBag;
-    static Vector2 PointerGui (out bool down)
-    {
-        down = false; Vector2 p = new Vector2(-1f, -1f);
-        var ts = UnityEngine.InputSystem.Touchscreen.current;
-        if (ts != null && ts.primaryTouch.press.isPressed) { down = true; p = ts.primaryTouch.position.ReadValue(); }
-        else if (UnityEngine.InputSystem.Mouse.current != null) { var ms = UnityEngine.InputSystem.Mouse.current; down = ms.leftButton.isPressed; p = ms.position.ReadValue(); }
-        return new Vector2(p.x, Screen.height - p.y);
-    }
+    static Vector2 PointerGui (out bool down) { Vector2 g; down = MolakGui.PointerGui(out g); return g; }
     void ScrollStep (float dt)
     {
         bool down; var p = PointerGui(out down);
