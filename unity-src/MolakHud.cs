@@ -7,7 +7,7 @@ public class MolakHud : MonoBehaviour
     static MolakHud instance;
     static Texture2D px;
     Font gowun;
-    GUIStyle sDay, sStat, sRank, sBig, sGold, sTierC, sCurse, sWarn;
+    GUIStyle sDay, sStat, sRank, sBig, sGold, sTierC, sCurse, sWarn, sBody; bool bodyNight; static bool wasLow = true;
     float builtU = -1f;
 
     static float rsFrom, rsTo; static bool rsTierUp; static string rsTier = ""; static float rsT = -1f;
@@ -108,6 +108,21 @@ public class MolakHud : MonoBehaviour
         return string.Join("   ", parts.ToArray());
     }
 
+    /// <summary>0.4.32 숫자 대신 몸으로 읽는 한 줄: 업보(부상·독·빚)가 없을 때 맨 윗줄에 흐리게 뜬다.</summary>
+    static string Body ()
+    {
+        float hp = MolakStats.Get("hp"), hpm = Mathf.Max(1f, MolakStats.Get("hpmax")), r = hp / hpm;
+        float curse = MolakStats.Get("curse"), mn = MolakStats.Get("mn");
+        var parts = new System.Collections.Generic.List<string>();
+        parts.Add(r >= 0.85f ? "숨이 고르다" : r >= 0.6f ? "몸이 묵직하다" : r >= 0.34f ? "온몸이 욱신거린다" : "입안에 피 맛이 돈다");
+        if (curse >= 90f) parts.Add("문양이 숨을 쉰다");
+        else if (curse >= 75f) parts.Add("문양이 뜨겁다");
+        else if (curse >= 50f) parts.Add("문양이 저릿하다");
+        else if (curse >= 25f) parts.Add("문양이 미지근하다");
+        if (mn <= 1f) parts.Add("전낭이 비었다");
+        return string.Join(" · ", parts.ToArray());
+    }
+
     string TierOf (float r)
     {
         if (r <= 0) return "무명";
@@ -147,6 +162,12 @@ public class MolakHud : MonoBehaviour
         // 몸에 남은 업보: 부상 · 독 · 곪은 상처 · 빚 — 맨 윗줄, 저주 표시 왼편
         string warn = Warn();
         if (warn.Length > 0) GUI.Label(new Rect(X0 + 124*u, sh+6*u, W - 124*u - 220*u, 36*u), warn, sWarn);
+        else
+        {
+            if (sBody == null || !Mathf.Approximately(sBody.fontSize, Mathf.RoundToInt(25*u)) || bodyNight != MolakTheme.Night)
+            { sBody = new GUIStyle(sWarn) { fontSize = Mathf.RoundToInt(25*u) }; MolakGui.Ink(sBody, new Color(InkM.r, InkM.g, InkM.b, 0.8f)); bodyNight = MolakTheme.Night; }
+            GUI.Label(new Rect(X0 + 124*u, sh+6*u, W - 124*u - 220*u, 36*u), Body(), sBody);
+        }
 
         // 한 줄 상태: 체력 · 내공 · 살기 + 아랫줄 검술 · 은자 · 서열 (상시)
         float pad = X0 + 84*u;
@@ -158,8 +179,38 @@ public class MolakHud : MonoBehaviour
             "<color="+hpCol+">체력 "+hp.ToString("0")+"</color>    내공 "+MolakStats.Get("ng").ToString("0")+
             "    살기 "+MolakStats.Get("sl").ToString("0");
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
-        // 가는 구분선
-        Box(new Rect(pad, y+lh+4*u, W-168*u-112*u, Mathf.Max(1f,1*u)), new Color(0.55f,0.48f,0.40f,0.45f));
+        // 가는 구분선 + 체력 붓 획(0.4.32): 구분선 위로 남은 체력만큼 먹 획이 그어진다. 끝으로 갈수록 가늘고, 바닥이면 붉다.
+        float lineW = W-168*u-112*u;
+        Box(new Rect(pad, y+lh+4*u, lineW, Mathf.Max(1f,1*u)), new Color(0.55f,0.48f,0.40f,0.45f));
+        {
+            float rr = Mathf.Clamp01(hp/hpm), sw2 = lineW * rr;
+            bool low = rr <= 0.34f;
+            if (low && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();   // 바닥으로 떨어지는 순간 한 번
+            if (Event.current.type == EventType.Repaint) wasLow = low;
+            float pul = low ? 0.75f + 0.25f*Mathf.Sin(Time.time*4f) : 1f;
+            var ink = low ? (MolakTheme.Night ? new Color(0.88f,0.42f,0.35f,0.9f*pul) : new Color(0.64f,0.18f,0.13f,0.9f*pul))
+                          : (MolakTheme.Night ? new Color(0.85f,0.80f,0.72f,0.75f) : new Color(0.16f,0.13f,0.11f,0.72f));
+            // 1px 남짓한 세로 조각으로 촘촘히 — 굵기만 줄이고 농도는 같게 둬야 이음매가 안 보인다
+            int seg = Mathf.Clamp(Mathf.CeilToInt(sw2 / Mathf.Max(1f, 1.5f*u)), 8, 400);
+            float segW = sw2 / seg;
+            for (int i = 0; i < seg; i++)
+            {
+                float f0 = i/(float)seg;
+                float th = (Mathf.Lerp(6f, 1.6f, f0*f0) + (f0 < 0.04f ? (0.04f-f0)*40f : 0f)) * u;   // 붓이 눌렸다 빠지듯, 시작점은 살짝 뭉툭
+                float x0 = Mathf.Floor(pad + segW*i), x1 = Mathf.Floor(pad + segW*(i+1));
+                if (x1 <= x0) continue;
+                // 굵기의 소수 부분은 위아래 한 줄의 옅기로 — 계단이 지지 않게
+                float cy = Mathf.Round(y+lh+4.5f*u), core = Mathf.Max(1f, Mathf.Floor(th)), frac = (th - core) * 0.5f;
+                float top = cy - Mathf.Floor(core/2f);
+                Box(new Rect(x0, top, x1 - x0, core), ink);
+                if (frac > 0.02f)
+                {
+                    var soft = new Color(ink.r, ink.g, ink.b, ink.a * frac);
+                    Box(new Rect(x0, top - 1f, x1 - x0, 1f), soft);
+                    Box(new Rect(x0, top + core, x1 - x0, 1f), soft);
+                }
+            }
+        }
 
         // 서랍: 검술 · 은자 · 서열·경지
         if (expanded)

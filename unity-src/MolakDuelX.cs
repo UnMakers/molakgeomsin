@@ -42,8 +42,8 @@ public static class MolakDuelX
             new[] { "교주가 웃는다. 칼은 보이지 않고 그림자만 길다." } }) },
         { "rival", new Habit(3, 3, 3, "앞 합에서 당신이 낸 수를 따라 한다.", ModeMirror, 0.6f, false, new[] {
             new[] { "곽산이 이를 악문다. 당신 발놀림을 흉내 낸 걸음이다." },
-            new[] { "곽산이 당신과 똑같은 높이로 칼을 세운다." },
-            new[] { "곽산의 칼이 당신이 쓰던 허초를 그린다." } }) },
+            new[] { "곽산이 당신과 똑같은 높이로 창을 세운다." },
+            new[] { "곽산의 창끝이 당신이 쓰던 허초를 그린다." } }) },
         { "namgung", new Habit(3, 3, 3, "정석대로 공세, 수비, 허초를 차례로 낸다.", ModeCycle, 0.8f, false, new[] {
             new[] { "남궁현의 칼이 교본대로 곧게 뻗어 온다." },
             new[] { "남궁현이 칼을 세우고 숨을 고른다. 세가에서 배운 받음이다." },
@@ -174,6 +174,7 @@ public static class MolakDuelX
         if (sit == 11) p = 0.34f;                     // 취한 걸음은 읽히지 않는다
         if (sit == 1) p -= 0.08f;                     // 빗속: 흐리다
         if (MolakStats.Get("injury") > 0) p -= 0.06f; // 아픈 몸은 눈도 늦다
+        if (MolakStats.Get("f_soaread") > 0) p += 0.06f;   // 0.4.32 지붕에서 소아에게 배운 읽기
         if (sure) p = 1f;
         int shown = t;
         if (Random.value > p) { shown = Random.Range(1, 3); if (shown >= t) shown++; }
@@ -209,13 +210,15 @@ public static class MolakDuelX
         MolakStats.Set("dx_last", a);
         MolakStats.Set("dx_lastres", res);
         string txt;
+        int iN = Mathf.RoundToInt(MolakStats.Get("dx_i")), nN = Mathf.RoundToInt(MolakStats.Get("dx_n"));
+        float momN = MolakStats.Get("dx_mom");
         if (res > 0)
         {
             txt = WinT[t];
             MolakVfx.Clash(true);                       // 흰 섬광, 크게 흔들림
             MolakArt.Hurt();                            // 상대가 밀려 흔들린다
-            MolakSfx.Play("hit_drum", 0.55f, 1.3f);
-            MolakVfx.Stamp("破", "기세 +1", false);
+            if (iN >= nN && nN > 1 && momN >= 2) { MolakVfx.Stamp("勢", "기세가 넘어왔다", true); MolakVfx.Gold(); }
+            else MolakVfx.Stamp("破", "기세 +1", false);
         }
         else if (res < 0)
         {
@@ -237,9 +240,24 @@ public static class MolakDuelX
             int o10 = Mathf.Clamp(Mathf.RoundToInt(odds / 10f), 1, 9);
             MolakStats.Set("odds10", o10);
             string m = mom >= 2 ? "기세가 완전히 넘어왔다." : mom >= 1 ? "기세를 잡았다." : mom <= -2 ? "기세를 다 내줬다. 몸이 반 박자씩 늦다." : mom <= -1 ? "기세가 상대 쪽으로 기운다." : "기세는 팽팽하다.";
-            MolakStats.SetStr("dx_momtext", m + " 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.");
+            string[] tl; string kindN = MolakStats.Str("duelkind", "any");
+            string turn = (Mathf.Abs(mom) >= 2 && Turn.TryGetValue(kindN, out tl)) ? tl[mom > 0 ? 0 : 1] + "<br>" : "";
+            MolakStats.SetStr("dx_momtext", turn + m + " 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.");
         }
     }
+
+    // 0.4.32 결전의 국면: 이름 있는 상대와의 합이 한쪽으로 크게 기울면 그 사람만의 장면이 한 줄 붙는다
+    static readonly Dictionary<string, string[]> Turn = new Dictionary<string, string[]> {
+        { "lord",     new[] { "거꾸로 쥐고 있던 교주의 칼이 바로 선다. 이제야 상대를 본다.", "교주가 하품을 참는다. \"또 그 얼굴이로구나.\"" } },
+        { "jinbaek",  new[] { "진백의 북두 걸음이 한 칸 꼬인다. \"……막내야, 이건 언제 익혔느냐.\"", "진백이 칼등으로 당신 손등을 툭 친다. \"검을 거꾸로 쥐는 버릇은 아직이구나.\"" } },
+        { "soa",      new[] { "소아의 외눈이 커진다. 눕혀 들었던 검이 반 뼘 늦게 돌아온다.", "\"느려.\" 소아가 검을 거두지도 않고 말한다." } },
+        { "hochi",    new[] { "호치의 웃음이 사라진다. 혀를 차며 반 걸음 물러선다.", "호치가 칼끝에 묻은 피를 혀로 훑는다. \"달군.\"" } },
+        { "rival",    new[] { "곽산이 창대를 무릎에 꺾는 시늉을 하다 멈춘다. 판은 아직 안 끝났다.", "곽산이 창을 어깨에 걸친다. \"자네 서열, 오늘 내 계단일세.\"" } },
+        { "namgung",  new[] { "남궁현의 정석이 어긋난다. 교본에 없는 자리다. 패를 쥔 엄지가 하얘진다.", "남궁현이 고개를 한 번 끄덕인다. 가르치는 사람의 얼굴이다." } },
+        { "kyona",    new[] { "견아가 이를 드러낸 채 멈칫한다. 물 곳을 잃은 개의 눈이다.", "견아가 낮게 웃는다. 독 냄새가 가까워진다." } },
+        { "wolf",     new[] { "혈쇄문주의 사슬이 엉킨다. 왼 어깨 쪽 고리가 헐겁다.", "사슬이 발목을 감는다. 혈쇄문주는 서두르지 않는다." } },
+        { "hunt3",    new[] { "집법전주의 법도가 한 박자 흐트러진다. 본 적 없는 수라는 얼굴이다.", "\"교의 법에 어긋난 칼이다.\" 집법전주가 장부를 펼치듯 칼을 편다." } },
+    };
 
     static string Num (int i) { return i == 1 ? "첫" : i == 2 ? "둘째" : i == 3 ? "셋째" : i + "째"; }
 }

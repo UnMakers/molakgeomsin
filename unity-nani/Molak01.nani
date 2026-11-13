@@ -339,6 +339,7 @@
 @set f_soamet=0
 @set f_soaold=0
 @set f_soaposter=0
+@set f_soaread=0
 @set f_soareq=0
 @set f_soarift=0
 @set f_soasaved=0

@@ -113,6 +113,6 @@ public class MarkCommand : Command
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp != null && sp.Skipping) return;
         MolakMark.Show(Text.Value, Assigned(Note) ? Note.Value : null);
-        MolakSfx.Play("tap_brush", 0.8f, 0.82f);
+        MolakSfx.Stamp();
     }
 }

@@ -14,6 +14,9 @@ public static class MolakEventDefs
     }
     public static readonly Def[] Table = {
             new Def("E_Yong", 2, 10, 'd', null, null, 0, 30),
+            // 0.4.32 칼버릇: 장이 이름난 칼잡이의 버릇을 판다 / 소아가 지붕에서 기세 읽는 법을 가르친다
+            new Def("E_JangHabit", 12, 40, 'n', "b_jang&!f_jangtaken&!g_seen_hochi", null, 0, 14),
+            new Def("E_SoaRead", 10, 40, 'd', "f_soamet&!f_soadead&aff>=2", null, 0, 20),
             new Def("E_Spared", 3, 0, 'd', "spared>0", null, 0, 40),
             new Def("E_Cup", 12, 0, 'n', "rank>0&rank<=20000", null, 0, 14),
             // 0.4.12 히로인의 일상

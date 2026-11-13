@@ -28,12 +28,16 @@ public class MolakSfx : MonoBehaviour
         return c;
     }
 
-    public static void Play (string name, float vol = 1f, float pitch = 1f)
+    public static void Play (string name, float vol = 1f, float pitch = 1f) { Try(name, vol, pitch); }
+
+    /// <summary>있으면 틀고 true. 0.4.32: 새 효과음이 빠진 빌드에서도 옛 소리로 물러설 수 있게.</summary>
+    public static bool Try (string name, float vol = 1f, float pitch = 1f)
     {
-        if (inst == null || Muted) return;
-        var c = Clip(name); if (c == null) return;
+        if (inst == null || Muted) return true;
+        var c = Clip(name); if (c == null) return false;
         inst.src.pitch = pitch;
         inst.src.PlayOneShot(c, vol * SfxScale());
+        return true;
     }
 
     /// <summary>환경 설정 '효과음'·'전체 음량' 슬라이더(나니노벨 SFX·마스터 음량)를 따른다.</summary>
@@ -60,4 +64,9 @@ public class MolakSfx : MonoBehaviour
     public static void Draw ()     { Play("sword_draw", 0.75f, Random.Range(0.97f, 1.03f)); }
     public static void Rewind ()   { Play("wind_rewind", 0.8f); }
     public static void TrueBell () { Play("true_bell", 1f); }
+    // 0.4.32 소리 점검: 칼끼리 맞는 쇳소리, 인장 찍는 소리, 몸이 바닥일 때의 심장, 사술이 숨 쉬는 소리
+    public static void Clash (bool heavy) { if (!Try("sword_clash", heavy ? 0.9f : 0.6f, Random.Range(heavy ? 0.92f : 1.02f, heavy ? 1f : 1.1f))) Draw(); }
+    public static void Stamp ()   { if (!Try("seal_stamp", 0.85f, Random.Range(0.95f, 1.05f))) Play("tap_brush", 0.8f, 0.82f); }
+    public static void Heart ()   { Try("heartbeat", 0.9f); }
+    public static void CurseBreath () { Try("curse_breath", 0.7f); }
 }

@@ -49,10 +49,10 @@ public class MolakVfx : MonoBehaviour
     public static void Flash (Color c, float dur) { if (instance != null) { instance.flashC = c; instance.flashDur = dur; instance.flashT = 0f; } }
     public static void Blood () { Flash(new Color(0.62f, 0.08f, 0.05f, 0.5f), 0.7f); Shake(14f); }
     public static void Gold () { Flash(new Color(0.85f, 0.68f, 0.18f, 0.32f), 0.6f); }
-    public static void CursePulse () { Flash(new Color(0.42f, 0.22f, 0.58f, 0.4f), 0.9f); }
+    public static void CursePulse () { Flash(new Color(0.42f, 0.22f, 0.58f, 0.4f), 0.9f); MolakSfx.CurseBreath(); }
     public static void Shake (float amp) { if (instance != null && (instance.shakeT < 0f || amp >= instance.shakeAmp)) { instance.shakeAmp = amp; instance.shakeT = 0f; } }
     /// <summary>칼이 부딪는 순간: 흰 섬광 한 번 + 짧은 흔들림 + 칼 소리</summary>
-    public static void Clash (bool heavy) { Flash(new Color(1f, 0.97f, 0.9f, heavy ? 0.55f : 0.35f), heavy ? 0.35f : 0.22f); Shake(heavy ? 16f : 9f); MolakSfx.Draw(); }
+    public static void Clash (bool heavy) { Flash(new Color(1f, 0.97f, 0.9f, heavy ? 0.55f : 0.35f), heavy ? 0.35f : 0.22f); Shake(heavy ? 16f : 9f); MolakSfx.Clash(heavy); }
 
     // 마디 이름(@chapter): 띠 그림 위에 붓 글씨 제목, 2.6초
     float chapT = -1f; string chapText = "", chapSub = "";
@@ -61,7 +61,7 @@ public class MolakVfx : MonoBehaviour
 
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
-    public static void Stamp (string hanja, string line, bool big) { if (instance == null) return; instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; }
+    public static void Stamp (string hanja, string line, bool big) { if (instance == null) return; instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; MolakSfx.Stamp(); }
     GUIStyle sStamp, sStampLine; Font gowun; float stampU = -1f;
     static Texture2D vig;
     /// <summary>가장자리만 짙은 둥근 비네트(심장 박동·사술의 숨결에 쓴다)</summary>
