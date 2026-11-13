@@ -222,6 +222,8 @@ public class DuelCommand : Command
         if (kind == "lord" && MolakStats.Get("f_northstep") > 0) bonus += 1.5f;
         if (kind == "lord" && MolakStats.Get("f_lordseal") > 0) bonus += 0.5f;
         if (kind == "lord" && MolakStats.Get("f_cheonggang") > 0) bonus += 0.5f;
+        if (MolakStats.Get("f_cheonggang") > 0) bonus += 1f;   // 0.4.51 장문인의 청강검: 어느 판이든 칼이 다르다
+        if (MolakStats.Get("f_guardsword") > 0 && (style == "guard" || style == "sense")) bonus += 0.5f;   // 표국의 검: 받는 칼
         if (kind == "lord" && MolakStats.Get("f_halfhap") > 0) bonus += 2f;
         if (kind == "tax" && MolakStats.Get("f_taxknow") > 0) bonus += 3f;       // 지난 생에 본 우두머리의 버릇
         if (kind == "raid" && MolakStats.Get("f_raidprep") > 0) bonus += 3f;     // 그 밤이 올 줄 알고 계단에 기름을 부었다

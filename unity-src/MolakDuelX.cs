@@ -200,6 +200,50 @@ public static class MolakDuelX
         MolakDuelStage.Tell(shown);
     }
 
+
+    // ---- 0.4.51 기억의 물건: 마지막 한 칼 앞에 품속의 물건을 쥐면 기세 +1(물건마다 생에 한 번) ----
+    // 얻기만 하고 쓸 데가 없던 물건들에 쓰임을 준다. 위에 있을수록 먼저 손에 잡힌다.
+    static readonly string[][] Keeps = {
+        new[] { "f_chamname", "희(喜)라는 이름을", "그녀가 한 번만 빌려 준 이름을 입속으로 부른다. 팔린 이름도 불러 주는 사람이 있으면 다시 제 것이 된다고 했다. 칼끝이 떨리지 않는다." },
+        new[] { "f_amhname", "설(雪)이라는 이름을", "눈 오던 날 팔려 온 여인의 이름을 떠올린다. 맥을 짚던 차가운 손가락. 여기서 죽으면 그녀가 침향을 피울 손님이 하나 줄어든다." },
+        new[] { "f_soablades", "적운의 쌍검 한 자루를", "왼손에 그녀의 검을 쥔다. 둘이 하나를 막고 하나가 들어온다. 그녀가 서야 할 자리를 그녀의 검이 지킨다." },
+        new[] { "f_soaledger", "적운의 장부를", "품속의 장부가 가슴에 닿는다. 줄마다 '빚'이라 썼다가 지운 자국. 빚진 사람이 먼저 죽는 법은 없다고, 그녀는 말할 것이다." },
+        new[] { "f_relicpae", "일곱째 사형의 패를", "운문(雲紋)이 새겨진 쇠패를 쥔다. 내년 봄에 하산한다던 사람. 그 봄을 대신 걸어 나가야 한다." },
+        new[] { "f_proknot", "청운 매듭을", "끝이 그을린 푸른 매듭을 쥔다. 대추 값이라며 던져 주던 손. 하산하면 새 걸로 단다던 사람 몫까지 칼을 든다." },
+        new[] { "f_projujube", "사저의 대추를", "돌처럼 굳은 대추 두 알이 손바닥에 굴러다닌다. 막내는 늘 배가 고팠잖아요. 오늘은 배가 고프지 않다." },
+        new[] { "f_cmsword", "막내의 목검을", "입문하던 날 대사형이 깎아 준 목검. 손잡이의 막(末) 자가 손바닥에 박힌다. 이번엔 거꾸로 쥐지 않는다." },
+        new[] { "f_cmtablet", "반쯤 탄 위패를", "사부의 위패를 떠올린다. 탄 쪽은 그 밤의 몫이고, 남은 쪽은 아직 갚지 않은 몫이다." },
+        new[] { "f_jbrice", "대사형의 쌀자루를", "두 번 고쳐 묶은 매듭. 마음에 들 때까지 고쳐 묶던 손이 칼을 쥐는 법도 가르쳤다. 검을 바로 쥔다." },
+        new[] { "f_herbrecipe", "사부의 처방지를", "보름마다 막내 몫으로 지어 갔다는 정심단 반 알. 그 처방지가 품속에서 바스락거린다. 숨이 고르게 내려간다." },
+        new[] { "f_amhcomb", "이 빠진 빗을", "이가 두 개 빠진 빗. 돌려주러 가야 하는 물건이다. 돌려주려면 살아서 걸어 나가야 한다." },
+        new[] { "f_amhturn", "침향 한 대를", "쓰고 맑은 냄새를 떠올린다. 매화는 오늘 갈 손님, 침향은 살려 보낼 손님. 이 향은 살려 보낼 손님 몫이었다." },
+        new[] { "f_gwakdinner", "곽산의 국 맛을", "짜다던 국 맛이 혀끝에 돈다. 그 밤이 지나면 와서 먹으라던 국. 한 그릇이 아직 남아 있다." },
+        new[] { "f_hajindot", "장부의 점을", "'운객' 칸에 찍힌 점 하나. 셈이 끝나지 않은 손님은 돌아와야 한다고, 주판알 소리가 말한다." },
+        new[] { "f_letter", "맡긴 편지를", "하진무에게 맡긴, 받을 이 없는 편지. 그 편지가 정말 받을 이 없는 편지가 되게 둘 수는 없다." },
+        new[] { "f_sutrashard", "경판 조각을", "모서리가 깨진 경판 조각. 새겨진 두 줄을 입속으로 왼다. 칼끝의 떨림이 경 소리에 맞춰 가라앉는다." },
+        new[] { "f_yeonsaved", "연(蓮)이 쥐여 준 것을", "독을 밀어낸 그 새벽, 아이가 손에 쥐여 준 매듭 끈. 그 아이는 이 칼을 모른다. 그래도 이 칼은 그 아이를 안다." },
+    };
+
+    public static void KeepCheck ()
+    {
+        string used = "," + MolakStats.Str("keepused", "") + ",";
+        foreach (var k in Keeps)
+            if (MolakStats.Get(k[0]) > 0f && !used.Contains("," + k[0] + ","))
+            { MolakStats.Set("dx_keepok", 1f); MolakStats.SetStr("dx_keepname", k[1]); MolakStats.SetStr("dx_keepflag", k[0]); MolakStats.SetStr("dx_keeptext", k[2]); return; }
+        MolakStats.Set("dx_keepok", 0f);
+    }
+
+    public static void KeepUse ()
+    {
+        string f = MolakStats.Str("dx_keepflag", "");
+        string used = MolakStats.Str("keepused", "");
+        if (used == "none") used = "";
+        MolakStats.SetStr("keepused", used.Length > 0 ? used + "," + f : f);
+        MolakStats.Add("dx_mom", 1f);
+        MolakStats.Set("dx_keepok", 0f);
+        MolakVfx.Stamp("勢", "기세 +1", false); MolakVfx.Gold();
+    }
+
     public static void Act (int a)
     {
         int t = Mathf.RoundToInt(MolakStats.Get("dx_true"));
@@ -315,6 +359,9 @@ public class DuelXCommand : Command
             if ((sp == null || !sp.Skipping) && !MolakBlackout.Auto && MolakDuelStage.ShowGuideIfFirst())
                 while (MolakDuelStage.GuideOpen) await Awaitable.NextFrameAsync();
         }
-        else if (d == "pre") MolakDuelX.Pre(); else MolakDuelX.Tell();
+        else if (d == "pre") MolakDuelX.Pre();
+        else if (d == "keepcheck") MolakDuelX.KeepCheck();
+        else if (d == "keep") MolakDuelX.KeepUse();
+        else MolakDuelX.Tell();
     }
 }

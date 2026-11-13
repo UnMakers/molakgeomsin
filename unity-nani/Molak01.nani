@@ -12,6 +12,10 @@
 @set b_amhyang=0
 @set b_bilok=0
 @set b_capture=0
+@set b_ch1=0
+@set b_ch2=0
+@set b_ch3=0
+@set b_ch4=0
 @set b_chain=0
 @set b_cm1=0
 @set b_cm2=0
@@ -97,6 +101,7 @@
 @set cansense=0
 @set cansl=0
 @set chain=0
+@set chamaff=0
 @set cmaff=0
 @set collapsed=0
 @set cost_body=0
@@ -126,6 +131,7 @@
 @set dtaint=0
 @set duelwin=0
 @set dx_i=0
+@set dx_keepok=0
 @set dx_n=0
 @set endhanja=0
 @set endtitle=0
@@ -162,6 +168,16 @@
 @set f_breath2=0
 @set f_chaininfo=0
 @set f_chainroute=0
+@set f_chamally=0
+@set f_chamfake=0
+@set f_chamfeather=0
+@set f_chamfree=0
+@set f_chamgone=0
+@set f_chamhurt=0
+@set f_chamname=0
+@set f_chamnews=0
+@set f_chamsold=0
+@set f_chamsuspect=0
 @set f_cheonggang=0
 @set f_cmally=0
 @set f_cmaxe=0
@@ -512,6 +528,9 @@
 @set deathtip="none"
 @set dejapre="none"
 @set dkind="none"
+@set dx_keepflag="none"
+@set dx_keepname="none"
+@set dx_keeptext="none"
 @set dx_momtext="none"
 @set dx_pretext="none"
 @set dx_restext="none"
@@ -521,6 +540,7 @@
 @set foerank="none"
 @set foetier="none"
 @set insultname="none"
+@set keepused="none"
 @set knownew="none"
 @set knowsnap="none"
 @set lifecmp="none"

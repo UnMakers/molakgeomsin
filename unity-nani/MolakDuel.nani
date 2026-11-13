@@ -3,6 +3,7 @@
 ; 지는 것이 곧 죽음인 판(dlethal)은 이야기의 결전·업보의 칼·생사결뿐. 그 밖의 판은 져도 목은 붙어 있고, 대신 몸·전낭·체면이 값을 치른다.
 # Run
 @set duelwin=0
+@set dx_keepok=0
 @set dstake=0
 @art scene:duel
 @duelinfo kind:{dkind}
@@ -73,7 +74,10 @@
 @goto #ExLoop if:dx_i<dx_n
 {dx_momtext}
 # Final
+; 0.4.51 기억의 물건: 품속의 물건을 쥐고 정면으로 벤다(기세 +1, 물건마다 생에 한 번)
+@duelx do:keepcheck
 @choice "끝을 낸다 — 정면으로 벤다" goto:#StFront
+@choice "품속의 {dx_keepname} 쥐고 벤다 — 기세 +1(이번 생에 한 번)" if:dx_keepok>0 goto:#StKeep
 @choice "끝을 낸다 — 살기를 실어 선공한다" if:cansl>0 goto:#StKiller
 @choice "버틴다 — 수를 아끼며 받아친다" if:cansense<1 goto:#StGuard
 @choice "칼날의 푸른 기를 먼저 읽는다" if:cansense>0 goto:#StSense
@@ -173,6 +177,10 @@
 @return
 
 ; ---------- 초식 ----------
+# StKeep
+@duelx do:keep
+<color=#9A70C4>{dx_keeptext}</color>
+@goto #StFront
 # StFront
 호흡 하나, 반 보. 칼이 먼저 나간 쪽이 이긴다.
 @vfx kind:clash
