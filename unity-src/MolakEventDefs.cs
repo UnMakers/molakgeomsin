@@ -17,6 +17,11 @@ public static class MolakEventDefs
             // 0.4.32 칼버릇: 장이 이름난 칼잡이의 버릇을 판다 / 소아가 지붕에서 기세 읽는 법을 가르친다
             new Def("E_JangHabit", 12, 40, 'n', "b_jang&!f_jangtaken&!g_seen_hochi", null, 0, 14),
             new Def("E_SoaRead", 10, 40, 'd', "f_soamet&!f_soadead&aff>=2", null, 0, 20),
+            // 0.4.33 반쪽의 꿈: 문양이 깊어질수록 노인의 기억이 흘러든다. 생을 넘어 한 번씩, 차례대로
+            new Def("E_OldDream1", 8, 58, 'n', "curse>=30&!g_oldmem1", null, 0, 45),
+            new Def("E_OldDream2", 8, 58, 'n', "curse>=45&g_oldmem1&!g_oldmem2", null, 0, 45),
+            new Def("E_OldDream3", 8, 58, 'n', "curse>=58&g_oldmem2&!g_oldmem3", null, 0, 45),
+            new Def("E_OldDream4", 8, 58, 'n', "curse>=70&g_oldmem3&!g_oldmem4", null, 0, 45),
             new Def("E_Spared", 3, 0, 'd', "spared>0", null, 0, 40),
             new Def("E_Cup", 12, 0, 'n', "rank>0&rank<=20000", null, 0, 14),
             // 0.4.12 히로인의 일상

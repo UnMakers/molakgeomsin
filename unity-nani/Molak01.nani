@@ -3,6 +3,7 @@
 ; (자동 생성) 변수 선초기화
 @set aff=0
 @set amhaff=0
+@set arenawin=0
 @set b_am1=0
 @set b_am2=0
 @set b_am25=0
@@ -117,16 +118,14 @@
 @set dlethal=0
 @set dloot=0
 @set dmore=0
+@set donecut=0
 @set dsit=0
 @set dsitforce=0
 @set dstake=0
 @set dtaint=0
 @set duelwin=0
 @set dx_i=0
-@set dx_momtext=0
 @set dx_n=0
-@set dx_restext=0
-@set dx_telltext=0
 @set endhanja=0
 @set endtitle=0
 @set f_acupgone=0
@@ -291,6 +290,7 @@
 @set f_old25=0
 @set f_old3=0
 @set f_oldface=0
+@set f_oldheard=0
 @set f_oldhint=0
 @set f_oldseen=0
 @set f_openname=0
@@ -487,10 +487,15 @@
 @set wrand=0
 @set wsnow=0
 @set yonglost=0
+@set byeolho="none"
 @set deathcause="none"
 @set deathtip="none"
 @set dejapre="none"
 @set dkind="none"
+@set dx_momtext="none"
+@set dx_pretext="none"
+@set dx_restext="none"
+@set dx_telltext="none"
 @set foename="none"
 @set foerank="none"
 @set foetier="none"
@@ -695,7 +700,7 @@
 사부가 직접 나간다. 장문인이 손님을 맞으러 산문까지 나가는 것은 삼 년 동안 처음 본다.
 둘이 산문 아래서 오래 말을 나눈다. 바람이 반쯤 끊어 날라 온다.
 "……아이 하나만. 그 아이가 아니면 이 술은 익지 않느니라."
-"청운은 아이를 내주지 않소. 돌아가시오, 사형."
+"청운은 아이를 내주지 않소. 돌아가시오, 사백(師伯)."
 노인이 산문을 올려다본다. 그리고 마당 끝, 빗자루를 든 막내를 본다. 아주 잠깐.
 @vfx kind:beat
 그 눈이 무엇을 재는 눈이었는지, 막내는 오래 뒤에야 안다.

@@ -28,6 +28,8 @@ public class VfxCommand : Command
             case "embers": MolakVfx.Weather("embers"); break;
             case "inferno": MolakVfx.Weather("inferno"); MolakVfx.Shake(8f); break;   // 불타는 산장 — 불티의 두 배와 아래에서 치솟는 열기
             case "clear": MolakVfx.Weather(""); break;
+            case "tier": MolakVfx.Gold(); MolakVfx.Shake(6f); MolakVfx.Stamp("境", MolakStats.Str("tiername", ""), true); MolakSfx.Bell(); break;   // 0.4.33 경지 돌파
+            case "crowd": MolakVfx.Shake(3f); MolakSfx.Play("page_turn", 0.5f, 0.7f); break;   // 구경꾼이 술렁인다
         }
         await Awaitable.NextFrameAsync();
     }

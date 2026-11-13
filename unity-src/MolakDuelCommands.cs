@@ -182,6 +182,7 @@ public class DuelCommand : Command
         if (style == "curse") { bonus = 3f + curse * 0.06f; hpRisk = 2f; MolakStats.Add("curse", 5f); }
         if (style == "curse2") { bonus = 5f + curse * 0.08f; hpRisk = 2f; MolakStats.Add("curse", 8f); } // 75 이상: 사술이 먼저 나선다
         if (style == "sense") { bonus = 2f; hpRisk = 2f; }   // 독 바른 칼을 먼저 읽는다
+        if (style == "onecut") { bonus = 6f; hpRisk = 4f; } // 0.4.33 한칼에 끝낸다: 격이 다를 때만 열린다(승산 열에 여덟 이상)
         if (MolakStats.Get("memwarn") > 0) bonus += 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f); // 전생의 앎: 상대의 첫 수를 안다
         bonus += MolakStats.Get("dx_mom") * MolakDuelX.MomBonus; MolakStats.Set("dx_mom", 0f);           // 0.4.30: 앞선 합에서 잡은(내준) 기세
         float sit = MolakStats.Get("dsit");

@@ -218,6 +218,7 @@ public class MolakHud : MonoBehaviour
             float y2 = y + lh + 10*u, lh2 = 50*u;
             Box(new Rect(pad, y2, W-168*u, lh2), MolakTheme.Night ? new Color(0.20f,0.18f,0.16f,0.85f) : new Color(0.96f,0.93f,0.87f,0.80f));
             string rtxt = rank > 0 ? rank.ToString("N0")+"위 · "+TierOf(rank) : "서열 없음";
+            { var bh = MolakStats.Str("byeolho", "none"); if (!string.IsNullOrEmpty(bh) && bh != "none") rtxt += " · <color=#8A3A30>" + bh + "</color>"; }   // 0.4.33 강호가 붙인 별호
             string s2 = "검술 "+MolakStats.Get("sw").ToString("0")+"    <color=#8A6D1F>은자 "+MolakStats.Get("mn").ToString("0")+"</color>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
         }

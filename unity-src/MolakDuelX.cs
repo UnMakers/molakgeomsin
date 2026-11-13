@@ -259,6 +259,36 @@ public static class MolakDuelX
         { "hunt3",    new[] { "집법전주의 법도가 한 박자 흐트러진다. 본 적 없는 수라는 얼굴이다.", "\"교의 법에 어긋난 칼이다.\" 집법전주가 장부를 펼치듯 칼을 편다." } },
     };
 
+    // 0.4.33 전생의 원수: 지난 생에 나를 꺾은 이름 있는 상대에게, 그 첫 수를 먼저 낸다
+    static readonly Dictionary<string, string> PreT = new Dictionary<string, string> {
+        { "hochi",    "뼈 장식이 짤랑이기도 전에 당신의 칼이 호치의 손목 앞에 가 있다. 도끼가 반도 들리지 않았다.<br>호치의 웃음이 얼어붙는다. \"……네가 어떻게, 그 수를.\"" },
+        { "kyona",    "견아가 몸을 낮추는 순간, 그 낮춘 자리로 당신의 칼끝이 먼저 내려가 있다.<br>견아가 목덜미의 털을 세운다. 제 수를 읽힌 개의 얼굴이다." },
+        { "jinbaek",  "진백의 칼이 소리 없이 내려가는 그 순간, 당신은 북두를 거꾸로 밟아 그 칼의 그림자 안에 들어가 있다.<br>\"……막내야.\" 진백의 목소리가 반 박자 늦다. 그 검이 늦은 적은 없었다." },
+        { "lord",     "교주의 소매가 부풀기 전에, 당신의 칼이 그 소매 끝을 가른다. 지난 생에 목을 내준 바로 그 자리다.<br>교주가 갈라진 소매를 내려다본다. \"……본좌의 첫 수를, 누가 너에게 가르쳤느냐.\"" },
+        { "soa",      "적운의 쌍검이 둘로 오기 전에, 당신은 그 둘이 만나는 한 점에 칼을 세워 둔다.<br>쌍검이 당신의 칼에 걸려 멎는다. 소아의 외눈이 커진다. \"……그건 사부밖에 모르는 수다.\"" },
+        { "wolf",     "사슬이 왼 어깨를 돌기 전에 당신의 칼이 오른 무릎을 친다.<br>혈쇄문주가 한쪽 무릎을 꿇는다. 사슬이 제 주인의 발목을 감는다." },
+        { "hunt3",    "집법전주가 소매를 걷는 그 짧은 틈, 당신의 칼끝이 그 소매 안쪽에 들어가 있다.<br>\"……법도에 없는 칼이다.\" 노인의 목소리에 금이 간다." },
+        { "rival",    "창이 멀리서 오는 첫 수를, 당신은 반 걸음 안으로 들어가 지운다. 창은 가까우면 창이 아니다.<br>곽산이 창대를 쥔 채 굳는다. \"……자네, 내 창을 어디서 맞아 봤나.\"" },
+        { "namgung",  "교본의 첫 장, 첫 수. 남궁현의 칼이 그 길을 떠나기도 전에 당신이 그 길의 끝에 서 있다.<br>남궁현의 엄지가 패에서 미끄러진다." },
+    };
+    /// <summary>합을 건너뛰고 지난 생의 그 첫 수를 먼저 낸다: 기세 +3에서 마지막 한 칼로.</summary>
+    public static void Pre ()
+    {
+        Init();
+        string kind = MolakStats.Str("duelkind", "any");
+        MolakStats.Set("dx_mom", 3f);
+        MolakStats.Set("dx_i", MolakStats.Get("dx_n"));
+        string t; if (!PreT.TryGetValue(kind, out t)) t = "지난 생, 당신을 쓰러뜨린 그 첫 수. 상대가 그 수를 내기도 전에 당신의 칼이 그 길목에 먼저 가 있다.<br>상대의 얼굴에서 핏기가 빠진다. \"……어떻게.\"";
+        MolakStats.SetStr("dx_pretext", t);
+        MolakVfx.Clash(true); MolakArt.Hurt(); MolakVfx.Gold();
+        MolakVfx.Stamp("先", "전생의 수 · 기세 +3", true);
+        float mem = 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f);
+        float odds = MolakDuel.Odds(MolakDuel.Pending, 3f * MomBonus + mem);
+        int o10 = Mathf.Clamp(Mathf.RoundToInt(odds / 10f), 1, 9);
+        MolakStats.Set("odds10", o10);
+        MolakStats.SetStr("dx_momtext", "기세가 통째로 넘어왔다. 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.");
+    }
+
     static string Num (int i) { return i == 1 ? "첫" : i == 2 ? "둘째" : i == 3 ? "셋째" : i + "째"; }
 }
 
@@ -275,6 +305,6 @@ public class DuelXCommand : Command
     {
         if (Assigned(Act)) { MolakDuelX.Act(Act.Value); return; }
         var d = Assigned(Do) ? Do.Value : "tell";
-        if (d == "init") MolakDuelX.Init(); else MolakDuelX.Tell();
+        if (d == "init") MolakDuelX.Init(); else if (d == "pre") MolakDuelX.Pre(); else MolakDuelX.Tell();
     }
 }
