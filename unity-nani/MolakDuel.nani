@@ -19,7 +19,7 @@
 @goto #Sit11 if:dsit==11
 @goto #Sit12 if:dsit==12
 # Head
-<color=#C03434>{foename}</color> — 강호 서열 {foerank}위 · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
+<color=#C03434>{foename}</color> — 강호 서열 {foerank} · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
 @goto #HeadInj if:injury>0||taint>0
 @goto #RunChoices if:memwarn<1
 <color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 첫 수가 반 박자 일찍 보인다.
@@ -313,23 +313,23 @@
 @goto #WinRank
 # WinRank
 @goto #WinSame if:oldrank==newrank
-강호 서열 <color=#C9A227>{oldrank}위 → {newrank}위</color>. 한 계단을 또 오른다.
+강호 서열 <color=#C9A227>{oldrank} → {newrank}</color>. 한 계단을 또 오른다.
 @goto #TierUp if:tierup>0
 @goto #WinAfter
 # WinSame
-강호 서열은 <color=#C9A227>{newrank}위</color> 그대로다. 아래 서열을 이겨서는 계단이 생기지 않는다.
+강호 서열은 <color=#C9A227>{newrank}</color> 그대로다. 아래 서열을 이겨서는 계단이 생기지 않는다.
 @goto #WinAfter
 # TierUp
 @vfx kind:tier
 <color=#C9A227>─ {tiername} 진입 ─</color>
-@goto #TU2 if:tiername=="2경 취위"
-@goto #TU3 if:tiername=="3경 운위"
-@goto #TU4 if:tiername=="4경 관맥"
-@goto #TU5 if:tiername=="5경 화경"
-@goto #TU6 if:tiername=="6경 발경"
-@goto #TU7 if:tiername=="7경 허실"
-@goto #TU8 if:tiername=="8경 천묵"
-@goto #TU9 if:tiername=="9경 멸도"
+@goto #TU2 if:tiername=="이류"
+@goto #TU3 if:tiername=="일류"
+@goto #TU4 if:tiername=="절정"
+@goto #TU5 if:tiername=="초절정"
+@goto #TU6 if:tiername=="화경"
+@goto #TU7 if:tiername=="현경"
+@goto #TU8 if:tiername=="생사경"
+@goto #TU9 if:tiername=="신화경"
 한 단계 높은 경지에 들어선다. 세상의 소리가 조금 더 또렷해진다.
 @goto #WinAfter
 # TU2
@@ -338,7 +338,7 @@
 @goto #WinAfter
 # TU3
 상대의 칼이 오기 전에 바람이 먼저 온다. 그 바람의 방향이 보인다.
-구름이 흘러가는 쪽을 아는 것. 운위(雲位)라 부르는 까닭을 몸이 먼저 안다.
+삼류는 칼을 휘두르고, 이류는 칼을 쓰고, 일류는 칼이 갈 길을 먼저 안다. 사부가 하던 말을 몸이 먼저 알아듣는다.
 @goto #WinAfter
 # TU4
 단전에서 손끝까지, 막혀 있던 마디가 하나씩 풀린다. 맥이 한 줄로 꿰인다.

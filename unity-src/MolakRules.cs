@@ -68,7 +68,7 @@ public static class MolakRules
     // ---- 이번 생의 뜻(회귀 아침에 고르는 맹세) ----
     public const float VowReward = 4f;
     /// <summary>복수: 서열 이 안에 들면 이룬다.</summary>
-    public const float VowRevengeRank = 1000f;
+    public const float VowRevengeRank = 1170f;   // 0.4.35: 보이는 서열 300위(= 안쪽 1,170)
     /// <summary>인연: 이 가운데 하나라도 맺었거나 소아 호감이 VowBondAff 이상이면 이룬다.</summary>
     public static readonly string[] VowBondFlags = { "f_soabond", "f_hajinbond", "f_herbbond", "f_gwakally", "f_yongally", "f_amhally", "f_jinally" };
     public const float VowBondAff = 3f;

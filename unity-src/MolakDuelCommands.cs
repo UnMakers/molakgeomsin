@@ -10,18 +10,36 @@ public static class MolakDuel
 
     static readonly string[] Names = { "유랑검객", "파문제자", "표국 무사", "낭인", "산채 부두목", "무관 사범", "비도객", "도객", "권사", "창수" };
 
+    /// <summary>0.4.35 경지: 무협 독자에게 익숙한 사다리(삼류 → 신화경). 안쪽 서열 값의 문턱은 그대로다.</summary>
     public static string TierName (float r)
     {
         if (r <= 0) return "무명";
-        if (r <= 1) return "9경 멸도";
-        if (r <= 10) return "8경 천묵";
-        if (r <= 100) return "7경 허실";
-        if (r <= 1000) return "6경 발경";
-        if (r <= 10000) return "5경 화경";
-        if (r <= 100000) return "4경 관맥";
-        if (r <= 1000000) return "3경 운위";
-        if (r <= 3000000) return "2경 취위";
-        return "1경 식위";
+        if (r <= 1) return "신화경";
+        if (r <= 10) return "생사경";
+        if (r <= 100) return "현경";
+        if (r <= 1000) return "화경";
+        if (r <= 10000) return "초절정";
+        if (r <= 100000) return "절정";
+        if (r <= 1000000) return "일류";
+        if (r <= 3000000) return "이류";
+        return "삼류";
+    }
+
+    /// <summary>0.4.35 보이는 서열: 안쪽 값은 그대로 두고, 화면엔 서열록(1만 줄)에 맞춰 보인다.
+    /// 백 위 안은 그대로, 그 밖은 3,000,000 → 10,000으로 눌러 담는다. 3,000,000보다 아래는 '서열록 밖'.</summary>
+    public const float ListEdge = 3000000f;
+    public static int ShowRank (float r)
+    {
+        if (r <= 0) return 0;
+        if (r <= 100f) return Mathf.Max(1, Mathf.RoundToInt(r));
+        return Mathf.Clamp(Mathf.RoundToInt(100f * Mathf.Pow(r / 100f, 0.4467f)), 101, 10000);
+    }
+    /// <summary>"1,234위" / "서열록 밖" / "무명"</summary>
+    public static string RankText (float r)
+    {
+        if (r <= 0) return "무명";
+        if (r > ListEdge) return "서열록 밖";
+        return string.Format("{0:N0}위", ShowRank(r));
     }
 
     public static Foe MakeFoe (string kind)
@@ -140,7 +158,7 @@ public class DuelInfoCommand : Command
         bool lostTo = MolakStats.Get("g_know_" + kind) > 0;
         MolakStats.Set("memwarn", bossKind && (lostTo || (MolakStats.Get("g_up_mem") > 0 && diedTo)) ? 1f : 0f);
         MolakStats.SetStr("foename", foe.Name);
-        MolakStats.SetStr("foerank", string.Format("{0:N0}", foe.Rank));
+        MolakStats.SetStr("foerank", MolakDuel.RankText(foe.Rank));
         MolakStats.SetStr("foetier", MolakDuel.TierName(foe.Rank));
         MolakStats.Set("odds10", Mathf.Clamp(Mathf.Round((MolakDuel.Odds(foe, 0) + drunkLie) / 10f), 1f, 9f));
         MolakStats.Set("cansl", MolakStats.Get("sl") >= 3 ? 1f : 0f);
@@ -252,12 +270,12 @@ public class DuelCommand : Command
             if (style == "killer" || style == "curse" || style == "curse2") MolakStats.Add("sl", 1f);
             MolakStats.Set("duelwin", 1f); MolakArt.EndDuel();
             MolakStats.Set("tierup", tierUp ? 1f : 0f);
-            MolakStats.SetStr("oldrank", oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명");
-            MolakStats.SetStr("newrank", string.Format("{0:N0}", newRank));
+            MolakStats.SetStr("oldrank", MolakDuel.RankText(oldRank));
+            MolakStats.SetStr("newrank", MolakDuel.RankText(newRank));
             MolakStats.SetStr("tiername", MolakDuel.TierName(newRank));
             MolakVfx.Gold(); MolakVfx.Shake(10f); MolakSfx.Draw();
             MolakHud.RankShift(oldRank, newRank, tierUp, MolakDuel.TierName(newRank));
-            MolakDuelCard.Show(true, foe.Name, "서열 " + (oldRank > 0 ? string.Format("{0:N0}", oldRank) : "무명") + " → " + string.Format("{0:N0}", newRank) + "위", tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");
+            MolakDuelCard.Show(true, foe.Name, "서열 " + MolakDuel.RankText(oldRank) + " → " + MolakDuel.RankText(newRank), tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");
             if (foe.Boss == "wolf") MolakStats.Set("f_wolfdown", 1f);
             if (foe.Boss == "hochi") MolakStats.Set("f_hmsaved", 1f);
             if (sit == 3) { MolakStats.Add("mn", 3f); MolakStats.Add("sl", 1f); }

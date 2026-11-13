@@ -114,7 +114,7 @@ public static class MolakChoiceMeta
             case "curse": if (!positive) return null; kind = Curse; return "저주 " + n.ToString("0") + " 이상";
             case "mn": if (!positive) return null; kind = Coin; return label.Contains("(은자") ? null : "은자 " + n.ToString("0");
             case "aff": if (!positive) return null; kind = Item; return "소아의 마음";
-            case "rank": if (!upperBound || n <= 0) return null; kind = Stat; return "서열 " + n.ToString("N0") + "위 이내";
+            case "rank": if (!upperBound || n <= 0) return null; kind = Stat; return "서열 " + MolakDuel.ShowRank(n).ToString("N0") + "위 이내";
             case "f_wanted": if (!positive) return null; kind = Item; return "수배된 몸";
             case "f_soamet": return null;
             case "rep_maeng": if (!positive) return null; kind = Item; return "무림맹의 신의 " + n.ToString("0");

@@ -274,7 +274,7 @@ public class MolakMenu : MonoBehaviour
             int vw = Mathf.RoundToInt(gv("vow"));
             if (vw > 0)
             {
-                string vt = vw == 1 ? "복수 — 서열록 천 위 안" : vw == 2 ? "인연 — 등을 맡길 사람" : "생존 — 그물이 조여 올 때까지";
+                string vt = vw == 1 ? "복수 — 서열록 삼백 위 안" : vw == 2 ? "인연 — 등을 맡길 사람" : "생존 — 그물이 조여 올 때까지";
                 var vs = new GUIStyle(sBtn){alignment=TextAnchor.MiddleCenter, fontSize=Mathf.RoundToInt(28*u), richText=true};
                 MolakGui.Ink(vs, MolakTheme.Ink3);
                 GUI.Label(new Rect(bx, by - 14*u, bw, 44*u), "이번 생의 뜻 · " + vt, vs);

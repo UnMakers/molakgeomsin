@@ -83,7 +83,7 @@ public static class MolakFaction
         if (e.Rep == "rank")
         {
             float r = MolakStats.Get("rank");
-            return r > 0 ? "이번 생 · 서열 " + string.Format("{0:N0}", r) + "위" : "이번 생 · 무명";
+            return r > 0 ? "이번 생 · 서열 " + MolakDuel.RankText(r) : "이번 생 · 무명";
         }
         int v = Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get(e.Rep)), 0, 5);
         var sb = new System.Text.StringBuilder("이번 생의 신의 ");

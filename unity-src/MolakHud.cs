@@ -126,15 +126,7 @@ public class MolakHud : MonoBehaviour
     string TierOf (float r)
     {
         if (r <= 0) return "무명";
-        if (r <= 1) return "멸도";
-        if (r <= 10) return "천묵";
-        if (r <= 100) return "허실";
-        if (r <= 1000) return "발경";
-        if (r <= 10000) return "화경";
-        if (r <= 100000) return "관맥";
-        if (r <= 1000000) return "운위";
-        if (r <= 3000000) return "취위";
-        return "식위";
+        return MolakDuel.TierName(r);   // 0.4.35 경지 이름은 한곳에서
     }
 
     void OnGUI ()
@@ -217,7 +209,7 @@ public class MolakHud : MonoBehaviour
         {
             float y2 = y + lh + 10*u, lh2 = 50*u;
             Box(new Rect(pad, y2, W-168*u, lh2), MolakTheme.Night ? new Color(0.20f,0.18f,0.16f,0.85f) : new Color(0.96f,0.93f,0.87f,0.80f));
-            string rtxt = rank > 0 ? rank.ToString("N0")+"위 · "+TierOf(rank) : "서열 없음";
+            string rtxt = rank > 0 ? MolakDuel.RankText(rank)+" · "+TierOf(rank) : "서열록에 이름 없음";
             { var bh = MolakStats.Str("byeolho", "none"); if (!string.IsNullOrEmpty(bh) && bh != "none") rtxt += " · <color=#8A3A30>" + bh + "</color>"; }   // 0.4.33 강호가 붙인 별호
             string s2 = "검술 "+MolakStats.Get("sw").ToString("0")+"    <color=#8A6D1F>은자 "+MolakStats.Get("mn").ToString("0")+"</color>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
@@ -257,7 +249,7 @@ public class MolakHud : MonoBehaviour
         float k = Mathf.Clamp01(rsT/roll);
         k = 1f-Mathf.Pow(1f-k, 3f);
         float cur = Mathf.Lerp(rsFrom, rsTo, k);
-        GUI.Label(new Rect(cx,cy+26*u,cw,90*u), "서열 "+Mathf.Round(cur).ToString("N0")+"위", sBig);
+        GUI.Label(new Rect(cx,cy+26*u,cw,90*u), "서열 "+(cur > MolakDuel.ListEdge ? "서열록 밖" : Mathf.Round(MolakDuel.ShowRank(cur)).ToString("N0")+"위"), sBig);
         if (rsTierUp && rsT > roll*0.7f)
             GUI.Label(new Rect(cx,cy+130*u,cw,54*u), "─ "+rsTier+" 진입 ─", sGold);
         else if (rsFrom > rsTo)

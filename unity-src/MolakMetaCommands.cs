@@ -401,7 +401,7 @@ public class LifeNoteCommand : Command
         MolakStats.SetStr("vowline", vowline);
         MolakStats.Set("vowc", vowline.Length > 0 ? 1f : 0f);
         // 이번 생의 기록
-        string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 ? "서열 " + rank.ToString("N0") + "위" : "서열록에 이름 없음") + " · 깨달음 +" + gained.ToString("0");
+        string sum = "이번 생 — " + Days(day) + " · " + (rank > 0 && rank <= MolakDuel.ListEdge ? "서열 " + MolakDuel.RankText(rank) : "서열록에 이름 없음") + " · 깨달음 +" + gained.ToString("0");
         MolakStats.SetStr("lifesum", sum);
         // 지난 생과 견줌(두 번째 생부터)
         float lastDay = MolakStats.Get("g_lastday"), bestDay = MolakStats.Get("g_bestday"), bestRank = MolakStats.Get("g_bestrank");
