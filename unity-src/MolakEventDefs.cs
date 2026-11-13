@@ -19,6 +19,11 @@ public static class MolakEventDefs
             new Def("E_SoaRead", 10, 40, 'd', "f_soamet&!f_soadead&aff>=2", null, 0, 20),
             // 0.4.33 반쪽의 꿈: 문양이 깊어질수록 노인의 기억이 흘러든다. 생을 넘어 한 번씩, 차례대로
             new Def("E_OldDream1", 8, 58, 'n', "curse>=30&!g_oldmem1", null, 0, 45),
+            // 0.4.34 사문을 대다: 비무판 연승 뒤, 서열록에 이름을 올리는 날
+            new Def("E_Cheongun", 12, 55, 'd', "arenawin>=3&rank>0&rank<=1000000&!f_namedtown", null, 0, 40),
+            // 0.4.34 되갚음(턱을 들던 칼끝을 다시 만난다), 저잣거리의 협
+            new Def("E_Payback", 10, 58, 'd', "f_insulted&!f_paidback&rank>0&rank<=600000", null, 0, 35),
+            new Def("E_Hyeop", 8, 55, 'd', null, null, 0, 16),
             new Def("E_OldDream2", 8, 58, 'n', "curse>=45&g_oldmem1&!g_oldmem2", null, 0, 45),
             new Def("E_OldDream3", 8, 58, 'n', "curse>=58&g_oldmem2&!g_oldmem3", null, 0, 45),
             new Def("E_OldDream4", 8, 58, 'n', "curse>=70&g_oldmem3&!g_oldmem4", null, 0, 45),

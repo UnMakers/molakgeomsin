@@ -227,8 +227,10 @@
 @set f_hmsaved=0
 @set f_honed=0
 @set f_huntdodge=0
+@set f_hyeop=0
 @set f_incense=0
 @set f_inkcord=0
+@set f_insulted=0
 @set f_ipmafight=0
 @set f_ipmaknow=0
 @set f_jaha=0
@@ -262,6 +264,7 @@
 @set f_lordintro=0
 @set f_lordlore=0
 @set f_lordseal=0
+@set f_lordshaken=0
 @set f_maengcontact=0
 @set f_maengcost=0
 @set f_maengdeal=0
@@ -274,6 +277,9 @@
 @set f_mirror=0
 @set f_monklore=0
 @set f_mournambush=0
+@set f_mournerally=0
+@set f_namedcheongun=0
+@set f_namedtown=0
 @set f_namgungdead=0
 @set f_namgungdoor=0
 @set f_namgungspared=0
@@ -295,6 +301,7 @@
 @set f_oldseen=0
 @set f_openname=0
 @set f_orphan=0
+@set f_paidback=0
 @set f_platefake=0
 @set f_poisonswap=0
 @set f_projujube=0
@@ -304,6 +311,7 @@
 @set f_r3truth=0
 @set f_r4wait=0
 @set f_raidprep=0
+@set f_rally=0
 @set f_rankplate=0
 @set f_reforge=0
 @set f_relicinfo=0
@@ -409,6 +417,7 @@
 @set hp=0
 @set hpmax=0
 @set injury=0
+@set insultday=0
 @set jsdeff=0
 @set jsdn=0
 @set killed=0
@@ -453,10 +462,12 @@
 @set pw=0
 @set r=0
 @set raidday=0
+@set rallyn=0
 @set rank=0
 @set rep_gae=0
 @set rep_heuk=0
 @set rep_maeng=0
+@set rolln=0
 @set sackind=0
 @set seen_E_Childplay=0
 @set seen_E_Rival=0
@@ -499,6 +510,7 @@
 @set foename="none"
 @set foerank="none"
 @set foetier="none"
+@set insultname="none"
 @set knownew="none"
 @set knowsnap="none"
 @set lifecmp="none"

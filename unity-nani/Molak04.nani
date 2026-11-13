@@ -320,6 +320,7 @@
 
 # Ld2
 @gosub Molak13#Stairs if:b_stairs<1
+@gosub #LdRally
 @art char:lord
 @gosub #LdNamgung
 @goto #Ld2Again if:g_clears>0
@@ -327,11 +328,24 @@
 @goto #Ld2V0 if:f_northinfo<1
 문지방을 넘는데 발밑 돌 틈으로 낮은 소리가 올라온다. 울음인지 숨소리인지. 산골 마을 노파가 말한 전각 밑이다. 그릇들이 아직 거기 있다.
 # Ld2V0
+@goto #Ld2Pro if:g_know_lord>0||g_died_lord>0
 대전(大殿) 끝, 붉은 단 위에 사내가 앉아 있다. <color=#C03434>공기가 그자를 중심으로 휘어 있다</color>.
 혈마교주, 혈천마.
 "…살아 있는 얼굴이로다. 그 밤의."
 교주가 천천히 일어선다.
 "일 년을 누워 있다가, 삼류에서 여기까지라. 사람의 걸음이 아니로다. …누구의 솜씨냐."
+@goto #Ld2Q
+# Ld2Pro
+대전(大殿) 끝, 붉은 단 위에 사내가 앉아 있다. <color=#C03434>공기가 그자를 중심으로 휘어 있다</color>.
+혈마교주, 혈천마. 그가 입을 열기 전에 당신이 먼저 말한다.
+"'살아 있는 얼굴이로다, 그 밤의.' 그렇게 말할 참이었지."
+교주의 입이 반쯤 열린 채 멎는다.
+"그다음은 '일 년을 누워 있다가 여기까지라. 누구의 솜씨냐.'"
+대전이 조용하다. 교주가 단 위에서 반쯤 일어선 채로 멈춰 있다.
+"……너는 본좌가 할 말을 아는구나."
+"당신이 나를 벤 자리도 알지. 왼쪽으로 세 걸음, 기둥 그림자가 끝나는 데. 오늘은 거기 서지 않소."
+교주가 마저 일어선다. 지겨워하던 얼굴에 낯선 것이 스친다.
+@set f_lordshaken=1
 @goto #Ld2Q
 # Ld2Again
 골짜기 가장 깊은 곳에 검은 전각이 있다. 문은 열려 있다.
@@ -344,11 +358,120 @@
 @goto #LdHap if:f_hapbyeok>0&&b_ldhap<1
 # Ld2Q2
 @choice "\"복면의 백발. 너도 아는 자겠지.\"" goto:#Ld2C0
+@choice "\"청운검파의 막내. 운검사태의 손제자다.\" — 이름을 건다" if:f_namedcheongun<1 goto:#Ld2Name
 @choice "대답 대신 검을 뽑는다" goto:#Ld2C1
 @choice "\"너도 누군가의 밭이었다지.\"" if:f_monklore>0||f_sutraknow>0 goto:#Ld2C2
 @choice "\"북두를 거꾸로.\" — 대사형의 말을 되뇐다" if:f_jinbaektruth>0 goto:#Ld2C3
 @choice "\"보름마다 사당에 쌀을 두던 사내를 아시오.\"" if:f_jbheard>0 goto:#Ld2C4
 @stop
+# Ld2Name
+교주의 눈썹이 한 번 움직인다.
+"청운은 본좌가 지웠다. 산문도, 장부도, 이름도."
+"지운 장부에 한 줄이 남았소. 막내라 맨 끝에 적혀 있어서, 불이 거기까진 안 닿았소."
+대전의 교도들이 서로를 본다. 그 밤 이후 이 전각에서 아무도 소리 내어 부르지 못하던 이름이다.
+교주가 웃는다. 웃음 끝이 짧다.
+"좋다. 그 한 줄까지 지워 주마."
+@set f_namedcheongun=1
+@mark text:"교주 앞에서 청운의 이름을 걸었다"
+@goto #Ld2C1
+
+; ---- 0.4.34 모여드는 칼들: 이 생에 살려 보내고, 이름을 불러 주고, 빚을 갚은 자들이 마지막 계단에 선다 ----
+; ---- 0.4.34 그 뒤, 사람들은 — 이 생에 얽힌 이들의 뒷이야기 ----
+# EpiRoll
+@set rolln=0
+@set rolln=rolln+1 if:f_rivalfriend>0
+@set rolln=rolln+1 if:f_yongcrew>0
+@set rolln=rolln+1 if:f_hajindead<1
+@set rolln=rolln+1 if:f_jangfriend>0
+@set rolln=rolln+1 if:f_hyeop>0
+@return if:rolln<2
+@page
+@art char:none
+그 뒤, 사람들은.
+@goto #ERl1 if:f_rivalfriend<1
+@goto #ERl0 if:f_gwakwifedied>0
+<color=#8A7A66>곽산</color> — 북령 목책에 창을 기대 두고 산다. 아내의 약값은 이제 외상이 아니다. 비무판에서 누가 청운을 비웃으면 창대로 탁자를 한 번 친다.
+@goto #ERl1
+# ERl0
+<color=#8A7A66>곽산</color> — 아내의 무덤 옆에 창을 꽂아 두었다. 비무판에는 다시 오르지 않는다. 대신 아이들에게 창을 가르친다. 독은 가르치지 않는다.
+# ERl1
+@goto #ERl2 if:f_yongcrew<1
+<color=#8A7A66>용개</color> — 지게꾼 다섯이 열이 되었다. 지게마다 청운(靑雲) 두 글자를 새겼다. 글을 몰라 남에게 새겨 달랬다.
+# ERl2
+@goto #ERl3 if:f_hajindead>0
+<color=#8A7A66>하진무</color> — 장부의 빈칸 하나를 끝내 채우지 않는다. 객 방값 칸이다. 셈이 안 맞는 칸은 비워 두는 법이라 했다.
+# ERl3
+@goto #ERl4 if:f_herbdead>0||f_herbfriend<1
+<color=#8A7A66>백초 할멈</color> — 청운 사람에게는 여전히 반값이다. 요즘은 손목부터 뒤집기 전에 "밥은 먹었느냐"를 먼저 묻는다.
+# ERl4
+@goto #ERl5 if:f_jangfriend<1
+<color=#8A7A66>쥐눈이 장</color> — 딸의 이름이 장부에서 지워졌다. 소식은 여전히 판다. 사람은 이제 안 판다.
+# ERl5
+@goto #ERl6 if:rep_gae<3||f_gaesold>0
+<color=#8A7A66>꼬지와 아이들</color> — 벼랑의 새끼 매듭이 길이 되었다. 장꾼들이 그 길로 소금을 나르고, 아이들이 통행세로 주먹밥 하나를 받는다.
+# ERl6
+@goto #ERl7 if:f_mournerally<1
+<color=#8A7A66>도길의 맏아들</color> — 아버지 기일마다 운락객잔 문간에 술 한 병을 두고 간다. 내일 다시 원수 하겠다던 말은 아직 지키는 중이다.
+# ERl7
+@goto #ERl8 if:f_sparedally<1
+<color=#8A7A66>목을 내밀었던 칼잡이</color> — 판에서 이기면 진 자의 목을 치지 않는다. 판주들이 그를 손 내미는 자라 부른다.
+# ERl8
+@goto #ERl9 if:f_hyeop<1
+<color=#8A7A66>저잣거리의 노점 할멈</color> — 좌판 구석에 주먹밥 하나를 늘 남겨 둔다. 임자는 안 와도 된다고 한다. 오면 더 좋고.
+# ERl9
+@goto #ERlA if:f_insulted<1||f_paidback<1
+<color=#8A7A66>{insultname}</color> — 비무판에서 진 상대의 턱을 다시는 들지 않는다. 누가 그 몸짓을 하면 먼저 고개를 돌린다.
+# ERlA
+@return
+
+# LdRally
+@set rallyn=0
+@set rallyn=rallyn+1 if:f_rivalfriend>0&&f_gwakally<1
+@set rallyn=rallyn+1 if:f_yongcrew>0
+@set rallyn=rallyn+1 if:rep_gae>=3&&f_gaesold<1
+@set rallyn=rallyn+1 if:f_mournerally>0
+@set rallyn=rallyn+1 if:f_sparedally>0
+@return if:rallyn<1
+@page
+@art scene:stairs
+@art char:none
+백팔 계단의 끝, 대전 문 앞 마당. 집법당 칼잡이 서른이 문을 등지고 늘어선다. 칼집이 한꺼번에 울린다.
+혼자라면 여기서 힘의 반을 쓴다. 숨을 고르고 칼을 고쳐 쥔다.
+@goto #LdR1 if:f_rivalfriend<1||f_gwakally>0
+@vfx kind:heavy
+계단 아래에서 창 한 자루가 먼저 날아든다. 맨 앞 칼잡이의 발등이 돌에 꿰매진다.
+@art char:gwaksan
+곽산이 창대를 어깨에 걸치고 마지막 계단을 올라온다. 숨이 차다. 북쪽에서부터 뛰어온 숨이다.
+"자네 서열이 내 계단이라 했지. 여기서 끝나면 내 계단도 끝나네. 올라가게."
+# LdR1
+@goto #LdR2 if:f_yongcrew<1
+@art char:yonggae
+옆 벼랑에서 돌이 쏟아진다. 지게꾼 다섯이 벼랑 끝에 지게를 엎는다. 맨 앞에 용개가 있다.
+"나리! 짐은 저희가 집니다요. 오늘 짐은 돌입죠!"
+돌무더기가 마당 왼쪽을 막는다. 칼잡이 열이 그 너머에 갇힌다.
+# LdR2
+@goto #LdR3 if:rep_gae<3||f_gaesold>0
+@art char:none
+벼랑의 새끼 매듭을 타고 거지 아이들이 쏟아져 내려온다. 꼬지가 맨 앞에서 깡통을 두드린다.
+교도들이 소리 나는 쪽을 돌아보는 반 박자. 그 반 박자에 당신은 마당을 반쯤 건넌다.
+# LdR3
+@goto #LdR4 if:f_mournerally<1
+@art char:none
+마당 한가운데 상복을 입은 사내가 선다. 도길의 맏아들이다. 상복 소매에서 낫이 나온다.
+"아버지 이름을 불러 준 값이오. 오늘 하루만이오. 내일 다시 원수 하리다."
+# LdR4
+@goto #LdR5 if:f_sparedally<1
+@art char:none
+비무판에서 목을 내밀었다가 손을 받아 일어섰던 칼잡이가 대전 문기둥 옆에 서 있다. 칼을 뽑아 든다.
+"빚이오. 목 하나. 여기서 갚소."
+# LdR5
+@vfx kind:gold
+등 뒤에서 칼 소리가 겹친다. 돌 구르는 소리, 깡통 소리, 창대가 돌을 치는 소리.
+혼자 온 길이 아니다. 돌아보지 않는다. 돌아보면 저들이 서운해할 것이다.
+@mark text:"마지막 계단을 혼자 오르지 않았다"
+@set f_rally=1
+@return
+
 ; ---- 대사형이 옆문을 막는다 ----
 # LdJin
 @set b_ldjin=1
@@ -482,6 +605,12 @@
 "이건 사부가 안 가르친 잔이다. 산 사람한테 따르는 거."
 @goto #TrueEnd
 # TrueEnd
+@gosub #EpiRoll
+@goto #TrueBoardE if:f_namedcheongun<1&&f_namedtown<1
+이듬해 봄, 청운산 무너진 산문에 비뚤어진 현판이 걸린다. 청운(靑雲). 획이 두 번 끊겼다.
+소아가 그 옆에 작은 판자를 하나 더 건다. 적운(赤雲). 그녀의 글씨는 반듯하다. 둘이 나란히 걸려 비뚤어진 쪽이 더 비뚤어 보인다.
+"고쳐 쓰지 마라. 그래야 네 글씨인 줄 안다."
+# TrueBoardE
 강호는 그해 겨울 당신을 몰락검신(沒落劍神)이라 부른다. 소아는 그 이름을 한 번도 부르지 않는다. 다른 이름으로 부른다.
 @set byeolho="몰락검신"
 \[ 眞 · 雲劍合璧 \]
@@ -807,6 +936,23 @@
 @gosub #EpiCm if:f_cmeve>0||f_cmally>0
 @gosub #EpiAmh if:f_amhdead<1&&f_amheve>0||f_amhdead<1&&f_amhwait>0
 @gosub #EpiOchi if:f_ochisaved>0
+@gosub #EpiRoll
+@goto #EpiBoard if:f_namedcheongun>0||f_namedtown>0
+@goto #EpiBoardE
+# EpiBoard
+@page
+이듬해 봄, 청운산. 무너진 산문 앞에 사람이 하나둘 모인다. 장꾼, 거지 아이, 지게꾼, 창잡이.
+@goto #EpiBoardH if:f_hajindead>0
+하진무가 나무판 하나를 지고 왔다. 객잔 장부를 매던 판자를 대패로 밀었다.
+"글씨는 객이 쓰시오. 나는 셈만 할 줄 아오."
+@goto #EpiBoardW
+# EpiBoardH
+누군가 객잔 장부를 매던 판자를 대패로 밀어 두고 갔다. 셈을 할 줄 알던 사람의 판자다.
+# EpiBoardW
+붓을 든다. 사부에게 배운 서체다. 손이 떨려 획이 두 번 끊긴다. 고쳐 쓰지 않는다.
+청운(靑雲).
+현판이 산문에 걸린다. 비뚤다. 아무도 바로잡지 않는다.
+# EpiBoardE
 @page
 그 겨울, 강호는 당신에게 새 이름을 붙인다.
 무너진 문파의 마지막 칼이 서열록 맨 윗줄까지 올라갔다는 이야기가 객잔마다 돈다. 이야기는 돌 때마다 부풀고, 이름은 돌 때마다 짧아진다.

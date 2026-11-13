@@ -714,6 +714,7 @@
 "……아우가 너한테 그것까지 말했더냐."
 그가 칼을 칼집에 꽂는다. 금은 그대로 두고 간다. 넘어오지 않겠다는 뜻이다.
 @mark text:"맏상주 앞에서 그 이름을 꺼냈다"
+@set f_mournerally=1
 @set grudge=0
 @set grudgevisit=0
 @fx curse:-2

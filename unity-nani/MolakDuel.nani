@@ -264,9 +264,15 @@
 # LtE2
 "다음엔 검을 들고 오게."
 목은 붙어 있다. 치욕도 같이 붙어 있다.
-@return
+@goto #LtIns
 # LtE3
 상대가 칼끝으로 턱을 한 번 들었다 놓는다. 베는 것보다 더 큰 모욕이다.
+# LtIns
+@return if:f_insulted>0
+@set f_insulted=1
+@set insultname=foename
+@set insultday=day
+<color=#9A70C4>{foename}. 그 이름을 잊지 않는다.</color>
 @return
 # LtF
 피를 뱉고 일어선다. 오늘은 둘 다 숨이 붙어 나간다.

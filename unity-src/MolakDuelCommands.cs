@@ -224,6 +224,9 @@ public class DuelCommand : Command
         if ((kind == "raid" || kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_rivalfriend") > 0 && MolakStats.Get("f_gwakally") < 1) bonus += 1.5f; // 곽산이 등을 받친다(맹약까지는 아니어도)
         if (kind == "lord" && MolakStats.Get("f_namgungdoor") > 0) bonus += 1f;    // 남궁이 측문을 비웠다
         if (kind == "lord" && MolakStats.Get("f_cmally") > 0) bonus += 1.5f;      // 사저가 가르친 아홉째, 운해
+        if (kind == "lord") bonus += Mathf.Min(2.5f, MolakStats.Get("rallyn") * 0.5f);   // 0.4.34 마지막 계단을 함께 오른 자들
+        if (kind == "lord" && MolakStats.Get("f_lordshaken") > 0) bonus += 1f;      // 교주가 할 말을 먼저 했다
+        if (kind == "lord" && MolakStats.Get("f_namedcheongun") > 0) bonus += 0.5f; // 청운의 이름을 걸었다
         if ((kind == "lord" || kind == "raid") && MolakStats.Get("f_amhwait") > 0) bonus += 1f;   // 침향 한 대: 살려 보낼 손님
         if (kind == "wolf" && MolakStats.Get("f_soachild") > 0) bonus += 1f;      // 사슬 창고의 길을 이미 걸었다
         if ((kind == "hunt1" || kind == "hunt2") && MolakStats.Get("f_gaewarn") > 0) bonus += 1f;   // 담장의 매듭 셋
