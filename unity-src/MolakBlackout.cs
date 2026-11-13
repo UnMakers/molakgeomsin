@@ -115,18 +115,12 @@ public class MolakBlackout : MonoBehaviour
             }
             float a = phase == 1 ? Mathf.Clamp01(e / 0.6f) : 1f - Mathf.Clamp01(e / (stack ? 0.7f : 0.4f));
             var col = red ? new Color(0.92f, 0.72f, 0.66f, a) : new Color(0.88f, 0.82f, 0.72f, a);
+            // 0.4.37: 쌓기 그림이 '▼ 표시' 조건의 else 에 매달려 있어서, 홑줄 모드에서도 ▼ 가 안 보이는 순간(떠오를 때·질 때)마다
+            //         앞 줄들이 금빛 머리줄·붉은 밑줄과 함께 겹쳐 그려졌다(글자가 두 번 뜨던 것). 홑줄/쌓기를 먼저 가른다.
             if (!stack)
             {
                 MolakGui.Ink(style, col);
                 GUI.Label(new Rect(w * 0.08f, h * 0.42f, w * 0.84f, 170 * u), lines[idx], style);
-            }
-            // 누르라는 표시: 마지막 줄까지 다 떠오르면 아래쪽에 ▼ 가 천천히 숨 쉰다
-            if (phase == 1 && e >= 0.6f && (!stack || idx >= lines.Length - 1))
-            {
-                float pa = Mathf.Clamp01((e - 0.6f) / 0.5f) * (0.35f + 0.3f * Mathf.Sin((e - 0.6f) * 3.2f));
-                var hs = new GUIStyle(style) { fontSize = Mathf.RoundToInt(30 * u) };
-                MolakGui.Ink(hs, red ? new Color(0.92f, 0.72f, 0.66f, pa) : new Color(0.88f, 0.82f, 0.72f, pa));
-                GUI.Label(new Rect(0, h * 0.80f, w, 60 * u), "▼", hs);
             }
             else
             {
@@ -147,6 +141,14 @@ public class MolakBlackout : MonoBehaviour
                         GUI.color = g0;
                     }
                 }
+            }
+            // 누르라는 표시: 마지막 줄까지 다 떠오르면 아래쪽에 ▼ 가 천천히 숨 쉰다
+            if (phase == 1 && e >= 0.6f && (!stack || idx >= lines.Length - 1))
+            {
+                float pa = Mathf.Clamp01((e - 0.6f) / 0.5f) * (0.35f + 0.3f * Mathf.Sin((e - 0.6f) * 3.2f));
+                var hs = new GUIStyle(style) { fontSize = Mathf.RoundToInt(30 * u) };
+                MolakGui.Ink(hs, red ? new Color(0.92f, 0.72f, 0.66f, pa) : new Color(0.88f, 0.82f, 0.72f, pa));
+                GUI.Label(new Rect(0, h * 0.80f, w, 60 * u), "▼", hs);
             }
         }
     }

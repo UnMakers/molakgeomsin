@@ -442,9 +442,12 @@
 @set max_tea=0
 @set max_vigor=0
 @set memwarn=0
+@set mkal=0
 @set mkgamble=0
+@set mkhb=0
 @set mksmith=0
 @set mkthief=0
+@set mktv=0
 @set mkv=0
 @set mn=0
 @set mnwarn=0
@@ -849,7 +852,13 @@
 @set f_gaekid=1
 @goto #MkAlleyIn
 # MkAlleyIn
+@goto #MkAlleyR if:mkal>0
+@set mkal=1
 장터 골목으로 든다. 헌 옷전과 숫돌 파는 노인을 지나면, 골목 끝에 무고(武庫)라는 대장장이의 대장간이 있다.
+@goto #MkAlleyC
+# MkAlleyR
+골목으로 다시 나선다. 남은 은자 {mn}냥.
+# MkAlleyC
 @choice "옷전 — 죽립과 낡은 장포 (은자 4)" if:mn>=4&&f_hat<1 goto:#MkHat
 @choice "숫돌 장수 — 청석(靑石) 숫돌 (은자 3)" if:mn>=3&&f_whetstone<1 goto:#MkStone
 @choice "대장간에 들어간다" if:f_cheonggang<1&&mksmith<1 goto:#MkSmith
@@ -881,8 +890,14 @@
 
 ; ---------- 약재 거리 ----------
 # MkHerb
+@goto #MkHerbR if:mkhb>0
+@set mkhb=1
 약재 거리. 백초당(百草堂) 앞에서 허리 굽은 노파가 약연을 돌리고, 건너편 향 가게에선 연기가 오른다.
 담벼락 밑에 거지 아이가 동냥 그릇을 내밀고 있다. 그릇 귀에 새끼 매듭이 묶여 있다.
+@goto #MkHerbC
+# MkHerbR
+약연 도는 소리가 여전하다. 남은 은자 {mn}냥.
+# MkHerbC
 @choice "백초당 — 금창약(金瘡藥) 한 통 (은자 5)" if:mn>=5&&f_salve<1 goto:#MkSalve
 @choice "향 가게 — 안식향(安息香) (은자 4)" if:mn>=4&&f_incense<1 goto:#MkIncense
 @choice "거지 아이에게 은자 한 냥을 던진다 (은자 1)" if:mn>=1&&f_alms<1 goto:#MkAlms
@@ -922,9 +937,15 @@
 
 ; ---------- 주루와 투전판 ----------
 # MkTavern
+@goto #MkTavernR if:mktv>0
+@set mktv=1
 주루 일층에는 술꾼들이 앉아 있고, 이층에서는 투전판이 벌어진다. 계단 밑에 쥐 닮은 사내가 기대 있다. 소식을 파는 쥐눈이 장이다.
 구석에서 이야기꾼이 부채를 편다.
 "오늘은 혈마교가 무림을 삼키던 그 밤 이야기올시다!"
+@goto #MkTavernC
+# MkTavernR
+주루 계단 밑으로 돌아온다. 남은 은자 {mn}냥.
+# MkTavernC
 @choice "쥐눈이 장에게 혈마교를 묻는다 (은자 10)" if:mn>=10&&f_janginfo<1 goto:#P4j
 @choice "투전판에 앉는다 (은자 5)" if:mn>=5&&mkgamble<1 goto:#MkGamble
 @choice "이야기꾼의 이야기를 듣는다 (은자 2)" if:mn>=2&&f_storylore<1 goto:#MkStory

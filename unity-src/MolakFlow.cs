@@ -24,6 +24,8 @@ public class MolakFlow : MonoBehaviour
     static bool afterChoice;
     bool lastWasChoice;
     bool lastPrintWaited = true;   // 직전 본문이 입력 대기였는가 → 다음 본문은 '새 단락'
+    int runParas, runChars;         // 0.4.37: 빈 줄 없이 이어 붙은 단락 수·글자 수
+    public static int RunBreakChars = 80;
     bool fastBlock;                // 단락 출력 중 탭 → 남은 줄 즉시 출력
     IInputHandle continueHandle;
     static readonly List<Choice> cbuf = new List<Choice>();
@@ -129,7 +131,14 @@ public class MolakFlow : MonoBehaviour
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
         // 0.4.9: 대사 줄은 앞뒤로 한 줄 띄운다(서술과 대사가 붙어 있으면 읽기 어렵다)
         bool curDlg = IsDialogue(pt);
-        if (!reset) InsertBreak((lastPrintWaited || afterChoice || curDlg || prevDlg) ? "\n\n" : "\n");
+        bool beat = lastPrintWaited || afterChoice || curDlg || prevDlg;
+        // 0.4.37: 한 번에 쭉 나오는 서술이 길면 숨 쉴 자리를 둔다 — 빈 줄 없이 이어진 단락이 둘 이상이고 글자가 RunBreakChars 를 넘었으면
+        //         다음 단락 앞에 빈 줄 하나(예: 첫 거리 장면 "…사람들이 길을 비킨다." 다음).
+        int len = PlainLen(pt);
+        if (!reset && !beat && runParas >= 2 && runChars >= RunBreakChars) beat = true;
+        if (reset || beat) { runParas = 0; runChars = 0; }
+        runParas++; runChars += len;
+        if (!reset) InsertBreak(beat ? "\n\n" : "\n");
         prevDlg = curDlg;
         afterChoice = false;
         // 같은 단락(연속된 서사 문장)은 한 번의 탭으로 쭉 출력: 다음 명령이 또 본문이면 입력 대기 없이 이어간다.
@@ -188,6 +197,18 @@ public class MolakFlow : MonoBehaviour
         }
         catch { }
         return null;
+    }
+
+    static int PlainLen (PrintText pt)
+    {
+        try
+        {
+            if (pt.Text == null || !pt.Text.HasValue) return 0;
+            var loc = Engine.GetService<ITextLocalizer>();
+            var t = loc != null ? loc.Resolve(pt.Text.Value) : pt.Text.Value.ToString();
+            return string.IsNullOrEmpty(t) ? 0 : System.Text.RegularExpressions.Regex.Replace(t, "<[^>]+>", "").Trim().Length;
+        }
+        catch { return 0; }
     }
 
     static bool IsDialogue (PrintText pt)
