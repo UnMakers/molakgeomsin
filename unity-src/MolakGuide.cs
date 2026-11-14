@@ -103,7 +103,7 @@ public class MolakGuide : MonoBehaviour
     {
         if (!Engine.Initialized || showing >= 0 || listOpen) return;
         checkT += Time.unscaledDeltaTime; if (checkT < 0.5f) return; checkT = 0f;
-        if (MolakPractice.Active || MolakMenu.IsOpen || MolakBag.IsOpen || MolakArt.InDuel || MolakDuelStage.GuideOpen || MolakBlackout.Auto) return;
+        if (MolakPractice.Active || MolakMenu.IsOpen || MolakTruthView.IsOpen || MolakBag.IsOpen || MolakArt.InDuel || MolakDuelStage.GuideOpen || MolakBlackout.Auto) return;
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp == null || sp.Skipping || !sp.Playing || sp.MainTrack == null || !sp.MainTrack.AwaitingInput) return;
         float day = G("day");

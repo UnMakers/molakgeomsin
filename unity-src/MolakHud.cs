@@ -255,7 +255,7 @@ public class MolakHud : MonoBehaviour
             "    살기 "+Num("sl", MolakStats.Get("sl"));
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
-        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 72*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 72*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 가는 구분선 + 체력 붓 획(0.4.32): 구분선 위로 남은 체력만큼 먹 획이 그어진다. 끝으로 갈수록 가늘고, 바닥이면 붉다.
         float lineW = W-168*u-112*u;
         Box(new Rect(pad, y+lh+4*u, lineW, Mathf.Max(1f,1*u)), new Color(0.55f,0.48f,0.40f,0.45f));

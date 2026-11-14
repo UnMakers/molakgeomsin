@@ -119,6 +119,8 @@ public static class MolakMemory
         if (sl != 0f) MolakStats.Add("sl", sl);
         if (cu != 0f) MolakStats.Set("curse", Mathf.Max(0f, G("curse") + cu));
         MolakStats.Set("g_wk_sw", 0f); MolakStats.Set("g_wk_sl", 0f); MolakStats.Set("g_wk_curse", 0f);
+        MolakStats.SetStr("tzseen", "");   // 0.4.58 밤의 귀띔은 생마다 새로
+        MolakTruth.Snapshot();   // 0.4.58 이번 생에 나아간 줄기를 가리려고
     }
 
     /// <summary>회차 시작치(InitRun 이 부른다).</summary>
@@ -169,7 +171,7 @@ public static class MolakMemory
     }
 
     static readonly HashSet<string> NotDeaths = new HashSet<string> { "등극", "합벽", "성사", "순검", "원행", "재건", "도주" };
-    static readonly HashSet<string> Blade = new HashSet<string> { "비무 패배", "소아의 검", "야습", "원수", "생사결", "자객", "협", "빚", "소아의 오인" };
+    static readonly HashSet<string> Blade = new HashSet<string> { "비무 패배", "소아의 검", "야습", "원수", "생사결", "자객", "협", "빚", "소아의 오인", "추살" };
 
     /// <summary>한 생이 끝날 때 한 번: 남는 것을 정산하고 보여 줄 줄을 만든다. 표시 변수 rm_text · rm_c · nx_sw · nx_ng · nx_hp.</summary>
     public static void OnLifeEnd ()
@@ -247,6 +249,10 @@ public static class MolakMemory
         MolakStats.Set("rm_c", lines.Count);
         MolakStats.Set("nx_sw", sw1); MolakStats.Set("nx_ng", ng1); MolakStats.Set("nx_hp", hp1);
         MolakStats.Set("knowc", MolakKnow.Count());
+        // 0.4.58 「그 밤의 진실」 — 풀다 만 실마리 두 줄
+        var leads = MolakTruth.Leads();
+        for (int k = 0; k < 2; k++) MolakStats.SetStr("tr_" + (k + 1), k < leads.Count ? leads[k] : "none");
+        MolakStats.Set("tr_c", leads.Count);
     }
 }
 

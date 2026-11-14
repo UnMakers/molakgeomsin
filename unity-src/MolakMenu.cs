@@ -180,7 +180,7 @@ public class MolakMenu : MonoBehaviour
         float bw = Mathf.Min(w*0.84f, 860*u), gap = 16*u;
         float bx = (w-bw)/2f;
         float rowH = 96*u, tileH = 128*u, secH = 50*u;
-        float totalH = 96*u + (secH + rowH + gap) + (secH + 3*(tileH+gap)) + (secH + rowH + gap) + (rowH + 24*u);
+        float totalH = 96*u + (secH + rowH + gap) + (secH + 4*(tileH+gap)) + (secH + rowH + gap) + (rowH + 24*u);
         float by = Mathf.Max(48*u, (h-totalH)/2f);
         GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
         if (GUI.Button(new Rect(bx+bw-70*u, by-6*u, 70*u, 70*u), "×", sHead)) { open = false; SetProcessInput(true); return; }
@@ -206,12 +206,12 @@ public class MolakMenu : MonoBehaviour
         MenuSection(bx, ref by, bw, secH, "기록");
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
-            string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록", "길잡이" };
-            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀" };
+            string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실" };
+            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀", "풀다 만 실마리 " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots() };
             float tw = (bw - gap) / 2f;
             for (int i = 0; i < t.Length; i++)
             {
-                var r = new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), tw, tileH);
+                var r = i == 6 ? new Rect(bx, by + 3 * (tileH + gap), bw, tileH) : new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), tw, tileH);
                 if (!Btn(r, t[i] + "\n<size=" + Mathf.RoundToInt(22*u) + "><color=#8C8378>" + sub[i] + "</color></size>", false, u)) continue;
                 switch (i)
                 {
@@ -227,9 +227,10 @@ public class MolakMenu : MonoBehaviour
                     case 3: knowTab = true; break;
                     case 4: facTab = true; break;
                     case 5: open = false; SetProcessInput(true); MolakGuide.OpenList(); break;
+                    case 6: open = false; SetProcessInput(true); MolakTruthView.Open(); break;
                 }
             }
-            by += 3 * (tileH + gap);
+            by += 4 * (tileH + gap);
         }
 
         // ── 저장

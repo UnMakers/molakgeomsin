@@ -35,6 +35,7 @@
 @set b_herb3=0
 @set b_hintshr=0
 @set b_hm=0
+@set b_hunt=0
 @set b_hunt1=0
 @set b_hunt2=0
 @set b_hunt3x=0
@@ -335,6 +336,7 @@
 @set f_roofwatcher=0
 @set f_salve=0
 @set f_sangsaknow=0
+@set f_scouttoken=0
 @set f_searchhid=0
 @set f_searchpaid=0
 @set f_seedknow=0
@@ -435,6 +437,7 @@
 @set herbbody=0
 @set hp=0
 @set hpmax=0
+@set hr=0
 @set injury=0
 @set insultday=0
 @set jsdeff=0
@@ -478,6 +481,7 @@
 @set pw=0
 @set r=0
 @set raidday=0
+@set raidshift=0
 @set rallyn=0
 @set rank=0
 @set rep_gae=0
@@ -511,6 +515,7 @@
 @set tn_sw2=0
 @set tn_wk1=0
 @set tr=0
+@set tr_c=0
 @set truehintc=0
 @set vow=0
 @set vowc=0
@@ -545,6 +550,7 @@
 @set lifesum="none"
 @set newrank="none"
 @set nextevent="none"
+@set nightteaser="none"
 @set oldrank="none"
 @set prepbond="none"
 @set prepitem="none"
@@ -560,7 +566,11 @@
 @set rm_9="none"
 @set rm_text="none"
 @set tiername="none"
+@set tr_1="none"
+@set tr_2="none"
 @set truehint="none"
+@set truthsnap="none"
+@set tzseen="none"
 @set vowline="none"
 @initrun
 @goto #Prologue if:g_runs<1

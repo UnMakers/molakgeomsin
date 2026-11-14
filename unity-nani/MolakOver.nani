@@ -233,6 +233,7 @@
 @goto #RgPoison if:deathcause=="독"||deathcause=="곪은 상처"
 @goto #RgRaid if:deathcause=="야습"
 @goto #RgSoa if:deathcause=="소아의 검"
+@goto #RgHunt if:deathcause=="추살"
 @goto #RgTown if:deathcause=="빚"||deathcause=="협"||deathcause=="자객"||deathcause=="원수"
 @goto #RgSword
 # RgSac
@@ -271,6 +272,10 @@
 @goto #RgEnd
 # RgSoa
 옆구리를 더듬는다. 쌍검이 지나간 자리가 없다. 젖은 외눈만 눈꺼풀 안에 남았다.
+@goto #RgEnd
+# RgHunt
+등을 더듬는다. 칼이 들어온 자리가 없다. 귓가에 그 목소리만 남았다. 산 채로라 하셨다. 대주께서.
+북두를 밟는 분. 그 걸음을 아는 사람은 이 세상에 몇 남지 않았다.
 @goto #RgEnd
 # RgTown
 아래층에서 주판알 소리가 난다. 이 고을의 누구도 아직 당신 이름을 모른다. 원한도, 빚도, 아직.
@@ -322,6 +327,12 @@
 # ShopNext
 @page
 다음 생 — 검술 <color=#C9A227>{nx_sw}</color> · 내공 <color=#C9A227>{nx_ng}</color> · 체력 <color=#C9A227>{nx_hp}</color>로 깨어난다.<br><color=#8A7A66>남은 기억 {knowc} · 청운검결 {formc}/4 · 회귀 {g_runs}회</color>
+@goto #ShopGo if:tr_c<1||rm_done<1
+@page
+<color=#C9A227>풀다 만 실마리</color> <color=#8A7A66>— 메뉴(☰)의 「그 밤의 진실」에 적혀 있다</color>
+@print "{tr_1}" if:tr_c>=1
+@print "{tr_2}" if:tr_c>=2
+# ShopGo
 @choice "다 시 그 날 로 — 새 생을 시작한다" goto:#Restart
 @stop
 # Restart

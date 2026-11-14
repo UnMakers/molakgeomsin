@@ -122,7 +122,7 @@ public class MolakScroll : MonoBehaviour
             lastPos = pos;
             float dxPx = pos.x - pressPos.x;
             if (!Dragging && !hSwipe && Mathf.Abs(dxPx) > 34f * CanvasScale() && Mathf.Abs(dxPx) > Mathf.Abs(dyPx) * 1.4f
-                && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakBlackout.Busy && !MolakArt.InDuel)
+                && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakBlackout.Busy && !MolakArt.InDuel)
             { hSwipe = true; DraggedThisPress = true; }
             if (hSwipe) return;
             if (!Dragging && Mathf.Abs(dyPx) > DragThresholdPx && Mathf.Abs(dyPx) > Mathf.Abs(pos.x - pressPos.x)) { Dragging = true; DraggedThisPress = true; }

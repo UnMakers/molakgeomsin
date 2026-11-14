@@ -182,6 +182,7 @@ public class DuelCommand : Command
     /// <summary>판에 오를 때 띄우는 인물 그림.</summary>
     public static readonly Dictionary<string, string> FoeArt = new Dictionary<string, string> {
         { "soa", "soa" }, { "hochi", "hochi" }, { "kyona", "kyona" }, { "jinbaek", "jinbaek" }, { "lord", "lord" }, { "rival", "gwaksan" }, { "hunt3", "lawlord" },
+        { "wolf", "wolf" }, { "namgung", "namgung" }, { "cheolsan", "cheolsan" }, { "hunt1", "scout" }, { "hunt2", "scout" },   // 0.4.58
     };
     public static bool IsBossKind (string kind) { return BossKinds.Contains(kind); }
     public StringParameter Style;

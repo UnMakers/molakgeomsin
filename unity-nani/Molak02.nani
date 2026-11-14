@@ -738,6 +738,7 @@
 @scene id:night
 @bridge kind:dusk
 @print "{bridgetext}" if:bridgetext!="none"
+@goto Molak16#Hunt if:day>=4&&b_hunt<1
 @goto #NvOld if:curse>=80&&curse<88&&f_oldseen>0&&tn_oldvoice<1
 @set tr=random(1,100)
 @goto #NvHj if:f_hajindead>0&&tn_nvhj<1
@@ -1118,6 +1119,7 @@
 한밤중. 전당포 뒷담은 낮다.
 @set tr=random(1,100)
 @goto #NLedgerOk if:tr<=55+sl*3
+@art char:wangsam
 궤짝을 여는 순간 등잔이 켜진다. 잠옷 바람의 왕삼이 수하 둘을 끼고 서 있다.
 "장부를 훔치는 손님은 처음이 아니오. 그 손님들 손가락이 지금 어디 있는지 아시오?"
 @set debtday=day
@@ -1327,19 +1329,19 @@
 @goto #NRest3 if:sv==3
 @goto #NRest4 if:sv==4
 아무 일도 없는 밤. 지금의 당신에게는 사치다.
-@fx hp:3
+@fx hp:2
 @goto #NightEnd
 # NRest2
 일찍 눕는다. 천장의 얼룩을 센다.
-@fx hp:3
+@fx hp:2
 @goto #NightEnd
 # NRest3
 창을 연다. 달이 느티나무에 걸려 있다.
-@fx hp:3
+@fx hp:2
 @goto #NightEnd
 # NRest4
 식은 국밥을 마저 먹고 눕는다. 배부른 것도 수련이라고 사형이 말했었다.
-@fx hp:3
+@fx hp:2
 @goto #NightEnd
 # NRestX1
 꿈에서 죽는다. 지난 생의 그 자리, 그 칼. 깨어 보니 이불이 땀에 젖었다.
@@ -1414,23 +1416,30 @@
 @goto #Evening
 # D10
 @set ms_d10=1
+@turn title:"열흘째 밤 — 문양이 깨어난다" lines:"아무 일 없던 날에도 저주가 자란다|하루에 자라는 몫이 날마다 조금씩 커진다"
 아무것도 하지 않은 날에도 문양이 <color=#9A70C4>조금 자라 있다</color>. 이제 시간은 당신 편이 아니다.
 @goto #Evening
 # D18
 @set ms_d18=1
+@turn title:"열여드레 — 문양이 익어 간다" lines:"하룻밤에 자라는 저주가 처음 며칠의 갑절 가까이 됐다|청심차·봉인 문양이 덜어 주는 몫이 그만큼 귀해진다"
 문양이 <color=#9A70C4>익어간다</color>. 자라는 속도가 빨라졌다.
 @goto #Evening
 # D25
 @set ms_d25=1
+@turn title:"스무닷새 — 방값이 오른다" lines:"교의 징세가 올랐다 — 객잔 방값 하룻밤 <color=#C9A227>두 냥</color>|날품과 비무판에서 버는 은자가 전보다 빨리 샌다"
+@art char:hajinmu_grave
 하진무가 방값 패를 바꿔 단다.
 "교의 징세가 또 올랐소. 이제부터 하룻밤 두 냥이오."
 @goto #Evening
 # D35
 @set ms_d35=1
+@turn title:"서른닷새 — 문양이 스스로 꿈틀거린다" lines:"저주가 자라는 빠르기 <color=#C03434>×1.4</color>|이제 하루를 버리는 일이 전보다 비싸다"
 한밤중, 가슴이 타는 듯해 눈을 뜬다. 문양이 <color=#9A70C4>스스로 꿈틀거린다</color>. 이제 하루가 다르게 자랄 것이다.
 @goto #Evening
 # D50
 @set ms_d50=1
+@turn title:"쉰째 날 — 쇄골까지" lines:"저주가 자라는 빠르기가 또 <color=#C03434>×1.6</color>|교의 수레가 내려오는 예순째 날까지 열흘"
+@art char:granny_grave
 문양이 <color=#C03434>쇄골까지 뻗었다</color>. 백초 할멈이 맥을 짚더니 한동안 말이 없다.
 @goto #Evening
 # Evening
@@ -1438,6 +1447,8 @@
 @set evkind="night"
 @pickevent chance:55 slot:night
 @gosub #RunEvent if:nextevent!="none"
+@teaser
+@print "{nightteaser}" if:nightteaser!="none"
 @goto #DayLoop
 
 # RunEvent

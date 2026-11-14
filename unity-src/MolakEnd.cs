@@ -43,6 +43,7 @@ public class MolakEnd : MonoBehaviour
         new Entry("hwansok",   "還俗", "환속", "산문 밖의 봄",          "승복을 벗은 사저와 함께, 사부의 위패를 모시러 갔을 때"),
         new Entry("huisaeng",  "犧牲", "희생", "너는 잊고, 나는 기억한다", "누군가 죽을 자리에, 그 사람 대신 섰을 때"),
         new Entry("mumyeong",  "無名", "무명", "이름 없는 두 사람",      "하오문 소식꾼이 당신의 죽음을 팔고, 둘이 이름 없이 남쪽으로 내려갔을 때"),
+        new Entry("chusal",    "追殺", "추살", "산 채로라 했는데",        "나흘째 밤, 객잔 이층으로 발소리 둘이 올라왔을 때"),
     };
 
     public static string Resolve ()
@@ -77,6 +78,7 @@ public class MolakEnd : MonoBehaviour
         if (cause == "환속") return "hwansok";
         if (cause == "희생") return "huisaeng";
         if (cause == "무명") return "mumyeong";
+        if (cause == "추살") return "chusal";
         if (cause == "비무 패배")
         {
             if (kind == "hochi") return "dokni";

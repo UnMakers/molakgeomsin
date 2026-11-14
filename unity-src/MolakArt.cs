@@ -65,7 +65,7 @@ public class MolakArt : MonoBehaviour
         if (!isDuel) MolakFlow.Break();
         var sp = Load("MolakArt/scene_" + key);
         inst.SetScene(sp, key);
-        MolakBgm.Mood(isDuel ? "duel" : (key == "raid" || key == "bloodroof") ? "raid" : "day");
+        MolakBgm.Mood(isDuel ? "duel" : (key == "raid" || key == "bloodroof" || key == "raidnight") ? "raid" : "day");
     }
 
     // 0.4.9: 인물이 나오면 그 사람이 있을 법한 자리를 뒤에 깐다(지금 장면이 하루의 기본 풍경일 때만 — 대본이 고른 장면은 그대로 둔다)
@@ -76,6 +76,7 @@ public class MolakArt : MonoBehaviour
         {"soa","innhall"},{"soa_smile","market"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},{"kyona","valley"},
         {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},{"cheongmyo","temple"},
         {"cheongmyo_robe","temple"},{"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},{"jang","alley"},
+        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},
     };
     static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
     {
@@ -83,11 +84,12 @@ public class MolakArt : MonoBehaviour
         {"soa","roofmoon"},{"soa_smile","roofmoon"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},
         {"jinbaek","alley"},{"lawlord","gate"},{"oldman","night"},{"jang","alley"},
         {"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},
+        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},
     };
     public static bool IsNight;
     static readonly Dictionary<string, string> SceneWeather = new Dictionary<string, string>
     {
-        {"rain","rain"},{"flood","rain"},{"snow","snow"},{"manorfire","inferno"},{"herbfire","embers"},{"bloodroof","bloodrain"},{"raid","bloodrain"},
+        {"rain","rain"},{"flood","rain"},{"snow","snow"},{"manorfire","inferno"},{"herbfire","embers"},{"bloodroof","bloodrain"},{"raid","bloodrain"},{"raidnight","embers"},{"soanight","rain"},
     };
 
     public static void Char (string id)

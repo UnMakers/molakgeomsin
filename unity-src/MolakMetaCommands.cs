@@ -61,6 +61,13 @@ public class InitRunCommand : Command
             MolakStats.Set("theme", th);
             MolakStats.Set("g_lasttheme", th);
             MolakStats.Set("raidday", th == MolakRules.ThemeEarlyRaid ? MolakRules.RaidDayEarly : MolakRules.RaidDay);
+            // 0.4.58 한 번 막아 낸 밤은 날을 바꿔서 온다
+            MolakStats.Set("raidshift", 0f);
+            if (MolakStats.Get("g_raid_won") > 0f)
+            {
+                int sh = Random.Range(-5, 4); if (sh == 0) sh = -2;
+                MolakStats.Add("raidday", sh); MolakStats.Set("raidshift", sh);
+            }
             MolakStats.Set("thday", MolakRules.ThemeHintDay);
         }
         MolakStats.Set("rank", 0);
@@ -195,12 +202,16 @@ public class PickEventCommand : Command
     static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id) * RunMul(d.Id))); }
     // 0.4.21 생을 넘는 사건 기억: 앞선 생들에서 자주 본 사건은 덜, 아직 못 본 사건은 더 나온다(첫 생에는 그대로).
     // g_ev_<id>는 나니노벨 전역 변수(g_ 접두)라 회귀해도 남는다.
+    // 0.4.58 생마다 더 달라지게(언메이커): 한 번도 못 본 사건 ×3, 바로 앞 생에 본 사건은 한 번 더 깎는다(×0.45).
     public static float RunMul (string id)
     {
-        if (MolakStats.Get("g_runs") < 1f) return 1f;
+        float runs = MolakStats.Get("g_runs");
+        if (runs < 1f) return 1f;
         float k = MolakStats.Get("g_ev_" + id);
-        if (k <= 0f) return 1.8f;
-        return Mathf.Max(0.35f, 1f / (1f + 0.5f * k));
+        if (k <= 0f) return 3f;
+        float m = Mathf.Max(0.3f, 1f / (1f + 0.5f * k));
+        if (MolakStats.Get("g_evl_" + id) >= runs) m *= 0.45f;   // g_evl_ = 그 사건을 마지막으로 본 생의 번호(1부터). 지금 생 = runs+1
+        return m;
     }
     public static float ThemeMul (string id) { return MolakRules.ThemeMul(Mathf.RoundToInt(MolakStats.Get("theme")), id); }
 
@@ -241,6 +252,7 @@ public class PickEventCommand : Command
         MolakStats.Set("seen_" + pick.Id, 1f);
         MolakStats.Set("seenday_" + pick.Id, day);
         MolakStats.Add("g_ev_" + pick.Id, 1f);
+        MolakStats.Set("g_evl_" + pick.Id, MolakStats.Get("g_runs") + 1f);
         MolakStats.Set("evdry", 0f);
         MolakStats.Add("evcount", 1f);
         SetNext(pick.Id);
