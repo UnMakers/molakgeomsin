@@ -111,6 +111,16 @@ public static class MolakMemory
         if (G("g_up_lodge") > 0f) MolakStats.Set("g_know_lodge", 1f);
     }
 
+    /// <summary>0.4.56 그 아침의 선택(MolakOver #GrChoice)이 새 생에 남긴 것 — 검술·살기·저주. 회차 시작 맨 끝에 한 번 얹고 비운다.</summary>
+    public static void ApplyWake ()
+    {
+        float sw = G("g_wk_sw"), sl = G("g_wk_sl"), cu = G("g_wk_curse");
+        if (sw != 0f) MolakStats.Add("sw", sw);
+        if (sl != 0f) MolakStats.Add("sl", sl);
+        if (cu != 0f) MolakStats.Set("curse", Mathf.Max(0f, G("curse") + cu));
+        MolakStats.Set("g_wk_sw", 0f); MolakStats.Set("g_wk_sl", 0f); MolakStats.Set("g_wk_curse", 0f);
+    }
+
     /// <summary>회차 시작치(InitRun 이 부른다).</summary>
     public static void ApplyStart ()
     {

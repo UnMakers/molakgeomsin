@@ -12,7 +12,7 @@ for s in outs.values():
     for m in re.finditer(r'@set ([A-Za-z_][A-Za-z0-9_]*)', t): idset.add(m.group(1))
     for m in re.finditer(r'\{([A-Za-z_][A-Za-z0-9_]*)\}', s): idset.add(m.group(1))
 drop = {'random', 'true', 'false', 'pow', 'abs', 'min', 'max'}
-strings = {'knownew', 'knowsnap', 'nextevent', 'dkind', 'deathcause', 'foename', 'foerank', 'foetier', 'oldrank', 'newrank', 'tiername','prepbond','prepitem','lifesum','lifecmp','deathtip','truehint','vowline','dejapre','byeolho','insultname','dx_pretext','dx_telltext','dx_restext','dx_momtext','bridgetext','evkind','keepused','dx_keepname','dx_keepflag','dx_keeptext','rm_text','rm_1','rm_2','rm_3','rm_4','rm_5','rm_6','rm_7','rm_8','rm_9','rm_10'}
+strings = {'knownew', 'knowsnap', 'nextevent', 'dkind', 'deathcause', 'foename', 'foerank', 'foetier', 'oldrank', 'newrank', 'tiername','prepbond','prepitem','lifesum','lifecmp','deathtip','truehint','vowline','dejapre','byeolho','insultname','dx_pretext','dx_telltext','dx_restext','dx_momtext','bridgetext','evkind','keepused','dx_keepname','dx_keepflag','dx_keeptext','rm_text','rm_1','rm_2','rm_3','rm_4','rm_5','rm_6','rm_7','rm_8','rm_9','rm_10','grname','grline'}
 nums = sorted(x for x in idset if x not in drop and not x.startswith('g_') and x[0].islower() and x not in strings)
 init = ['; (자동 생성) 변수 선초기화'] + ['@set %s=0' % v for v in nums] + ['@set %s="none"' % v for v in sorted(strings)]
 m01 = outs['Molak01']

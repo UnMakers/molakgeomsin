@@ -416,10 +416,15 @@
 @set f_yongspared=0
 @set f_yongspear=0
 @set formc=0
+@set fr1=0
+@set fr2=0
+@set fr3=0
+@set fr4=0
 @set gaefed=0
 @set gaefedday=0
 @set gdebt=0
 @set griefk=0
+@set grlv=0
 @set grudge=0
 @set grudgeday=0
 @set grudgename=0
@@ -530,6 +535,8 @@
 @set foename="none"
 @set foerank="none"
 @set foetier="none"
+@set grline="none"
+@set grname="none"
 @set insultname="none"
 @set keepused="none"
 @set knownew="none"

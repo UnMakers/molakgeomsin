@@ -11,7 +11,7 @@ public class InitRunCommand : Command
     static readonly string[] CodeGlobals = {
         "g_pts", "g_runs", "g_clears", "g_lastday", "g_bestday", "g_bestrank", "g_hapbo", "g_samecount", "g_lasttheme",
         "g_next_bond", "g_next_item", "g_redo", "g_lk_nameless", "g_ls_nameless",
-        "g_bestsw", "g_bestng", "g_vow_rev", "g_vow_bond", "g_vow_live", "g_cursedeaths", "g_memv", "g_membuy", "g_up_mem",
+        "g_bestsw", "g_bestng", "g_vow_rev", "g_vow_bond", "g_vow_live", "g_cursedeaths", "g_memv", "g_membuy", "g_up_mem", "g_wk_sw", "g_wk_sl", "g_wk_curse",
         "g_up_sword", "g_up_body", "g_up_core", "g_up_coin", "g_up_seal", "g_up_tea", "g_up_lodge", "g_up_vigor",
     };
 
@@ -67,6 +67,7 @@ public class InitRunCommand : Command
         if (MolakStats.Get("g_hapbo") > 0) MolakStats.Set("f_hapbyeok", 1f);   // 0.4.9: 한 번 읽은 합벽 검보는 되감기지 않는다
         MolakKnow.Snapshot();   // 이번 생이 시작될 때 이미 아는 것 — 죽을 때 "되감기지 않는 것"을 가려낸다
         MolakStats.Set("runs", MolakStats.Get("g_runs"));
+        MolakMemory.ApplyWake();   // 0.4.56 눈을 뜬 아침의 선택
     }
 }
 
