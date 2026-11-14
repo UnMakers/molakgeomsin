@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 /// <summary>
 /// 0.4.59 본문 속 이름에 사람마다 다른 색(언메이커: 이름이 눈에 안 들어온다).
+/// 0.4.60 세력 이름·초식 이름도(언메이커: 세력이름, 초식이름은 칠할 필요가 있다).
+///  · 사람 = 굵게 + 사람마다 다른 색. 세력 = 그 세력의 우두머리와 같은 색 계열, 굵지 않게(사람과 갈래가 보이게).
+///  · 초식·무공 = 쪽빛 한 가지 + 밑줄 — 사람·세력 색과 섞여도 '이건 칼 쓰는 법'으로 읽히게.
 /// 본문 TMP 전처리기(MolakTypography.DialogueStyler)에서 대사 가르기 전에 한 번 칠한다 — 대본은 그대로 둔다.
 ///  · 이미 색이 칠해진 구간(<color>…</color>, 첫 소개 같은 붉은 이름)은 건드리지 않는다.
 ///  · 낮(종이)과 먹색 화면에 각각 읽히는 색을 따로 둔다.
@@ -12,7 +15,32 @@ using System.Text.RegularExpressions;
 /// </summary>
 public static class MolakNames
 {
-    struct P { public string Rx, Day, Night; public P (string rx, string d, string n) { Rx = rx; Day = d; Night = n; } }
+    struct P { public string Rx, Day, Night; public int Kind; public P (string rx, string d, string n, int kind = 0) { Rx = rx; Day = d; Night = n; Kind = kind; } }
+    const int Person = 0, Faction = 1, Art = 2;
+    const string ArtDay = "#1F5878", ArtNight = "#8CCBEB";
+
+    // 초식·무공: 가장 먼저 건다(청운검법 → 청운, 혈쇄망 → 혈쇄문 보다 앞서게)
+    static readonly P[] Arts = {
+        new P("운검비록|운상보|북두낙월|적운쌍영|회마창|혈쇄망|멸도벽|천뢰일섬|철산고|독아쇄|광견난무|집법단죄|청운검법|청운검결|제자검법|적운의 구결|횡소|기수식|혈천진|멸도(?!벽)", ArtDay, ArtNight, Art),
+    };
+    // 세력: 사람 뒤에 건다(혈쇄문주 → 혈쇄문, 남궁현 → 남궁, 교주 → 교 보다 앞서게)
+    static readonly P[] Factions = {
+        new P("청운검파|청운산장|청운",                     "#4A6A8A", "#A8C2DC", Faction),   // 우리 — 옅은 쇠빛
+        new P("적운검파|적운",                             "#9A4A3A", "#E29C8A", Faction),   // 붉은 구름 — 벽돌빛
+        new P("운검류",                                   "#2E7D5E", "#86D6B4", Faction),   // 운검사태의 갈래
+        new P("혈마교|마교|교도|(?<![가-힣])교(?=(?:의|가|는|를|에서|에게|에|도|와|로)(?![가-힣]))", "#6E1830", "#E27C90", Faction),
+        new P("혈랑대",                                   "#5A3440", "#D49AA8", Faction),
+        new P("혈쇄문",                                   "#4A3A5A", "#BBA8D0", Faction),
+        new P("무림맹|(?<![가-힣])맹(?=(?:의|은|이|에|도|과|을|에서)(?![가-힣]))", "#3B4E7A", "#AFC0E8", Faction),
+        new P("남궁세가|남궁(?!현)",                        "#4E5E6E", "#B8C8D8", Faction),
+        new P("독아단",                                   "#5A5A2A", "#C8C890", Faction),
+        new P("집법전|집법당",                             "#3A3A3A", "#C8C8C8", Faction),
+        new P("하오문",                                   "#6A4A6A", "#D2AED2", Faction),
+        new P("개방",                                     "#7A6440", "#D8C098", Faction),
+        new P("징세조",                                   "#5E4A36", "#CCB096", Faction),
+        new P("서열각",                                   "#5A5040", "#C8BCA4", Faction),
+        new P("회목채",                                   "#66651A", "#D2CE6C", Faction),
+    };
 
     // 긴 이름이 먼저 걸리게 순서를 둔다. 정규식 조각(뒤따르는 글자로 다른 낱말을 거른다).
     static readonly P[] People = {
@@ -30,7 +58,7 @@ public static class MolakNames
         new P("참새",                                   "#8A6A12", "#E3C463"),   // 저잣거리 귀 — 황토
         new P("백리휘",                                 "#3B4E7A", "#AFC0E8"),   // 무림맹 밀사 — 남빛
         new P("남궁현",                                 "#4E5E6E", "#B8C8D8"),   // 세가 — 은회색
-        new P("운검사태",                               "#2E7D5E", "#86D6B4"),   // 연잎 — 연둣빛 청록
+        new P("운검사태|운검(?![류비])",                 "#2E7D5E", "#86D6B4"),   // 연잎 — 연둣빛 청록
         new P("왕삼",                                   "#7A5A2E", "#D8B080"),   // 고리대 — 놋빛
         new P("마충",                                   "#5B6B3A", "#BFD08F"),   // 낭인 — 쑥빛
         new P("철산도",                                 "#5A3A2A", "#CDA088"),   // 산적 — 흙빛
@@ -41,17 +69,18 @@ public static class MolakNames
     };
     const string CoinDay = "#8C6B1F", CoinNight = "#E8C870";
 
-    static Regex rx; static string[] dayHex, nightHex; static Regex coin;
+    static Regex rx; static string[] dayHex, nightHex; static int[] kinds; static Regex coin;
     static void Build ()
     {
         if (rx != null) return;
         var sb = new StringBuilder();
-        dayHex = new string[People.Length]; nightHex = new string[People.Length];
-        for (int i = 0; i < People.Length; i++)
+        var all = new List<P>(); all.AddRange(Arts); all.AddRange(People); all.AddRange(Factions);
+        dayHex = new string[all.Count]; nightHex = new string[all.Count]; kinds = new int[all.Count];
+        for (int i = 0; i < all.Count; i++)
         {
             if (i > 0) sb.Append('|');
-            sb.Append("(?<p").Append(i).Append(">").Append(People[i].Rx).Append(')');
-            dayHex[i] = People[i].Day; nightHex[i] = People[i].Night;
+            sb.Append("(?<p").Append(i).Append(">").Append(all[i].Rx).Append(')');
+            dayHex[i] = all[i].Day; nightHex[i] = all[i].Night; kinds[i] = all[i].Kind;
         }
         rx = new Regex(sb.ToString(), RegexOptions.Compiled);
         // 은자 액수: "은자 3냥", "12냥", "열 냥", "스무 냥", "냥 반" 같은 꼴
@@ -117,7 +146,13 @@ public static class MolakNames
     static string Wrap (Match m, string[] hexes)
     {
         for (int k = 0; k < hexes.Length; k++)
-            if (m.Groups["p" + k].Success) return "<b><color=" + hexes[k] + ">" + m.Value + "</color></b>";   // 가는 명조라 색만으로는 약하다 — 굵게
+            if (m.Groups["p" + k].Success)
+            {
+                string c = "<color=" + hexes[k] + ">" + m.Value + "</color>";
+                if (kinds[k] == Person) return "<b>" + c + "</b>";   // 가는 명조라 색만으로는 약하다 — 굵게
+                if (kinds[k] == Art) return "<u>" + c + "</u>";
+                return c;
+            }
         return m.Value;
     }
 }
