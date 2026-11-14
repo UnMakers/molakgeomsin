@@ -49,12 +49,16 @@ public static class MolakTypography
         static readonly Regex Line = new Regex("^((?:\\s|<[^>]+>)*)([\"“「].*)$", RegexOptions.Multiline);
         public string PreprocessText (string text)
         {
-            if (string.IsNullOrEmpty(text) || text.IndexOf('"') < 0 && text.IndexOf('“') < 0 && text.IndexOf('「') < 0) return text;
+            if (string.IsNullOrEmpty(text)) return text;
+            try { text = MolakNames.Paint(text, MolakTheme.Night); } catch { }   // 0.4.59 이름·은자 액수 색
+            if (text.IndexOf('"') < 0 && text.IndexOf('“') < 0 && text.IndexOf('「') < 0) return text;
             string hex = DialogueHex;
             return Line.Replace(text, m => m.Groups[1].Value + "<color=" + hex + ">" + m.Groups[2].Value.TrimEnd('\r') + "</color>");
         }
     }
     static readonly DialogueStyler styler = new DialogueStyler();
+    /// <summary>본문과 같은 전처리기(지난 쪽 사본 칸 등에서 같은 색을 쓰려고).</summary>
+    public static TMPro.ITextPreprocessor BodyStyler { get { return styler; } }
 
     static int lastNight = -1;
     /// <summary>본문 TMP 하나에 읽힘새를 입힌다(매 프레임 불러도 바뀐 것만 고친다). 먹색 화면을 켜고 끄면 대사 색을 다시 입힌다.</summary>

@@ -92,6 +92,7 @@ public class MolakPageBack : MonoBehaviour
         past.characterSpacing = src.characterSpacing; past.wordSpacing = src.wordSpacing;
         past.margin = src.margin; past.richText = src.richText;
         past.textWrappingMode = src.textWrappingMode; past.alignment = src.alignment;
+        past.textPreprocessor = MolakTypography.BodyStyler;   // 0.4.59 지난 쪽도 이름 색·대사 먹색 그대로
         past.text = pages[i];
         past.maxVisibleCharacters = 99999;
         past.gameObject.SetActive(true);
