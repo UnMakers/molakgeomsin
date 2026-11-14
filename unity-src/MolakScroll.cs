@@ -25,6 +25,7 @@ public class MolakScroll : MonoBehaviour
     public static bool DraggedThisPress { get; private set; }
     public static bool ScrolledUp => inst != null && inst.userScroll > 1f;
     bool pressing; Vector2 pressPos; float pressScroll; bool pressInBottomZone;
+    bool hSwipe; Vector2 lastPos;   // 0.4.57 가로로 쓸기: 왼쪽→오른쪽이면 지난 쪽(MolakPageBack)
 
     const float DragThresholdPx = 14f;
 
@@ -95,7 +96,7 @@ public class MolakScroll : MonoBehaviour
         Vector2 pos; bool down = MolakGui.PointerScreen(out pos);
         if (down && !pressing)
         {
-            pressing = true; pressPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false;
+            pressing = true; pressPos = pos; lastPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false; hSwipe = false;
             // 화면 맨 아래 띠(선택지 아래 150캔버스단위)에서 시작한 누름 → 위로 쓸면 행낭
             float zone = (MolakTheme.ChoiceCount > 0 ? MolakLayout.BagSwipeZoneWithChoices : MolakLayout.BagSwipeZone) * CanvasScale();
             pressInBottomZone = pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
@@ -118,6 +119,12 @@ public class MolakScroll : MonoBehaviour
                 if (dyPx > 22f) { MolakBag.Open(); DraggedThisPress = true; pressInBottomZone = false; }
                 return;
             }
+            lastPos = pos;
+            float dxPx = pos.x - pressPos.x;
+            if (!Dragging && !hSwipe && Mathf.Abs(dxPx) > 34f * CanvasScale() && Mathf.Abs(dxPx) > Mathf.Abs(dyPx) * 1.4f
+                && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakBlackout.Busy && !MolakArt.InDuel)
+            { hSwipe = true; DraggedThisPress = true; }
+            if (hSwipe) return;
             if (!Dragging && Mathf.Abs(dyPx) > DragThresholdPx && Mathf.Abs(dyPx) > Mathf.Abs(pos.x - pressPos.x)) { Dragging = true; DraggedThisPress = true; }
             if (Dragging)
             {
@@ -132,6 +139,12 @@ public class MolakScroll : MonoBehaviour
         }
         else if (!down && pressing)
         {
+            if (hSwipe)
+            {
+                float dx = lastPos.x - pressPos.x;
+                if (Mathf.Abs(dx) > 90f * CanvasScale()) { if (dx > 0f) MolakPageBack.Back(); else MolakPageBack.Forward(); }
+                hSwipe = false;
+            }
             pressing = false; Dragging = false;
         }
     }

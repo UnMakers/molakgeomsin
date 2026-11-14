@@ -157,6 +157,13 @@ public class MolakFlow : MonoBehaviour
 
 
         if (afterChoice) MolakInputGuard.MuteFor(0.22f);   // 0.4.43: 0.45→0.22초(언메이커: 너무 안 넘어간다). 0.4.39: 고르는 탭의 여파가 첫 문단의 타자 효과를 건너뛰지 않게
+        MolakPageBack.Close();   // 0.4.57 지난 쪽을 보던 중이면 지금 쪽으로
+        if (reset)
+        {   // 0.4.57 넘어가는 쪽의 글을 적어 둔다(오른쪽으로 쓸어 다시 본다). 선택지를 고른 뒤의 첫 쪽이면 고르기 전 쪽들은 버린다.
+            if (afterChoice) { MolakPageBack.Clear(); MolakPageBack.MarkPicked(); }
+            else { var dtp = DialogueText(); if (dtp != null) MolakPageBack.Push(dtp.text); }
+        }
+        else MolakPageBack.MarkPrinted();
         pt.ResetPrinter = reset;
         if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); if (buf.Count > 0) MolakPageTurn.Play(); } }   // 글이 있던 쪽을 넘긴다
         MolakScroll.ResetToBottom();

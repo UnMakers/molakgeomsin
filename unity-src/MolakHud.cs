@@ -16,24 +16,108 @@ public class MolakHud : MonoBehaviour
     public static bool Expanded { get { return expanded; } }
 
     // 능력치 변화 플로팅 표시
-    struct Float { public string text; public Color col; public float t; public float x; }
+    // 0.4.57 능력치 변화 — 예전엔 @fx 로 바뀐 것만, 상태 줄 밑에 작은 글씨로 떴다가 사라져 잘 안 보였다(언메이커).
+    //  · 어디서 바뀌든(@fx, @set, 비무, 하루 마감) 화면에 보이는 정수가 바뀌면 잡는다(MolakHud.Update 가 매 프레임 견준다).
+    //  · 상태 줄의 그 숫자가 2.2초 동안 굵고 붉게/푸르게 바뀌고,
+    //  · 그림 띠 위에 어두운 패 하나("체력 −2")가 튀어나왔다가 2.4초 뒤 사라진다. 같은 수치는 0.8초 안이면 합친다.
+    //  · 새 생·불러오기·비무 연습 몸 고르기처럼 한꺼번에 바뀌는 때는 띄우지 않는다.
+    struct Float { public int k; public float d; public float t; }
     static readonly System.Collections.Generic.List<Float> floats = new System.Collections.Generic.List<Float>();
     static readonly string[] fkeys = { "hp", "ng", "sw", "sl", "mn", "curse" };
     static readonly string[] fnames = { "체력", "내공", "검술", "살기", "은자", "저주" };
-    public static void Delta (string key, float d)
+    static readonly float[] flashT = { -1f, -1f, -1f, -1f, -1f, -1f };
+    static readonly float[] flashD = new float[6];
+    static readonly float[] lastV = new float[6];
+    static bool synced, hookedReset; static float lastRuns = -1f, lastDay = -1f;
+    /// <summary>옛 호출 자리(@fx). 이제는 Update 가 모든 변화를 잡으므로 아무것도 하지 않는다.</summary>
+    public static void Delta (string key, float d) { }
+    /// <summary>한꺼번에 바뀌는 순간(연습 몸 고르기 등) — 다음 프레임에 지금 값으로 다시 맞춘다.</summary>
+    public static void Resync () { synced = false; }
+
+    void Update ()
     {
-        if (Mathf.Abs(d) < 0.5f) return;
-        int k = System.Array.IndexOf(fkeys, key); if (k < 0) return;
-        bool good = key == "curse" ? d < 0 : d > 0;
-        var c = good ? new Color(0.20f, 0.42f, 0.22f, 1f) : new Color(0.66f, 0.17f, 0.12f, 1f);
-        if (key == "mn") c = good ? new Color(0.54f, 0.42f, 0.10f, 1f) : c;
-        // 같은 키가 이미 떠 있으면 합산
-        for (int i = 0; i < floats.Count; i++) if (floats[i].text.StartsWith(fnames[k]) && floats[i].t < 0.6f)
+        if (!Engine.Initialized) return;
+        if (!hookedReset)
         {
-            float prev; var parts = floats[i].text.Split(' ');
-            if (parts.Length > 1 && float.TryParse(parts[1], out prev)) { d += prev; floats.RemoveAt(i); break; }
+            var stm = Engine.GetService<IStateManager>();
+            if (stm != null) { stm.OnResetStarted += () => synced = false; stm.OnGameLoadFinished += _ => synced = false; hookedReset = true; }
         }
-        floats.Add(new Float { text = fnames[k] + " " + (d > 0 ? "+" : "") + Mathf.Round(d).ToString("0"), col = c, t = 0f, x = 0.18f + 0.13f*k });
+        float day = MolakStats.Get("day"), runs = MolakStats.Get("g_runs");
+        if (day < 1f || MolakPractice.Active) { synced = false; return; }
+        if (!synced || runs != lastRuns || day < lastDay)
+        {
+            for (int k = 0; k < fkeys.Length; k++) lastV[k] = Mathf.Round(MolakStats.Get(fkeys[k]));
+            synced = true; lastRuns = runs; lastDay = day; floats.Clear();
+            return;
+        }
+        lastDay = day;
+        for (int k = 0; k < fkeys.Length; k++)
+        {
+            float cur = Mathf.Round(MolakStats.Get(fkeys[k]));
+            if (cur == lastV[k]) continue;
+            float d = cur - lastV[k]; lastV[k] = cur;
+            flashT[k] = 0f; flashD[k] = d;
+            bool merged = false;
+            for (int i = 0; i < floats.Count; i++)
+                if (floats[i].k == k && floats[i].t < 0.8f) { var f = floats[i]; f.d += d; f.t = 0f; floats[i] = f; merged = true; break; }
+            if (!merged) floats.Add(new Float { k = k, d = d, t = 0f });
+        }
+        for (int k = 0; k < flashT.Length; k++) if (flashT[k] >= 0f) { flashT[k] += Time.unscaledDeltaTime; if (flashT[k] > 2.2f) flashT[k] = -1f; }
+    }
+
+    static bool Good (int k, float d) { return fkeys[k] == "curse" ? d < 0 : d > 0; }
+    /// <summary>상태 줄의 숫자: 막 바뀌었으면 굵게, 좋으면 푸르게 나쁘면 붉게.</summary>
+    static string Num (string key, float v)
+    {
+        int k = System.Array.IndexOf(fkeys, key);
+        string s = v.ToString("0");
+        if (k < 0 || flashT[k] < 0f) return s;
+        string c = Good(k, flashD[k]) ? (MolakTheme.Night ? "#7FD08A" : "#2E7D3A") : (MolakTheme.Night ? "#FF7A66" : "#B3261E");
+        return "<b><color=" + c + ">" + s + "</color></b>";
+    }
+
+    GUIStyle sChip; float chipU = -1f;
+    void DrawChips (float X0, float W, float yTop, float u)
+    {
+        if (floats.Count == 0) return;
+        if (sChip == null || !Mathf.Approximately(chipU, u)) { chipU = u; sChip = MolakGui.Label(34, u, TextAnchor.MiddleCenter, false); }
+        float dt = Event.current.type == EventType.Repaint ? Time.unscaledDeltaTime : 0f;   // OnGUI 는 한 프레임에 여러 번 불린다
+        var items = new System.Collections.Generic.List<(string txt, Color col, float a, float sc, float rise)>();
+        for (int i = floats.Count - 1; i >= 0; i--)
+        {
+            var f = floats[i]; f.t += dt; floats[i] = f;
+            if (f.t > 2.4f || Mathf.Round(f.d) == 0f) { floats.RemoveAt(i); continue; }
+        }
+        float total = 0f, gap = 14f * u;
+        var sizes = new System.Collections.Generic.List<Vector2>();
+        foreach (var f in floats)
+        {
+            string txt = fnames[f.k] + " " + (f.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(f.d)).ToString("0");
+            var sz = sChip.CalcSize(new GUIContent(txt)); sz.x += 36f * u; sz.y = 58f * u;
+            sizes.Add(sz); total += sz.x + gap;
+        }
+        float x = X0 + (W - total + gap) / 2f;
+        var g0 = GUI.color; var m0 = GUI.matrix;
+        for (int i = 0; i < floats.Count; i++)
+        {
+            var f = floats[i]; var sz = sizes[i];
+            float a = f.t < 0.12f ? f.t / 0.12f : (f.t > 1.9f ? Mathf.Clamp01((2.4f - f.t) / 0.5f) : 1f);
+            float sc = f.t < 0.18f ? Mathf.Lerp(1.35f, 1f, f.t / 0.18f) : 1f;
+            float rise = Mathf.Min(1f, f.t / 2.4f) * 12f * u;
+            var r = new Rect(x, yTop - rise, sz.x, sz.y);
+            GUI.matrix = m0; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), r.center);
+            GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.88f * a); GUI.DrawTexture(r, MolakGui.Px);
+            bool good = Good(f.k, f.d);
+            Color c = fkeys[f.k] == "mn" && good ? new Color(0.98f, 0.82f, 0.38f, a)
+                    : fkeys[f.k] == "curse" && !good ? new Color(0.80f, 0.62f, 1f, a)
+                    : good ? new Color(0.55f, 0.88f, 0.58f, a) : new Color(1f, 0.46f, 0.38f, a);
+            GUI.color = new Color(c.r, c.g, c.b, a); GUI.DrawTexture(new Rect(r.x, r.y, 6f * u, r.height), MolakGui.Px);   // 왼쪽 색띠
+            GUI.color = Color.white;
+            string txt = fnames[f.k] + " " + (f.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(f.d)).ToString("0");
+            MolakGui.Ink(sChip, c); GUI.Label(new Rect(r.x + 4f * u, r.y, r.width, r.height), txt, sChip);
+            x += sz.x + gap;
+        }
+        GUI.matrix = m0; GUI.color = g0;
     }
 
     static Color InkD { get { return MolakTheme.InkText; } }
@@ -167,8 +251,8 @@ public class MolakHud : MonoBehaviour
         string hpCol = hp/hpm <= 0.34f ? (MolakTheme.Night ? "#E06A5A" : "#A33226") : "#" + ColorUtility.ToHtmlStringRGB(MolakTheme.InkText);
         // 날짜는 보이지 않는다(0.4.3) — 시간은 문양과 바깥 풍경으로만 느낀다
         string stats =
-            "<color="+hpCol+">체력 "+hp.ToString("0")+"</color>    내공 "+MolakStats.Get("ng").ToString("0")+
-            "    살기 "+MolakStats.Get("sl").ToString("0");
+            "<color="+hpCol+">체력 "+Num("hp", hp)+"</color>    내공 "+Num("ng", MolakStats.Get("ng"))+
+            "    살기 "+Num("sl", MolakStats.Get("sl"));
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
         if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 72*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
@@ -212,23 +296,12 @@ public class MolakHud : MonoBehaviour
             Box(new Rect(pad, y2, W-168*u, lh2), MolakTheme.Night ? new Color(0.20f,0.18f,0.16f,0.85f) : new Color(0.96f,0.93f,0.87f,0.80f));
             string rtxt = rank > 0 ? MolakDuel.RankText(rank)+" · "+TierOf(rank) : "서열록에 이름 없음";
             { var bh = MolakStats.Str("byeolho", "none"); if (!string.IsNullOrEmpty(bh) && bh != "none") rtxt += " · <color=#8A3A30>" + bh + "</color>"; }   // 0.4.33 강호가 붙인 별호
-            string s2 = "검술 "+MolakStats.Get("sw").ToString("0")+"    <color=#8A6D1F>은자 "+MolakStats.Get("mn").ToString("0")+"</color>    "+rtxt;
+            string s2 = "검술 "+Num("sw", MolakStats.Get("sw"))+"    <color=#8A6D1F>은자 "+Num("mn", MolakStats.Get("mn"))+"</color>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
         }
 
-        // 플로팅 델타
-        for (int i = floats.Count-1; i >= 0; i--)
-        {
-            var f = floats[i]; f.t += Time.deltaTime; floats[i] = f;
-            if (f.t > 1.6f) { floats.RemoveAt(i); continue; }
-            float k = f.t/1.6f;
-            float alpha = k < 0.15f ? k/0.15f : (k > 0.7f ? (1f-k)/0.3f : 1f);
-            float fy = y + lh + 18*u + (expanded ? 60*u : 0f) + (1f-Mathf.Pow(1f-k,2f))*26*u;
-            var g = GUI.color; GUI.color = new Color(1,1,1,alpha);
-            var st = new GUIStyle(sStat); MolakGui.Ink(st, f.col); st.alignment = TextAnchor.MiddleLeft;
-            GUI.Label(new Rect(X0+W*f.x, fy, 260*u, 40*u), f.text, st);
-            GUI.color = g;
-        }
+        // 0.4.57 능력치 변화 패: 상태 줄 바로 밑, 그림 띠 위
+        DrawChips(X0, W, y + lh + (expanded ? 72*u : 16*u) + 18*u, u);
 
         DrawRankShift(w, u);
     }
