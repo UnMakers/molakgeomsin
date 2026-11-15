@@ -6,6 +6,7 @@
 @set dx_keepok=0
 @set dstake=0
 @art scene:duel
+@companion at:duel
 @duelinfo kind:{dkind}
 @goto #Sit1 if:dsit==1
 @goto #Sit2 if:dsit==2
@@ -21,6 +22,7 @@
 @goto #Sit12 if:dsit==12
 # Head
 <color=#C03434>{foename}</color> — 강호 서열 {foerank} · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10}</color>.
+@print "{compline}" if:compline!="none"
 @print "<color=#9A70C4>옷깃의 참새 깃이 흔들린다. 그녀가 미리 알아다 준 이 칼잡이의 버릇이 떠오른다.</color>" if:f_chamfeather>0&&dlethal>0
 @goto #HeadInj if:injury>0||taint>0
 @goto #RunChoices if:memwarn<1
@@ -52,30 +54,43 @@
 @duel style:onecut
 @goto #Result
 # ExInit
-; --- 합(合): 상대의 기세를 읽고 응수한다. 공세엔 받아치기, 수비엔 흔들기, 허초엔 정면 ---
-@duelx do:init
-# ExLoop
-@duelx do:tell
+; --- 0.4.67 간파(看破): 상대의 세 수(엎어진 패)를 읽고 내 응수 셋을 순서대로 깐 뒤 한 합씩 맞부딪친다. 셋째 합은 결(決) ---
+@duelx do:kinit
+# KPlan
+@duelx do:kshow
 {dx_telltext}
-@choice "받아친다 — 상대가 찌르러 올 때 강하다" goto:#ExA2
-@choice "칼끝을 흔든다 — 상대가 굳게 받을 때 강하다" goto:#ExA3
-@choice "정면으로 벤다 — 상대가 허초를 쓸 때 강하다" goto:#ExA1
-@choice "칼 대신 눈을 낸다 — 이 합은 보기만 하고 다음 합의 수를 읽는다(관)" if:dx_caneye>0 goto:#ExA4
+@choice "받아친다 — 찌르기(攻)에 이긴다" goto:#KA2
+@choice "흔든다 — 버티기(守)에 이긴다" goto:#KA3
+@choice "정면으로 벤다 — 허초(虛)에 이긴다" goto:#KA1
+@choice "관(觀) — 이 합은 눈으로. 남은 수가 다 보인다" if:dx_caneye>0 goto:#KA4
+@choice "운반(雲返) — 필살 말고는 다 이긴다 · 내공 −2" if:kp_can5>0 goto:#KA5
+@choice "적운보(赤雲步) — 攻·虛를 흘린다" if:kp_can6>0 goto:#KA6
 @stop
-# ExA4
-@duelx act:4
-@goto #ExRes
-# ExA1
-@duelx act:1
-@goto #ExRes
-# ExA2
-@duelx act:2
-@goto #ExRes
-# ExA3
-@duelx act:3
-# ExRes
+# KA1
+@duelx put:1
+@goto #KNext
+# KA2
+@duelx put:2
+@goto #KNext
+# KA3
+@duelx put:3
+@goto #KNext
+# KA4
+@duelx put:4
+@goto #KNext
+# KA5
+@duelx put:5
+@goto #KNext
+# KA6
+@duelx put:6
+# KNext
+@goto #KPlan if:kp_k<3
+@duelx do:kgo
+{dx_telltext}
+# KRes
+@duelx do:kres
 {dx_restext}
-@goto #ExLoop if:dx_i<dx_n
+@goto #KRes if:dx_i<3
 {dx_momtext}
 # Final
 ; 0.4.51 기억의 물건: 품속의 물건을 쥐고 정면으로 벤다(기세 +1, 물건마다 생에 한 번)

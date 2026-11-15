@@ -114,6 +114,7 @@ public static class MolakDuel
     public static float Odds (Foe foe, float bonus)
     {
         if (MolakStory.On) return 97f;   // 0.4.66 이야기 모드
+        bonus += MolakStats.Get("compbonus");   // 0.4.67 동행이 상대의 버릇을 짚어 준다
         return Mathf.Clamp(50f + (MyPower() + bonus - foe.P) * 5f, 5f, 92f);
     }
 }
@@ -204,7 +205,9 @@ public class DuelCommand : Command
         if (style == "sense") { bonus = 2f; hpRisk = 2f; }   // 독 바른 칼을 먼저 읽는다
         if (style == "onecut") { bonus = 6f; hpRisk = 4f; } // 0.4.33 한칼에 끝낸다: 격이 다를 때만 열린다(승산 열에 여덟 이상)
         if (MolakStats.Get("memwarn") > 0) bonus += 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f); // 전생의 앎: 상대의 첫 수를 안다
-        bonus += MolakStats.Get("dx_mom") * MolakDuelX.MomBonus; MolakStats.Set("dx_mom", 0f);           // 0.4.30: 앞선 합에서 잡은(내준) 기세
+        float momRaw = MolakStats.Get("dx_mom");
+        bool kpOn = MolakStats.Get("kp_on") > 0f; MolakStats.Set("kp_on", 0f);
+        bonus += momRaw * MolakDuelX.MomBonus; MolakStats.Set("dx_mom", 0f);           // 0.4.30: 앞선 합에서 잡은(내준) 기세
         float sit = MolakStats.Get("dsit");
         if (sit == 1) bonus += style == "guard" ? 2f : (style == "front" || style == "killer" ? -1.5f : 0f); // 빗속: 디딤이 미끄럽다
         if (sit == 2) bonus += style == "killer" ? 1f : (style == "guard" ? -1f : 0f);                    // 외나무다리: 물러설 데가 없다
@@ -262,6 +265,12 @@ public class DuelCommand : Command
         if ((kind == "raid" || kind == "hunt2") && MolakStats.Get("f_yongspear") > 0) bonus += 0.5f;   // 곽산에게 배운 작대기 — 둘을 엇대면 골목이 막힌다
         float odds = MolakDuel.Odds(foe, bonus);
         bool win = Random.Range(1, 101) <= odds;
+        MolakStats.Set("compbonus", 0f);   // 동행의 한 칸은 이 판에만
+        if (kpOn && !MolakStory.On)
+        {   // 0.4.67 간파: 기세가 둘 이상 기울었으면 주사위 없이
+            if (momRaw >= 2f) win = true;
+            else if (momRaw <= -2f) win = false;
+        }
         float oldRank = MolakStats.Get("rank");
         if (win)
         {

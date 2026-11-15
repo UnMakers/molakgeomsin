@@ -15,7 +15,7 @@ public class MolakDuelStage : MonoBehaviour
     static int tell; static float tellT = -1f;
     static int act, res; static float strikeT = -1f;
     static bool guideOpen; static float guideT;
-    const string GuidePref = "molak.duelguide2";   // 0.4.55 필살·검결 줄이 붙어서 한 번 더 보여 준다
+    const string GuidePref = "molak.duelguide2_kp";   // 0.4.55 필살·검결 줄이 붙어서 한 번 더 보여 준다
 
     public static bool GuideOpen { get { return guideOpen; } }
 
@@ -95,7 +95,79 @@ public class MolakDuelStage : MonoBehaviour
         var local = new Rect(0f, 0f, band.width, band.height);
         if (tellT >= 0f) { tellT += dt; DrawTell(local, u); }
         if (strikeT >= 0f) { strikeT += dt; DrawStrike(local, u); if (strikeT > 0.9f) strikeT = -1f; }
+        if (MolakStats.Get("kp_on") > 0f) DrawBoard(local, u);
         GUI.EndGroup();
+    }
+
+    // ---- 0.4.67 간파 판: 그림 띠 아래쪽에 상대의 세 수(위 줄)와 내 수(아래 줄) ----
+    static readonly string[] MvH = { "？", "攻", "守", "虛" };
+    static readonly string[] MvN = { "엎어진 수", "찌른다", "버틴다", "허초" };
+    static readonly Color[] MvC = { new Color(0.35f, 0.32f, 0.3f, 1f), new Color(0.62f, 0.12f, 0.08f, 1f), new Color(0.2f, 0.36f, 0.55f, 1f), new Color(0.42f, 0.26f, 0.56f, 1f) };
+    static readonly string[] AcH = { "", "斬", "受", "變", "觀", "返", "步" };
+    static readonly string[] AcN = { "", "정면", "받아친다", "흔든다", "관", "운반", "적운보" };
+    GUIStyle sCard, sCardSub, sMark; float cardU = -1f;
+    void DrawBoard (Rect band, float u)
+    {
+        if (sCard == null || !Mathf.Approximately(cardU, u))
+        {
+            cardU = u;
+            sCard = MolakGui.Label(46, u, TextAnchor.MiddleCenter, false); if (MolakGui.Hanja != null) sCard.font = MolakGui.Hanja;
+            sCardSub = MolakGui.Label(22, u, TextAnchor.MiddleCenter, false);
+            sMark = MolakGui.Label(54, u, TextAnchor.MiddleCenter, false);
+        }
+        var g0 = GUI.color;
+        int k = Mathf.RoundToInt(MolakStats.Get("kp_k")) + 1;
+        int resolved = Mathf.RoundToInt(MolakStats.Get("dx_i"));
+        bool resolving = MolakStats.Get("kp_k") >= 3f;
+        int sigi = Mathf.RoundToInt(MolakStats.Get("dx_sigi"));
+        float cw = Mathf.Min(band.width * 0.21f, 132f * u), ch = band.height * 0.32f, gap = cw * 0.22f;
+        float total = cw * 3f + gap * 2f, x0 = band.xMax - total - band.width * 0.04f;
+        float yTop = band.yMax - ch * 2f - band.height * 0.08f;
+        var panel = new Rect(x0 - gap * 0.6f, yTop - band.height * 0.04f, total + gap * 1.2f, ch * 2f + band.height * 0.1f);
+        GUI.color = new Color(0.05f, 0.04f, 0.03f, 0.55f); GUI.DrawTexture(panel, MolakGui.Px);
+        for (int i = 1; i <= 3; i++)
+        {
+            float x = x0 + (i - 1) * (cw + gap);
+            int t = Mathf.RoundToInt(MolakStats.Get("kp_t" + i));
+            bool vis = MolakStats.Get("kp_v" + i) > 0 || (resolving && i <= resolved);
+            bool dep = MolakStats.Get("kp_d" + i) > 0;
+            bool cur = !resolving && i == k;
+            // 위: 상대
+            var r1 = new Rect(x, yTop, cw, ch);
+            string hj = dep ? "察" : i == sigi && !vis ? "絶" : vis ? MvH[Mathf.Clamp(t, 0, 3)] : "？";
+            string nm = dep ? "앞 수를 본다" : i == sigi ? (vis ? "필살 · " + MvN[Mathf.Clamp(t, 0, 3)] : "필살") : vis ? MvN[Mathf.Clamp(t, 0, 3)] : "엎어진 수";
+            Color bg = dep ? new Color(0.3f, 0.28f, 0.24f, 1f) : i == sigi ? new Color(0.5f, 0.06f, 0.05f, 1f) : vis ? MvC[Mathf.Clamp(t, 0, 3)] : MvC[0];
+            GUI.color = new Color(bg.r, bg.g, bg.b, 0.92f); GUI.DrawTexture(r1, MolakGui.Px);
+            if (cur) { GUI.color = new Color(0.85f, 0.68f, 0.3f, 0.9f + 0.1f * Mathf.Sin(Time.unscaledTime * 6f)); DrawFrame(r1, Mathf.Max(2f, 3f * u)); }
+            GUI.color = Color.white;
+            MolakGui.Ink(sCard, new Color(0.96f, 0.93f, 0.86f, 1f)); GUI.Label(new Rect(r1.x, r1.y, r1.width, r1.height * 0.74f), hj, sCard);
+            MolakGui.Ink(sCardSub, new Color(0.9f, 0.86f, 0.78f, 0.9f)); GUI.Label(new Rect(r1.x, r1.y + r1.height * 0.66f, r1.width, r1.height * 0.32f), nm, sCardSub);
+            // 아래: 나
+            var r2 = new Rect(x, yTop + ch + band.height * 0.02f, cw, ch);
+            int a = Mathf.RoundToInt(MolakStats.Get("kp_a" + i));
+            GUI.color = a > 0 ? new Color(0.93f, 0.89f, 0.8f, 0.95f) : new Color(1f, 1f, 1f, 0.1f); GUI.DrawTexture(r2, MolakGui.Px);
+            if (a > 0)
+            {
+                MolakGui.Ink(sCard, new Color(0.12f, 0.1f, 0.08f, 1f)); GUI.Label(new Rect(r2.x, r2.y, r2.width, r2.height * 0.74f), AcH[Mathf.Clamp(a, 0, 6)], sCard);
+                MolakGui.Ink(sCardSub, new Color(0.25f, 0.2f, 0.16f, 1f)); GUI.Label(new Rect(r2.x, r2.y + r2.height * 0.66f, r2.width, r2.height * 0.32f), AcN[Mathf.Clamp(a, 0, 6)], sCardSub);
+            }
+            else { MolakGui.Ink(sCardSub, new Color(0.9f, 0.86f, 0.78f, 0.6f)); GUI.Label(r2, (i == 3 ? "결(決)" : "") + (cur ? " ▼" : ""), sCardSub); }
+            // 결과 표식
+            if (resolving && i <= resolved)
+            {
+                float rr = MolakStats.Get("kp_r" + i);
+                string mk = rr > 0 ? "○" : rr < 0 ? "×" : "=";
+                Color mc = rr > 0 ? new Color(0.95f, 0.8f, 0.35f, 1f) : rr < 0 ? new Color(0.9f, 0.3f, 0.25f, 1f) : new Color(0.85f, 0.82f, 0.76f, 1f);
+                MolakGui.Ink(sMark, mc); GUI.Label(new Rect(x, yTop + ch * 0.5f, cw, ch), mk, sMark);
+            }
+        }
+        GUI.color = g0;
+    }
+
+    static void DrawFrame (Rect r, float th)
+    {
+        GUI.DrawTexture(new Rect(r.x, r.y, r.width, th), MolakGui.Px); GUI.DrawTexture(new Rect(r.x, r.yMax - th, r.width, th), MolakGui.Px);
+        GUI.DrawTexture(new Rect(r.x, r.y, th, r.height), MolakGui.Px); GUI.DrawTexture(new Rect(r.xMax - th, r.y, th, r.height), MolakGui.Px);
     }
 
     void DrawTell (Rect band, float u)
@@ -226,7 +298,7 @@ public class MolakDuelStage : MonoBehaviour
         var ink = new Color(0.93f, 0.89f, 0.81f, 1f); var gold = new Color(0.85f, 0.68f, 0.3f, 1f); var red = new Color(0.8f, 0.22f, 0.16f, 1f);
         MolakGui.Ink(sHead, gold); GUI.Label(new Rect(cx, y, cw, 70f * u), "비무의 법", sHead); y += 90f * u;
         MolakGui.Ink(sHint, ink);
-        GUI.Label(new Rect(cx, y, cw, 120f * u), "마지막 한 칼 앞에 몇 번 칼을 섞는다. 이것을 <b>합(合)</b>이라 한다.\n합마다 상대의 기세가 보인다. 그 기세를 꺾는 수를 고른다.", sHint);
+        GUI.Label(new Rect(cx, y, cw, 120f * u), "<b>간파(看破)</b> — 판이 열리면 상대가 낼 세 수가 엎어진 패로 놓인다. 몇 장은 앞면이 보인다.\n내 응수 세 장을 순서대로 깔면 한 합씩 맞부딪친다. 셋째 합은 <b>결(決)</b>, 두 배로 친다.", sHint);
         y += 130f * u;
         string[,] rows = { { "攻", "찌르러 온다", "受", "받아친다" }, { "守", "굳게 받는다", "變", "칼끝을 흔든다" }, { "虛", "허초로 흔든다", "斬", "정면으로 벤다" } };
         float rh = 104f * u;
@@ -249,9 +321,9 @@ public class MolakDuelStage : MonoBehaviour
         y += 14f * u;
         MolakGui.Ink(sHint, ink);
         GUI.Label(new Rect(cx, y, cw, 200f * u),
-            "맞수를 고르면 <color=#D9B55A>기세 +1</color>, 상대가 노리던 수를 고르면 <color=#CC5544>기세 −1 · 체력 −1</color>.\n" +
-            "쌓인 기세가 마지막 한 칼의 승산을 올린다(한 칸에 약 열에 하나).\n" +
-            "기세는 가끔 거짓으로 보인다. 검술이 높을수록 잘 읽히고, 지난 생에 맞붙어 본 상대의 수는 <color=#B08CD8>보랏빛</color>으로 확실히 보인다.", sHint);
+            "맞수를 깔면 <color=#D9B55A>기세 +1</color>, 상대가 노리던 수를 깔면 <color=#CC5544>기세 −1 · 체력 −1</color>.\n" +
+            "기세가 <color=#D9B55A>+2 이상</color>이면 마지막 한 칼은 반드시 이기고, <color=#CC5544>−2 이하</color>면 반드시 진다. 그 사이일 때만 승산을 굴린다.\n" +
+            "검술이 높을수록 앞면이 많이 보이고, 지난 생에 맞붙어 본 상대는 세 수가 다 보인다. 察(살핌) 표시는 내가 앞 칸에 깐 수를 보고 정하는 수다.", sHint);
         y += 206f * u;
         GUI.Label(new Rect(cx, y, cw, 200f * u),
             "<color=#CC5544>필살 초식(絶)</color> — 이름난 칼잡이는 한 판에 한 번 제 초식을 낸다. 처음 받을 땐 읽히지 않고, 얻고 잃는 것이 두 배다. 한 번 받아 보면 다음 생부터 보인다.\n" +

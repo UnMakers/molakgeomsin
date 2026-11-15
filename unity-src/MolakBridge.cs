@@ -134,6 +134,8 @@ public static class MolakBridge
         if (kind != "dusk") dayEvents++;
 
         string line = (time + (time.Length > 0 && after.Length > 0 ? " " : "") + after).Trim();
+        string comp = MolakCompanion.Join(kind, nextEvent);   // 0.4.67 동행
+        if (comp.Length > 0) line = (line + " " + comp).Trim();
         if (line.Length == 0) return null;
         return "<color=#8A7A66>" + line + "</color>";
     }

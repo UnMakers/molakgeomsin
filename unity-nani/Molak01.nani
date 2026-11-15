@@ -128,7 +128,6 @@
 @set dx_canfall=0
 @set dx_i=0
 @set dx_keepok=0
-@set dx_n=0
 @set endhanja=0
 @set endtitle=0
 @set f_acupgone=0
@@ -140,6 +139,7 @@
 @set f_amhdeal=0
 @set f_amheve=0
 @set f_amhgone=0
+@set f_amhincense=0
 @set f_amhname=0
 @set f_amhnames=0
 @set f_amholdman=0
@@ -165,11 +165,13 @@
 @set f_chaininfo=0
 @set f_chainroute=0
 @set f_chamally=0
+@set f_chamclerk=0
 @set f_chamfake=0
 @set f_chamfeather=0
 @set f_chamfree=0
 @set f_chamgone=0
 @set f_chamhurt=0
+@set f_chamledger=0
 @set f_chamname=0
 @set f_chamnews=0
 @set f_chamsold=0
@@ -181,6 +183,7 @@
 @set f_cmfiresaved=0
 @set f_cmform=0
 @set f_cmglimpse=0
+@set f_cmninth=0
 @set f_cmsword=0
 @set f_cmtablet=0
 @set f_cmwait=0
@@ -374,6 +377,7 @@
 @set f_soarift=0
 @set f_soasaved=0
 @set f_soaseal=0
+@set f_soastep=0
 @set f_soastitch=0
 @set f_soatrain=0
 @set f_soatruth=0
@@ -455,6 +459,9 @@
 @set jsdn=0
 @set killed=0
 @set knowc=0
+@set kp_can5=0
+@set kp_can6=0
+@set kp_k=0
 @set lifecmpc=0
 @set lodgneed=0
 @set lostonce=0
@@ -532,6 +539,10 @@
 @set truehintc=0
 @set vow=0
 @set vowc=0
+@set vs_amh=0
+@set vs_cham=0
+@set vs_cm=0
+@set vs_soa=0
 @set wr=0
 @set wrand=0
 @set wsnow=0
@@ -541,6 +552,8 @@
 @set btguard="none"
 @set btpath="none"
 @set byeolho="none"
+@set comp="none"
+@set compline="none"
 @set deathcause="none"
 @set deathtip="none"
 @set dejapre="none"
