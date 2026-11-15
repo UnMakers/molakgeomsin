@@ -78,10 +78,30 @@ public class MolakPlayMode : MonoBehaviour
         var im = Engine.GetService<IInputManager>();
         var st = Engine.GetService<IStateManager>();
         if (im == null || st == null) return;
+        var spx = Engine.GetService<IScriptPlayer>();
+        if (spx != null) spx.AddPreExecutionTask(FastArtHold);
         var cont = im.GetInput("Continue");
         if (cont != null) cont.OnStart += OnContinue;
         st.OnResetStarted += () => { Fast = false; SkipAll = false; Auto = false; };
         hooked = true;
+    }
+
+    /// <summary>0.4.65 빨리일 때 그림이 바뀌면 글을 반 박자 늦춘다(언메이커: 빨리 모드에서 그림이 너무 늦게 나오는 느낌).
+    /// 한 쪽이 한꺼번에 찍히니 그림이 글 뒤에 떠오르는 것처럼 보였다 — 그림이 다 떠오를 때까지(최대 0.25초) 기다린 뒤 0.08초 더 두고 글을 찍는다.
+    /// 나니노벨 순서: OnExecute(MolakFlow 가 바탕 그림을 되돌림) → 실행 전 작업(여기) → 실행. 그래서 같은 줄에서 바뀐 그림도 잡힌다.</summary>
+    static async Awaitable FastArtHold (IScriptTrack track)
+    {
+        var pt = track != null ? track.PlayedCommand as Naninovel.Commands.PrintText : null;
+        if (!Fast || pt == null) return;
+        // 비어 있는 {dejapre} 줄은 아무것도 찍지 않는다 — 여기서 기다리면 정작 글 앞에서는 안 기다린다
+        if (pt.Text != null && pt.Text.ToString().Trim() == "{dejapre}") { var dv = MolakStats.Str("dejapre"); if (string.IsNullOrEmpty(dv) || dv == "none" || dv == "\u200B") return; }
+        var sp = Player; if (sp != null && sp.Skipping) return;
+        bool changed = Time.unscaledTime - MolakArt.ChangedAt < 0.35f;
+        if (!changed && !MolakArt.Busy) return;
+        float until = Time.realtimeSinceStartup + 0.25f;
+        while (MolakArt.Busy && Time.realtimeSinceStartup < until) await Awaitable.NextFrameAsync();
+        float hold = Time.realtimeSinceStartup + 0.08f;
+        while (Time.realtimeSinceStartup < hold) await Awaitable.NextFrameAsync();
     }
 
     void OnContinue ()

@@ -103,12 +103,12 @@ public class MolakArt : MonoBehaviour
             if ((IsNight ? HomeNight : HomeDay).TryGetValue(id, out home) && home != inst.sceneId)
             {
                 var hs = Load("MolakArt/scene_" + home);
-                if (hs != null) { inst.sceneCur = hs; inst.sceneId = home; inst.sceneT = 0f; }
+                if (hs != null) { inst.sceneCur = hs; inst.sceneId = home; inst.sceneT = 0f; ChangedAt = Time.unscaledTime; }
             }
             else if (inst.sceneCur == null)
             {
                 var fs = Load("MolakArt/scene_" + (IsNight ? "night" : "morning"));
-                if (fs != null) { inst.sceneCur = fs; inst.sceneId = IsNight ? "night" : "morning"; inst.sceneT = 0f; }
+                if (fs != null) { inst.sceneCur = fs; inst.sceneId = IsNight ? "night" : "morning"; inst.sceneT = 0f; ChangedAt = Time.unscaledTime; }
             }
         }
         var sp = Load("MolakArt/char_" + id);
@@ -190,8 +190,12 @@ public class MolakArt : MonoBehaviour
         return s;
     }
 
-    void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; if (s != null && charCur != null) SetChar(null, ""); }
-    void SetChar (Sprite s, string id) { if (id != charId) pushT = 0f; charCur = s; charId = id; charT = 0f; }
+    void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; ChangedAt = Time.unscaledTime; if (s != null && charCur != null) SetChar(null, ""); }
+    void SetChar (Sprite s, string id) { if (id != charId) pushT = 0f; charCur = s; charId = id; charT = 0f; ChangedAt = Time.unscaledTime; }
+    /// <summary>0.4.65 그림이 마지막으로 바뀐 때(빨리에서 글을 그림 뒤로 반 박자 늦추는 데 쓴다).</summary>
+    public static float ChangedAt = -9f;
+    /// <summary>0.4.65 그림이 아직 다 떠오르지 않았다(장면·인물 페이드, 인물 뒤 풍경 눌림까지).</summary>
+    public static bool Busy { get { return inst != null && (inst.sceneT < 1f || inst.charT < 1f); } }
     float pushT = 1f, hurtT = -1f;
     /// <summary>인물이 맞았다: 반 박자 옆으로 흔들린다(장면만 있으면 장면이).</summary>
     public static void Hurt () { if (inst != null) inst.hurtT = 0f; }
