@@ -10,11 +10,17 @@ using UnityEngine;
 ///  · 자동: 메뉴에서 끌 때까지 유지.
 ///  · '읽은 글 ▶▶'는 예전처럼 처음 보는 글에서 멈춘다.
 ///  · 새 생·불러오기(상태 초기화) 때는 둘 다 끈다.
+/// 0.4.64 빨리 = 한 쪽씩(언메이커: 다 넘어가는 게 아니라 한 페이지만). 넘기기를 쓰지 않는다.
+///  · 한 쪽 안의 글은 타자 없이 한꺼번에 나오고(PrintText 속도 ×100), 쪽 안의 단락마다 기다리지 않는다.
+///  · 쪽 끝(다음 글이 쪽을 넘기거나 선택지·장면 전환이 오면)에서는 기다린다 — 누르면 다음 쪽이 한꺼번에.
+///  · 판단은 MolakFlow(쪽 나눔을 하는 곳)가 한다. 검증 도구가 쓰던 '끝까지 넘기기'는 SetSkipAll 로 남겼다.
 /// </summary>
 public class MolakPlayMode : MonoBehaviour
 {
     static MolakPlayMode inst;
     public static bool Fast { get; private set; }
+    /// <summary>검증 도구용 '끝까지 넘기기'(예전의 빨리). 선택지에서만 멈춘다.</summary>
+    public static bool SkipAll { get; private set; }
     public static bool Auto { get; private set; }
 
     bool hooked;
@@ -31,10 +37,18 @@ public class MolakPlayMode : MonoBehaviour
 
     static IScriptPlayer Player { get { return Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null; } }
 
+    /// <summary>메뉴의 '빨리' — 한 쪽씩 한꺼번에(넘기기 없이).</summary>
     public static void SetFast (bool on)
     {
-        var sp = Player;
         Fast = on;
+        if (on && SkipAll) SetSkipAll(false);
+    }
+
+    /// <summary>검증 도구용: 처음 보는 글까지 끝까지 넘긴다(선택지에서 멈춤).</summary>
+    public static void SetSkipAll (bool on)
+    {
+        var sp = Player;
+        SkipAll = on;
         if (inst != null) inst.stopFrame = -100;
         if (sp == null) return;
         sp.SkipMode = on ? PlayerSkipMode.Everything : PlayerSkipMode.ReadOnly;
@@ -52,7 +66,7 @@ public class MolakPlayMode : MonoBehaviour
     public static void SkipRead ()
     {
         var sp = Player;
-        Fast = false;
+        SkipAll = false;
         if (sp == null) return;
         sp.SkipMode = PlayerSkipMode.ReadOnly;
         sp.SetSkip(true);
@@ -66,14 +80,14 @@ public class MolakPlayMode : MonoBehaviour
         if (im == null || st == null) return;
         var cont = im.GetInput("Continue");
         if (cont != null) cont.OnStart += OnContinue;
-        st.OnResetStarted += () => { Fast = false; Auto = false; };
+        st.OnResetStarted += () => { Fast = false; SkipAll = false; Auto = false; };
         hooked = true;
     }
 
     void OnContinue ()
     {
         // 메뉴·설정을 닫는 탭이 '계속'으로 새어 들어온 것은 사람이 멈춘 게 아니다
-        if (!Fast || Time.unscaledTime - uiOpenAt < 0.4f || MolakMenu.IsOpen || MolakSettings.IsOpen) return;
+        if (!SkipAll || Time.unscaledTime - uiOpenAt < 0.4f || MolakMenu.IsOpen || MolakSettings.IsOpen) return;
         stopFrame = Time.frameCount;
     }
 
@@ -84,9 +98,9 @@ public class MolakPlayMode : MonoBehaviour
         var sp = Player;
         if (sp == null) return;
 
-        if (Fast && !sp.Skipping)
+        if (SkipAll && !sp.Skipping)
         {
-            if (Time.frameCount - stopFrame <= 3) { Fast = false; sp.SkipMode = PlayerSkipMode.ReadOnly; stopFrame = -100; }
+            if (Time.frameCount - stopFrame <= 3) { SkipAll = false; sp.SkipMode = PlayerSkipMode.ReadOnly; stopFrame = -100; }
             else { if (sp.SkipMode != PlayerSkipMode.Everything) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(true); }
         }
         if (Auto && !sp.AutoPlaying) sp.SetAutoPlay(true);

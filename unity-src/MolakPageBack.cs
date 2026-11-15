@@ -9,6 +9,8 @@ using UnityEngine;
 ///  · 지난 쪽을 보는 동안에는 화면을 눌러도 이야기가 넘어가지 않는다(누르면 지금 쪽으로 돌아온다).
 ///  · 새 글이 찍히거나(자동 진행 등) 상태가 초기화되면 지금 쪽으로 돌아온다.
 /// 그림은 그대로 두고, 본문 칸(DialogueText)을 잠시 숨긴 채 같은 글꼴·같은 자리의 사본 칸에 지난 쪽을 그린다.
+/// 0.4.64 넘기는 연출(언메이커: 뒷장으로 넘겼을 때 연출 필요): 종이 넘기는 소리 + 넘어오는 쪽이 넘기는 방향에서 미끄러져 들어오며 짙어지고,
+///   그 위로 책장 그림자 한 줄이 쓸고 지나간다. 지금 쪽으로 돌아올 때는 지금 쪽 글이 옅게 떠올랐다 짙어진다(본문 칸은 움직이지 않는다).
 /// </summary>
 public class MolakPageBack : MonoBehaviour
 {
@@ -19,6 +21,12 @@ public class MolakPageBack : MonoBehaviour
     static TMPro.TextMeshProUGUI past;
     static TMPro.TMP_Text hiddenSrc;
     static float hintT = -1f; static string hintMsg = "";
+    // 넘기는 연출
+    const float AnimDur = 0.34f;
+    static float animT0 = -1f; static int animDir;   // animDir −1: 앞 쪽(왼쪽에서 들어온다) · +1: 뒤 쪽(오른쪽에서)
+    static bool animLive;                             // 지금 쪽으로 돌아오는 중(본문 칸을 짙게)
+    static Vector2 pastBase;
+    static CanvasGroup pastCg;
     bool hooked;
 
     public static bool Viewing => view >= 0;
@@ -98,17 +106,49 @@ public class MolakPageBack : MonoBehaviour
         past.gameObject.SetActive(true);
         Hide(src, true);
         hiddenSrc = src;
+        // 넘기는 방향: 지금 쪽에서 앞으로, 또는 더 앞 쪽으로 = 왼쪽에서 / 다시 뒤 쪽으로 = 오른쪽에서
+        animDir = (view < 0 || i < view) ? -1 : 1;
         view = i;
-        MolakSfx.Confirm();
+        pastBase = b.anchoredPosition;
+        if (pastCg == null) { pastCg = past.GetComponent<CanvasGroup>(); if (pastCg == null) pastCg = past.gameObject.AddComponent<CanvasGroup>(); }   // 유니티 객체는 ?? 로 거르면 안 된다
+        pastCg.alpha = 0f;
+        animLive = false; animT0 = Time.unscaledTime;
+        Apply(0f);
+        MolakSfx.Confirm();   // 종이 넘기는 소리
+        MolakSfx.Vibrate();
     }
 
     public static void Close ()
     {
         if (view < 0 && (past == null || !past.gameObject.activeSelf)) return;
+        bool wasViewing = view >= 0;
         view = -1;
-        if (past != null) past.gameObject.SetActive(false);
-        if (hiddenSrc != null) Hide(hiddenSrc, false);
+        if (past != null) { past.gameObject.SetActive(false); past.rectTransform.anchoredPosition = pastBase; }
+        var live = hiddenSrc;
+        if (live != null) Hide(live, false);
         hiddenSrc = null;
+        // 지금 쪽으로 돌아오는 연출: 오른쪽에서 넘어오듯 지금 쪽 글이 옅게 떠올라 짙어진다
+        if (wasViewing && live != null)
+        {
+            liveTx = live; animLive = true; animDir = 1; animT0 = Time.unscaledTime;
+            var cg = live.GetComponent<CanvasGroup>(); if (cg != null) cg.alpha = 0.15f;
+            MolakSfx.Confirm();
+        }
+    }
+    static TMPro.TMP_Text liveTx;
+
+    /// <summary>연출 한 장면: e(0→1, 끝이 부드럽게)에 맞춰 넘어오는 쪽을 미끄러뜨리고 짙게.</summary>
+    static void Apply (float e)
+    {
+        if (animLive)
+        {
+            if (liveTx != null) { var cg = liveTx.GetComponent<CanvasGroup>(); if (cg != null) cg.alpha = Mathf.Lerp(0.15f, 1f, e); }
+            return;
+        }
+        if (past == null) return;
+        float w = past.rectTransform.rect.width;
+        past.rectTransform.anchoredPosition = pastBase + new Vector2((1f - e) * animDir * w * 0.22f, 0f);
+        if (pastCg != null) pastCg.alpha = e;
     }
 
     /// <summary>본문 칸을 숨긴다 — 한자 등 대체 글꼴은 딸린 칸(SubMesh)에 따로 그려지므로 CanvasGroup 으로 통째로.</summary>
@@ -129,6 +169,13 @@ public class MolakPageBack : MonoBehaviour
             if (st != null) { st.OnResetStarted += Clear; st.OnGameLoadStarted += _ => Clear(); hooked = true; }
         }
         if (hintT >= 0f) { hintT += Time.unscaledDeltaTime; if (hintT > 1.8f) hintT = -1f; }
+        if (animT0 >= 0f)
+        {
+            float t = Mathf.Clamp01((Time.unscaledTime - animT0) / AnimDur);
+            float e = 1f - (1f - t) * (1f - t) * (1f - t);
+            Apply(e);
+            if (t >= 1f) { animT0 = -1f; if (animLive && liveTx != null) { var cg = liveTx.GetComponent<CanvasGroup>(); if (cg != null) cg.alpha = 1f; } animLive = false; }
+        }
         // 메뉴·행낭이 열리면 지금 쪽으로
         if (view >= 0 && (MolakMenu.IsOpen || MolakBag.IsOpen)) Close();
     }
@@ -136,8 +183,29 @@ public class MolakPageBack : MonoBehaviour
     GUIStyle st; float builtU = -1f;
     void OnGUI ()
     {
-        if (view < 0 && hintT < 0f) return;
+        if (view < 0 && hintT < 0f && animT0 < 0f) return;
         float u = MolakGui.U, w = Screen.width, h = Screen.height;
+        // 책장 그림자: 넘기는 동안 넘기는 방향으로 한 줄 쓸고 지나간다(먹빛, 끝으로 갈수록 옅게)
+        if (animT0 >= 0f && Event.current.type == EventType.Repaint)
+        {
+            float t = Mathf.Clamp01((Time.unscaledTime - animT0) / AnimDur);
+            float e = 1f - (1f - t) * (1f - t) * (1f - t);
+            float x = animDir < 0 ? Mathf.Lerp(-0.1f * w, 1.05f * w, e) : Mathf.Lerp(1.05f * w, -0.1f * w, e);
+            float bw = 120f * u, fade = 1f - e;
+            var gc = GUI.color;
+            GUI.depth = MolakGui.DepthVfx - 9;
+            for (int s = 0; s < 8; s++)
+            {
+                float k = s / 8f;   // 가운데가 짙고 뒤로 갈수록 옅은 띠
+                float sx = x - animDir * k * bw;
+                GUI.color = new Color(0.16f, 0.11f, 0.07f, 0.22f * fade * (1f - k));
+                GUI.DrawTexture(new Rect(sx - bw / 16f, 0, bw / 8f, h), MolakGui.Px);
+            }
+            GUI.color = new Color(0.98f, 0.95f, 0.88f, 0.10f * fade);   // 넘어오는 종이의 밝은 가장자리
+            GUI.DrawTexture(new Rect(x - 2f * u, 0, 4f * u, h), MolakGui.Px);
+            GUI.color = gc;
+            if (view < 0 && hintT < 0f) return;
+        }
         if (st == null || !Mathf.Approximately(builtU, u)) { builtU = u; st = MolakGui.Label(24, u, TextAnchor.MiddleCenter, false); }
         GUI.depth = MolakGui.DepthVfx - 10;
         var g0 = GUI.color;

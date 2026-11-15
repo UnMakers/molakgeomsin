@@ -84,7 +84,7 @@ public class MolakProbe : MonoBehaviour
         var tr = sp.MainTrack;
         while (Time.realtimeSinceStartup - t0 < 40f)
         {
-            MolakPlayMode.SetFast(true);
+            MolakPlayMode.SetSkipAll(true);
             if (returned) { Log.AppendLine("■ @return(장면 끝)"); break; }
             if (MolakTurnCard.Showing || MolakFrenzy.Playing) { yield return null; continue; }
             var cur = tr.PlayedScript != null ? tr.PlayedScript.Path : "";
@@ -105,7 +105,7 @@ public class MolakProbe : MonoBehaviour
             }
             var labels = btns.Select(b => (b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").Split('\n')[0]).ToArray();
             int k = 0;
-            if (pi < picks.Length && picks[pi] == "■") { Log.AppendLine("■ 선택지 앞에서 멈춤(화면 확인용)"); MolakPlayMode.SetFast(false); Status = "done"; yield break; }
+            if (pi < picks.Length && picks[pi] == "■") { Log.AppendLine("■ 선택지 앞에서 멈춤(화면 확인용)"); MolakPlayMode.SetSkipAll(false); Status = "done"; yield break; }
             if (pi < picks.Length) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(picks[pi])) { k = i; break; } pi++; }
             Log.AppendLine("  · 판(" + lastText.Replace("\n", " ⏎ ").Substring(Mathf.Max(0, lastText.Length - 160)) + ")");
             Log.AppendLine("▶ [" + string.Join(" / ", labels) + "] → " + labels[k]);
@@ -122,7 +122,7 @@ public class MolakProbe : MonoBehaviour
         var dt2 = DialogueText();
         Log.AppendLine("  · 마지막 글(" + (dt2 != null ? dt2.text.Replace("\n", " ⏎ ") : "") + ")");
         Log.AppendLine("vars hp=" + MolakStats.Get("hp") + " curse=" + MolakStats.Get("curse") + " sl=" + MolakStats.Get("sl") + " ng=" + MolakStats.Get("ng"));
-        MolakPlayMode.SetFast(false);
+        MolakPlayMode.SetSkipAll(false);
         Status = "done";
     }
 

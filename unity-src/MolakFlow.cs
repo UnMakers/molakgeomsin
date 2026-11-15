@@ -217,13 +217,27 @@ public class MolakFlow : MonoBehaviour
             if (nx != null)
             {
                 var dt = DialogueText();
-                string cur = TextOf(pt), page = reset || dt == null ? cur : (dt.text ?? "") + "\n\n" + cur;
+                string cur = TextOf(pt), page = reset || dt == null ? cur : (dt.text ?? "").TrimEnd('\n', ' ') + "\n\n" + cur;   // 0.4.64 이미 넣은 단락 빈 줄을 두 번 세지 않게(쪽 끝을 일찍 잡아 쪽 가운데서 멈추던 것)
                 if (PageWouldOverflow(TextOf(nx), page)) wait = true;
             }
         }
         if (isBridge) { wait = false; holdPage = true; }   // 이음 문장은 기다리지 않고 바로 사건으로
+        lastPrintWaited = wait;   // 단락 나눔(빈 줄)은 보통 때 기준으로 — 빨리여도 쪽 모양이 같게
+        // 0.4.64 빨리(한 쪽씩): 쪽 안의 단락은 기다리지 않고, 쪽 끝에서만 기다린다. 글은 타자 없이 한꺼번에.
+        if (MolakPlayMode.Fast && !isBridge && wait)
+        {
+            bool overflowNext = false;
+            var nx2 = NextText(track);
+            if (nx2 != null && NextIsText(track))
+            {
+                var dt2 = DialogueText();
+                string cur2 = TextOf(pt), page2 = reset || dt2 == null ? cur2 : (dt2.text ?? "").TrimEnd('\n', ' ') + "\n\n" + cur2;
+                overflowNext = PageWouldOverflow(TextOf(nx2), page2);
+            }
+            if (!overflowNext && !NextBreaksPage(track)) wait = false;
+        }
+        pt.RevealSpeed = MolakPlayMode.Fast ? (DecimalParameter)100f : new DecimalParameter();
         pt.WaitForInput = wait;
-        lastPrintWaited = wait;
         breakNext = false;
         Mark(spot);
     }
@@ -259,6 +273,41 @@ public class MolakFlow : MonoBehaviour
             continue; // 변수·능력치·연출·기타 명령은 통과
         }
         return false;
+    }
+
+    /// <summary>0.4.64 다음에 오는 것이 쪽을 넘기는가(빨리 — 한 쪽씩). 쪽을 넘기지 않는 @wait·같은 대본 안의 @goto 는 지나쳐 본다.</summary>
+    static bool NextBreaksPage (IScriptTrack track)
+    {
+        var pl = track.Playlist; if (pl == null) return true;
+        string curPath = track.PlayedScript != null ? track.PlayedScript.Path : "";
+        for (int k = track.PlayedIndex + 1; k < pl.Count; k++)
+        {
+            var c = pl[k];
+            if (c.ConditionalExpression != null && c.ConditionalExpression.HasValue)
+            { bool ok = true; try { ok = Naninovel.ExpressionEvaluator.Evaluate<bool>(c.ConditionalExpression.Value); } catch { } if (!ok) continue; }
+            if (c is PrintText) return false;
+            if (c is AddChoice || c is Gosub || c is Return || c is Stop) return true;
+            if (c is Wait) continue;
+            var n = c.GetType().Name;
+            if (n == "SceneCommand" || n.Contains("Ending") || n == "DayTickCommand" || n == "InitRunCommand" || n == "PageCommand") return true;
+            if (c is Goto)
+            {
+                var g = (Goto)c;
+                string pv = Assigned(g.Path) ? (g.Path.Value ?? "") : "";
+                int hi = pv.IndexOf('#');
+                string gs = hi >= 0 ? pv.Substring(0, hi) : pv, gl = hi >= 0 ? pv.Substring(hi + 1) : null;
+                if (!string.IsNullOrEmpty(gs) && gs != curPath) return true;
+                if (!string.IsNullOrEmpty(gl) && IsHubLabel(gl)) return true;
+                return false;   // 같은 대본 안에서 이어진다(그 뒤 글이 넘치면 그 글에서 다시 판단)
+            }
+            if (n == "ArtCommand")
+            {
+                var f = c.GetType().GetField("SceneId"); var v = f != null ? f.GetValue(c) as StringParameter : null;
+                var off = c.GetType().GetField("Off"); var ov = off != null ? off.GetValue(c) as BooleanParameter : null;
+                if ((v != null && v.HasValue) || (ov != null && ov.HasValue && ov.Value)) return true;
+            }
+        }
+        return true;
     }
 
     static bool prevDlg;

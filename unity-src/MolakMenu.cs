@@ -193,7 +193,7 @@ public class MolakMenu : MonoBehaviour
             // 0.4.46: 켜 둔 동안 유지(MolakPlayMode) — 예전엔 사건이 바뀌거나 처음 보는 글이 나오면 저절로 꺼졌다
             bool auto = MolakPlayMode.Auto, skip = MolakPlayMode.Fast;
             if (Btn(new Rect(bx, by, tw, rowH), "자동 " + (auto ? "●" : "○"), auto, u)) MolakPlayMode.SetAuto(!auto);
-            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "빨리 " + (skip ? "●" : "○"), skip, u)) { MolakPlayMode.SetFast(!skip); if (!skip) Toast("빨리 넘긴다 — 선택지에서 멈춘다. 화면을 누르면 그친다."); }
+            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "빨리 " + (skip ? "●" : "○"), skip, u)) { MolakPlayMode.SetFast(!skip); if (!skip) Toast("빨리 — 한 쪽씩 한꺼번에 나온다. 누르면 다음 쪽."); }
             if (Btn(new Rect(bx+2*(tw+gap), by, tw, rowH), "읽은 글 ▶▶", false, u))
             {   // 이미 본 글은 빠르게 — 처음 보는 글과 선택지에서 멈춘다(나니노벨 읽은 글 넘기기)
                 open = false; SetProcessInput(true);
