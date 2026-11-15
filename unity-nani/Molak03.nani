@@ -17,7 +17,7 @@
 @goto #Soa1M
 # Soa1M
 검은 옷(黑衣)을 입었다. 등에 쌍검을 엇갈려 멨고, 한쪽 눈은 주홍빛 천으로 가렸다. 천 아래로 흉터가 비친다.
-여자가 남의 국밥을 한 숟갈 떠먹는다.
+여자가 당신 앞의 국밥을 제 것처럼 끌어다 한 숟갈 떠먹는다.
 "남의 그릇이 더 맛있지. 내 그릇은 늘 먼저 비어서."
 @set g_fac_jeok=1
 "죽을상이군. 어느 문파 잔당이지?"
@@ -50,7 +50,7 @@
 "운주 들판. 보름날. 거기서도 그 이름을 부르면, 그땐 벤다."
 @set f_soamet=1
 @set aff=aff+2
-@goto Molak02#AfterChapter
+@goto #SoaGift
 # Soa1LB
 @goto #SoamarkDie if:curse>=50
 "꿈이라."
@@ -59,7 +59,7 @@
 "……다음에 또 그 이름을 부르면, 꿈속에서 죽은 걸로 해 주마."
 @set f_soamet=1
 @set aff=aff+1
-@goto Molak02#AfterChapter
+@goto #SoaGift
 # Soa1C0
 @goto #Soa2
 # Soa1C1
@@ -121,7 +121,7 @@
 # Soa2aC0
 @goto #Soa2c
 # Soa2aC1
-@goto Molak02#AfterChapter
+@goto #SoaGift
 # Soa2aX
 일어서던 여자가 김이 오르는 새 그릇을 내려다본다.
 "…국밥 한 그릇에 넘어갈 계집으로 보이느냐."
@@ -129,7 +129,7 @@
 "보름날이다. 늦지 마라."
 @set aff=aff+1
 @fx mn:-1
-@goto Molak02#AfterChapter
+@goto #SoaGift
 
 # Soa2b
 그릇을 당기는 손목 급소를 여자의 젓가락이 한 치 앞에서 겨눈다.
@@ -137,16 +137,16 @@
 "소아다. 적운검파. 운주 들판, 보름날 무인들이 모인다. 그 몸뚱이가 무얼 기억하는지 보고 싶거든 오거라."
 @fx sl:1
 @set f_soamet=1
-@goto Molak02#AfterChapter
+@goto #SoaGift
 
 # Soa2c
 "국밥값."
 여자가 돌아본다. 눈썹 끝이 살짝 움직인다.
 동전 한 닢이 탁자에 떨어진다.
-"뻔뻔한 건 쓸 만하군."
+"숟갈 하나에 셈을 하는군. 그만큼 낯이 두꺼워야 강호에서 오래 버틴다."
 @fx mn:1
 @set f_soamet=1
-@goto Molak02#AfterChapter
+@goto #SoaGift
 
 # SoaMarkSafe
 여자의 젓가락이 멎는다. 외눈이 문양을 길고 차갑게 읽는다.
@@ -157,7 +157,7 @@
 여자가 소매를 내리고 일어선다.
 "소아. 적운검파(赤雲劍派). 운주 들판, 보름날. 그 몸으로 살아남을 작정이면, 오거라."
 @set f_soamet=1
-@goto Molak02#AfterChapter
+@goto #SoaGift
 
 # Shr1
 @art scene:shrine
@@ -511,6 +511,7 @@
 @choice "그날 밤 짐을 꾸린다" goto:#Hm4C1
 @stop
 # Hm4C0
+@set f_hyeop=f_hyeop+1
 @goto #HmStay
 # Hm4C1
 @goto #HmGo
@@ -833,3 +834,29 @@
 @fx sl:1
 @set f_amhyangknown=1
 @return
+
+; ---------- 0.4.66 기연: 소아의 적운환 (첫 만남, 생마다 한 번) ----------
+# SoaGift
+@goto Molak02#AfterChapter if:f_soagift>0
+@set f_soagift=1
+@art char:soa
+문턱을 넘던 여자가 돌아보지도 않고 무언가를 뒤로 던진다. 기름종이에 싼 작은 덩이가 국밥 그릇 옆에 떨어진다.
+종이를 펴자 콩알만 한 붉은 환약 한 알. 쇠비린내와 대추 냄새가 같이 난다.
+"<color=#C9A227>적운환(赤雲丸).</color> 적운산이 불탈 때 사부 품에서 꺼내 온 게 셋이었다. 이제 둘 남았다."
+"보름날 운주 들판에서 한 합 만에 나뒹굴면 내 눈이 틀린 게 된다. 삼켜라."
+@choice "그 자리에서 삼킨다" goto:#SoaGiftA
+@choice "\"받을 까닭이 없소.\" — 그래도 여자는 돌아오지 않는다" goto:#SoaGiftB
+@stop
+# SoaGiftA
+환약이 혀에 닿자마자 녹는다. 목구멍을 타고 내려간 열이 단전에서 한 번 크게 터진다.
+막혀 있던 혈도 셋이 한꺼번에 뚫린다. 손끝까지 피가 도는 소리가 들린다.
+@vfx kind:gold
+@giyeon name:"적운환(赤雲丸)" hanja:"丹" line:"소아가 던져 준 적운문의 마지막 환약 셋 중 하나" ng:4 hpmax:3 sw:2 curse:-4 heal:true why:"소아의 적운환 — 혈도 셋이 뚫렸다"
+@set aff=aff+1
+문밖에서 여자의 목소리만 넘어온다. "왼손이 반 박자 늦더군. 보름까지 고쳐 와."
+@goto Molak02#AfterChapter
+# SoaGiftB
+여자는 이미 저잣거리 사람들 사이로 사라졌다. 탁자 위에 붉은 환약만 남는다.
+돌려줄 데가 없다. 종이째 쥐고 있다가, 밤이 되어서야 삼킨다. 열이 단전에서 터진다.
+@giyeon name:"적운환(赤雲丸)" hanja:"丹" line:"돌려줄 데가 없어 밤에 삼킨 붉은 환약" ng:4 hpmax:3 sw:2 curse:-4 heal:true why:"소아의 적운환 — 혈도 셋이 뚫렸다"
+@goto Molak02#AfterChapter

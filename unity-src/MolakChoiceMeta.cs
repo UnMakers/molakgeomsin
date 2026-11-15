@@ -37,6 +37,7 @@ public static class MolakChoiceMeta
             if (v.StartsWith("g_")) continue;
             if (v == "mn" || v == "sw" || v == "ng" || v == "sl" || v == "hp" || v == "rep_maeng" || v == "rep_gae" || v == "rep_heuk") continue;
             if (v.StartsWith("f_") && BagName(v) != null) continue;
+            if (v == "f_hyeop") continue;   // 0.4.66 협 — 수치는 감추고 "남을 위해 나선 일이 더 쌓이면"
             return false;
         }
         return true;
@@ -44,13 +45,14 @@ public static class MolakChoiceMeta
     /// <summary>잠긴 카드의 주석: 무엇을 갖추면 열리는지. 지난 생의 앎은 이름을 말하지 않는다.</summary>
     static string LockHint (string cond)
     {
-        var parts = new List<string>(); bool know = false;
+        var parts = new List<string>(); bool know = false, hy = false;
         foreach (var raw in cond.Split(new[] { "&&" }, System.StringSplitOptions.RemoveEmptyEntries))
         {
             var m = Atom.Match(raw.Trim('(', ')', ' ')); if (!m.Success) continue;
             string v = m.Groups[1].Value; float n; float.TryParse(m.Groups[3].Value, out n);
             if (m.Groups[2].Value == ">") n += 1;
             if (v.StartsWith("g_")) { know = true; continue; }
+            if (v == "f_hyeop") { hy = true; continue; }
             string t = null;
             switch (v)
             {
@@ -67,6 +69,7 @@ public static class MolakChoiceMeta
             if (!string.IsNullOrEmpty(t) && !parts.Contains(t)) parts.Add(t);
         }
         string need = parts.Count > 0 ? string.Join(" · ", parts.ToArray()) + " 필요" : "";
+        if (hy) need = need.Length > 0 ? "남을 위해 나선 일이 더 쌓이면  ·  " + need : "남을 위해 나선 일이 더 쌓이면";
         if (know) return need.Length > 0 ? "지난 생에 알아 둔 일이 있다면  ·  " + need : "지난 생에 알아 둔 일이 있다면";
         return need;
     }

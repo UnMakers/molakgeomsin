@@ -1,0 +1,233 @@
+; ===== 몰락검신 — 경지의 밤 (0.4.66) =====
+; 비무판에서 경지가 바뀐 날(일류부터), 그 밤에 마디가 다시 닫힐 때까지 반 시진을 앉아 있어야 한다. 칼을 들 수 없는 반 시진.
+; 그 반 시진에 누가 문 앞에 앉아 주는가(호법), 누가 그 틈을 노리고 오는가는 이번 생을 어떻게 살았느냐가 정한다.
+;  · 길(btpath): 칼(sw) · 기(ng) · 협(f_hyeop) · 살(sl) · 사(curse) — 돌파의 글과 연출이 달라진다
+;  · 호법(btguard): 소아 > 하진무 > 장꾼들(협이 쌓인 생) > 없음
+;  · 노리는 자(btfoe): 원수 > 피를 많이 본 생의 원한 > 수배 > 없음
+; 진입: MolakDuel#TierUp 이 btpend=1 → Molak02#Night 첫머리. 끝나면 Molak02#NightEnd.
+
+# Break
+@set btpend=0
+@page
+@scene id:night
+@art scene:yard
+@art char:none
+판에서 돌아온 몸이 아직 뜨겁다. 낮에 열린 마디가 밤이 되어도 닫히지 않는다.
+<color=#C9A227>{tiername}</color>의 문턱을 넘은 날 밤에는 기가 제 길을 다시 찾느라 몸이 텅 빈다. 반 시진, 칼을 들 수 없다. 사부가 그렇게 일렀다. 그래서 문파마다 그 밤에는 호법(護法)을 세운다.
+청운에는 이제 호법을 서 줄 사형이 없다.
+@set btpath="sword"
+@set btpath="qi" if:ng>sw
+@set btpath="hyeop" if:f_hyeop>=4
+@set btpath="blood" if:sl>=8
+@set btpath="curse" if:curse>=60
+@set btguard="none"
+@set btguard="town" if:f_hyeop>=6
+@set btguard="hajin" if:f_hajinbond>0&&f_hajindead<1
+@set btguard="soa" if:f_soamet>0&&f_soadead<1&&aff>=6
+@set btfoe="none"
+@set btfoe="hunt" if:f_wanted>0
+@set btfoe="blood" if:killed>=3||sl>=10
+@set btfoe="grudge" if:grudge>0
+@goto #Guard_soa if:btguard=="soa"
+@goto #Guard_hajin if:btguard=="hajin"
+@goto #Guard_town if:btguard=="town"
+@goto #Guard_none
+
+; ---------- 누가 문 앞에 앉는가 ----------
+# Guard_soa
+@art char:soa
+뒷마당에 가부좌를 틀자 담 위에서 기왓장 하나가 달각 운다.
+소아가 쌍검을 무릎에 가로 얹고 담 위에 앉아 있다. 묻지도 않았는데 먼저 말한다.
+"적운에서도 그날 밤엔 사저가 내 등 뒤에 앉았다. 앉아 있기만 하면 된다. 칼은 내가 든다."
+외눈이 담 밖 골목을 향한다. 당신 쪽은 보지 않는다. 그게 호법의 자세다.
+@goto #Path
+# Guard_hajin
+@art char:hajinmu
+뒷마당에 가부좌를 틀자 객잔 뒷문이 열린다. 하진무가 걸상 하나와 주판을 들고 나온다.
+걸상을 뒷문 앞에 놓고 앉는다. 주판알을 하나씩 튕긴다.
+"장문인께서 이 마당에서 돌파하실 적에도 이 늙은이가 여기 앉았소. 그때도 칼은 없었소. 주판이면 되오."
+@goto #Path
+# Guard_town
+@art char:none
+뒷마당에 가부좌를 틀자 담 너머가 소란하다. 등불 하나, 둘, 다섯.
+짚신 영감, 대추 장수 할멈, 백초당에 업혀 갔던 거지, 짐을 같이 져 준 지게꾼. 한 번씩 손을 보탠 얼굴들이 저마다 몽둥이며 멜대를 들고 담 밑에 둘러앉는다.
+"협객 양반이 오늘 밤 큰일을 치른다기에." 지게꾼이 멋쩍게 웃는다. "칼은 못 써도 소리는 지를 줄 아오."
+@goto #Path
+# Guard_none
+뒷마당에 혼자 가부좌를 튼다. 담 밖으로 개 짖는 소리가 멀다.
+등 뒤가 비어 있다. 청운의 연무장에서는 이런 밤마다 대사형이 등을 대고 앉아 주었다.
+<color=#8A7A66>아무도 앉아 주지 않는 밤. 반 시진을 혼자 견뎌야 한다.</color>
+@goto #Path
+
+; ---------- 어떤 길로 왔는가 ----------
+# Path
+@goto #Path_curse if:btpath=="curse"
+@goto #Path_blood if:btpath=="blood"
+@goto #Path_hyeop if:btpath=="hyeop"
+@goto #Path_qi if:btpath=="qi"
+# Path_sword
+눈을 감는다. 손바닥부터 뜨거워진다. 마당에서 천 번 그은 횡소가 손바닥 안에서 다시 한 번씩 그어진다.
+판 위에서 받아 낸 칼들이 차례로 떠오른다. 막은 칼, 흘린 칼, 몸으로 받은 칼. 하나하나가 길을 하나씩 열어 놓았다.
+@goto #Foe
+# Path_qi
+눈을 감는다. 숨을 여섯에 들이고 아홉에 내쉰다. 거지 중이 열병 속에서도 외던 그 숫자다.
+단전의 열이 등줄기를 타고 올라 정수리에서 한 바퀴 돈다. 막혀 있던 마디가 하나씩 물에 잠기듯 풀린다.
+@goto #Foe
+# Path_hyeop
+눈을 감는다. 떠오르는 것은 칼이 아니다. 얼굴들이다. 대추를 주워 담던 할멈의 손, 업혀 가던 거지의 가쁜 숨, 지하 창고 계단을 내려가던 아이 셋.
+그 얼굴들 앞에 섰던 순간마다 몸 어딘가가 조금씩 단단해졌다. 오늘 그것이 한 줄로 꿰인다.
+@goto #Foe
+# Path_blood
+눈을 감는다. 떠오르는 것은 판 위의 목들이다. 칼이 들어가던 자리, 상대의 숨이 끊기던 박자.
+열린 마디로 들어오는 기에 쇠비린내가 섞여 있다. 단전이 뜨겁다 못해 따갑다.
+@goto #Foe
+# Path_curse
+눈을 감자마자 가슴의 문양이 먼저 깬다. 마디가 열린 틈으로 검은 열이 기어든다.
+문양이 낮게 웃는다. <color=#9A70C4>"익어 가는구나. 문을 열어 두었으니, 노부도 들어가 앉으마."</color>
+@vfx kind:curse
+@goto #Foe
+
+; ---------- 누가 그 틈을 노리는가 ----------
+# Foe
+@goto #Foe_grudge if:btfoe=="grudge"
+@goto #Foe_blood if:btfoe=="blood"
+@goto #Foe_hunt if:btfoe=="hunt"
+@goto #Quiet
+# Foe_grudge
+반 시진의 절반쯤. 담 밖에서 발소리가 멈춘다. 하나. 숨을 죽이는 법을 아는 발이다.
+담 위로 흰 삼베 띠를 맨 머리가 솟는다. 상복이다. 비무판에서 목을 친 그 사내의 피붙이다.
+"판 둘레에서 다 봤다. 오늘 밤 네 몸이 빈다는 걸."
+@goto #FoeHit
+# Foe_blood
+반 시진의 절반쯤. 담을 넘는 소리가 셋. 복면에 짧은 칼. 얼굴은 모르지만 칼 쥔 손목이 다들 어디서 본 듯하다.
+"형님이 판에서 네 칼에 갔다. 오늘 밤 네가 빈다는 소문을 들었지."
+피를 많이 본 생에는 그 피가 이렇게 담을 넘어 돌아온다.
+@goto #FoeHit
+# Foe_hunt
+반 시진의 절반쯤. 골목 끝에서 늑대 가죽 하나가 등불을 등지고 선다. 수배 방의 얼굴을 대조하는 눈이다.
+"서열이 올랐다더니, 오늘 밤 앉아 있을 줄 알았다. 산 채로 데려오라셨지."
+@goto #FoeHit
+
+# FoeHit
+@vfx kind:shake
+@goto #Def_soa if:btguard=="soa"
+@goto #Def_hajin if:btguard=="hajin"
+@goto #Def_town if:btguard=="town"
+@goto #Def_none
+
+# Def_soa
+@vfx kind:clash
+담 위에서 그림자 하나가 떨어진다. 쌍검이 엇갈리는 소리 한 번, 짧은 비명 한 번.
+"앉아 있어."
+그 한마디 뒤로 칼 소리가 담 밖으로 멀어진다. 당신은 눈을 뜨지 않는다. 뜨면 마디가 닫힌다.
+반 시진이 끝날 무렵 소아가 담 위로 돌아와 앉는다. 왼 소매가 젖어 있다. 제 피인지 남의 피인지 묻지 않는다.
+"……다음엔 네가 앉아라. 내 차례가 오면."
+@set aff=aff+2
+@fx curse:-2 why:"경지의 밤, 소아가 호법을 서 주었다"
+@goto #Done
+# Def_hajin
+@vfx kind:hit
+주판 소리가 멎는다. 걸상 넘어지는 소리. 하진무가 뒷문을 몸으로 막고 선다.
+"이 늙은이를 먼저 넘어가시오. 객잔 주인이 손님 방 앞을 비우는 법은 없소."
+칼등이 노인의 어깨를 친다. 노인이 비키지 않는다. 또 친다. 비키지 않는다.
+골목 끝에서 호루라기 소리가 난다. 포졸들이 다가오는 소리다. 칼 든 자가 혀를 차고 물러간다.
+반 시진이 끝나고 눈을 뜬다. 하진무가 걸상을 다시 세우고 앉아 어깨를 주무른다. 주판알 하나가 깨져 있다.
+"셈이 또 틀렸소. 깨진 알 값은 나중에 받겠소."
+@set f_hajinhurt=1
+@set hajinaff=hajinaff+2
+@goto #Done
+# Def_town
+담 밑의 등불들이 한꺼번에 일어선다. 몽둥이와 멜대가 담 위를 향한다.
+"누구요!" 지게꾼이 고함을 지른다. 짚신 영감이 징을 친다. 골목마다 창이 열린다. 등불이 열, 스물로 는다.
+칼 든 자가 담 위에서 멈칫한다. 스무 개의 등불이 그 얼굴을 비춘다. 얼굴이 밝혀진 자객은 칼을 쓰지 못한다.
+그가 담 밖으로 사라진다. 등불들은 반 시진이 끝날 때까지 꺼지지 않는다.
+@set f_hyeop=f_hyeop+1
+@fx curse:-3 why:"골목 사람들이 등불로 호법을 서 주었다"
+@goto #Done
+# Def_none
+등 뒤에 아무도 없다. 칼이 담을 넘어온다. 마디는 아직 열려 있다.
+@choice "운기를 끊고 칼을 든다 — 경지가 덜 여문다" goto:#DefN_cut
+@choice "끝까지 운기를 잇는다 — 칼을 몸으로 받는다" goto:#DefN_hold
+@choice "문양에 몸을 맡긴다 — 열린 마디로 검은 열을 들인다 〔저주 +8〕" if:curse>=40 goto:#DefN_curse
+@stop
+# DefN_cut
+눈을 뜬다. 열려 있던 마디가 한꺼번에 닫히며 피를 한 모금 토한다. 그래도 손은 칼을 찾는다.
+@risk on:sw need:+1
+@goto #DefN_cutL if:pass==0
+@vfx kind:heavy
+첫 칼을 흘리고 손목을 벤다. 자객이 칼을 떨어뜨리고 담 밖으로 구른다.
+@fx ng:-1 hp:-2 why:"돌파 중에 운기를 끊고 칼을 들었다"
+<color=#8A7A66>살았다. 그러나 오늘 넘은 문턱은 반만 넘었다.</color>
+@goto #DoneHalf
+# DefN_cutL
+@vfx kind:hit
+닫히는 마디에 칼이 반 박자 늦는다. 옆구리가 뜨겁다. 자객도 당신 칼에 귀를 하나 잃고 달아난다.
+@fx ng:-1 hp:-5 why:"돌파 중에 운기를 끊었으나 칼이 늦었다"
+@goto #DoneHalf
+# DefN_hold
+눈을 감은 채 버틴다. 첫 칼이 어깨를 긋는다. 둘째 칼이 등을 긋는다.
+숨을 여섯에 들이고 아홉에 내쉰다. 셋째 칼이 오기 전에, 마지막 마디가 닫힌다.
+@vfx kind:heavy
+눈을 뜨는 것과 칼이 나가는 것이 같은 순간이다. 자객이 제 칼을 쥔 채 무릎을 꿇는다. 무엇에 베였는지도 모르는 얼굴이다.
+@fx hp:-4 why:"돌파를 잇느라 자객의 칼을 몸으로 받았다"
+@goto #Done
+# DefN_curse
+열린 마디를 문양에 내준다. 검은 열이 혈도를 타고 손끝까지 단숨에 닿는다.
+@vfx kind:curse
+@vfx kind:beat
+눈을 뜨지 않았는데 담 위의 자객이 보인다. 그의 숨, 그의 맥, 그가 다음에 디딜 발.
+손이 혼자 움직인다. 자객이 담 위에서 떨어진다. 다시 일어나지 않는다.
+가슴의 문양이 배부른 소리를 낸다. 제 몫을 챙긴 소리다.
+@fx curse:8 sl:2 why:"열린 마디를 문양에 내주었다"
+@set killed=killed+1
+@goto #Done
+
+# Quiet
+반 시진 내내 아무도 오지 않는다. 담 밖으로 개 짖는 소리, 바람 소리, 멀리 야경꾼의 딱따기 소리뿐이다.
+@goto #Done
+
+; ---------- 마디가 닫힌다 ----------
+# Done
+@goto #Done_curse if:btpath=="curse"
+@goto #Done_blood if:btpath=="blood"
+@goto #Done_hyeop if:btpath=="hyeop"
+@goto #Done_qi if:btpath=="qi"
+# Done_sword
+@vfx kind:bt_sword
+마지막 마디가 닫힌다. 손에 쥔 것도 없는데 손바닥 안에 칼자루의 무게가 있다.
+일어나 목검을 한 번 긋는다. 마당의 낙엽이 칼이 지나간 줄을 따라 한 줄로 갈라져 눕는다.
+@goto #Reward
+# Done_qi
+@vfx kind:bt_qi
+마지막 마디가 닫힌다. 단전에서 정수리까지 한 줄기 물길이 선다. 숨 한 번이 전보다 길다.
+눈을 뜨자 마당의 물동이에 동그란 물결이 하나 번져 있다. 손을 대지 않았다.
+@goto #Reward
+# Done_hyeop
+@vfx kind:bt_hyeop
+마지막 마디가 닫힌다. 몸이 가볍다. 등 뒤가 든든하다. 아무도 기대 있지 않은데.
+담 너머 어느 집에서 아이가 잠꼬대를 한다. 그 소리가 또렷이 들린다. 이 골목의 숨소리가 다 들린다.
+@goto #Reward
+# Done_blood
+@vfx kind:bt_blood
+마지막 마디가 닫힌다. 귓속에서 심장 소리가 북처럼 크다. 눈을 뜨자 마당이 붉게 보이다가 천천히 제 빛으로 돌아온다.
+칼을 쥐지 않은 손가락이 저절로 굽는다. 무엇을 쥐고 싶은지 손이 먼저 안다. 그게 무섭다.
+@fx sl:1 why:"피로 연 경지 — 손이 먼저 쥘 것을 안다"
+@goto #Reward
+# Done_curse
+@vfx kind:bt_curse
+마지막 마디가 닫힌다. 닫힌 마디 안쪽에 검은 열이 한 줌 남아 있다. 문양이 그 열 위에 똬리를 튼다.
+<color=#9A70C4>"고맙구나. 방 한 칸 잘 얻었다."</color>
+경지는 넘었다. 넘은 몸의 한 칸을 남이 쓰고 있다.
+@fx curse:3 why:"넘은 몸의 한 칸을 문양이 차지했다"
+@goto #Reward
+
+# Reward
+@set hpmax=hpmax+2
+@fx hp:99 why:"경지의 밤 — 마디가 닫히며 몸이 다 회복된다"
+@fx ng:1 why:"경지의 밤 — 마디가 닫히며 기가 한 칸 깊어졌다"
+@turn kicker:"경지의 밤" title:"{tiername}" lines:"체력의 끝 +2, 몸이 다 회복된다|내공 +1"
+@goto Molak02#NightEnd
+# DoneHalf
+@set hpmax=hpmax+1
+@turn kicker:"경지의 밤 — 반쯤" title:"{tiername}" lines:"체력의 끝 +1|운기를 끊었다 — 내공 −1"
+@goto Molak02#NightEnd

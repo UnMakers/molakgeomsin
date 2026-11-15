@@ -343,11 +343,14 @@
 @set evkind="day"
 @pickevent chance:85 slot:day
 @gosub #RunEvent if:nextevent!="none"
+@goto #DayLoop if:hp<=0
 @pickevent chance:40 slot:day
 @gosub #RunEvent if:nextevent!="none"
+@goto #DayLoop if:hp<=0
 @goto #Night
 
 # AfterChapter
+@goto #DayLoop if:hp<=0
 @art char:none
 @set chain=chain+1
 @goto #BeatCheck if:chain<3
@@ -375,8 +378,10 @@
 # Collapse3
 백초 할멈의 약연 소리에 눈을 뜬다.
 "죽으려거든 약값부터 치르고 죽거라. 이틀이다. 다음엔 안 깨어날 게다."
+@goto #CollapseT
 # CollapseB
-늙은 등에 업혀 있다. 지난번보다 숨이 가쁘다.
+늙은 등에 업혀 있다. 주판 냄새가 난다. 지난번보다 숨이 가쁘다.
+하진무가 걸음을 멈추고 숨을 고른다.
 "객. 두 번은 업어 드리겠다고 장부에 적어 두었소. 세 번은…… 이 늙은 등이 못 하오."
 @goto #CollapseT
 # CollapseT
@@ -735,6 +740,9 @@
 
 ; --- 밤: 며칠 밤의 선택 ---
 # Night
+@goto #DayLoop if:hp<=0
+@goto Molak18#Break if:btpend>0&&hp>0
+@goto #NightEnd if:storymode>0
 @art char:none
 @scene id:night
 @bridge kind:dusk
@@ -788,7 +796,7 @@
 @goto #NightChoice
 # NvBroke
 전낭을 뒤집어 턴다. 먼지만 떨어진다.
-방값 셈은 하진무가 하지 않는다. 그래서 더 눈치가 보인다.
+하진무는 방값을 재촉하지 않는다. 그래서 더 눈치가 보인다.
 @goto #NightChoice
 # NvOld
 @set tn_oldvoice=1
@@ -840,7 +848,7 @@
 가슴의 글자가 오늘도 하나 늘었다. 늘어난 만큼 검을 쥔다.
 @goto #NightChoice
 # NightChoice
-@choice "검술을 수련한다 — 검술이 오른다" if:day<10 goto:#NSw
+@choice "검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1" if:day<10 goto:#NSw
 @choice "검술을 수련한다" if:day>=10 goto:#NSw
 @choice "운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다" if:day<10 goto:#NQi
 @choice "운기조식으로 내공을 쌓는다" if:day>=10 goto:#NQi
@@ -891,19 +899,19 @@
 @goto #NSw3 if:sv==3
 @goto #NSw4 if:sv==4
 달빛 아래 옆으로 크게 베는 횡소(橫掃)를 천 번 긋는다. 손바닥이 터지고, 감각이 쌓인다.
-@fx sw:1 hp:-1
+@fx sw:1 hp:-1 why:"밤새 횡소를 긋는다 — 검은 늘고 손바닥은 터졌다"
 @goto #NightEnd
 # NSw2
-횡소 천 번. 사형이 세던 숫자를 이제 당신이 센다.
-@fx sw:1 hp:-1
+횡소 천 번. 사형이 세던 숫자를 이제 당신이 센다. 굳은살이 터져 칼자루가 미끄럽다.
+@fx sw:1 hp:-1 why:"밤새 횡소를 긋는다 — 검은 늘고 굳은살이 터졌다"
 @goto #NightEnd
 # NSw3
-느티나무를 상대로 천 번. 나무는 피하지 않는다.
-@fx sw:1 hp:-1
+느티나무를 상대로 천 번. 나무는 피하지 않는다. 되돌아오는 울림에 손목이 저리고 손바닥이 갈라진다.
+@fx sw:1 hp:-1 why:"느티나무에 천 번 — 검은 늘고 손바닥이 갈라졌다"
 @goto #NightEnd
 # NSw4
-달 없는 밤. 천 번째에는 눈 없이도 검끝이 어디 있는지 안다.
-@fx sw:1 hp:-1
+달 없는 밤. 천 번째에는 눈 없이도 검끝이 어디 있는지 안다. 대신 어깨가 올라가지 않는다.
+@fx sw:1 hp:-1 why:"달 없는 밤의 천 번 — 검은 늘고 어깨가 굳었다"
 @goto #NightEnd
 # NSwX1
 삼백 번째쯤, 담 위에 소아가 앉는다. 오백 번째에 입을 연다.
@@ -911,13 +919,13 @@
 "……사형은 그게 내 버릇이라 했다."
 "버릇은 죽을 자리를 알려 준다. 고쳐라."
 그러고는 담 너머로 사라진다.
-@fx sw:2 hp:-1
+@fx sw:2 hp:-1 why:"소아가 왼손 버릇을 짚어 주었다 — 손은 터졌다"
 @set aff=aff+1
 @goto #NightEnd
 # NSwX2
 칠백 번째, 쨍 소리와 함께 날 끝의 이가 빠진다.
 대장간에 맡기면 이틀에 은자 둘이다.
-@fx mn:-2 hp:-1
+@fx mn:-2 hp:-1 why:"칼날 이가 빠져 대장간 삯 · 손이 터졌다"
 @goto #NightEnd
 # NSwCtx
 @goto #NSwC1 if:c_sw==1
@@ -979,15 +987,15 @@
 @goto #NSwB2 if:sv==2
 @goto #NSwB3 if:sv==3
 「운검비록」의 구결대로 긋는다. 검끝이 반 치씩 깊어진다.
-@fx sw:2 hp:-1
+@fx sw:2 hp:-1 why:"운검비록 구결대로 긋는다 — 손은 터졌다"
 @goto #NightEnd
 # NSwB2
 손목보다 허리, 허리보다 발. 어제 몰랐던 반 치가 오늘 손에 있다.
-@fx sw:2 hp:-1
+@fx sw:2 hp:-1 why:"운검비록 구결대로 긋는다 — 손은 터졌다"
 @goto #NightEnd
 # NSwB3
 운검비록의 셋째 구결을 편다. 허공에 획 하나를 천 번 긋는다. 허공이 베이는 소리가 들린다.
-@fx sw:2 hp:-1
+@fx sw:2 hp:-1 why:"운검비록 셋째 구결 — 손은 터졌다"
 @goto #NightEnd
 # NQi
 @set nmul=3
@@ -1008,19 +1016,19 @@
 @goto #NQi3 if:sv==3
 @goto #NQi4 if:sv==4
 숨을 고르고(조식), 기를 모아(취기) 온몸에 돌린다(운기). 마지막에 탁한 기운을 뱉으려는데, 가슴의 <color=#9A70C4>문양이 먼저 삼킨다</color>.
-@fx ng:2 hp:1 curse:3
+@fx ng:2 hp:1 curse:3 why:"밤새 운기조식 — 내공이 돌고 몸이 쉰다. 탁기는 문양으로 간다"
 @goto #NightEnd
 # NQi2
 운기 한 바퀴. 기가 가슴에서 한 번 멈춘다. 문양이 통행세처럼 진기를 떼어 가는 자리다.
-@fx ng:2 hp:1 curse:3
+@fx ng:2 hp:1 curse:3 why:"밤새 운기조식 — 내공이 돌고 몸이 쉰다. 탁기는 문양으로 간다"
 @goto #NightEnd
 # NQi3
 들숨, 날숨. 문양은 제 몫을 챙긴다.
-@fx ng:2 hp:1 curse:3
+@fx ng:2 hp:1 curse:3 why:"밤새 운기조식 — 내공이 돌고 몸이 쉰다. 탁기는 문양으로 간다"
 @goto #NightEnd
 # NQi4
 운기 도중 사형의 목소리가 들린 것 같다. '막내야, 숨이 급하다.' 숨을 늦추자 기가 한 뼘 깊이 내려간다.
-@fx ng:2 hp:1 curse:3
+@fx ng:2 hp:1 curse:3 why:"밤새 운기조식 — 내공이 돌고 몸이 쉰다. 탁기는 문양으로 간다"
 @goto #NightEnd
 # NQiX1
 운기 셋째 바퀴. 기가 거꾸로 돌아 문양 쪽으로 빨려 든다. 입 안에 쇳내가 고인다.
@@ -1084,15 +1092,15 @@
 @set sv=random(1,2)
 @goto #NQiB2 if:sv==2
 들숨 여섯, 날숨 아홉. 다리 밑 거지 중이 알려 준 호흡법대로 숨을 바꾸자, 탁기가 덜 쌓인다.
-@fx ng:2 hp:1 curse:2
+@fx ng:2 hp:1 curse:2 why:"거지 중의 호흡법(여섯·아홉)으로 운기 — 탁기가 덜 쌓인다"
 @goto #NightEnd
 # NQiB2
 여섯, 아홉. 문양이 삼키는 몫이 손톱만큼 준다.
-@fx ng:2 hp:1 curse:2
+@fx ng:2 hp:1 curse:2 why:"거지 중의 호흡법(여섯·아홉)으로 운기 — 탁기가 덜 쌓인다"
 @goto #NightEnd
 # NQiB3
 여섯, 아홉, 반 호흡 멈춤. 거지 중의 두 번째 구결이다. 탁기가 문양에 닿기 전에 빠져나간다.
-@fx ng:2 hp:1 curse:1
+@fx ng:2 hp:1 curse:1 why:"거지 중의 호흡법(여섯·아홉)으로 운기 — 탁기가 덜 쌓인다"
 @goto #NightEnd
 # NightTown
 @art scene:nightmarket
@@ -1413,7 +1421,7 @@
 @goto #Evening
 # DMn
 @set mnwarn=day
-<color=#C03434>전낭이 가볍다.</color> 이대로면 방값이 사흘을 못 간다. 날품을 팔든 비무판에 서든, 은자를 벌어야 한다.
+<color=#C03434>전낭이 가볍다.</color> 남은 은자 {mn}냥으로는 방값이 사흘을 못 간다. 날품을 팔든 비무판에 서든, 은자를 벌어야 한다.
 @goto #Evening
 # D10
 @set ms_d10=1
@@ -1448,6 +1456,7 @@
 @set evkind="night"
 @pickevent chance:55 slot:night
 @gosub #RunEvent if:nextevent!="none"
+@goto #DayLoop if:hp<=0
 @teaser
 @print "{nightteaser}" if:nightteaser!="none"
 @goto #DayLoop
@@ -1608,6 +1617,12 @@
 @gosub MolakEvents#E_CultRite if:nextevent=="E_CultRite"
 @gosub MolakEvents#E_CultLaugh if:nextevent=="E_CultLaugh"
 @gosub MolakEvents#E_CultFeast if:nextevent=="E_CultFeast"
+@gosub MolakEvents#E_HyeopName if:nextevent=="E_HyeopName"
+@gosub MolakEvents#E_GiGinseng if:nextevent=="E_GiGinseng"
+@gosub MolakEvents#E_GiScar if:nextevent=="E_GiScar"
+@gosub MolakEvents#E_GiPill if:nextevent=="E_GiPill"
+@gosub MolakEvents#E_GiPurse if:nextevent=="E_GiPurse"
+@gosub MolakEvents#E_GiMaster if:nextevent=="E_GiMaster"
 @gosub MolakEvents#E_HerbNeedle if:nextevent=="E_HerbNeedle"
 @gosub MolakEvents#E_RingClosed if:nextevent=="E_RingClosed"
 @return

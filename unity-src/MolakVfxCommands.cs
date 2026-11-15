@@ -27,11 +27,34 @@ public class VfxCommand : Command
             case "petals": MolakVfx.Weather("petals"); break;
             case "embers": MolakVfx.Weather("embers"); break;
             case "inferno": MolakVfx.Weather("inferno"); MolakVfx.Shake(8f); break;   // 불타는 산장 — 불티의 두 배와 아래에서 치솟는 열기
+            case "fireon": MolakVfx.Weather("inferno"); break;   // 0.4.66 장면이 바뀌어도 불길을 이어 간다(흔들림 없이) — 뒷산으로 달아나도 산장이 타고 있다
             case "clear": MolakVfx.Weather(""); break;
             case "tier": MolakVfx.Gold(); MolakVfx.Shake(6f); MolakVfx.Stamp("境", MolakStats.Str("tiername", ""), true); MolakSfx.Bell(); break;   // 0.4.33 경지 돌파
+            // 0.4.66 경지의 밤: 어떤 길로 넘었느냐에 따라 빛·소리·인장이 다르다(세 박자로 터진다)
+            case "bt_sword": Breakthrough(new Color(1f, 0.86f, 0.42f, 0.55f), "劍", "sword"); break;
+            case "bt_qi": Breakthrough(new Color(0.70f, 0.86f, 1f, 0.50f), "氣", "qi"); break;
+            case "bt_hyeop": Breakthrough(new Color(1f, 0.96f, 0.86f, 0.55f), "俠", "hyeop"); break;
+            case "bt_blood": Breakthrough(new Color(0.75f, 0.06f, 0.05f, 0.55f), "殺", "blood"); break;
+            case "bt_curse": Breakthrough(new Color(0.42f, 0.18f, 0.62f, 0.60f), "邪", "curse"); break;
             case "crowd": MolakVfx.Shake(3f); MolakSfx.Play("page_turn", 0.5f, 0.7f); break;   // 구경꾼이 술렁인다
         }
         await Awaitable.NextFrameAsync();
+    }
+
+    /// <summary>경지 돌파 세 박자: ① 빛이 몸 안에서 터지고 흔들림 ② 숨 한 번 뒤 인장(길의 한 글자 + 경지 이름) ③ 종(또는 심장·문양의 숨)으로 닫는다.</summary>
+    static async void Breakthrough (Color c, string hanja, string path)
+    {
+        string tier = MolakStats.Str("tiername", "");
+        MolakVfx.Flash(new Color(c.r, c.g, c.b, c.a * 0.6f), 0.5f); MolakVfx.Shake(path == "blood" || path == "curse" ? 16f : 9f);
+        if (path == "sword") MolakSfx.Clash(true); else if (path == "blood") MolakSfx.Heart(); else if (path == "curse") MolakSfx.CurseBreath(); else MolakSfx.Draw();
+        try { await Awaitable.WaitForSecondsAsync(0.7f); } catch { return; }
+        MolakVfx.Flash(c, path == "qi" ? 2.4f : 1.6f);
+        if (path == "curse") MolakVfx.CursePulse();
+        MolakVfx.Stamp(hanja, tier.Length > 0 ? tier + " — 마디가 닫혔다" : "마디가 닫혔다", true);
+        if (path == "sword") MolakVfx.Shake(12f);
+        try { await Awaitable.WaitForSecondsAsync(0.9f); } catch { return; }
+        if (path == "hyeop") MolakSfx.TrueBell(); else if (path == "blood") { MolakSfx.Heart(); MolakVfx.Flash(new Color(0.5f, 0f, 0f, 0.3f), 0.8f); } else if (path == "curse") MolakSfx.Death(); else MolakSfx.Bell();
+        if (path == "sword" || path == "qi" || path == "hyeop") MolakVfx.Gold();
     }
 }
 

@@ -113,6 +113,7 @@ public static class MolakDuel
 
     public static float Odds (Foe foe, float bonus)
     {
+        if (MolakStory.On) return 97f;   // 0.4.66 이야기 모드
         return Mathf.Clamp(50f + (MyPower() + bonus - foe.P) * 5f, 5f, 92f);
     }
 }
@@ -198,8 +199,8 @@ public class DuelCommand : Command
         float sl = MolakStats.Get("sl"), curse = MolakStats.Get("curse");
         if (style == "killer") { bonus = 2f + sl * 0.3f; hpRisk = 5f; }
         if (style == "guard") { bonus = -1f; hpRisk = 2f; }
-        if (style == "curse") { bonus = 3f + curse * 0.06f; hpRisk = 2f; MolakStats.Add("curse", 5f); }
-        if (style == "curse2") { bonus = 5f + curse * 0.08f; hpRisk = 2f; MolakStats.Add("curse", 8f); } // 75 이상: 사술이 먼저 나선다
+        if (style == "curse") { bonus = 3f + curse * 0.06f; hpRisk = 2f; MolakStatLog.Why("curse", "비무에서 문양의 힘을 빌렸다"); MolakStats.Add("curse", 5f); }
+        if (style == "curse2") { bonus = 5f + curse * 0.08f; hpRisk = 2f; MolakStatLog.Why("curse", "비무에서 사술이 먼저 나섰다"); MolakStats.Add("curse", 8f); } // 75 이상: 사술이 먼저 나선다
         if (style == "sense") { bonus = 2f; hpRisk = 2f; }   // 독 바른 칼을 먼저 읽는다
         if (style == "onecut") { bonus = 6f; hpRisk = 4f; } // 0.4.33 한칼에 끝낸다: 격이 다를 때만 열린다(승산 열에 여덟 이상)
         if (MolakStats.Get("memwarn") > 0) bonus += 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f); // 전생의 앎: 상대의 첫 수를 안다
@@ -269,6 +270,11 @@ public class DuelCommand : Command
             float dmg = Random.Range(0, Mathf.Max(1, (int)hpRisk - 1));
             float reward = kind == "unju" ? 3f : kind == "hochi" ? 8f : kind == "cheolsan" ? 100f : kind == "back" ? 3f : 1f;
             MolakStats.Set("rank", newRank);
+            string fn = foe.Name ?? "상대";
+            MolakStatLog.Why("hp", "비무에서 이겼으나 " + fn + "의 칼에 스쳤다");
+            MolakStatLog.Why("sw", fn + MolakStatLog.Eul(fn) + " 꺾으며 검이 한 뼘 는다");
+            MolakStatLog.Why("mn", "비무 상금");
+            MolakStatLog.Why("sl", "죽이려는 칼로 이겼다");
             MolakStats.Add("hp", -dmg);
             MolakStats.Add("sw", 1f);
             MolakStats.Add("mn", reward);
@@ -284,6 +290,7 @@ public class DuelCommand : Command
             MolakDuelCard.Show(true, foe.Name, "서열 " + MolakDuel.RankText(oldRank) + " → " + MolakDuel.RankText(newRank), tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");
             if (foe.Boss == "wolf") MolakStats.Set("f_wolfdown", 1f);
             if (foe.Boss == "hochi") MolakStats.Set("f_hmsaved", 1f);
+            if (sit == 3 || sit == 7) MolakStatLog.Why("mn", "비무 상금에 판돈이 얹혔다");
             if (sit == 3) { MolakStats.Add("mn", 3f); MolakStats.Add("sl", 1f); }
             if (sit == 7) MolakStats.Add("mn", 10f);
             if (sit == 12) { MolakStats.Set("f_wanted", 1f); MolakStats.Add("sl", 1f); }
@@ -302,10 +309,13 @@ public class DuelCommand : Command
                 MolakStats.Set("dinj", 1f);
                 if (wasHurt && MolakStats.Get("taint") <= 0) { MolakStats.Set("taint", 1f); MolakStats.Set("taintkind", 2f); MolakStats.Set("dtaint", 1f); }
                 if (sit == 4 && MolakStats.Get("taint") <= 0) { MolakStats.Set("taint", 1f); MolakStats.Set("taintkind", 1f); MolakStats.Set("dtaint", 1f); }
+                if (sit == 2) MolakStatLog.Why("mn", "비무에 지고 전낭 반을 털렸다");
+                if (sit == 3 || sit == 12) MolakStatLog.Why("sl", "지고 나니 칼끝의 독기가 꺾였다");
                 if (sit == 2) { float lost = Mathf.Ceil(MolakStats.Get("mn") / 2f); MolakStats.Add("mn", -lost); MolakStats.Set("dloot", lost); }
                 if (sit == 3) MolakStats.Add("sl", -1f);
                 if (sit == 12) { MolakStats.Add("sl", -1f); if (oldRank > 0) MolakStats.Set("rank", Mathf.Floor(oldRank * 1.15f)); }
             }
+            MolakStatLog.Why("hp", "비무에서 " + (foe.Name ?? "상대") + "에게 졌다");
             MolakStats.Add("hp", -dmg);
             if (IsBossKind(kind) && MolakStats.Get("practice") < 1f) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다
             MolakStats.Set("duelwin", 0f); MolakArt.EndDuel();

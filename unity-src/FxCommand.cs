@@ -16,12 +16,15 @@ public class FxCommand : Command
     public IntegerParameter Mn;
     public IntegerParameter Curse;
     public IntegerParameter Day;
+    /// <summary>0.4.66 능력치 기록에 남길 까닭(없으면 앞 서술로 갈음).</summary>
+    public StringParameter Why;
 
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
     {
         float k = Mathf.Max(1f, MolakStats.Get("nmul"));
+        if (Assigned(Why)) MolakStatLog.Why("*", Why.Value);
         if (Assigned(Hp))
         {
             float v = Hp.Value * k; MolakStats.Add("hp", v); MolakHud.Delta("hp", v);

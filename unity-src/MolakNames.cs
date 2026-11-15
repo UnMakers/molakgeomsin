@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 /// 0.4.60 세력 이름·초식 이름도(언메이커: 세력이름, 초식이름은 칠할 필요가 있다).
 ///  · 사람 = 굵게 + 사람마다 다른 색. 세력 = 그 세력의 우두머리와 같은 색 계열, 굵지 않게(사람과 갈래가 보이게).
 ///  · 초식·무공 = 쪽빛 한 가지 + 밑줄 — 사람·세력 색과 섞여도 '이건 칼 쓰는 법'으로 읽히게.
-/// 0.4.61 이야기의 실마리(언메이커: 스토리에 중요한 것들도 표기): 문양·복면·북두·연잎·산문·우물·반쪽·열매… 「그 밤의 진실」에 걸린 낱말은
+/// 0.4.61 이야기의 실마리(언메이커: 스토리에 중요한 것들도 표기): 문양·북두(0.4.66 복면은 뺐다)·운주 들판·연잎·산문·우물·반쪽·열매… 「그 밤의 진실」에 걸린 낱말은
 ///  글자색은 그대로 두고 옅은 금빛 형광(<mark>)을 깐다 — 진실 판의 금빛 칸과 같은 빛. 한 쪽에 같은 낱말은 처음 한 번만(같은 쪽에 '문양'이 다섯 번 나와도 첫 번째만).
 /// 본문 TMP 전처리기(MolakTypography.DialogueStyler)에서 대사 가르기 전에 한 번 칠한다 — 대본은 그대로 둔다.
 ///  · 이미 색이 칠해진 구간(<color>…</color>, 첫 소개 같은 붉은 이름)은 건드리지 않는다.
@@ -21,6 +21,8 @@ public static class MolakNames
     const int Person = 0, Faction = 1, Art = 2, Clue = 3;
     const string ClueDay = "#E0B43C80", ClueNight = "#C9A22790";
     const string ArtDay = "#1F5878", ArtNight = "#8CCBEB";
+    // 0.4.66 초식은 밑줄 대신 형광펜(언메이커) — 실마리(금빛)와 갈리게 옅은 쪽빛. 매번 칠한다.
+    const string ArtMarkDay = "#7FB9DA70", ArtMarkNight = "#3F7FA690";
 
     // 초식·무공: 가장 먼저 건다(청운검법 → 청운, 혈쇄망 → 혈쇄문 보다 앞서게)
     static readonly P[] Arts = {
@@ -31,7 +33,7 @@ public static class MolakNames
         new P("북두칠성|북두(?!를 거꾸로)", ClueDay, ClueNight, Clue),
         new P("사형의 패|일곱째의 패", ClueDay, ClueNight, Clue),
         new P("문양", ClueDay, ClueNight, Clue),
-        new P("복면", ClueDay, ClueNight, Clue),
+        new P("운주 들판", ClueDay, ClueNight, Clue),   // 0.4.66 소아가 일러 주는 무인 모임 자리(언메이커: 중요한 일인데 강조를)
         new P("연잎|蓮", ClueDay, ClueNight, Clue),
         new P("산문(?=을 열|을 연|이 열|을 닫)", ClueDay, ClueNight, Clue),
         new P("멸문", ClueDay, ClueNight, Clue),
@@ -67,7 +69,7 @@ public static class MolakNames
         new P("하진무",                                 "#7A4A22", "#DDA772"),   // 객잔 주인 — 호두빛 갈색
         new P("혈랑대주|대사형|진백",                    "#2F5590", "#8FB4EC"),   // 대사형 — 쇠빛 푸름
         new P("백초 할멈|할멈",                          "#2F7A3A", "#8ED48C"),   // 약초 — 풀빛
-        new P("노인(?![들네])",                          "#256E6E", "#7ED2D2"),   // 복면 노인 — 청록
+        new P("백발(?:의)? ?노인|복면(?:을 쓴)? ?노인|노인(?![들네])", "#256E6E", "#7ED2D2"),   // 백발 노인 — 청록. 0.4.66 '백발 노인'·'복면 노인'은 통째로(언메이커: 노인에만 칠하면 헷갈린다)
         new P("혈천마|혈마교주|교주(?![전])",             "#6E1830", "#E27C90"),   // 교주 — 검붉은 자줏빛(위험 붉음보다 어둡게)
         new P("곽산",                                   "#A4471F", "#F0956A"),   // 창잡이 — 녹슨 쇠
         new P("용개",                                   "#66651A", "#D2CE6C"),   // 회목채 — 올리브
@@ -108,6 +110,7 @@ public static class MolakNames
     }
 
     static readonly Dictionary<string, string> cacheDay = new Dictionary<string, string>(), cacheNight = new Dictionary<string, string>();
+    static bool paintNight;
 
     /// <summary>태그 밖, 이미 칠한 색 구간 밖의 이름·은자 액수에 색을 입힌다.</summary>
     public static string Paint (string text, bool night)
@@ -117,6 +120,7 @@ public static class MolakNames
         var cache = night ? cacheNight : cacheDay;
         string hit; if (cache.TryGetValue(text, out hit)) return hit;
         var hexes = night ? nightHex : dayHex; string coinHex = night ? CoinNight : CoinDay;
+        paintNight = night;
         clueSeen.Clear();
         var outp = new StringBuilder(text.Length + 64);
         int colorDepth = 0, i = 0;
@@ -171,7 +175,7 @@ public static class MolakNames
             {
                 string c = "<color=" + hexes[k] + ">" + m.Value + "</color>";
                 if (kinds[k] == Person) return "<b>" + c + "</b>";   // 가는 명조라 색만으로는 약하다 — 굵게
-                if (kinds[k] == Art) return "<u>" + c + "</u>";
+                if (kinds[k] == Art) return "<mark=" + (paintNight ? ArtMarkNight : ArtMarkDay) + ">" + c + "</mark>";
                 if (kinds[k] == Clue)
                 {
                     if (clueSeen.Contains(k)) return m.Value;   // 한 쪽에 한 번

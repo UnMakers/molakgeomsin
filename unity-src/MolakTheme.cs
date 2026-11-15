@@ -357,6 +357,17 @@ public class MolakTheme : MonoBehaviour
             var seal = btn.transform.Find("MolakSeal");
             if (seal == null)
             {
+                // 0.4.66 능력치 기록: 이 카드를 누르면 그 글을 '고른 일'로 적어 둔다
+                var pickBtn = btn.GetComponent<UnityEngine.UI.Button>();
+                if (pickBtn != null)
+                {
+                    var pickRef = btn;
+                    pickBtn.onClick.AddListener(() =>
+                    {
+                        foreach (var ptx in pickRef.GetComponentsInChildren<TMPro.TMP_Text>(true))
+                            if (ptx.gameObject.name != "Num" && ptx.transform.parent != null && ptx.transform.parent.name != "MolakSeal" && !string.IsNullOrEmpty(ptx.text)) { MolakStatLog.Pick(ptx.text); break; }
+                    });
+                }
                 var sg = new GameObject("MolakSeal", typeof(RectTransform), typeof(Image), typeof(UnityEngine.UI.LayoutElement));
                 sg.transform.SetParent(btn.transform, false);
                 sg.GetComponent<UnityEngine.UI.LayoutElement>().ignoreLayout = true;

@@ -44,11 +44,28 @@ public class MolakVfx : MonoBehaviour
         Color c;
         if (Scenes.TryGetValue(id, out c)) tintTarget = c;
     }
-    public static void Flash (Color c, float dur) { if (instance != null) { instance.flashC = c; instance.flashDur = dur; instance.flashT = 0f; } }
+    // 0.4.66 깜빡임 줄이기(언메이커: "화면 깜빡이는 게 너무 과하다")
+    //  · 세기 전체를 절반 아래로(FlashScale), 화면 전체 막은 더 옅게 · 가장자리 비네트 위주로
+    //  · 켜질 때 0.12초에 걸쳐 스며들고(톡 터지지 않게) 천천히 걷힌다
+    //  · 0.6초 안에 또 오면 새로 터뜨리지 않고 지금 빛에 합친다(연달아 번쩍이는 것 막기)
+    public const float FlashScale = 0.42f, ShakeScale = 0.6f;
+    public static void Flash (Color c, float dur)
+    {
+        if (instance == null) return;
+        c.a *= FlashScale;
+        float now = Time.unscaledTime;
+        if (instance.flashT >= 0f && now - instance.flashStart < 0.6f)
+        {   // 합치기: 더 센 쪽 색, 남은 길이는 늘리지 않는다
+            if (c.a > instance.flashC.a * (1f - Mathf.Clamp01(instance.flashT / instance.flashDur))) instance.flashC = new Color(c.r, c.g, c.b, Mathf.Max(c.a, instance.flashC.a));
+            return;
+        }
+        instance.flashC = c; instance.flashDur = Mathf.Max(0.35f, dur); instance.flashT = 0f; instance.flashStart = now;
+    }
+    float flashStart = -9f;
     public static void Blood () { Flash(new Color(0.62f, 0.08f, 0.05f, 0.5f), 0.7f); Shake(14f); }
     public static void Gold () { Flash(new Color(0.85f, 0.68f, 0.18f, 0.32f), 0.6f); }
     public static void CursePulse () { Flash(new Color(0.42f, 0.22f, 0.58f, 0.4f), 0.9f); MolakSfx.CurseBreath(); }
-    public static void Shake (float amp) { if (instance != null && (instance.shakeT < 0f || amp >= instance.shakeAmp)) { instance.shakeAmp = amp; instance.shakeT = 0f; } }
+    public static void Shake (float amp) { amp *= ShakeScale; if (instance != null && (instance.shakeT < 0f || amp >= instance.shakeAmp)) { instance.shakeAmp = amp; instance.shakeT = 0f; } }
     /// <summary>칼이 부딪는 순간: 흰 섬광 한 번 + 짧은 흔들림 + 칼 소리</summary>
     public static void Clash (bool heavy) { Flash(new Color(1f, 0.97f, 0.9f, heavy ? 0.55f : 0.35f), heavy ? 0.35f : 0.22f); Shake(heavy ? 16f : 9f); MolakSfx.Clash(heavy); }
 
@@ -160,7 +177,7 @@ public class MolakVfx : MonoBehaviour
             if (hp > 0f && r <= 0.3f)
             {
                 float k = Mathf.InverseLerp(0.3f, 0.05f, r);                       // 낮을수록 짙고 빠르게
-                float a = (0.12f + 0.20f * k) * (0.35f + 0.65f * Beat(Time.time, 64f + 40f * k));
+                float a = (0.08f + 0.14f * k) * (0.45f + 0.55f * Beat(Time.time, 64f + 40f * k));
                 var g = GUI.color; GUI.color = new Color(0.55f, 0.04f, 0.03f, a); GUI.DrawTexture(new Rect(0, 0, w, h), Vig); GUI.color = g;
             }
             if (cu >= 75f)
@@ -173,15 +190,16 @@ public class MolakVfx : MonoBehaviour
         // 플래시(비네트 느낌: 중앙은 옅고 가장자리 진하게 — 상/하/좌/우 밴드)
         if (flashT >= 0f)
         {
-            flashT += Time.deltaTime;
+            if (Event.current.type == EventType.Repaint) flashT += Time.unscaledDeltaTime;   // OnGUI 는 한 프레임에 여러 번 불린다
             float k = 1f - Mathf.Clamp01(flashT / flashDur);
-            if (k <= 0f) flashT = -1f;
+            k = k * k * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(flashT / 0.12f));   // 스며들었다가 천천히 걷힌다
+            if (flashT >= flashDur) flashT = -1f;
             else
             {
                 // 0.4.27: 네모 띠 대신 화면 전체를 고르게 물들이고, 가장자리는 둥근 비네트로 조금 더 짙게(본문 창 자리만 빠져 보이던 문제)
                 var g = GUI.color;
-                GUI.color = new Color(flashC.r, flashC.g, flashC.b, flashC.a * k * 0.75f); GUI.DrawTexture(new Rect(0, 0, w, h), Px);
-                GUI.color = new Color(flashC.r, flashC.g, flashC.b, Mathf.Min(1f, flashC.a * k * 1.3f)); GUI.DrawTexture(new Rect(0, 0, w, h), Vig);
+                GUI.color = new Color(flashC.r, flashC.g, flashC.b, flashC.a * k * 0.35f); GUI.DrawTexture(new Rect(0, 0, w, h), Px);
+                GUI.color = new Color(flashC.r, flashC.g, flashC.b, Mathf.Min(1f, flashC.a * k * 1.1f)); GUI.DrawTexture(new Rect(0, 0, w, h), Vig);
                 GUI.color = g;
             }
         }
@@ -258,7 +276,7 @@ public class MolakVfx : MonoBehaviour
             int n = k == "snow" ? 80 : k == "petals" ? 34 : k == "embers" ? 40 : k == "inferno" ? 110 : k == "bloodrain" ? 90 : 70;
             if (k == "inferno")
             {   // 0.4.22 불타는 산장: 아래에서 치솟는 열기(흔들리는 붉은 빛) + 화면 전체가 불빛에 일렁인다
-                float fl0 = 0.75f + 0.25f * Mathf.Sin(t * 7.3f) * Mathf.Sin(t * 3.1f + 1f);
+                float fl0 = 0.88f + 0.12f * Mathf.Sin(t * 1.9f) * Mathf.Sin(t * 1.1f + 1f);   // 0.4.66 일렁임을 느리고 얕게(깜빡여 보이지 않게)
                 Box(new Rect(0, 0, w, h), new Color(0.55f, 0.12f, 0.02f, 0.07f * fl0));
                 for (int b = 0; b < 8; b++)
                 {

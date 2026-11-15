@@ -168,6 +168,7 @@ public class MolakFlow : MonoBehaviour
             string dv = MolakStats.Str("dejapre");
             if (string.IsNullOrEmpty(dv) || dv == "none" || dv == "\u200B") { pt.ResetPrinter = false; pt.WaitForInput = false; return; }
         }
+        MolakStatLog.Line(TextOf(pt));   // 0.4.66 능력치 기록: 변화 앞의 마지막 서술
         EnsureParagraphBreaks();
         // (컴파일러가 generic 라인에 reset을 미리 박아 두므로 항상 덮어쓴다)
 

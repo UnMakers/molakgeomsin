@@ -95,25 +95,31 @@ public class DayTickCommand : Command
         {
             MolakStats.Add("day", 1f);
             float day = MolakStats.Get("day");
-            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor();
+            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor() * (MolakStory.On ? 0.4f : 1f);
             if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - MolakRules.TeaCurseCut); // 청심차 비방: 매일 반 김
+            if (root > 0f) MolakStatLog.Why("curse", MolakStats.Get("f_tea") > 0 ? "하룻밤 새 문양이 자란다(청심차로 반은 눌렀다)" : "하룻밤 새 문양이 뿌리를 뻗는다");
             MolakStats.Add("curse", root);
             if (MolakStats.Get("f_ringclosed") > 0) MolakStats.Add("f_ringclosed", -1f); // 비무판 폐쇄 일수
             if (MolakStats.Get("injury") > 0) MolakStats.Add("injury", -1f);                 // 부상: 사흘이면 아문다
+            if (MolakStory.On) MolakStats.Set("taint", 0f);
+            if (MolakStats.Get("taint") > 0) MolakStatLog.Why("hp", MolakStats.Get("taintkind") == 1f ? "몸에 든 독이 하루치 살을 깎는다" : "곪은 상처가 하루치 살을 깎는다");
             if (MolakStats.Get("taint") > 0)                                                 // 독·곪은 상처: 날마다 몸을 깎는다
                 MolakStats.Add("hp", MolakStats.Get("taint") >= MolakRules.TaintHeavy ? -MolakRules.TaintHpHeavy : -MolakRules.TaintHpLight);
             float lodg = day >= MolakRules.LodgeLateDay ? MolakRules.LodgeLate : MolakRules.LodgeBase;
             if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f;                          // 하진무가 방값을 안 받기로 함
             if (MolakStats.Get("f_hajincold") > 0) lodg += MolakRules.LodgeColdExtra;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
             if (MolakStats.Get("f_hajindead") > 0) lodg = MolakRules.LodgeNoHajin;     // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
-            if (MolakStats.Get("mn") >= lodg) MolakStats.Add("mn", -lodg);
+            if (MolakStory.On) lodg = 0f;
+            if (MolakStats.Get("mn") >= lodg) { MolakStatLog.Why("mn", "객잔 방값 " + lodg.ToString("0") + "냥" + (n > 1 ? " × " + n + "밤" : "") + (MolakStats.Get("f_hajindead") > 0 ? "(새 주인)" : MolakStats.Get("f_hajincold") > 0 ? "(하진무가 셈을 바꿨다)" : "")); MolakStats.Add("mn", -lodg); }
             else if (MolakStats.Get("f_gaerice") > 0 && day - MolakStats.Get("gaefedday") >= MolakRules.GaeRiceGap)
             {   // 다리 밑의 솥: 굶는 날 거지들이 한 그릇 덜어 준다(나흘에 한 번). 아침에 그 장면이 나온다.
+                MolakStatLog.Why("mn", "방값에 남은 은자를 털었다");
                 MolakStats.Set("mn", 0f); MolakStats.Set("gaefed", 1f); MolakStats.Set("gaefedday", day);
             }
-            else { MolakStats.Set("mn", 0f); MolakStats.Add("hp", -(n >= 3 ? MolakRules.StarveHpLong : MolakRules.StarveHpShort)); MolakStats.Set("starved", 1f); }
+            else { MolakStatLog.Why("mn", "방값에 남은 은자를 털었다"); MolakStatLog.Why("hp", "방값을 치르고 나니 밥값이 없다. 굶었다"); MolakStats.Set("mn", 0f); MolakStats.Add("hp", -(n >= 3 ? MolakRules.StarveHpLong : MolakRules.StarveHpShort)); MolakStats.Set("starved", 1f); }
         }
         // 독·곪은 상처는 마감마다 깊어진다(며칠 한 바퀴면 두 칸 — 손쓸 기회는 한두 바퀴)
+        MolakStory.Boost(MolakStats.Get("day"));
         if (MolakStats.Get("taint") > 0) MolakStats.Add("taint", n >= 3 ? MolakRules.TaintGrowLong : MolakRules.TaintGrowShort);
         MolakStats.ClampAll();
 #if UNITY_EDITOR

@@ -25,6 +25,7 @@
 @choice "\"객잔에 짐꾼 자리가 하나 비었소.\"" if:f_hajinfree>0 goto:#Yong2Y
 @stop
 # Yong2X
+@set f_hyeop=f_hyeop+1
 용개의 왼 어깨에 지게 멜빵 자국이 벌겋게 짓물렀다. 금창약 통을 쥐여 준다.
 "이, 이 귀한 걸 어찌…."
 용개가 은자 주머니를 문턱에 내려놓고, 붙잡을 새도 없이 골목으로 뛰어간다.
@@ -517,6 +518,7 @@
 "쥐인 줄 알았더니 늑대 새끼였군. 다음이 기다려지는구나."
 @goto #OchiEsc
 # Ochi3A
+@set f_hyeop=f_hyeop+1
 @art char:ochi
 달이 구름에 드는 잠깐.
 곡괭이 소리로 발소리를 지우며 막사 그늘을 따라간다. 젊은이 다섯. 그중 하나가 오담과 눈매가 같다.
@@ -638,6 +640,7 @@
 @choice "\"독 바른 창은 받지 않겠다.\" — 돌아선다" goto:#Rival2PF
 @stop
 # Rival2PD
+@set f_hyeop=f_hyeop+1
 할멈이 곽산의 창날을 코에 대 보고 눈을 가늘게 뜬다.
 "……이 독은 내가 처음 배운 독이다. 교 창고에 이걸 대는 손이 누군지도 안다."
 할멈이 곽산에게 약 꾸러미를 던진다.
@@ -650,6 +653,7 @@
 @fx curse:-2
 @goto Molak02#AfterChapter
 # Rival2PE
+@set f_hyeop=f_hyeop+1
 @fx mn:-12 curse:-1
 은자를 내민다. 곽산이 받지 않자, 그의 손을 펴서 쥐여 준다.
 "……판돈이 아니라서 받기 싫다."

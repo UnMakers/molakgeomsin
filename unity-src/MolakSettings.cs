@@ -94,6 +94,19 @@ public class MolakSettings : MonoBehaviour
         sHint = mk(22, MolakTheme.Ink3, TextAnchor.MiddleCenter);
     }
 
+    float wipeArm = -9f, wipeDone = -9f;
+    /// <summary>회귀로 쌓인 전역(g_) 기억을 모두 처음으로. 판 진행 저장은 건드리지 않는다.</summary>
+    static async void WipeMemory ()
+    {
+        try
+        {
+            foreach (var n in MolakVarList.Globals) MolakStats.Set(n, 0f);
+            MolakStats.SetStr("g_lastend", "none"); MolakStats.SetStr("g_lastcause", "none"); MolakStats.SetStr("g_nxform", "none"); MolakStats.SetStr("g_scars", "");
+            await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
+        }
+        catch (System.Exception e) { Debug.LogWarning("[MolakSettings] 기억 지우기 실패: " + e.Message); }
+    }
+
     void OnGUI ()
     {
         if (!open) return;
@@ -168,6 +181,20 @@ public class MolakSettings : MonoBehaviour
         var cr = new Rect(cx + cw * 0.3f, br.yMax + 56 * u, cw * 0.4f, 64 * u);
         GUI.Label(cr, "<u>제작 정보</u>", sHint);
         if (GUI.Button(cr, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); credits = true; }
+        // 0.4.66 모든 생의 기억 지우기(언메이커: 처음부터 다시 했는데 '지난 생엔…'이 나온다) — 첫 화면에서만, 두 번 눌러야
+        if (MolakTitle.Showing)
+        {
+            bool armed = Time.unscaledTime - wipeArm < 4f;
+            var wr = new Rect(cx + cw * 0.1f, cr.yMax + 10 * u, cw * 0.8f, 64 * u);
+            string wl = wipeDone > 0f && Time.unscaledTime - wipeDone < 3f ? "모든 생의 기억을 지웠다. 이제 정말 처음부터다."
+                      : armed ? "<color=#E08070>한 번 더 누르면 모든 생의 기억(앎·말로·업보)이 사라진다</color>" : "<u>모든 생의 기억 지우기</u>";
+            GUI.Label(wr, wl, sHint);
+            if (GUI.Button(wr, GUIContent.none, GUIStyle.none))
+            {
+                if (armed) { wipeArm = -9f; WipeMemory(); wipeDone = Time.unscaledTime; MolakSfx.Death(); }
+                else { wipeArm = Time.unscaledTime; MolakSfx.Confirm(); }
+            }
+        }
 
         // 빈 자리를 누른 손가락이 뒤의 타이틀·메뉴로 새지 않게
         GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);

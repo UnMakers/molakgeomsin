@@ -21,7 +21,7 @@ public class MolakHud : MonoBehaviour
     //  · 상태 줄의 그 숫자가 2.2초 동안 굵고 붉게/푸르게 바뀌고,
     //  · 그림 띠 위에 어두운 패 하나("체력 −2")가 튀어나왔다가 2.4초 뒤 사라진다. 같은 수치는 0.8초 안이면 합친다.
     //  · 새 생·불러오기·비무 연습 몸 고르기처럼 한꺼번에 바뀌는 때는 띄우지 않는다.
-    struct Float { public int k; public float d; public float t; }
+    struct Float { public int k; public float d; public float t; public string why; }
     static readonly System.Collections.Generic.List<Float> floats = new System.Collections.Generic.List<Float>();
     static readonly string[] fkeys = { "hp", "ng", "sw", "sl", "mn", "curse" };
     static readonly string[] fnames = { "체력", "내공", "검술", "살기", "은자", "저주" };
@@ -57,10 +57,13 @@ public class MolakHud : MonoBehaviour
             if (cur == lastV[k]) continue;
             float d = cur - lastV[k]; lastV[k] = cur;
             flashT[k] = 0f; flashD[k] = d;
+            // 0.4.66 능력치 기록: 왜 바뀌었는지 한 줄
+            string why = MolakStatLog.Resolve(fkeys[k]);
+            MolakStatLog.Record(fkeys[k], d, why);
             bool merged = false;
             for (int i = 0; i < floats.Count; i++)
-                if (floats[i].k == k && floats[i].t < 0.8f) { var f = floats[i]; f.d += d; f.t = 0f; floats[i] = f; merged = true; break; }
-            if (!merged) floats.Add(new Float { k = k, d = d, t = 0f });
+                if (floats[i].k == k && floats[i].t < 0.8f) { var f = floats[i]; f.d += d; f.t = 0f; if (!string.IsNullOrEmpty(why) && f.why != why) f.why = string.IsNullOrEmpty(f.why) ? why : f.why + " · " + why; floats[i] = f; merged = true; break; }
+            if (!merged) floats.Add(new Float { k = k, d = d, t = 0f, why = why });
         }
         for (int k = 0; k < flashT.Length; k++) if (flashT[k] >= 0f) { flashT[k] += Time.unscaledDeltaTime; if (flashT[k] > 2.2f) flashT[k] = -1f; }
     }
@@ -86,7 +89,7 @@ public class MolakHud : MonoBehaviour
         for (int i = floats.Count - 1; i >= 0; i--)
         {
             var f = floats[i]; f.t += dt; floats[i] = f;
-            if (f.t > 2.4f || Mathf.Round(f.d) == 0f) { floats.RemoveAt(i); continue; }
+            if (f.t > ChipLife || Mathf.Round(f.d) == 0f) { floats.RemoveAt(i); continue; }
         }
         float total = 0f, gap = 14f * u;
         var sizes = new System.Collections.Generic.List<Vector2>();
@@ -101,9 +104,9 @@ public class MolakHud : MonoBehaviour
         for (int i = 0; i < floats.Count; i++)
         {
             var f = floats[i]; var sz = sizes[i];
-            float a = f.t < 0.12f ? f.t / 0.12f : (f.t > 1.9f ? Mathf.Clamp01((2.4f - f.t) / 0.5f) : 1f);
+            float a = f.t < 0.12f ? f.t / 0.12f : (f.t > ChipLife - 0.5f ? Mathf.Clamp01((ChipLife - f.t) / 0.5f) : 1f);
             float sc = f.t < 0.18f ? Mathf.Lerp(1.35f, 1f, f.t / 0.18f) : 1f;
-            float rise = Mathf.Min(1f, f.t / 2.4f) * 12f * u;
+            float rise = Mathf.Min(1f, f.t / ChipLife) * 12f * u;
             var r = new Rect(x, yTop - rise, sz.x, sz.y);
             GUI.matrix = m0; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), r.center);
             GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.88f * a); GUI.DrawTexture(r, MolakGui.Px);
@@ -117,8 +120,30 @@ public class MolakHud : MonoBehaviour
             MolakGui.Ink(sChip, c); GUI.Label(new Rect(r.x + 4f * u, r.y, r.width, r.height), txt, sChip);
             x += sz.x + gap;
         }
-        GUI.matrix = m0; GUI.color = g0;
+        GUI.matrix = m0;
+        // 0.4.66 패 아래 한 줄: 왜 오르내렸는지(능력치 기록과 같은 글)
+        var whys = new System.Collections.Generic.List<string>(); float wa = 0f;
+        foreach (var f in floats)
+        {
+            if (string.IsNullOrEmpty(f.why)) continue;
+            foreach (var part in f.why.Split(new[] { " · " }, System.StringSplitOptions.None)) if (!whys.Contains(part)) whys.Add(part);
+            wa = Mathf.Max(wa, f.t < 0.12f ? f.t / 0.12f : (f.t > ChipLife - 0.5f ? Mathf.Clamp01((ChipLife - f.t) / 0.5f) : 1f));
+        }
+        if (whys.Count > 0)
+        {
+            if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(26, u, TextAnchor.MiddleCenter, false); sWhy.clipping = TextClipping.Clip; }
+            string wt = string.Join(" · ", whys.ToArray());
+            var wsz = sWhy.CalcSize(new GUIContent(wt));
+            float ww = Mathf.Min(W - 40f * u, wsz.x + 40f * u);
+            var wr = new Rect(X0 + (W - ww) / 2f, yTop + 64f * u, ww, 44f * u);
+            GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.80f * wa); GUI.DrawTexture(wr, MolakGui.Px);
+            MolakGui.Ink(sWhy, new Color(0.93f, 0.89f, 0.81f, wa)); GUI.color = Color.white;
+            GUI.Label(wr, wt, sWhy);
+        }
+        GUI.color = g0;
     }
+    const float ChipLife = 3.2f;
+    GUIStyle sWhy; float whyU = -1f;
 
     static Color InkD { get { return MolakTheme.InkText; } }
     static Color InkM { get { return MolakTheme.InkMid; } }
@@ -255,7 +280,7 @@ public class MolakHud : MonoBehaviour
             "    살기 "+Num("sl", MolakStats.Get("sl"));
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
-        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 72*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 72*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 가는 구분선 + 체력 붓 획(0.4.32): 구분선 위로 남은 체력만큼 먹 획이 그어진다. 끝으로 갈수록 가늘고, 바닥이면 붉다.
         float lineW = W-168*u-112*u;
         Box(new Rect(pad, y+lh+4*u, lineW, Mathf.Max(1f,1*u)), new Color(0.55f,0.48f,0.40f,0.45f));

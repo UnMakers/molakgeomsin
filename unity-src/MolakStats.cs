@@ -21,6 +21,7 @@ public static class MolakStats
 
     public static void Set (string name, float value)
     {
+        if (Get(name) != value) MolakStatLog.Snap(name);   // 0.4.66 능력치 기록: 바뀌는 순간의 까닭
         Vars?.SetVariableValue(name, new CustomVariableValue(value));
     }
 
@@ -67,7 +68,7 @@ public static class MolakStats
     public static void ClampAll ()
     {
         var hpMax = Mathf.Max(1f, Get("hpmax"));
-        Set("hp", Mathf.Clamp(Get("hp"), 0f, hpMax));
+        Set("hp", Mathf.Clamp(Get("hp"), MolakStory.On && Get("day") >= 1f ? 1f : 0f, hpMax));   // 이야기 모드는 쓰러지지 않는다
         Set("curse", Mathf.Clamp(Get("curse"), 0f, MolakRules.CurseMax));
         foreach (var k in new[] { "ng", "sw", "sl", "mn" })
             if (Get(k) < 0f) Set(k, 0f);
@@ -80,6 +81,7 @@ public static class MolakStats
         var cur = Get("hpmax");
         if (nm > cur)
         {
+            MolakStatLog.Why("hp", "검과 내공이 쌓여 몸이 한 칸 두터워졌다");
             Set("hp", Get("hp") + (nm - cur));
             Set("hpmax", nm);
         }

@@ -39,6 +39,7 @@
 @set b_hunt1=0
 @set b_hunt2=0
 @set b_hunt3x=0
+@set b_hyname=0
 @set b_ipma=0
 @set b_jang=0
 @set b_jang2=0
@@ -90,6 +91,7 @@
 @set b_wanted=0
 @set b_yong2=0
 @set b_yong3=0
+@set btpend=0
 @set buycx=0
 @set buyhx=0
 @set c_gamble=0
@@ -359,6 +361,7 @@
 @set f_soadead=0
 @set f_soadone=0
 @set f_soaeve=0
+@set f_soagift=0
 @set f_soajin=0
 @set f_soakilled=0
 @set f_soaledger=0
@@ -508,6 +511,7 @@
 @set soaseal=0
 @set spared=0
 @set starved=0
+@set storymode=0
 @set sv=0
 @set sw=0
 @set taint=0
@@ -533,6 +537,9 @@
 @set wsnow=0
 @set yonglost=0
 @set bridgetext="none"
+@set btfoe="none"
+@set btguard="none"
+@set btpath="none"
 @set byeolho="none"
 @set deathcause="none"
 @set deathtip="none"
@@ -583,6 +590,7 @@
 @set tzseen="none"
 @set vowline="none"
 @initrun
+@set storymode=g_storypick
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
 # Rebirth
@@ -806,6 +814,7 @@
 @stop
 # P1a
 @art scene:forest
+@vfx kind:fireon
 숲의 어둠이 등을 받아 준다. 가지에 긁히고, 뿌리에 걸려 구르고, 그래도 달린다.
 얼마나 달렸을까. 다리가 꺾여 주저앉은 자리에, 누군가 서 있다.
 @art char:oldman
@@ -853,6 +862,7 @@
 "청운검파에 입은 은혜가 있소. 그 문파의 마지막 제자라면 당연한 일이오."
 하진무가 낡은 전낭을 내민다.
 "은자 서른 냥이오. 산 사람은 살아야 하지 않겠소."
+"방은 그대로 쓰시오. 다만 오늘부터 방값은 받겠소. 하룻밤 한 냥. 지난 일 년은 청운에 진 빚으로 치고, 이제부터는 객도 강호 사람이오."
 가슴이 욱신거린다. 옷깃 아래에 낙인 같은 <color=#9A70C4>문양</color>이 새겨져 있다. 그날 밤은 꿈이 아니었다.
 @goto #P3K0 if:f_proknot<1&&f_projujube<1
 "쓰러져 계실 때 손에 꼭 쥐고 계시던 거요. 버리지 않았소."
@@ -887,9 +897,10 @@
 # P4bR
 해가 한 뼘 기울었다. 남은 은자 {mn}냥.
 # P4bC
-@choice "장터 골목 — 옷전, 숫돌 장수, 대장간" goto:#MkAlley
-@choice "약재 거리 — 백초당과 향 가게" goto:#MkHerb
-@choice "주루와 투전판 — 소식과 내기" goto:#MkTavern
+; 0.4.66 다 둘러본 곳은 지운다(언메이커: 한 번 하면 그 자리에서 더 할 게 없는 선택지) — 아직 안 본 곳이거나, 남은 물건을 살 은자가 있을 때만
+@choice "장터 골목 — 옷전, 숫돌 장수, 대장간" if:mkal<1||f_hat<1&&mn>=4||f_whetstone<1&&mn>=3||f_cheonggang<1&&mksmith<1 goto:#MkAlley
+@choice "약재 거리 — 백초당과 향 가게" if:mkhb<1||f_salve<1&&mn>=5||f_incense<1&&mn>=4||f_alms<1&&mn>=1 goto:#MkHerb
+@choice "주루와 투전판 — 소식과 내기" if:mktv<1||f_janginfo<1&&mn>=10||mkgamble<1||f_storylore<1&&mn>=2 goto:#MkTavern
 @choice "이만하면 됐다 — 객잔으로 돌아간다" goto:#P4e
 @stop
 

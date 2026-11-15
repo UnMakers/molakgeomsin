@@ -206,12 +206,12 @@ public class MolakMenu : MonoBehaviour
         MenuSection(bx, ref by, bw, secH, "기록");
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
-            string[] t = { "지난 기록", "원수록", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실" };
-            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀", "풀다 만 실마리 " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots() };
+            string[] t = { "지난 기록", "원수록", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실", "능력치 기록" };
+            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀", "풀다 만 실마리 " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots(), "무엇이 왜 오르내렸나" };
             float tw = (bw - gap) / 2f;
             for (int i = 0; i < t.Length; i++)
             {
-                var r = i == 6 ? new Rect(bx, by + 3 * (tileH + gap), bw, tileH) : new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), tw, tileH);
+                var r = new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), tw, tileH);
                 if (!Btn(r, t[i] + "\n<size=" + Mathf.RoundToInt(22*u) + "><color=#8C8378>" + sub[i] + "</color></size>", false, u)) continue;
                 switch (i)
                 {
@@ -228,6 +228,7 @@ public class MolakMenu : MonoBehaviour
                     case 4: facTab = true; break;
                     case 5: open = false; SetProcessInput(true); MolakGuide.OpenList(); break;
                     case 6: open = false; SetProcessInput(true); MolakTruthView.Open(); break;
+                    case 7: open = false; SetProcessInput(true); MolakStatLogView.Open(); break;
                 }
             }
             by += 4 * (tileH + gap);

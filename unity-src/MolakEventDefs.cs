@@ -34,14 +34,26 @@ public static class MolakEventDefs
             new Def("E_SoaBowl", 6, 50, 'd', "f_soamet&!f_soadead", null, 0, 22),
             new Def("E_AmhShop", 8, 26, 'd', null, null, 0, 14),
             // 0.4.50 참새의 일상
-            new Def("E_ChamRoof", 15, 48, 'n', "b_ch1&!f_chamgone", null, 0, 18),
-            new Def("E_ChamTab", 16, 40, 'd', "b_ch1&!f_chamgone", "E_ChamRoof", 2, 16),
-            new Def("E_ChamRain", 24, 52, 'n', "b_ch2&!f_chamgone", null, 0, 16),
-            new Def("E_AmhSpill", 16, 32, 'n', "f_amhseen&!f_amhdead", "E_AmhShop", 3, 22),
-            new Def("E_TempleBell", 18, 50, 'd', null, null, 0, 12),
-            new Def("E_AmhLetter", 38, 48, 'n', "b_am1&!f_amhdead", null, 0, 16),
-            new Def("E_CmSweep", 26, 48, 'd', "b_cm1", null, 0, 14),
-            new Def("E_YeonMarket", 47, 56, 'd', "f_yeonsaved&!f_amhdead", null, 0, 16),
+            new Def("E_ChamRoof", 13, 48, 'n', "b_ch1&!f_chamgone", null, 0, 18),
+            new Def("E_ChamTab", 14, 40, 'd', "b_ch1&!f_chamgone", "E_ChamRoof", 2, 16),
+            new Def("E_ChamRain", 19, 52, 'n', "b_ch2&!f_chamgone", null, 0, 16),
+            new Def("E_AmhSpill", 16, 36, 'n', "f_amhseen&!f_amhdead", "E_AmhShop", 3, 22),
+            new Def("E_TempleBell", 12, 44, 'd', "!f_jbsister", null, 0, 34),
+            // 0.4.67 히로인 사이사이 — 마디와 마디 사이에 정이 쌓이는 날(무게 높게)
+            new Def("E_SoaStep", 9, 45, 'd', "f_soamet&!f_soadead&aff>=3&!f_soastep", null, 0, 40),
+            new Def("E_SoaSleeve", 7, 50, 'd', "f_soamet&!f_soadead", null, 0, 26),
+            new Def("E_AmhTea", 19, 50, 'd', "f_amhyangknown&!f_amhdead", null, 0, 32),
+            new Def("E_AmhIncense", 22, 52, 'n', "f_amhyangknown&!f_amhdead&amhaff>=2", null, 0, 40),
+            new Def("E_AmhRiver", 24, 54, 'd', "f_amhyangknown&!f_amhdead", "E_AmhTea", 2, 30),
+            new Def("E_CmDates", 17, 50, 'd', "f_jbsister", null, 0, 32),
+            new Def("E_CmNinth", 22, 52, 'd', "f_jbsister&cmaff>=3&!f_cmninth", null, 0, 42),
+            new Def("E_CmGraves", 26, 54, 'd', "f_jbsister&cmaff>=2", null, 0, 28),
+            new Def("E_ChamBeans", 10, 50, 'd', "b_ch1&!f_chamgone", null, 0, 30),
+            new Def("E_ChamLedger", 18, 50, 'n', "b_ch1&!f_chamgone&chamaff>=2&!f_chamledger", null, 0, 38),
+            new Def("E_TempleBell2", 15, 46, 'd', "f_cmglimpse&!f_jbsister", "E_TempleBell", 2, 45),   // 0.4.67 첫 생에도 청묘를 만난다
+            new Def("E_AmhLetter", 30, 46, 'n', "b_am1&!f_amhdead", null, 0, 16),
+            new Def("E_CmSweep", 21, 48, 'd', "b_cm1", null, 0, 14),
+            new Def("E_YeonMarket", 41, 56, 'd', "f_yeonsaved&!f_amhdead", null, 0, 16),
             new Def("E_YongNight", 35, 55, 'n', "f_yongcrew", null, 0, 14),
             new Def("E_GwakKids", 42, 56, 'd', "f_gwakdinner", null, 0, 14),
             new Def("E_GwakYong", 44, 57, 'd', "f_yongcrew&f_gwakdinner", "E_GwakKids", 2, 16),
@@ -181,6 +193,13 @@ public static class MolakEventDefs
             new Def("E_CultRite", 8, 50, 'n', null, null, 0, 20),    // 0.4.62 혈마교의 광기: 솥의 밤
             new Def("E_CultLaugh", 6, 45, 'd', null, null, 0, 18),   // 웃는 교도
             new Def("E_CultFeast", 20, 58, 'n', null, null, 0, 18),  // 붉은 술의 밤
+            new Def("E_HyeopName", 8, 58, 'd', "f_hyeop>=5&!b_hyname", null, 0, 40),
+            // 0.4.66 기연(奇緣): 크게 한 번 몸이 뛰는 날 — 생마다 고루 한두 번은 터지게 무게를 높게
+            new Def("E_GiGinseng", 5, 30, 'd', null, null, 0, 26),
+            new Def("E_GiScar", 9, 40, 'n', "c_sw>=3", null, 0, 30),
+            new Def("E_GiPill", 12, 48, 'd', "f_breath", null, 0, 34),
+            new Def("E_GiPurse", 6, 36, 'd', null, null, 0, 22),
+            new Def("E_GiMaster", 14, 52, 'd', "arenawin>=2", null, 0, 30),   // 0.4.66 협객이라 불리다
             new Def("E_HerbNeedle", 18, 52, 'n', "!f_herbdead&curse>=50&!f_herbtrue", "E_Herb4", 3, 26),   // 0.4.62 금침의 밤
             new Def("E_RingClosed", 21, 38, 'd', "rank>0", null, 0, 14),
     };

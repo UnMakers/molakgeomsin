@@ -12,6 +12,8 @@ using UnityEngine;
 public class MolakTitle : MonoBehaviour
 {
     static MolakTitle instance;
+    /// <summary>0.4.66 첫 화면이 떠 있는가(환경 설정의 '모든 생의 기억 지우기'는 여기서만).</summary>
+    public static bool Showing;
     static Texture2D dot, disk;
     Texture2D night, enso, silSoa, silJin, silOld, silMourn;
     Font gowun, hanjaFont;
@@ -165,9 +167,10 @@ public class MolakTitle : MonoBehaviour
         var defTitle = ui.GetUI<Naninovel.UI.ITitleUI>() as Naninovel.UI.IManagedUI;
         if (defTitle != null && defTitle.Visible) defTitle.ChangeVisibility(false, 0f);
 
-        if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; return; }
+        if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; Showing = false; return; }
         float day = G("day");
         bool show = !sp.Playing && day < 1f && !AnyUIVisible(ui);
+        Showing = show;
         if (!show) { shownAt = -1f; return; }
 
         float t = Time.unscaledTime;
@@ -315,7 +318,7 @@ public class MolakTitle : MonoBehaviour
         // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
         GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
         // 패 하나 = 손가락 한 마디(약 9mm)보다 크게. 나가기는 폰의 홈·뒤로 가기에 맡긴다.
-        float bh = 96*u, gap = 20*u, ih = bh + gap, n = 5;
+        float bh = 96*u, gap = 20*u, ih = bh + gap, n = 6;
         float my0 = Mathf.Min(h * 0.56f, h - 200*u - n * ih);
         float rx = w - 52*u, mw = Mathf.Min(w * 0.52f, 560*u);
         Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.25f : 0.35f));
@@ -324,7 +327,7 @@ public class MolakTitle : MonoBehaviour
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
         bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable || state.AutoLoadAvailable;
-        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) Wake(sp, state, t);
+        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { MolakStats.Set("g_storypick", 0f); Wake(sp, state, t); }
         if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
             // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록
@@ -337,7 +340,14 @@ public class MolakTitle : MonoBehaviour
         string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>" : "말로록";
         if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();
         if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "비무 연습", !busy, u, t, false) && !busy) MolakPractice.Start();   // 0.4.55 합만 겨뤄 보는 판
-        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "환경 설정", !busy, u, t, false))
+        // 0.4.66 이야기 모드: 죽지 않고, 밤 수련을 건너뛰고, 이야기 마디만 이어 읽는다
+        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "이야기 모드  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>죽지 않고 이야기만</color></size>", !busy, u, t, false) && !busy)
+        {
+            MolakStats.Set("g_storypick", 1f);
+            var gsm = Engine.GetService<IStateManager>(); if (gsm != null) { try { _ = gsm.SaveGlobal(); } catch { } }
+            Wake(sp, state, t);
+        }
+        if (Item(5, new Rect(rx - mw, my0 + 5 * ih, mw, bh), "환경 설정", !busy, u, t, false))
         {
             MolakSettings.Open();
         }

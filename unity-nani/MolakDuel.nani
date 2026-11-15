@@ -341,6 +341,7 @@
 @goto #WinAfter
 # TierUp
 @vfx kind:tier
+@set btpend=1 if:tiername!="이류"&&practice<1
 <color=#C9A227>─ {tiername} 진입 ─</color>
 @goto #TU2 if:tiername=="이류"
 @goto #TU3 if:tiername=="일류"

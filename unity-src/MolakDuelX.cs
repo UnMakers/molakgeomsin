@@ -250,7 +250,7 @@ public static class MolakDuelX
         new[] { "f_hajindot", "장부의 점을", "'운객' 칸에 찍힌 점 하나. 셈이 끝나지 않은 손님은 돌아와야 한다고, 주판알 소리가 말한다." },
         new[] { "f_letter", "맡긴 편지를", "하진무에게 맡긴, 받을 이 없는 편지. 그 편지가 정말 받을 이 없는 편지가 되게 둘 수는 없다." },
         new[] { "f_sutrashard", "경판 조각을", "모서리가 깨진 경판 조각. 새겨진 두 줄을 입속으로 왼다. 칼끝의 떨림이 경 소리에 맞춰 가라앉는다." },
-        new[] { "f_yeonsaved", "연(蓮)이 쥐여 준 것을", "독을 밀어낸 그 새벽, 아이가 손에 쥐여 준 매듭 끈. 그 아이는 이 칼을 모른다. 그래도 이 칼은 그 아이를 안다." },
+        new[] { "f_yeonsaved", "란(蘭)이 쥐여 준 것을", "독을 밀어낸 그 새벽, 아이가 손에 쥐여 준 매듭 끈. 그 아이는 이 칼을 모른다. 그래도 이 칼은 그 아이를 안다." },
     };
 
     public static void KeepCheck ()
@@ -331,6 +331,7 @@ public static class MolakDuelX
             float hp = MolakStats.Get("hp");
             float cutN = sig ? 2f : 1f;
             bool cut = hp > 2f;
+            if (cut) MolakStatLog.Why("hp", sig ? "상대의 초식이 다 펼쳐져 두 군데를 베였다" : "합을 나누다 칼을 맞았다");
             if (cut) MolakStats.Add("hp", -Mathf.Min(cutN, hp - 2f));   // 합에서 맞는 칼은 얕다. 목숨은 마지막 한 칼이 정한다
             MolakVfx.Blood(); MolakSfx.Hit();
             MolakVfx.Stamp("傷", (sig ? "기세 −2" : "기세 −1") + (cut ? " · 체력 −" + cutN.ToString("0") : ""), false);
@@ -414,6 +415,7 @@ public static class MolakDuelX
         float add = Mathf.Min(mom, 3f);                 // 두 배로 싣되, 더해지는 것은 셋까지
         MolakStats.Set("dx_mom", mom + add);
         MolakStats.Set("dx_fallen", 1f);
+        MolakStatLog.Why("curse", "떨어지는 칼(落)에 문양의 힘을 실었다");
         MolakStats.Add("curse", 4f);
         MolakVfx.Stamp("落", "기세 +" + add.ToString("0") + " · 저주 +4", true); MolakVfx.Gold(); MolakVfx.Shake(8f);
         FinalText("기세가 칼끝 하나로 모인다. 위에서 아래로, 떨어지는 길만 보인다.");
