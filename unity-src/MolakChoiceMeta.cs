@@ -7,17 +7,69 @@ using UnityEngine;
 ///  - Hint: 카드 글귀 아래 회색 작은 글씨 (물건 이름·능력치·지난 생의 말로 등)
 ///  - Kind: 인장 색 (0 일반 주홍 · 1 전생의 앎 보라 · 2 물건·비방·인연 쪽빛 · 3 능력치 먹 · 4 은자 금 · 5 사술 검붉은 자주)
 /// MolakFlow 가 AddChoice 실행 때마다 Push, 새 선택지 묶음이 시작되면 Reset. MolakTheme 는 카드 순서(cidx)로 꺼내 쓴다.
+/// 0.4.63 잠긴 선택지: 조건이 '갖추면 열리는 것'(은자·능력치·물건·지난 생의 앎)뿐이면 숨기지 않고 잠근 채 띄운다.
+///   못 고르는 순간 "저걸 갖추면 저 길이 열린다"가 다음 판의 이유가 된다. 이야기 갈래 조건(f_x&lt;1, == 등)이 섞이면 예전처럼 숨긴다.
+///   지난 생의 앎으로 열리는 선택지는 글귀가 곧 비밀이라 글귀를 가리고 「· · ·」만 보인다.
 /// </summary>
 public static class MolakChoiceMeta
 {
     public const int Normal = 0, Know = 1, Item = 2, Stat = 3, Coin = 4, Curse = 5;
-    public struct Meta { public string Hint; public int Kind; }
+    public struct Meta { public string Hint; public int Kind; public bool Locked; }
     public static readonly List<string> Batch = new List<string>();   // 이번 선택지 묶음의 if: 조건들(실행 순서 = 카드 순서)
     /// <summary>카드마다의 승부수 표시: 글귀 끝의 〔검술+2〕 · 〔내공 12〕 · 〔살기〕 (없으면 null). 나니노벨이 대괄호를 인라인 명령으로 읽지 않도록 거북 괄호를 쓴다.</summary>
     public static readonly List<string> Risks = new List<string>();
+    public static readonly List<bool> Locks = new List<bool>();
 
-    public static void Reset () { Batch.Clear(); Risks.Clear(); }
-    public static void Push (string cond, string label = null) { Batch.Add(cond ?? ""); Risks.Add(RiskTag(label)); }
+    public static void Reset () { Batch.Clear(); Risks.Clear(); Locks.Clear(); }
+    public static void Push (string cond, string label = null, bool locked = false) { Batch.Add(cond ?? ""); Risks.Add(RiskTag(label)); Locks.Add(locked); }
+
+    /// <summary>잠가서 보여 줄 수 있는 조건인가 — '||' 없이, 모든 항이 "이만큼 갖추면" 꼴(≥·&gt; 또는 ==양수)이고 아는 종류일 때만.</summary>
+    public static bool Lockable (string cond)
+    {
+        if (string.IsNullOrEmpty(cond) || cond.Contains("||") || cond.Contains("!")) return false;
+        foreach (var raw in cond.Split(new[] { "&&" }, System.StringSplitOptions.RemoveEmptyEntries))
+        {
+            var m = Atom.Match(raw.Trim('(', ')', ' '));
+            if (!m.Success) return false;
+            string v = m.Groups[1].Value, op = m.Groups[2].Value; float n; float.TryParse(m.Groups[3].Value, out n);
+            bool positive = op == ">=" || op == ">" || (op == "==" && n > 0);
+            if (!positive) return false;
+            if (v.StartsWith("g_")) continue;
+            if (v == "mn" || v == "sw" || v == "ng" || v == "sl" || v == "hp" || v == "rep_maeng" || v == "rep_gae" || v == "rep_heuk") continue;
+            if (v.StartsWith("f_") && BagName(v) != null) continue;
+            return false;
+        }
+        return true;
+    }
+    /// <summary>잠긴 카드의 주석: 무엇을 갖추면 열리는지. 지난 생의 앎은 이름을 말하지 않는다.</summary>
+    static string LockHint (string cond)
+    {
+        var parts = new List<string>(); bool know = false;
+        foreach (var raw in cond.Split(new[] { "&&" }, System.StringSplitOptions.RemoveEmptyEntries))
+        {
+            var m = Atom.Match(raw.Trim('(', ')', ' ')); if (!m.Success) continue;
+            string v = m.Groups[1].Value; float n; float.TryParse(m.Groups[3].Value, out n);
+            if (m.Groups[2].Value == ">") n += 1;
+            if (v.StartsWith("g_")) { know = true; continue; }
+            string t = null;
+            switch (v)
+            {
+                case "mn": t = "은자 " + n.ToString("0") + "냥"; break;
+                case "sw": t = "검술 " + n.ToString("0"); break;
+                case "ng": t = "내공 " + n.ToString("0"); break;
+                case "sl": t = "살기 " + n.ToString("0"); break;
+                case "hp": t = "체력 " + n.ToString("0"); break;
+                case "rep_maeng": t = "무림맹의 신의 " + n.ToString("0"); break;
+                case "rep_gae": t = "개방의 신의 " + n.ToString("0"); break;
+                case "rep_heuk": t = "흑도의 신의 " + n.ToString("0"); break;
+                default: t = BagName(v); break;
+            }
+            if (!string.IsNullOrEmpty(t) && !parts.Contains(t)) parts.Add(t);
+        }
+        string need = parts.Count > 0 ? string.Join(" · ", parts.ToArray()) + " 필요" : "";
+        if (know) return need.Length > 0 ? "지난 생에 알아 둔 일이 있다면  ·  " + need : "지난 생에 알아 둔 일이 있다면";
+        return need;
+    }
 
     /// <summary>글귀 안의 승부수 표시.</summary>
     static readonly Regex RiskRx = new Regex(@"\s*〔(검술|내공|살기)\s*([+\-]?\d+)?〕");
@@ -41,7 +93,13 @@ public static class MolakChoiceMeta
 
     public static Meta Get (int index, string label)
     {
-        var m = Build(index >= 0 && index < Batch.Count ? Batch[index] : "", label);
+        string cond0 = index >= 0 && index < Batch.Count ? Batch[index] : "";
+        if (index >= 0 && index < Locks.Count && Locks[index])
+        {
+            var lm = Build(cond0, label);
+            return new Meta { Hint = "잠김  ·  " + LockHint(cond0), Kind = lm.Kind, Locked = true };
+        }
+        var m = Build(cond0, label);
         string risk = index >= 0 && index < Risks.Count ? Risks[index] : null;
         if (risk != null)
         {

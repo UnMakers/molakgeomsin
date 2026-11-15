@@ -45,7 +45,7 @@ public class MolakBeatWalker : MonoBehaviour
                 if (tr.AwaitingInput) setWait.Invoke(tr, new object[] { false });
                 var bl = GameObject.Find(MolakUi.ChoiceListPath);
                 var btns = new List<UnityEngine.UI.Button>();
-                if (bl != null) foreach (var b in bl.GetComponentsInChildren<Naninovel.UI.ChoiceHandlerButton>()) if (b.gameObject.activeInHierarchy) btns.Add(b.GetComponent<UnityEngine.UI.Button>());
+                if (bl != null) foreach (var b in bl.GetComponentsInChildren<Naninovel.UI.ChoiceHandlerButton>()) if (b.gameObject.activeInHierarchy && !b.Choice.Locked) btns.Add(b.GetComponent<UnityEngine.UI.Button>());
                 var cg = bl != null ? bl.GetComponent<CanvasGroup>() : null;
                 if (btns.Count > 0 && cg != null && cg.alpha > 0.5f)
                 {

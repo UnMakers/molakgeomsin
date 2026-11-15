@@ -381,14 +381,18 @@ public class MolakTheme : MonoBehaviour
             if (hintAt >= 0) rawLabel = rawLabel.Substring(0, hintAt);
             rawLabel = MolakChoiceMeta.StripRisk(rawLabel);   // 승부수 표시 〔검술+2〕 는 주석으로 옮겨 적는다
             var meta = MolakChoiceMeta.Get(cidx, rawLabel);
+            bool lockedCard = meta.Locked || (btn.Choice.Locked);
             if (lblTx != null)
             {
                 string hintCol = Night ? "#9C9286" : "#8C8378";
-                string wantText = string.IsNullOrEmpty(meta.Hint) ? rawLabel : rawLabel + "\n<size=62%><color=" + hintCol + ">" + meta.Hint + "</color></size>";
+                // 잠긴 카드: 지난 생의 앎으로 열리는 것은 글귀가 곧 비밀이라 가린다. 나머지는 글귀를 흐리게 그대로 둔다.
+                string shownLabel = lockedCard && meta.Kind == MolakChoiceMeta.Know ? "· · ·" : rawLabel;
+                if (lockedCard) shownLabel = "<color=" + (Night ? "#6E675E" : "#A39A8C") + ">" + shownLabel + "</color>";
+                string wantText = string.IsNullOrEmpty(meta.Hint) ? shownLabel : shownLabel + "\n<size=62%><color=" + hintCol + ">" + meta.Hint + "</color></size>";
                 if (lblTx.text != wantText) lblTx.text = wantText;
             }
             if (meta.Kind != MolakChoiceMeta.Normal && MolakStats.Get("g_sealhelp") < 1f) { MolakStats.Set("g_sealhelp", 1f); MolakMenu.ShowLegend(); }
-            var sealCol = MolakChoiceMeta.SealColor(meta.Kind, Night);
+            var sealCol = lockedCard ? (Night ? new Color(0.30f, 0.29f, 0.28f, 1f) : new Color(0.62f, 0.59f, 0.55f, 1f)) : MolakChoiceMeta.SealColor(meta.Kind, Night);
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
@@ -416,6 +420,7 @@ public class MolakTheme : MonoBehaviour
                 cb.fadeDuration = 0.06f;
                 ub.colors = cb;
             }
+            if (ub != null && ub.interactable == lockedCard) ub.interactable = !lockedCard;   // 잠긴 카드는 눌리지 않는다
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
             float wantH = tier.CardH;

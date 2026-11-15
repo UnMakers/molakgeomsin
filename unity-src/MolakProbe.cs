@@ -94,6 +94,9 @@ public class MolakProbe : MonoBehaviour
             if (tr.Playing) { yield return null; continue; }
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled).ToArray();
+            var lockedLabels = btns.Where(b => b.Choice.Locked).Select(b => "🔒" + (b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").Replace("\n", " ")).ToArray();
+            btns = btns.Where(b => !b.Choice.Locked).ToArray();
+            if (lockedLabels.Length > 0 && btns.Length > 0) Log.AppendLine("  잠김: " + string.Join(" / ", lockedLabels));
             if (btns.Length == 0)
             {
                 yield return new WaitForSecondsRealtime(0.3f);
@@ -102,6 +105,7 @@ public class MolakProbe : MonoBehaviour
             }
             var labels = btns.Select(b => (b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").Split('\n')[0]).ToArray();
             int k = 0;
+            if (pi < picks.Length && picks[pi] == "■") { Log.AppendLine("■ 선택지 앞에서 멈춤(화면 확인용)"); MolakPlayMode.SetFast(false); Status = "done"; yield break; }
             if (pi < picks.Length) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(picks[pi])) { k = i; break; } pi++; }
             Log.AppendLine("  · 판(" + lastText.Replace("\n", " ⏎ ").Substring(Mathf.Max(0, lastText.Length - 160)) + ")");
             Log.AppendLine("▶ [" + string.Join(" / ", labels) + "] → " + labels[k]);

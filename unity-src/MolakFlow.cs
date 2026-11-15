@@ -39,6 +39,28 @@ public class MolakFlow : MonoBehaviour
     bool fastBlock;                // 단락 출력 중 탭 → 남은 줄 즉시 출력
     IInputHandle continueHandle;
     static readonly List<Choice> cbuf = new List<Choice>();
+    static readonly System.Collections.Generic.Dictionary<Command, string> origCond = new System.Collections.Generic.Dictionary<Command, string>();
+    object preparedList;
+    /// <summary>0.4.63 대본(재생 목록)이 바뀔 때 한 번: '갖추면 열리는' 조건만 붙은 @choice 의 if: 를 lock:!(조건) 으로 옮긴다.
+    /// 나니노벨은 if: 가 거짓인 명령은 OnExecute 도 부르지 않고 건너뛰므로, 실행 때 바꾸면 늦다.</summary>
+    void PrepareLocks (IScriptTrack track)
+    {
+        var pl = track != null ? track.Playlist : null;
+        if (pl == null || ReferenceEquals(pl, preparedList)) return;
+        preparedList = pl;
+        for (int i = 0; i < pl.Count; i++)
+        {
+            var ac = pl[i] as AddChoice;
+            if (ac == null || origCond.ContainsKey(ac)) continue;
+            if (!ac.ConditionalExpression.HasValue) continue;
+            string c = ac.ConditionalExpression.Value;
+            if (!MolakChoiceMeta.Lockable(c) || (ac.Lock != null && ac.Lock.HasValue)) continue;
+            origCond[ac] = c;
+            ac.Lock = "!(" + c + ")";
+            ac.ConditionalExpression = new StringParameter();
+        }
+    }
+
     static void ClearStaleChoices ()
     {
         var chm = Engine.GetService<IChoiceHandlerManager>();
@@ -64,6 +86,7 @@ public class MolakFlow : MonoBehaviour
         player = Engine.GetService<IScriptPlayer>();
         if (player == null) return;
         player.OnExecute += OnExecute;
+        player.OnPlay += PrepareLocks;   // 새 대본을 틀 때 첫 명령보다 먼저
         var im = Engine.GetService<IInputManager>();
         continueHandle = im != null ? im.GetInput("Continue") : null;
         // 나니노벨 기본 배경 액터(MainBackground)는 쓰지 않는다 — 리소스 없는 placeholder 사각형이 화면 중앙에 그려지는 것을 막는다
@@ -77,12 +100,13 @@ public class MolakFlow : MonoBehaviour
 
     void OnDestroy ()
     {
-        if (player != null) player.OnExecute -= OnExecute;
+        if (player != null) { player.OnExecute -= OnExecute; player.OnPlay -= PrepareLocks; }
 
     }
 
     void OnExecute (IScriptTrack track)
     {
+        PrepareLocks(track);
         var cmd = track != null ? track.PlayedCommand : null;
         if (cmd == null) return;
         var spot = cmd.PlaybackSpot;
@@ -123,10 +147,14 @@ public class MolakFlow : MonoBehaviour
         if (cmd is AddChoice)
         {
             if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); }
-            string cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
+            // 0.4.63 잠긴 선택지: 대본을 틀 때 '갖추면 열리는' if: 를 lock:!(조건) 으로 옮겨 두었다(PrepareLocks). 여기서는 원래 조건으로 주석을 단다.
+            string cexp; bool lockIt = false;
+            if (origCond.TryGetValue(cmd, out cexp))
+            { try { lockIt = !Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { lockIt = false; } }
+            else cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
             bool shown = true;
-            if (!string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
-            if (shown) MolakChoiceMeta.Push(cexp, ChoiceText(cmd));   // 조건이 거짓이라 안 뜨는 선택지는 카드 순서에서 뺀다
+            if (!lockIt && !string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
+            if (shown || lockIt) MolakChoiceMeta.Push(cexp, ChoiceText(cmd), lockIt);   // 조건이 거짓이라 안 뜨는 선택지는 카드 순서에서 뺀다
             lastWasChoice = true;
             afterChoice = true;   // 선택지 뒤의 첫 본문은 빈 줄로 단락을 나눈다
         }

@@ -252,7 +252,7 @@ public class MolakEndTester : MonoBehaviour
             sp.SetAutoPlay(true); sp.SetSkip(true);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
-                .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+                .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
             if (btns.Length > 0)
             {
                 var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
@@ -318,7 +318,7 @@ public class MolakEndTester : MonoBehaviour
             sp.SetAutoPlay(true); sp.SetSkip(true);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
-                .Where(b => b.isActiveAndEnabled && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+                .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
             if (btns.Length > 0)
             {
                 var labels = btns.Select(b => b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").ToArray();
