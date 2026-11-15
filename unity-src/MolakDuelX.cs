@@ -270,7 +270,7 @@ public static class MolakDuelX
         MolakStats.SetStr("keepused", used.Length > 0 ? used + "," + f : f);
         MolakStats.Add("dx_mom", 1f);
         MolakStats.Set("dx_keepok", 0f);
-        MolakVfx.Stamp("勢", "기세 +1", false); MolakVfx.Gold();
+        MolakVfx.Stamp("勢", "기세 +1", false); MolakVfx.Gold(); MolakSfx.Momentum();
     }
 
     public static void Act (int a)
@@ -322,7 +322,7 @@ public static class MolakDuelX
             txt = sig ? "필살의 길목을 먼저 막는다. 상대의 초식이 반쯤 펼쳐지다 꺾인다. 상대가 두 걸음 물러난다." : WinT[t];
             MolakVfx.Clash(true);                       // 흰 섬광, 크게 흔들림
             MolakArt.Hurt();                            // 상대가 밀려 흔들린다
-            if (iN >= nN && nN > 1 && momN >= 2) { MolakVfx.Stamp("勢", "기세가 넘어왔다", true); MolakVfx.Gold(); }
+            if (iN >= nN && nN > 1 && momN >= 2) { MolakVfx.Stamp("勢", "기세가 넘어왔다", true); MolakVfx.Gold(); MolakSfx.Momentum(); }
             else MolakVfx.Stamp(sig ? "破" : "破", "기세 +" + gain, false);
         }
         else if (res < 0)
@@ -540,7 +540,7 @@ public static class MolakDuelX
         int k = Mathf.RoundToInt(G("kp_k")) + 1;
         if (k > 3) return;
         S("kp_a" + k, a); S("kp_k", k);
-        if (a == 4) { S("dx_eyeused", 1f); for (int i = k + 1; i <= 3; i++) S("kp_v" + i, 1f); MolakVfx.Stamp("觀", "남은 수가 보인다", false); }
+        if (a == 4) { S("dx_eyeused", 1f); for (int i = k + 1; i <= 3; i++) S("kp_v" + i, 1f); MolakVfx.Stamp("觀", "남은 수가 보인다", false); MolakSfx.CardFlip(); }
         if (a == 5) { S("kp_used5", 1f); MolakStatLog.Why("ng", "청운 아홉째 운반을 쓰느라 기를 쏟았다"); MolakStats.Add("ng", -2f); }
         if (a == 6) S("kp_used6", 1f);
         if (k < 3 && G("kp_d" + (k + 1)) > 0)
@@ -554,7 +554,7 @@ public static class MolakDuelX
             if (G("memwarn") > 0 || G("dx_eyeused") > 0 && a == 4) S("kp_v" + (k + 1), 1f);
         }
         KCan();
-        MolakSfx.Tap();
+        MolakSfx.CardPlace();
     }
 
     public static void KGo ()

@@ -10,7 +10,8 @@ public class EndingCommand : Command
     {
         var id = MolakEnd.Resolve();
         var e = MolakEnd.Find(id);
-        MolakBgm.Mood("end");
+        // 0.4.70 말로마다 곡: 합벽은 진말로 곡, 살아서 떠나는 말로는 밝은 곡, 나머지는 회귀의 곡
+        MolakBgm.Mood(id == "hapbyeok" ? "true" : (id == "wonhaeng" || id == "donghaeng" || id == "sicheon" || id == "doju" || id == "jaegeon" || id == "muhyang" || id == "hwansok" || id == "mumyeong") ? "ending" : "end");
         bool isNew = false;
         var key = "g_end_" + id;
         if (MolakStats.Get(key) < 1f)

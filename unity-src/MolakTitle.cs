@@ -135,7 +135,7 @@ public class MolakTitle : MonoBehaviour
         GUI.Label(new Rect(lr.x + 1.5f*u, lr.y + 2*u, lr.width, lr.height), label, sh);
         GUI.Label(lr, label, st);
         bool hit = enabled && reveal >= 1f && GUI.Button(r, GUIContent.none, GUIStyle.none);   // 다 그어지기 전엔 눌리지 않는다
-        if (hit) { pressed = idx; pressedAt = t; downIdx = -1; MolakSfx.Confirm(); }
+        if (hit) { pressed = idx; pressedAt = t; downIdx = -1; MolakSfx.TitleBtn(); }
         return hit;
     }
 

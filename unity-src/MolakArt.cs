@@ -61,11 +61,47 @@ public class MolakArt : MonoBehaviour
         }
         if (inst.sceneId == key) { if (inst.charCur != null) inst.SetChar(null, ""); return; }   // 같은 장면을 다시 부르면 인물을 내리고 장면을 보인다
         bool isDuel = key.StartsWith("duel");   // duel, duelbridge … 비무 판의 변형
-        if (isDuel) { if (!inst.sceneId.StartsWith("duel")) { prevScene = inst.sceneId; MolakSfx.Draw(); } } else prevScene = null;
+        if (isDuel) { if (!inst.sceneId.StartsWith("duel")) { prevScene = inst.sceneId; MolakSfx.Draw(); MolakSfx.Crowd(); } } else prevScene = null;
         if (!isDuel) MolakFlow.Break();
         var sp = Load("MolakArt/scene_" + key);
         inst.SetScene(sp, key);
-        MolakBgm.Mood(isDuel ? "duel" : (key == "raid" || key == "bloodroof" || key == "raidnight") ? "raid" : "day");
+        MolakBgm.Mood(MoodFor(key));
+        MolakAmbience.Scene(key);
+    }
+
+    // 0.4.70 장면에 맞는 배경음 묶음
+    static readonly Dictionary<string, string> SceneMood = new Dictionary<string, string>
+    {
+        {"raid","fire"},{"bloodroof","fire"},{"raidnight","fire"},{"manorfire","fire"},{"herbfire","fire"},
+        {"rain","rain"},{"flood","rain"},{"soanight","rain"},
+        {"night","night"},{"roofmoon","night"},{"nightmarket","night"},{"stairs","night"},{"well","night"},
+        {"lordhall","boss"},
+        {"camp","tension"},{"pass","tension"},{"valley","tension"},{"cellar","tension"},{"blood","tension"},{"ruins","tension"},{"storehouse","tension"},
+        {"mourners","sorrow"},{"shrineash","sorrow"},{"stonebox","sorrow"},
+        {"yard","prologue"},{"gate","prologue"},
+        {"truemorning","true"},{"hapbyeok2","true"},
+    };
+    static string MoodFor (string key)
+    {
+        if (string.IsNullOrEmpty(key)) return IsNight ? "night" : "day";
+        if (key.StartsWith("duel")) return BossDuel ? "boss" : "duel";
+        string m;
+        if (SceneMood.TryGetValue(key, out m))
+        {
+            if (m == "prologue" && MolakStats.Get("day") >= 1f) return "day";   // 청운산장 앞마당은 서장에서만
+            return m;
+        }
+        return IsNight ? "night" : "day";
+    }
+    /// <summary>교주전·결전 비무면 boss 묶음(MolakDuel 이 켠다).</summary>
+    public static bool BossDuel;
+    public static string CurrentMood ()
+    {
+        if (inst == null) return "day";
+        string c = inst.charId ?? "";
+        if (c.StartsWith("soa")) return "soa";
+        if (c.StartsWith("amhyang") || c.StartsWith("cheongmyo") || c.StartsWith("chamsae")) return "heroine";
+        return MoodFor(inst.sceneId);
     }
 
     // 0.4.9: 인물이 나오면 그 사람이 있을 법한 자리를 뒤에 깐다(지금 장면이 하루의 기본 풍경일 때만 — 대본이 고른 장면은 그대로 둔다)
@@ -95,7 +131,7 @@ public class MolakArt : MonoBehaviour
     public static void Char (string id)
     {
         if (inst == null) return;
-        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); return; }
+        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); if (!inst.sceneId.StartsWith("duel")) MolakBgm.Mood(CurrentMood()); return; }
         if (inst.charId == id) return;
         if (Generic.Contains(inst.sceneId) && !inst.sceneId.StartsWith("duel"))
         {
@@ -113,6 +149,7 @@ public class MolakArt : MonoBehaviour
         }
         var sp = Load("MolakArt/char_" + id);
         inst.SetChar(sp, id);
+        if (!inst.sceneId.StartsWith("duel")) MolakBgm.Mood(CurrentMood());   // 0.4.70 소아·히로인이 나오면 그 사람의 곡
     }
 
     static string prevScene;
@@ -122,7 +159,9 @@ public class MolakArt : MonoBehaviour
         if (inst == null || !inst.sceneId.StartsWith("duel")) return;
         MolakDuelStage.Clear();
         if (string.IsNullOrEmpty(prevScene)) inst.SetScene(null, ""); else { var sp = Load("MolakArt/scene_" + prevScene); inst.SetScene(sp, prevScene); }
-        MolakBgm.Mood(prevScene == "raid" || prevScene == "bloodroof" ? "raid" : "day");
+        BossDuel = false;
+        MolakBgm.Mood(CurrentMood());
+        MolakAmbience.Scene(inst.sceneId);
         prevScene = null;
     }
 

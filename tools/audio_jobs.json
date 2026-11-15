@@ -1,0 +1,424 @@
+[
+ {
+  "kind": "sfx",
+  "name": "page_turn2",
+  "prompt": "Single soft page turn of thin rice paper, quiet, close-up foley",
+  "sec": 1.6,
+  "seed": 1000
+ },
+ {
+  "kind": "sfx",
+  "name": "ui_menu",
+  "prompt": "Soft wooden click, small wooden block tap, gentle dry UI click",
+  "sec": 1.0,
+  "seed": 1001
+ },
+ {
+  "kind": "sfx",
+  "name": "ui_title",
+  "prompt": "Deep resonant wooden temple block knock, single hit",
+  "sec": 1.6,
+  "seed": 1002
+ },
+ {
+  "kind": "sfx",
+  "name": "wind_rewind",
+  "prompt": "Reversed whoosh, wind sucked backwards, rising reverse swell, mystical",
+  "sec": 3.2,
+  "seed": 1003
+ },
+ {
+  "kind": "sfx",
+  "name": "chapter_pluck",
+  "prompt": "Single guzheng string pluck, Chinese zither, resonant gentle decay",
+  "sec": 2.6,
+  "seed": 1004
+ },
+ {
+  "kind": "sfx",
+  "name": "day_rooster",
+  "prompt": "Distant rooster crow at dawn in a quiet village, early morning",
+  "sec": 4.0,
+  "seed": 1005
+ },
+ {
+  "kind": "sfx",
+  "name": "true_bell",
+  "prompt": "Clear bright Chinese bronze bell strike, shimmering long decay",
+  "sec": 4.5,
+  "seed": 1006
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_stamp",
+  "prompt": "Wooden seal stamp pressed firmly on paper, single thud, foley",
+  "sec": 1.0,
+  "seed": 1007
+ },
+ {
+  "kind": "sfx",
+  "name": "gloss_paper",
+  "prompt": "Tiny soft paper rustle, quiet, short",
+  "sec": 1.0,
+  "seed": 1008
+ },
+ {
+  "kind": "sfx",
+  "name": "autolife_breath",
+  "prompt": "Low soft breath of wind, airy ethereal whoosh, gentle",
+  "sec": 3.0,
+  "seed": 1009
+ },
+ {
+  "kind": "sfx",
+  "name": "sword_draw",
+  "prompt": "Sword unsheathing, steel blade sliding out of a scabbard, sharp metallic ring, foley",
+  "sec": 1.6,
+  "seed": 1010
+ },
+ {
+  "kind": "sfx",
+  "name": "sword_clash",
+  "prompt": "Two steel swords clash, quick light metallic clang, foley",
+  "sec": 1.2,
+  "seed": 1011
+ },
+ {
+  "kind": "sfx",
+  "name": "sword_clash_heavy",
+  "prompt": "Heavy sword clash, powerful steel impact with long metallic ring",
+  "sec": 2.6,
+  "seed": 1012
+ },
+ {
+  "kind": "sfx",
+  "name": "hit_drum",
+  "prompt": "Sword slash hit with a deep war drum impact",
+  "sec": 1.6,
+  "seed": 1013
+ },
+ {
+  "kind": "sfx",
+  "name": "card_place",
+  "prompt": "Wooden tile placed on a wooden table, single click, mahjong tile",
+  "sec": 1.0,
+  "seed": 1014
+ },
+ {
+  "kind": "sfx",
+  "name": "card_flip",
+  "prompt": "Quick crisp paper card flip, single",
+  "sec": 1.0,
+  "seed": 1015
+ },
+ {
+  "kind": "sfx",
+  "name": "momentum_drum",
+  "prompt": "Single big Chinese war drum hit, deep boom",
+  "sec": 2.2,
+  "seed": 1016
+ },
+ {
+  "kind": "sfx",
+  "name": "win_gong",
+  "prompt": "Chinese gong crash, triumphant, long shimmer",
+  "sec": 4.5,
+  "seed": 1017
+ },
+ {
+  "kind": "sfx",
+  "name": "lose_drum",
+  "prompt": "Low muffled drum hit, somber, fading",
+  "sec": 3.0,
+  "seed": 1018
+ },
+ {
+  "kind": "sfx",
+  "name": "crowd_cheer",
+  "prompt": "Small crowd in an ancient market cheering and shouting, outdoors",
+  "sec": 5.0,
+  "seed": 1019,
+  "neg": "music, melody, low quality, distortion"
+ },
+ {
+  "kind": "sfx",
+  "name": "heartbeat",
+  "prompt": "Single deep heartbeat thump thump, close, low",
+  "sec": 1.8,
+  "seed": 1020
+ },
+ {
+  "kind": "sfx",
+  "name": "curse_breath",
+  "prompt": "Eerie low breathing, dark ominous drone, creepy",
+  "sec": 4.0,
+  "seed": 1021,
+  "neg": "music, melody, singing, low quality"
+ },
+ {
+  "kind": "sfx",
+  "name": "death_drum",
+  "prompt": "Deep funeral drum hit with long dark reverb tail",
+  "sec": 5.0,
+  "seed": 1022
+ },
+ {
+  "kind": "sfx",
+  "name": "bell_rise",
+  "prompt": "Rising shimmering chimes into a bright bell strike, ascension, magical",
+  "sec": 4.0,
+  "seed": 1023
+ },
+ {
+  "kind": "sfx",
+  "name": "frenzy_whisper",
+  "prompt": "Many overlapping whispering voices, chaotic, frightening, swirling",
+  "sec": 6.0,
+  "seed": 1024,
+  "neg": "music, melody, singing, low quality"
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_rain",
+  "prompt": "Steady rain falling on clay tile roof, eaves dripping, ambience",
+  "sec": 22.0,
+  "seed": 1025
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_eaves",
+  "prompt": "Water dripping from roof eaves after rain, quiet ambience",
+  "sec": 16.0,
+  "seed": 1026
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_fire",
+  "prompt": "Large wooden building on fire, roaring flames, crackling wood, ambience",
+  "sec": 22.0,
+  "seed": 1027
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_market",
+  "prompt": "Busy ancient street market ambience, murmuring crowd, distant vendors, footsteps",
+  "sec": 22.0,
+  "seed": 1028,
+  "neg": "music, melody, singing, low quality"
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_night",
+  "prompt": "Quiet night ambience, crickets, soft wind, distant dog bark",
+  "sec": 22.0,
+  "seed": 1029
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_river",
+  "prompt": "River flowing, gentle water lapping a wooden dock, ambience",
+  "sec": 22.0,
+  "seed": 1030
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_temple",
+  "prompt": "Mountain temple ambience, distant bell, wind, birds",
+  "sec": 22.0,
+  "seed": 1031
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_snow",
+  "prompt": "Cold winter wind blowing softly, snowy ambience",
+  "sec": 22.0,
+  "seed": 1032
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_roof",
+  "prompt": "Stealthy footsteps on clay roof tiles at night, tiles clicking",
+  "sec": 10.0,
+  "seed": 1033
+ },
+ {
+  "kind": "sfx",
+  "name": "amb_tavern",
+  "prompt": "Ancient tavern interior ambience, cups clinking, low murmuring",
+  "sec": 22.0,
+  "seed": 1034,
+  "neg": "music, melody, singing, low quality"
+ },
+ {
+  "kind": "bgm",
+  "name": "title_00",
+  "prompt": "Chinese traditional, wuxia, cinematic, guzheng, xiao bamboo flute, erhu, slow, melancholic, epic, grand, instrumental, no vocals",
+  "sec": 150,
+  "bpm": 70,
+  "key": "D minor",
+  "seed": 2035
+ },
+ {
+  "kind": "bgm",
+  "name": "day_00",
+  "prompt": "Chinese traditional, light, pleasant, pipa, dizi flute, guzheng, village life, relaxed, instrumental, no vocals",
+  "sec": 120,
+  "bpm": 96,
+  "key": "G major",
+  "seed": 2038
+ },
+ {
+  "kind": "bgm",
+  "name": "night_00",
+  "prompt": "Chinese traditional, night, quiet, guqin, xiao flute, slow, contemplative, moonlight, instrumental, no vocals",
+  "sec": 120,
+  "bpm": 60,
+  "key": "A minor",
+  "seed": 2040
+ },
+ {
+  "kind": "bgm",
+  "name": "duel_00",
+  "prompt": "Chinese martial arts battle, war drums, fast pipa, erhu, energetic, wuxia fight, instrumental, no vocals",
+  "sec": 120,
+  "bpm": 150,
+  "key": "E minor",
+  "seed": 2044
+ },
+ {
+  "kind": "bgm",
+  "name": "tension_00",
+  "prompt": "dark, suspense, low drums, taiko, erhu dissonance, Chinese traditional, ominous, tension, instrumental, no vocals",
+  "sec": 120,
+  "bpm": 90,
+  "key": "C minor",
+  "seed": 2043
+ },
+ {
+  "kind": "bgm",
+  "name": "soa_00",
+  "prompt": "Chinese traditional, bittersweet, erhu solo, guzheng, tender, lonely swordswoman theme, instrumental, no vocals",
+  "sec": 120,
+  "bpm": 72,
+  "key": "E minor",
+  "seed": 2047
+ },
+ {
+  "kind": "bgm",
+  "name": "sorrow_00",
+  "prompt": "sad, Chinese traditional, erhu lament, slow, grief, funeral, instrumental, no vocals",
+  "sec": 120,
+  "bpm": 58,
+  "key": "D minor",
+  "seed": 2049
+ },
+ {
+  "kind": "bgm",
+  "name": "end_00",
+  "prompt": "Chinese traditional, mysterious, ethereal, guqin, ambient, haunting, time rewinding, instrumental, no vocals",
+  "sec": 90,
+  "bpm": 64,
+  "key": "F minor",
+  "seed": 2050
+ },
+ {
+  "kind": "bgm",
+  "name": "fire_00",
+  "prompt": "Chinese war drums, intense, fast, erhu tremolo, dramatic, battle, burning, cinematic, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 140,
+  "key": "D minor",
+  "seed": 2037,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "rain_00",
+  "prompt": "Chinese traditional, rain, melancholic, erhu, slow strings, guzheng, sad, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 62,
+  "key": "B minor",
+  "seed": 2042,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "boss_00",
+  "prompt": "epic orchestral, Chinese traditional, massive taiko drums, dark, final battle, wuxia, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 140,
+  "key": "C minor",
+  "seed": 2046,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "heroine_00",
+  "prompt": "Chinese traditional, gentle romantic, guzheng, dizi, warm, soft, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 76,
+  "key": "F major",
+  "seed": 2048,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "ending_00",
+  "prompt": "uplifting, Chinese traditional, sunrise, hope, orchestral, dizi, guzheng, warm, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 84,
+  "key": "D major",
+  "seed": 2051,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "true_00",
+  "prompt": "grand epic finale, Chinese orchestra, triumphant, emotional, wuxia, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 80,
+  "key": "D major",
+  "seed": 2052,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "prologue_00",
+  "prompt": "Chinese traditional, peaceful morning, guqin, bamboo flute, calm, gentle, serene, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 72,
+  "key": "G major",
+  "seed": 2036,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "day_01",
+  "prompt": "Chinese folk, gentle, warm, erhu and guzheng, teahouse, calm daily life, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 88,
+  "key": "C major",
+  "seed": 2039,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "night_01",
+  "prompt": "ambient, wuxia, night, sparse guzheng, soft pads, lonely, slow, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 56,
+  "key": "E minor",
+  "seed": 2041,
+  "codes": false
+ },
+ {
+  "kind": "bgm",
+  "name": "duel_01",
+  "prompt": "epic wuxia duel, heavy drums, dizi, orchestral, intense, powerful, instrumental, no vocals",
+  "sec": 100,
+  "bpm": 160,
+  "key": "D minor",
+  "seed": 2045,
+  "codes": false
+ }
+]

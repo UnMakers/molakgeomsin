@@ -57,7 +57,21 @@ public class MolakSfx : MonoBehaviour
 
     public static void Tap ()     { Play("tap_brush", 0.9f, Random.Range(0.94f, 1.06f)); Vibrate(); }
     public static float LastConfirm = -9f;
-    public static void Confirm () { LastConfirm = Time.unscaledTime; Play("page_turn", 0.7f, Random.Range(0.96f, 1.04f)); }
+    public static void Confirm () { LastConfirm = Time.unscaledTime; if (!Try("ui_menu", 0.6f, Random.Range(0.97f, 1.03f))) Play("page_turn", 0.7f, Random.Range(0.96f, 1.04f)); }
+    // 0.4.70 ComfyUI(Stable Audio Open)로 뽑은 소리. 파일이 없으면 옛 소리로 물러선다.
+    public static void TitleBtn () { LastConfirm = Time.unscaledTime; if (!Try("ui_title", 0.75f)) Confirm(); }
+    public static void Page ()    { Try("page_turn2", 0.38f, Random.Range(0.96f, 1.05f)); }
+    public static void Chapter () { if (!Try("chapter_pluck", 0.7f)) Bell(); }
+    public static void Dawn ()    { Try("day_rooster", 0.45f); }
+    public static void Gloss ()   { Try("gloss_paper", 0.35f); }
+    public static void Follow ()  { Try("autolife_breath", 0.5f); }
+    public static void CardPlace () { if (!Try("card_place", 0.75f, Random.Range(0.95f, 1.05f))) Tap(); }
+    public static void CardFlip () { Try("card_flip", 0.6f, Random.Range(0.95f, 1.05f)); }
+    public static void Momentum () { Try("momentum_drum", 0.85f); }
+    public static void Win ()     { Try("win_gong", 0.8f); }
+    public static void Lose ()    { Try("lose_drum", 0.85f); }
+    public static void Crowd ()   { Try("crowd_cheer", 0.45f); }
+    public static void Frenzy ()  { Try("frenzy_whisper", 0.7f); }
     public static void Hit ()     { Play("hit_drum", 1f, Random.Range(0.95f, 1.05f)); Vibrate(); }
     public static void Bell ()    { Play("bell_rise", 0.8f); }
     public static void Death ()   { Play("death_drum", 1f); Vibrate(); }
@@ -65,7 +79,7 @@ public class MolakSfx : MonoBehaviour
     public static void Rewind ()   { Play("wind_rewind", 0.8f); }
     public static void TrueBell () { Play("true_bell", 1f); }
     // 0.4.32 소리 점검: 칼끼리 맞는 쇳소리, 인장 찍는 소리, 몸이 바닥일 때의 심장, 사술이 숨 쉬는 소리
-    public static void Clash (bool heavy) { if (!Try("sword_clash", heavy ? 0.9f : 0.6f, Random.Range(heavy ? 0.92f : 1.02f, heavy ? 1f : 1.1f))) Draw(); }
+    public static void Clash (bool heavy) { if (heavy && Try("sword_clash_heavy", 0.85f, Random.Range(0.96f, 1.02f))) return; if (!Try("sword_clash", heavy ? 0.9f : 0.6f, Random.Range(heavy ? 0.92f : 1.02f, heavy ? 1f : 1.1f))) Draw(); }
     public static void Stamp ()   { if (!Try("seal_stamp", 0.85f, Random.Range(0.95f, 1.05f))) Play("tap_brush", 0.8f, 0.82f); }
     public static void Heart ()   { Try("heartbeat", 0.9f); }
     public static void CurseBreath () { Try("curse_breath", 0.7f); }

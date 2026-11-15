@@ -112,7 +112,7 @@ public class MolakGloss : MonoBehaviour
         if (!Engine.Initialized || MolakMenu.IsOpen || MolakTitle.Showing) return;
         float now = Time.unscaledTime;
         for (int i = showing.Count - 1; i >= 0; i--) if (now - showing[i].t0 > Life) showing.RemoveAt(i);
-        while (showing.Count < 2 && queue.Count > 0) showing.Add((queue.Dequeue(), now));
+        while (showing.Count < 2 && queue.Count > 0) { showing.Add((queue.Dequeue(), now)); MolakSfx.Gloss(); }
         if (showing.Count == 0) return;
         float u = MolakGui.U;
         if (sT == null || !Mathf.Approximately(bu, u)) { bu = u; sT = MolakGui.Label(25, u, TextAnchor.UpperLeft, true); sT.richText = true; }
@@ -129,7 +129,8 @@ public class MolakGloss : MonoBehaviour
         }
         string txt = sb.ToString();
         float hgt = sT.CalcHeight(new GUIContent(txt), w - pad * 2f) + pad * 1.6f;
-        var r = new Rect(ta.x, ta.yMax - hgt, w, hgt);
+        float lift = MolakHud.SlipH > 0f ? MolakHud.SlipH + 6f * u : 0f;   // 0.4.70 수치 쪽지가 떠 있으면 그 위로
+        var r = new Rect(ta.x, ta.yMax - hgt - lift, w, hgt);
         var g0 = GUI.color;
         GUI.color = new Color(0.98f, 0.96f, 0.91f, 0.96f * a); GUI.DrawTexture(r, MolakGui.Px);
         GUI.color = new Color(0.62f, 0.45f, 0.18f, 0.8f * a); GUI.DrawTexture(new Rect(r.x, r.y, Mathf.Max(2f, 3f * u), r.height), MolakGui.Px);

@@ -4,6 +4,7 @@
 @set aff=0
 @set amhaff=0
 @set arenawin=0
+@set autofollow=0
 @set b_am1=0
 @set b_am2=0
 @set b_am25=0
@@ -1000,7 +1001,7 @@
 @stop
 # MkSalve
 @goto #MkSalveK if:g_herbdied<1
-노파의 손이 따뜻하다. 지난 생, 불타는 약방에서 업고 나온 그 등이다.
+노파의 굽은 등을 본다. 지난 생, 불타는 약방에서 업고 나온 그 등이다.
 # MkSalveK
 노파가 당신 손목 맥을 짚더니 이맛살을 찌푸린다.
 "……맥이 둘이구나. 가슴에 있는 그것이 따로 뛰고 있어. 그건 약으로 못 고친다."
@@ -1108,7 +1109,7 @@
 # MkGambleC
 패를 엎고 일어선다.
 "보는 눈은 있는데 겁이 많군."
-겁이 아니다. 오늘은 칼부림할 날이 아니다.
+오늘은 칼부림할 날이 아니다.
 @goto #MkGambleCD if:gdebt>0
 @goto #MkTavern
 # MkGambleCD
@@ -1149,7 +1150,7 @@
 객잔으로 돌아온다. 하진무가 마당을 쓸다 말고 고개만 끄덕인다.
 서열록 맨 위에는 혈마교주가 있다. 그보다 더 위에, 당신에게 사술을 건 노인이 있다.
 당신의 이름은 아직 서열록에 없다. 맨 아래부터 올라가야 한다.
-@goto Molak02#Night if:g_runs<1||g_bestday<10
+@goto Molak02#Night if:g_runs<1||g_bestday<10||autofollow>0
 @choice "오늘 밤부터 한 걸음씩 걷는다" goto:Molak02#Night
 @choice "기억대로 흘려보낸다 — 아는 날들을 건너뛴다 (아흐레)" goto:#FF
 @stop

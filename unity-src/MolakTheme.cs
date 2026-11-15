@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Naninovel;
 using UnityEngine;
 using UnityEngine.UI;
@@ -227,6 +228,19 @@ public class MolakTheme : MonoBehaviour
     }
 
     /// <summary>선택지 카드 폭: 배경 종이의 테두리 선(화면 폭의 약 4.5%) 안쪽에 들어오도록 화면 비율에 맞춰 계산</summary>
+    readonly Dictionary<int, MolakChoiceMeta.Meta> metaCache = new Dictionary<int, MolakChoiceMeta.Meta>();
+    static string RawLabel (Naninovel.UI.ChoiceHandlerButton btn)
+    {
+        TMPro.TMP_Text lblTx = null;
+        foreach (var tx0 in btn.GetComponentsInChildren<TMPro.TMP_Text>(true)) if (tx0.gameObject.name != "Num") { lblTx = tx0; break; }
+        string raw = lblTx != null ? lblTx.text : "";
+        int hintAt = raw.IndexOf("\n<size=62%>");
+        if (hintAt >= 0) raw = raw.Substring(0, hintAt);
+        // 이미 잠김으로 흐리게 칠한 글귀면 색 태그를 벗긴다
+        if (raw.StartsWith("<color=") && raw.EndsWith("</color>")) { int gt = raw.IndexOf('>'); raw = raw.Substring(gt + 1, raw.Length - gt - 1 - 8); }
+        return MolakChoiceMeta.StripRisk(raw);   // 승부수 표시 〔검술+2〕 는 주석으로 옮겨 적는다
+    }
+
     static float CardWidth (Component c)
     {
         float cw = MolakLayout.Canvas.x;
@@ -339,7 +353,35 @@ public class MolakTheme : MonoBehaviour
             }
         }
         var tier = MolakLayout.For(choiceCount);
-        foreach (var btn in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        // 0.4.70 잠긴 선택지는 작게, 맨 아래로(언메이커). 카드 순서를 바꾸기 전에 원래 순서(나니노벨 실행 순서 = MolakChoiceMeta 의 순서)로 주석을 정해 둔다.
+        if (choiceCount == 0 && metaCache.Count > 0) metaCache.Clear();
+        var allBtns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var b0 in allBtns)
+        {
+            int id0 = b0.GetInstanceID();
+            if (metaCache.ContainsKey(id0)) continue;
+            int ci0 = 0;
+            for (int ci = 0; ci < b0.transform.GetSiblingIndex(); ci++)
+            { var sib = b0.transform.parent.GetChild(ci); if (sib.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null && sib.gameObject.activeSelf) ci0++; }
+            var m0 = MolakChoiceMeta.Get(ci0, RawLabel(b0));
+            if (b0.Choice.Locked) m0.Locked = true;
+            metaCache[id0] = m0;
+        }
+        {   // 잠긴 카드를 열린 카드 뒤로(잠긴 것끼리는 원래 순서)
+            var lockedList = new List<Naninovel.UI.ChoiceHandlerButton>();
+            foreach (var b0 in allBtns) { MolakChoiceMeta.Meta mm; if (metaCache.TryGetValue(b0.GetInstanceID(), out mm) && mm.Locked) lockedList.Add(b0); }
+            if (lockedList.Count > 0 && lockedList.Count < allBtns.Length)
+            {
+                lockedList.Sort((a, b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex()));
+                var par0 = lockedList[0].transform.parent;
+                int lastUnlocked = -1;
+                for (int ci = 0; ci < par0.childCount; ci++)
+                { var bb = par0.GetChild(ci).GetComponent<Naninovel.UI.ChoiceHandlerButton>(); MolakChoiceMeta.Meta mm; if (bb != null && bb.gameObject.activeSelf && !(metaCache.TryGetValue(bb.GetInstanceID(), out mm) && mm.Locked)) lastUnlocked = ci; }
+                bool misplaced = false; foreach (var lb in lockedList) if (lb.transform.GetSiblingIndex() < lastUnlocked) { misplaced = true; break; }
+                if (misplaced) foreach (var lb in lockedList) lb.transform.SetAsLastSibling();
+            }
+        }
+        foreach (var btn in allBtns)
         {
             // ---- 선택지 카드: 한지 바탕 + 이중 먹선 테두리 + 왼쪽 주홍 인장(一二三四) ----
             int cidx = 0;
@@ -382,16 +424,15 @@ public class MolakTheme : MonoBehaviour
                 seal = sg.transform;
             }
             var sealImg = seal.GetComponent<Image>();
-            { var srt0 = (RectTransform)seal; if (Mathf.Abs(srt0.sizeDelta.x - tier.Seal) > 0.5f) { srt0.sizeDelta = new Vector2(tier.Seal, tier.Seal); srt0.anchoredPosition = new Vector2(tier.SealX, 0f); } }
+            bool lockedEarly = metaCache.ContainsKey(btn.GetInstanceID()) && metaCache[btn.GetInstanceID()].Locked;
+            { float sz = lockedEarly ? tier.Seal * 0.72f : tier.Seal; var srt0 = (RectTransform)seal; if (Mathf.Abs(srt0.sizeDelta.x - sz) > 0.5f) { srt0.sizeDelta = new Vector2(sz, sz); srt0.anchoredPosition = new Vector2(tier.SealX, 0f); } }
             // 조건부 선택지: 원래 글귀(주석 붙기 전)를 기억해 두고 종류·주석을 만든다
             var lblTx = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
             if (lblTx != null && lblTx.gameObject.name == "Num") lblTx = null;
             foreach (var tx0 in btn.GetComponentsInChildren<TMPro.TMP_Text>(true)) if (tx0.gameObject.name != "Num") { lblTx = tx0; break; }
-            string rawLabel = lblTx != null ? lblTx.text : "";
-            int hintAt = rawLabel.IndexOf("\n<size=62%>");
-            if (hintAt >= 0) rawLabel = rawLabel.Substring(0, hintAt);
-            rawLabel = MolakChoiceMeta.StripRisk(rawLabel);   // 승부수 표시 〔검술+2〕 는 주석으로 옮겨 적는다
-            var meta = MolakChoiceMeta.Get(cidx, rawLabel);
+            string rawLabel = RawLabel(btn);
+            MolakChoiceMeta.Meta meta;
+            if (!metaCache.TryGetValue(btn.GetInstanceID(), out meta)) meta = MolakChoiceMeta.Get(cidx, rawLabel);
             bool lockedCard = meta.Locked || (btn.Choice.Locked);
             if (lblTx != null)
             {
@@ -409,7 +450,7 @@ public class MolakTheme : MonoBehaviour
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
             string want = MolakLayout.Numeral(cidx);
             if (num.text != want) num.text = want;
-            { float nfs = want.Length > 1 ? tier.Numeral2 : tier.Numeral; if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
+            { float nfs = (want.Length > 1 ? tier.Numeral2 : tier.Numeral) * (lockedCard ? 0.75f : 1f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
             if (num.color != numCol) num.color = numCol;
             var vlg0 = btn.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
@@ -434,22 +475,22 @@ public class MolakTheme : MonoBehaviour
             if (ub != null && ub.interactable == lockedCard) ub.interactable = !lockedCard;   // 잠긴 카드는 눌리지 않는다
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
-            float wantH = tier.CardH;
+            float wantH = lockedCard ? Mathf.Round(tier.CardH * 0.66f) : tier.CardH;
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = InkText;
-            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Tap(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); }); }
+            if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Vibrate(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); }); }
             foreach (var tx in btn.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
                 if (tx.gameObject.name == "Num") continue;
                 if (tx.color != inkDark) tx.color = inkDark;
                 { var sf = MolakTypography.SongTMP(GowunTMP()); if (sf != null && tx.font != sf) tx.font = sf; }   // 선택지는 송명(붓 명조)
-                float cfs = Mathf.Round(tier.Font * FontScale);
+                float cfs = Mathf.Round(tier.Font * FontScale * (lockedCard ? 0.8f : 1f));
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
                 if (tx.textWrappingMode != TMPro.TextWrappingModes.Normal) tx.textWrappingMode = TMPro.TextWrappingModes.Normal;
                 if (tx.gameObject.name != "Num" && tx.alignment != TMPro.TextAlignmentOptions.MidlineLeft) tx.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                 if (tx.overflowMode != TMPro.TextOverflowModes.Overflow) tx.overflowMode = TMPro.TextOverflowModes.Overflow;
-                float need = tx.preferredHeight + tier.TextPad;
+                float need = tx.preferredHeight + (lockedCard ? tier.TextPad * 0.4f : tier.TextPad);
                 if (need > le.minHeight + 1f) le.minHeight = need;
             }
         }

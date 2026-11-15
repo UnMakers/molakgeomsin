@@ -103,6 +103,7 @@ public class MolakSettings : MonoBehaviour
             foreach (var n in MolakVarList.Globals) MolakStats.Set(n, 0f);
             MolakStats.SetStr("g_lastend", "none"); MolakStats.SetStr("g_lastcause", "none"); MolakStats.SetStr("g_nxform", "none"); MolakStats.SetStr("g_scars", "");
             MolakGloss.Reset();
+            MolakAutoLife.Reset();
             await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
         }
         catch (System.Exception e) { Debug.LogWarning("[MolakSettings] 기억 지우기 실패: " + e.Message); }
@@ -166,6 +167,9 @@ public class MolakSettings : MonoBehaviour
             if (Mathf.Abs(nd - ad) > 0.001f) tp.BaseAutoDelay = nd;
             y += rh + gap;
         }
+        // 0.4.70 회귀 뒤 지난 생을 하루 한 줄로 따라 걷기
+        if (Toggle(new Rect(cx, y, cw, rh), "회귀 뒤 지난 생 따라 걷기", MolakAutoLife.Enabled, u)) MolakAutoLife.Enabled = !MolakAutoLife.Enabled;
+        y += rh + gap;
 
         // ── 화면
         Section(ref y, cx, cw, sh, "화면");

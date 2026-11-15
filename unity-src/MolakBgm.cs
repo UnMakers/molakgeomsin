@@ -61,9 +61,20 @@ public class MolakBgm : MonoBehaviour
         m = m ?? "";
         if (inst.mood == m) return;
         inst.mood = m;
-        string want = (m.Length > 0 && Has(m)) ? m : "bgm";
+        string want = (m.Length > 0 && Has(m)) ? m : Fallback(m);
         if (want == inst.set && inst.pendingSet == null) return;
         inst.pendingSet = want;
+    }
+
+    /// <summary>0.4.70 묶음이 없으면 가까운 묶음으로: 장면 묶음 → 낮/밤 → 옛 기본 묶음.</summary>
+    static string Fallback (string m)
+    {
+        string near = m == "fire" ? "tension" : m == "boss" ? "duel" : m == "heroine" ? "soa" : m == "rain" ? "night" : m == "sorrow" ? "night" : m == "prologue" ? "day"
+                    : m == "ending" ? "true" : m == "true" ? "ending" : m == "raid" ? "fire" : "";
+        if (near.Length > 0 && Has(near)) return near;
+        if (m == "night" || m == "rain" || m == "sorrow") { if (Has("night")) return "night"; }
+        if (Has("day")) return "day";
+        return "bgm";
     }
 
     void Next ()
@@ -142,8 +153,9 @@ public class MolakBgm : MonoBehaviour
         {
             moodT = 0.5f;
             float day = 0f; try { day = MolakStats.Get("day"); } catch { }
-            if (day < 1f) { if (mood != "end") Mood("title"); }
-            else if (mood == "title" || mood == "end") Mood("day");
+            if (MolakTitle.Showing) { if (mood != "end" && mood != "ending" && mood != "true") Mood("title"); }
+            else if (day < 1f) { if (mood == "title" || mood == "") Mood("prologue"); }
+            else if (mood == "title" || mood == "end" || mood == "ending" || mood == "true" || mood == "prologue") Mood(MolakArt.CurrentMood());
         }
         // 묶음 갈아타기: 소리를 내린 뒤 새 묶음의 다음 곡
         if (pendingSet != null)

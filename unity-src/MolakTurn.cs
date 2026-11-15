@@ -114,7 +114,7 @@ public class MolakTurnCard : MonoBehaviour
     {
         if (inst == null) return;
         inst.kicker = kick ?? ""; inst.title = ttl ?? ""; inst.lines = ls ?? new string[0]; inst.t = 0f;
-        MolakSfx.Stamp(); MolakVfx.Shake(10f);
+        MolakSfx.Dawn(); MolakSfx.Stamp(); MolakVfx.Shake(10f);
     }
 
     void Update () { if (t >= 0f) t += Time.unscaledDeltaTime; }

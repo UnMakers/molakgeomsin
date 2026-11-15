@@ -23,7 +23,7 @@ public class MolakDuelCard : MonoBehaviour
 
     public static void Show (bool win, string foe, string line, string sub)
     {
-        cWin = win; cName = foe; cLine = line; cSub = sub ?? ""; cT = 0f; if (instance != null) instance.outAt = -1f;
+        cWin = win; cName = foe; cLine = line; cSub = sub ?? ""; cT = 0f; if (win) MolakSfx.Win(); else MolakSfx.Lose(); if (instance != null) instance.outAt = -1f;
     }
 
     static Texture2D Px { get { return MolakGui.Px; } }

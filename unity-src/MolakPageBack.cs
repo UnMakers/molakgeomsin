@@ -114,8 +114,7 @@ public class MolakPageBack : MonoBehaviour
         pastCg.alpha = 0f;
         animLive = false; animT0 = Time.unscaledTime;
         Apply(0f);
-        MolakSfx.Confirm();   // 종이 넘기는 소리
-        MolakSfx.Vibrate();
+        MolakSfx.Page(); MolakSfx.Vibrate();
     }
 
     public static void Close ()
@@ -132,7 +131,6 @@ public class MolakPageBack : MonoBehaviour
         {
             liveTx = live; animLive = true; animDir = 1; animT0 = Time.unscaledTime;
             var cg = live.GetComponent<CanvasGroup>(); if (cg != null) cg.alpha = 0.15f;
-            MolakSfx.Confirm();
         }
     }
     static TMPro.TMP_Text liveTx;

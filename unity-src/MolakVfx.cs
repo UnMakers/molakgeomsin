@@ -72,7 +72,7 @@ public class MolakVfx : MonoBehaviour
     // 마디 이름(@chapter): 띠 그림 위에 붓 글씨 제목, 2.6초
     float chapT = -1f; string chapText = "", chapSub = "";
     GUIStyle sChap, sChapSub; float chapU = -1f;
-    public static void Chapter (string text, string sub) { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapT = 0f; MolakSfx.Bell(); }
+    public static void Chapter (string text, string sub) { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapT = 0f; MolakSfx.Chapter(); }
 
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
@@ -117,6 +117,26 @@ public class MolakVfx : MonoBehaviour
             vig.Apply(); return vig;
         }
     }
+    static Texture2D edge;
+    /// <summary>0.4.70 화면 가장자리·모서리에만 짙은 띠(가운데는 완전히 비운다). 체력 바닥·사술·번쩍임은 이것으로만 — 화면 전체가 깜빡이면 눈이 아프다(언메이커).</summary>
+    static Texture2D Edge
+    {
+        get
+        {
+            if (edge != null) return edge;
+            int S = 256; edge = new Texture2D(S, S, TextureFormat.RGBA32, false); edge.filterMode = FilterMode.Bilinear; edge.wrapMode = TextureWrapMode.Clamp;
+            for (int y = 0; y < S; y++) for (int x = 0; x < S; x++)
+            {
+                float fx = (x + 0.5f) / S, fy = (y + 0.5f) / S;
+                float ex = Mathf.Min(fx, 1f - fx), ey = Mathf.Min(fy, 1f - fy);
+                float side = Mathf.Clamp01(1f - Mathf.Min(ex, ey) / 0.10f); side = side * side;           // 네 변: 안쪽 10% 까지
+                float cd = Mathf.Sqrt(ex * ex + ey * ey);
+                float corner = Mathf.Clamp01(1f - cd / 0.30f); corner = corner * corner * corner;        // 모서리는 조금 더 깊이
+                edge.SetPixel(x, y, new Color(1, 1, 1, Mathf.Clamp01(Mathf.Max(side * 0.85f, corner))));
+            }
+            edge.Apply(); return edge;
+        }
+    }
     /// <summary>심장 박동 곡선: 쿵-쿵 두 번 뛰고 쉰다(분당 약 일흔, 숨이 가쁠수록 빨라진다).</summary>
     static float Beat (float t, float bpm)
     {
@@ -132,6 +152,7 @@ public class MolakVfx : MonoBehaviour
         kind = kind ?? "";
         if (kind == WeatherKind) return;
         WeatherKind = kind;
+        MolakAmbience.Weather(kind);
         instance.SetRain(kind.Length > 0);
     }
     static Texture2D Dot
@@ -199,14 +220,15 @@ public class MolakVfx : MonoBehaviour
             if (hp > 0f && r <= 0.3f)
             {
                 float k = Mathf.InverseLerp(0.3f, 0.05f, r);                       // 낮을수록 짙고 빠르게
-                float a = (0.08f + 0.14f * k) * (0.45f + 0.55f * Beat(Time.time, 64f + 40f * k));
-                var g = GUI.color; GUI.color = new Color(0.55f, 0.04f, 0.03f, a); GUI.DrawTexture(new Rect(0, 0, w, h), Vig); GUI.color = g;
+                // 0.4.70 가장자리·모서리에만, 맥박은 옅게(꺼졌다 켜지지 않고 짙어졌다 옅어지는 정도)
+                float a = (0.30f + 0.25f * k) * (0.78f + 0.22f * Beat(Time.time, 64f + 30f * k));
+                var g = GUI.color; GUI.color = new Color(0.55f, 0.04f, 0.03f, a); GUI.DrawTexture(new Rect(0, 0, w, h), Edge); GUI.color = g;
             }
             if (cu >= 75f)
             {
                 float k = Mathf.InverseLerp(75f, 100f, cu);
-                float a = (0.08f + 0.14f * k) * (0.5f + 0.5f * Mathf.Sin(Time.time * (0.9f + 0.8f * k)));
-                var g = GUI.color; GUI.color = new Color(0.36f, 0.16f, 0.48f, Mathf.Max(0f, a)); GUI.DrawTexture(new Rect(0, 0, w, h), Vig); GUI.color = g;
+                float a = (0.26f + 0.22f * k) * (0.8f + 0.2f * Mathf.Sin(Time.time * (0.9f + 0.8f * k)));
+                var g = GUI.color; GUI.color = new Color(0.36f, 0.16f, 0.48f, Mathf.Max(0f, a)); GUI.DrawTexture(new Rect(0, 0, w, h), Edge); GUI.color = g;
             }
         }
         // 플래시(비네트 느낌: 중앙은 옅고 가장자리 진하게 — 상/하/좌/우 밴드)
@@ -220,8 +242,8 @@ public class MolakVfx : MonoBehaviour
             {
                 // 0.4.27: 네모 띠 대신 화면 전체를 고르게 물들이고, 가장자리는 둥근 비네트로 조금 더 짙게(본문 창 자리만 빠져 보이던 문제)
                 var g = GUI.color;
-                GUI.color = new Color(flashC.r, flashC.g, flashC.b, flashC.a * k * 0.35f); GUI.DrawTexture(new Rect(0, 0, w, h), Px);
-                GUI.color = new Color(flashC.r, flashC.g, flashC.b, Mathf.Min(1f, flashC.a * k * 1.1f)); GUI.DrawTexture(new Rect(0, 0, w, h), Vig);
+                // 0.4.70 화면 전체를 물들이지 않는다 — 가장자리·모서리만
+                GUI.color = new Color(flashC.r, flashC.g, flashC.b, Mathf.Min(1f, flashC.a * k * 1.4f)); GUI.DrawTexture(new Rect(0, 0, w, h), Edge);
                 GUI.color = g;
             }
         }

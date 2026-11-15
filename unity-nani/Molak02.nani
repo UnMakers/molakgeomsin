@@ -42,9 +42,9 @@
 @goto #A24 if:day>=24&&rank>0&&rank<=2000&&f_wolfdown<1&&f_wolfedge<1&&b_chain<1
 @goto #A27 if:day>=27&&seen_E_Rival>0&&b_rival2<1
 @goto #A28 if:day>=28&&f_soamet>0&&f_soadead<1&&b_soa4<1
-@goto #A33 if:day>=18&&f_amhyangknown>0&&b_amh2<1
+@goto #A33 if:day>=18&&f_amhyangknown>0&&f_amhdead<1&&b_amh2<1
 @goto #AYong3 if:day>=33&&b_yong2>0&&b_yong3<1
-@goto #AHerb3 if:day>=35&&b_herb2>0&&f_herbout<1&&b_herb3<1
+@goto #AHerb3 if:day>=35&&b_herb2>0&&f_herbout<1&&f_herbdead<1&&b_herb3<1
 @goto #AGwak3 if:day>=40&&b_rival2>0&&f_rivalfriend>0&&b_gwak3<1
 @goto #AHajin3 if:day>=44&&b_depart>0&&f_hajindead<1&&b_hajin3<1
 @goto #AJang3 if:day>=41&&b_jang2>0&&f_jangtaken<1&&b_jang3<1
@@ -110,7 +110,8 @@
 @goto #MAfterSnow
 # MSnowF
 @set b_frost=1
-눈이 온다. 하진무가 말없이 두고 간 솜옷의 깃을 여민다.
+@print "눈이 온다. 하진무가 말없이 두고 간 솜옷의 깃을 여민다." if:f_hajindead<1
+@print "눈이 온다. 하진무가 장롱 맨 아래 칸에 개어 둔 솜옷을 꺼내 깃을 여민다. 아직 그의 담배 냄새가 난다." if:f_hajindead>0
 한기가 살갗에서 멈춘다. 그 사내는 그때 이미 이 겨울을 알았던 것이다.
 @goto #MAfterSnow
 # MGae
@@ -214,14 +215,16 @@
 @fx hp:-1
 @goto #Daytime
 # MTh2b
-옆방 손님이 새벽에 실려 나간다. 하진무가 그 방에 식초를 뿌린다.
+@print "옆방 손님이 새벽에 실려 나간다. 하진무가 그 방에 식초를 뿌린다." if:f_hajindead<1
+@print "옆방 손님이 새벽에 실려 나간다. 점소이가 코를 막고 그 방에 식초를 뿌린다. 하진무가 하던 대로다." if:f_hajindead>0
 @goto #Daytime
 # MTh3a
 징세조 붉은 끈 다섯이 아침부터 어물전을 턴다. 미처 못 걷은 좌판이 엎어진다.
 은자를 못 낸 생선장수 이마에 우두머리가 제 손가락을 깨물어 피로 점 하나를 찍는다. 다음 장날까지 그 점이 지워지면 집에 불을 놓는다고, 노래하듯 말한다. 다섯이 다 같이 웃는다.
 @goto #Daytime
 # MTh3b
-하진무가 주판을 오래 튕긴다. 셈이 안 맞는 얼굴인데, 방값 이야기는 꺼내지 않는다.
+@print "하진무가 주판을 오래 튕긴다. 셈이 안 맞는 얼굴인데, 방값 이야기는 꺼내지 않는다." if:f_hajindead<1
+@print "계산대 위 주판이 먼지를 쓰고 있다. 점소이는 방값 이야기를 꺼낼 줄 모른다." if:f_hajindead>0
 @goto #Daytime
 # M1
 운락객잔의 아침. 장작 냄새가 마당에 남아 있다.
@@ -315,10 +318,11 @@
 찻집 건너편에 백발의 뒷모습이 보인다. 잔을 비우고 보니 자리는 비었고, 두 잔 찻값이 놓여 있다.
 @goto #Daytime
 # M31
-비무판 구경꾼 틈의 복면 하나가 당신만 본다. 몇 번째 생인지 세는 눈이다.
+비무판 구경꾼 틈의 복면 하나가 당신만 본다. 값을 매기는 눈이다. 돌아보면 그 자리가 비어 있다.
 @goto #Daytime
 # M32
-느티나무 아래 들어온 발자국만 있고 나간 자국은 없다. 하진무가 빗자루로 지운다.
+@print "느티나무 아래 들어온 발자국만 있고 나간 자국은 없다. 하진무가 빗자루로 지운다." if:f_hajindead<1
+@print "느티나무 아래 들어온 발자국만 있고 나간 자국은 없다. 점소이가 빗자루로 지운다. 영감에게 배운 대로다." if:f_hajindead>0
 @goto #Daytime
 # M33
 세수하다 멈춘다. 쇄골 아래 획들이 모여 글자가 되었다.
@@ -378,8 +382,13 @@
 "내려놓지 않으리다. 한 번 업어 본 몸이라, 무게는 아오."
 @goto #CollapseT
 # Collapse3
+@goto #Collapse4 if:f_herbdead>0
 백초 할멈의 약연 소리에 눈을 뜬다.
 "죽으려거든 약값부터 치르고 죽거라. 이틀이다. 다음엔 안 깨어날 게다."
+@goto #CollapseT
+# Collapse4
+눈을 뜬다. 성 밖 허물어진 산신각 마루다. 탁발승 하나가 미음을 떠 넣고 있다.
+"이틀을 앓았소. 길바닥에 엎어진 걸 지게로 실어 왔지. 다음엔 지게도 없소."
 @goto #CollapseT
 # CollapseB
 늙은 등에 업혀 있다. 주판 냄새가 난다. 지난번보다 숨이 가쁘다.
@@ -749,7 +758,7 @@
 @scene id:night
 @bridge kind:dusk
 @print "{bridgetext}" if:bridgetext!="none"
-@goto Molak16#Hunt if:day>=4&&b_hunt<1
+@goto Molak16#Hunt if:day>=4&&b_hunt<1&&f_hajindead<1
 @goto #NvOld if:curse>=80&&curse<88&&f_oldseen>0&&tn_oldvoice<1
 @set tr=random(1,100)
 @goto #NvHj if:f_hajindead>0&&tn_nvhj<1
@@ -757,7 +766,7 @@
 @goto #NvSoa if:f_soamet>0&&f_soadead<1&&aff>=4&&tr<=30
 @goto #NvSoaD if:f_soadead>0&&tr<=25
 @goto #NvLow if:hp<=hpmax/4&&tr<=70
-@goto #NvBroke if:mn<=1&&tr<=60
+@goto #NvBroke if:mn<=1&&tr<=60&&f_hajindead<1
 @pickflavor pool:night
 @goto #Nv2 if:nrand==2
 @goto #Nv3 if:nrand==3
@@ -1441,9 +1450,10 @@
 # D25
 @set ms_d25=1
 @turn title:"스무닷새 — 방값이 오른다" lines:"교의 징세가 올랐다 — 객잔 방값 하룻밤 <color=#C9A227>두 냥</color>|날품과 비무판에서 버는 은자가 전보다 빨리 샌다"
-@art char:hajinmu_grave
-하진무가 방값 패를 바꿔 단다.
-"교의 징세가 또 올랐소. 이제부터 하룻밤 두 냥이오."
+@art char:hajinmu_grave if:f_hajindead<1
+@print "하진무가 방값 패를 바꿔 단다." if:f_hajindead<1
+@print "\"교의 징세가 또 올랐소. 이제부터 하룻밤 두 냥이오.\"" if:f_hajindead<1
+@print "징세조가 객잔 문에 붙은 방값 패를 제 손으로 바꿔 단다. 하룻밤 두 냥. 점소이가 그 뒤에서 고개만 숙인다." if:f_hajindead>0
 @goto #Evening
 # D35
 @set ms_d35=1
@@ -1453,8 +1463,9 @@
 # D50
 @set ms_d50=1
 @turn title:"쉰째 날 — 쇄골까지" lines:"저주가 자라는 빠르기가 또 <color=#C03434>×1.6</color>|교의 수레가 내려오는 예순째 날까지 열흘"
-@art char:granny_grave
-문양이 <color=#C03434>쇄골까지 뻗었다</color>. 백초 할멈이 맥을 짚더니 한동안 말이 없다.
+@art char:granny_grave if:f_herbdead<1
+@print "문양이 <color=#C03434>쇄골까지 뻗었다</color>. 백초 할멈이 맥을 짚더니 한동안 말이 없다." if:f_herbdead<1
+@print "문양이 <color=#C03434>쇄골까지 뻗었다</color>. 맥을 짚어 줄 사람이 없다. 우물물에 비친 목덜미를 한참 들여다본다." if:f_herbdead>0
 @goto #Evening
 # Evening
 @art char:none
@@ -2372,7 +2383,7 @@
 @fx sl:1
 @return
 # S_PlB
-쥐눈이 장이 은자를 소매에 넣는다.
+주루 계단 밑. 소식을 파는 쥐 닮은 사내, 쥐눈이 장이 은자를 소매에 넣는다.
 "남의 이름이라. 지난달 강에 떠오른 표사가 있소. 장부의 얼굴 칸이 아직 안 지워졌지."
 이튿날, 죽은 표사 이름의 무명 패가 허리에 걸린다. 패 끈의 매듭이 별 모양이다.
 @fx mn:-4
@@ -2395,7 +2406,7 @@
 @page
 @art char:ggoji
 아침. 객잔 담장 말뚝에 새끼 매듭 셋이 묶여 있다.
-골목 끝에서 꼬지가 손가락 셋을 펴 보이고, 늑대 귀 흉내를 내고 사라진다.
+골목 끝에서 거지 아이 하나가 손가락 셋을 펴 보이고, 늑대 귀 흉내를 내고 사라진다. 거지들은 저 아이를 꼬지라 부른다.
 매듭 셋은 늑대, 곧 혈랑대다. 혈마교가 멸문한 문파의 생존자를 사냥하는 추격대. 사흘 안에 이 골목으로 온다.
 @set f_raidprep=1
 @set f_gaewarn=1
@@ -2597,8 +2608,10 @@
 아침. 시킨 적 없는 달걀이 국밥에 얹혀 있다. 건너편 표사가 잔을 들어 보인다.
 서열이 오른 '운객(雲客)'의 얼굴을 보러 온 자들로 객잔이 붐빈다.
 # S_Fame_vm
-하진무가 당신에게만 들리게 말한다.
-"…방을 옮기시겠소? 뒷마당 창고 쪽이 눈에 덜 띄오."
+@print "하진무가 당신에게만 들리게 말한다." if:f_hajindead<1
+@print "\"…방을 옮기시겠소? 뒷마당 창고 쪽이 눈에 덜 띄오.\"" if:f_hajindead<1
+@print "점소이가 국밥을 내려놓으며 속삭인다." if:f_hajindead>0
+@print "\"…뒷마당 창고 방이 비었어요. 영감님이 살아 계셨으면 거기로 모셨을 거예요.\"" if:f_hajindead>0
 @choice "창고 방으로 옮긴다" goto:#S_FameC0
 @choice "그대로 지낸다 — 보란 듯이" goto:#S_FameC1
 @choice "소문의 출처부터 찾는다" if:sl>=4 goto:#S_FameC2
@@ -2618,6 +2631,7 @@
 
 # S_Depart
 @page
+@goto #S_DepartDead if:f_hajindead>0
 @set tr=random(1,3)
 @goto #S_Depart_v2 if:tr==2
 @goto #S_Depart_v3 if:tr==3
@@ -2653,4 +2667,19 @@
 # S_DepartC2
 "그럼 저 봇짐은 나들이 짐이오?"
 거짓말은 서로 들켰고, 들킨 채로 접어 두기로 한다.
+@return
+# S_DepartDead
+밤. 방문 앞에 봇짐이 놓여 있다. 매듭이 서툴다.
+육포 몇 쪽과 짝이 안 맞는 버선. 점소이가 영감 흉내를 낸 것이다.
+아래층 계산대에는 아무도 없다. 주판만 제자리에 있다.
+@choice "주판알 하나를 튕기고 나선다" goto:#S_DepartDeadA
+@choice "점소이 방 문 앞에 은자 한 냥을 놓는다" if:mn>=1 goto:#S_DepartDeadB
+@stop
+# S_DepartDeadA
+딸깍. 빈 객잔에 그 소리만 오래 남는다.
+@fx curse:-1
+@return
+# S_DepartDeadB
+문 너머에서 숨죽인 울음소리가 난다. 모른 척 계단을 내려간다.
+@fx mn:-1 hp:2
 @return

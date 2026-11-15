@@ -134,6 +134,8 @@ public class DuelInfoCommand : Command
 #pragma warning restore CS1998
     {
         var kind = Assigned(Kind) ? Kind.Value : "any";
+        MolakArt.BossDuel = DuelCommand.BossKinds.Contains(kind);   // 0.4.70 이름 있는 상대·결전은 boss 묶음
+        if (MolakArt.InDuel) MolakBgm.Mood(MolakArt.BossDuel ? "boss" : "duel");
         // 판의 형편: 0 없음 1 빗속 2 외나무다리 3 구경꾼 4 독 바른 칼 5 판돈 6 제자를 데려온 상대 7 생사결(뒷골목만)
         //           8 등불 하나의 밤 9 맹인 검객 10 아이를 업은 여검객 11 술 취한 고수 12 교 감찰관 앞
         int sit = 0;

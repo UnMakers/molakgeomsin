@@ -83,72 +83,49 @@ public class MolakHud : MonoBehaviour
     GUIStyle sChip; float chipU = -1f;
     void DrawChips (float X0, float W, float yTop, float u)
     {
-        if (floats.Count == 0) return;
+        if (floats.Count == 0 && whyRows.Count == 0) return;
         if (sChip == null || !Mathf.Approximately(chipU, u)) { chipU = u; sChip = MolakGui.Label(34, u, TextAnchor.MiddleCenter, false); }
         float dt = Event.current.type == EventType.Repaint ? Time.unscaledDeltaTime : 0f;   // OnGUI 는 한 프레임에 여러 번 불린다
-        var items = new System.Collections.Generic.List<(string txt, Color col, float a, float sc, float rise)>();
         for (int i = floats.Count - 1; i >= 0; i--)
         {
             var f = floats[i]; f.t += dt; floats[i] = f;
             if (f.t > ChipLife || Mathf.Round(f.d) == 0f) { floats.RemoveAt(i); continue; }
         }
-        float total = 0f, gap = 14f * u;
-        var sizes = new System.Collections.Generic.List<Vector2>();
-        foreach (var f in floats)
-        {
-            string txt = fnames[f.k] + " " + (f.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(f.d)).ToString("0");
-            var sz = sChip.CalcSize(new GUIContent(txt)); sz.x += 36f * u; sz.y = 58f * u;
-            sizes.Add(sz); total += sz.x + gap;
-        }
-        float x = X0 + (W - total + gap) / 2f;
-        var g0 = GUI.color; var m0 = GUI.matrix;
-        for (int i = 0; i < floats.Count; i++)
-        {
-            var f = floats[i]; var sz = sizes[i];
-            float a = f.t < 0.12f ? f.t / 0.12f : (f.t > ChipLife - 0.5f ? Mathf.Clamp01((ChipLife - f.t) / 0.5f) : 1f);
-            float sc = f.t < 0.18f ? Mathf.Lerp(1.35f, 1f, f.t / 0.18f) : 1f;
-            float rise = Mathf.Min(1f, f.t / ChipLife) * 12f * u;
-            var r = new Rect(x, yTop - rise, sz.x, sz.y);
-            GUI.matrix = m0; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), r.center);
-            GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.88f * a); GUI.DrawTexture(r, MolakGui.Px);
-            bool good = Good(f.k, f.d);
-            Color c = fkeys[f.k] == "mn" && good ? new Color(0.98f, 0.82f, 0.38f, a)
-                    : fkeys[f.k] == "curse" && !good ? new Color(0.80f, 0.62f, 1f, a)
-                    : good ? new Color(0.55f, 0.88f, 0.58f, a) : new Color(1f, 0.46f, 0.38f, a);
-            GUI.color = new Color(c.r, c.g, c.b, a); GUI.DrawTexture(new Rect(r.x, r.y, 6f * u, r.height), MolakGui.Px);   // 왼쪽 색띠
-            GUI.color = Color.white;
-            string txt = fnames[f.k] + " " + (f.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(f.d)).ToString("0");
-            MolakGui.Ink(sChip, c); GUI.Label(new Rect(r.x + 4f * u, r.y, r.width, r.height), txt, sChip);
-            x += sz.x + gap;
-        }
-        GUI.matrix = m0;
-        // 0.4.68 패 아래 까닭 판: 수치마다 한 줄씩, 길면 줄을 바꿔 다 보인다. 5초 동안(패보다 오래) 남는다.
+        // 0.4.70 그림 위에 검은 패를 띄우지 않는다(언메이커: 그림 위로 수치가 뜨는 건 아니다).
+        //   바뀐 수치와 까닭은 글자리 맨 아래 종이 쪽지 한 장에(낱말 풀이 쪽지와 같은 모양), 수치마다 한 줄.
         for (int i = whyRows.Count - 1; i >= 0; i--) if (Time.unscaledTime - whyRows[i].t0 > WhyLife) whyRows.RemoveAt(i);
-        if (whyRows.Count > 0)
+        SlipH = 0f;
+        if (whyRows.Count > 0 && !MolakVfx.Holding && !MolakDuelCard.Visible && !MolakGiyeonCard.Showing)
         {
             if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(24, u, TextAnchor.UpperLeft, true); sWhy.richText = true; }
-            float ww = W - 36f * u, pad = 14f * u;
+            var ta = MolakVfx.TextArea();
+            float ww = ta.width, pad = 12f * u;
             var sb = new System.Text.StringBuilder();
             float wa = 0f;
             foreach (var r in whyRows)
             {
                 float age = Time.unscaledTime - r.t0;
-                wa = Mathf.Max(wa, age < 0.15f ? age / 0.15f : age > WhyLife - 0.6f ? Mathf.Clamp01((WhyLife - age) / 0.6f) : 1f);
+                wa = Mathf.Max(wa, age < 0.2f ? age / 0.2f : age > WhyLife - 0.6f ? Mathf.Clamp01((WhyLife - age) / 0.6f) : 1f);
                 bool good = r.key == "curse" ? r.d < 0 : r.d > 0;
-                string col = r.key == "mn" && good ? "#F5D060" : r.key == "curse" && !good ? "#C9A0FF" : good ? "#8FE094" : "#FF8A72";
+                string col = r.key == "mn" ? "#8A6A12" : r.key == "curse" ? "#6B3FA0" : good ? "#2E6E37" : "#A33226";
                 if (sb.Length > 0) sb.Append('\n');
-                sb.Append("<color=" + col + ">" + MolakStatLog.Name(r.key) + " " + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
+                sb.Append("<b><color=" + col + ">" + MolakStatLog.Name(r.key) + " " + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
             }
             string wt = sb.ToString();
-            float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f) + pad * 1.4f;
-            var wr = new Rect(X0 + 18f * u, yTop + 62f * u, ww, wh);
-            GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.84f * wa); GUI.DrawTexture(wr, MolakGui.Px);
-            MolakGui.Ink(sWhy, new Color(0.95f, 0.92f, 0.85f, wa)); GUI.color = Color.white;
-            GUI.Label(new Rect(wr.x + pad, wr.y + pad * 0.7f, ww - pad * 2f, wh), wt, sWhy);
+            float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f - 6f * u) + pad * 1.5f;
+            var wr = new Rect(ta.x, ta.yMax - wh, ww, wh);
+            SlipH = wh;
+            GUI.color = new Color(0.98f, 0.96f, 0.91f, 0.96f * wa); GUI.DrawTexture(wr, MolakGui.Px);
+            GUI.color = new Color(0.45f, 0.36f, 0.24f, 0.7f * wa); GUI.DrawTexture(new Rect(wr.x, wr.y, Mathf.Max(2f, 3f * u), wr.height), MolakGui.Px);
+            GUI.color = Color.white;
+            MolakGui.Ink(sWhy, new Color(0.22f, 0.18f, 0.14f, wa));
+            GUI.Label(new Rect(wr.x + pad + 6f * u, wr.y + pad * 0.75f, ww - pad * 2f - 6f * u, wh), wt, sWhy);
         }
-        GUI.color = g0;
+        GUI.color = Color.white;
     }
     const float ChipLife = 3.2f, WhyLife = 5.5f;
+    /// <summary>글자리 아래 수치 쪽지의 높이(낱말 풀이 쪽지가 그 위로 올라간다).</summary>
+    public static float SlipH;
     GUIStyle sWhy; float whyU = -1f;
     struct WhyRow { public string key; public float d; public string why; public float t0; }
     readonly System.Collections.Generic.List<WhyRow> whyRows = new System.Collections.Generic.List<WhyRow>();

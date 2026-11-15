@@ -33,7 +33,7 @@ public class MolakFrenzy : MonoBehaviour
         inst.words = ws; inst.center = centerWord ?? ""; inst.level = Mathf.Clamp(lvl, 0, 3);
         inst.dur = quick ? 0.7f : 2.6f + 0.7f * inst.level;
         inst.t = 0f; inst.nextShard = 0f; inst.nextBeat = 0.05f; inst.shards.Clear();
-        MolakSfx.Heart();
+        MolakSfx.Heart(); MolakSfx.Frenzy();
     }
 
     void Update ()
