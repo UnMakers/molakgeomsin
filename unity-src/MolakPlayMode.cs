@@ -79,7 +79,7 @@ public class MolakPlayMode : MonoBehaviour
         var st = Engine.GetService<IStateManager>();
         if (im == null || st == null) return;
         var spx = Engine.GetService<IScriptPlayer>();
-        if (spx != null) spx.AddPreExecutionTask(FastArtHold);
+        if (spx != null) { spx.AddPreExecutionTask(FastArtHold); spx.AddPreExecutionTask(MomentHold); }
         var cont = im.GetInput("Continue");
         if (cont != null) cont.OnStart += OnContinue;
         st.OnResetStarted += () => { Fast = false; SkipAll = false; Auto = false; };
@@ -102,6 +102,16 @@ public class MolakPlayMode : MonoBehaviour
         while (MolakArt.Busy && Time.realtimeSinceStartup < until) await Awaitable.NextFrameAsync();
         float hold = Time.realtimeSinceStartup + 0.08f;
         while (Time.realtimeSinceStartup < hold) await Awaitable.NextFrameAsync();
+    }
+
+    /// <summary>0.4.68 인장·비무 결과판이 떠 있는 동안 다음 글·선택지를 붙잡는다(빈 글자리에 먼저 보이고, 누르면 걷힌 뒤 대사가 나온다).</summary>
+    static async Awaitable MomentHold (IScriptTrack track)
+    {
+        var cmd = track != null ? track.PlayedCommand : null;
+        if (cmd == null) return;
+        // 인장·결과판이 떠 있으면 다음 명령은 무엇이든 기다린다(그 사이 다른 인장이 겹쳐 뜨지 않게)
+        float until = Time.realtimeSinceStartup + 30f;
+        while ((MolakVfx.Holding || MolakDuelCard.Visible) && Time.realtimeSinceStartup < until) await Awaitable.NextFrameAsync();
     }
 
     void OnContinue ()

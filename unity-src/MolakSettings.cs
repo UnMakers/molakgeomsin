@@ -102,6 +102,7 @@ public class MolakSettings : MonoBehaviour
         {
             foreach (var n in MolakVarList.Globals) MolakStats.Set(n, 0f);
             MolakStats.SetStr("g_lastend", "none"); MolakStats.SetStr("g_lastcause", "none"); MolakStats.SetStr("g_nxform", "none"); MolakStats.SetStr("g_scars", "");
+            MolakGloss.Reset();
             await Engine.GetServiceOrErr<IStateManager>().SaveGlobal();
         }
         catch (System.Exception e) { Debug.LogWarning("[MolakSettings] 기억 지우기 실패: " + e.Message); }

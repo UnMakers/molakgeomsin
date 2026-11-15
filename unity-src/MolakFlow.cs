@@ -22,6 +22,15 @@ public class MolakFlow : MonoBehaviour
     public static void CancelArtReset () { if (inst != null) inst.artResetPending = false; }
     public static void BridgeNext () { if (inst != null) { inst.breakNext = true; inst.bridgePending = true; } }
     bool bridgePending, holdPage;
+    // 0.4.68 쪽 넘김 문(언메이커: 빨리 모드에서 '팍팍팍' 넘어간다 · 넘기면 다음 대사까지 넘어간다).
+    //  · 읽을 틈을 준 적 없는 쪽(직전 글이 기다리지 않았고, 그 뒤로 누른 적도 없다)은 지우지 않는다 — 한 번 누를 때까지 붙잡는다.
+    //  · 빨리 모드에서는 쪽이 한꺼번에 뜨므로 새 쪽이 뜬 직후 잠깐(0.35초) '계속'을 받지 않는다(한 번의 탭이 두 쪽을 넘기지 않게).
+    bool lastFinalWait = true; float lastPrintAt = -10f, lastPressAt = -10f; bool prevDown;
+    bool gatePending, gateTurn; float gateStart = -1f;
+    public static bool Gating { get { return inst != null && inst.gateStart >= 0f; } }
+    public static System.Text.StringBuilder Trace;
+    /// <summary>인장·결과판·기연판처럼 글 위에 뜬 것을 사람이 눌러 걷었다 = 읽을 틈을 줬다.</summary>
+    public static void Ack () { if (inst != null) inst.lastPressAt = Time.unscaledTime; }
     // 0.4.44 그림도 글처럼: 맥락이 바뀌어(다른 대본으로·하루 흐름 라벨로·날 넘김) 글이 새 쪽이 될 때, 대본이 그림을 따로 정하지 않았으면
     //        하루의 바탕 그림으로 되돌린다. 선택지 직후·쪽이 꽉 차서 넘길 때·같은 대본 안의 처리 루틴(gosub)은 같은 자리라 그대로 둔다.
     bool artResetPending;
@@ -81,14 +90,19 @@ public class MolakFlow : MonoBehaviour
 
     void Update ()
     {
+        Vector2 pp; bool dn = MolakGui.PointerScreen(out pp);
+        if (dn && !prevDown) lastPressAt = Time.unscaledTime;
+        prevDown = dn;
         if (player != null) return;
         if (!Engine.Initialized) return;
         player = Engine.GetService<IScriptPlayer>();
         if (player == null) return;
         player.OnExecute += OnExecute;
+        player.AddPreExecutionTask(FlipGate);
         player.OnPlay += PrepareLocks;   // 새 대본을 틀 때 첫 명령보다 먼저
         var im = Engine.GetService<IInputManager>();
         continueHandle = im != null ? im.GetInput("Continue") : null;
+        if (continueHandle != null) continueHandle.OnStart += () => { lastPressAt = Time.unscaledTime; };
         // 나니노벨 기본 배경 액터(MainBackground)는 쓰지 않는다 — 리소스 없는 placeholder 사각형이 화면 중앙에 그려지는 것을 막는다
         var bm = Engine.GetService<IBackgroundManager>() as IActorManager;
         if (bm != null)
@@ -194,7 +208,14 @@ public class MolakFlow : MonoBehaviour
         }
         else MolakPageBack.MarkPrinted();
         pt.ResetPrinter = reset;
-        if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); if (buf.Count > 0) MolakPageTurn.Play(); } }   // 글이 있던 쪽을 넘긴다
+        bool hadText = false;
+        if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); hadText = buf.Count > 0; } }
+        // 0.4.68 읽을 틈 없이 지워지는 쪽은 붙잡는다(FlipGate). 선택지 뒤·이음 문장·검증 넘기기는 제외.
+        bool unread = reset && hadText && !afterChoice && !isBridge && !lastFinalWait && lastPressAt <= lastPrintAt + 0.05f;
+        var spk = player; bool skipping = MolakPlayMode.SkipAll || (spk != null && spk.Skipping);
+        if (unread && !skipping) { gatePending = true; gateTurn = true; }
+        else if (reset && hadText) MolakPageTurn.Play();   // 글이 있던 쪽을 넘긴다
+        if (reset && MolakPlayMode.Fast && !skipping && !unread) MolakInputGuard.MuteFor(0.35f);
         MolakScroll.ResetToBottom();
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
         // 0.4.9: 대사 줄은 앞뒤로 한 줄 띄운다(서술과 대사가 붙어 있으면 읽기 어렵다)
@@ -239,8 +260,49 @@ public class MolakFlow : MonoBehaviour
         }
         pt.RevealSpeed = MolakPlayMode.Fast ? (DecimalParameter)100f : new DecimalParameter();
         pt.WaitForInput = wait;
+        if (Trace != null) Trace.AppendLine(spot.ScriptPath + ":" + (spot.LineNumber) + " reset=" + reset + (ovf ? "(ovf)" : "") + " wait=" + wait + (gatePending ? " GATE" : "") + " | " + Short(TextOf(pt)));
+        lastFinalWait = wait; lastPrintAt = Time.unscaledTime;
         breakNext = false;
         Mark(spot);
+    }
+
+    static string Short (string t) { t = System.Text.RegularExpressions.Regex.Replace(t ?? "", "<[^>]+>", "").Replace("\n", " "); return t.Length > 28 ? t.Substring(0, 28) + "…" : t; }
+
+    /// <summary>0.4.68 읽을 틈이 없던 쪽: 누를 때까지(자동이면 읽을 만큼) 다음 쪽을 찍지 않는다.</summary>
+    static async Awaitable FlipGate (IScriptTrack track)
+    {
+        if (inst == null || !inst.gatePending) return;
+        if (!(track != null && track.PlayedCommand is PrintText)) return;
+        inst.gatePending = false;
+        float start = Time.unscaledTime; inst.gateStart = start;
+        int chars = 0; var dt = DialogueText(); if (dt != null) chars = (dt.text ?? "").Length;
+        float autoAt = start + 1.6f + chars * 0.03f;
+        while (true)
+        {
+            var sp = inst.player;
+            if (MolakPlayMode.SkipAll || (sp != null && sp.Skipping)) break;
+            if (inst.lastPressAt > start + 0.05f && !MolakMenu.IsOpen && !MolakSettings.IsOpen) { MolakInputGuard.BlockCurrentPress(); break; }
+            if (MolakPlayMode.Auto && Time.unscaledTime >= autoAt) break;
+            if (Time.unscaledTime - start > 600f) break;
+            await Awaitable.NextFrameAsync();
+        }
+        inst.gateStart = -1f;
+        if (inst.Trace0()) Trace.AppendLine("  (문 열림 " + (Time.unscaledTime - start).ToString("0.00") + "초)");
+        MolakInputGuard.MuteFor(0.3f);
+        if (inst.gateTurn) { inst.gateTurn = false; MolakPageTurn.Play(); }
+    }
+    bool Trace0 () { return Trace != null; }
+
+    GUIStyle sGate; float gateU = -1f;
+    void OnGUI ()
+    {
+        if (gateStart < 0f || MolakMenu.IsOpen) return;
+        float u = MolakGui.U;
+        if (sGate == null || !Mathf.Approximately(gateU, u)) { gateU = u; sGate = MolakGui.Label(30, u, TextAnchor.LowerRight, false); }
+        var ta = MolakVfx.TextArea();
+        float a = 0.35f + 0.45f * (0.5f + 0.5f * Mathf.Sin((Time.unscaledTime - gateStart) * 4f));
+        MolakGui.Ink(sGate, new Color(0.75f, 0.6f, 0.32f, a));
+        GUI.Label(new Rect(ta.x, ta.yMax - 40f * u, ta.width - 10f * u, 36f * u), "▼", sGate);
     }
 
     static readonly System.Collections.Generic.HashSet<string> HubLabels = new System.Collections.Generic.HashSet<string> {

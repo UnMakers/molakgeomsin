@@ -404,9 +404,9 @@ public static class MolakDuelX
         float mem = MolakStats.Get("memwarn") > 0 ? 1f + (MolakStats.Get("g_up_mem") > 0 ? 1f : 0f) : 0f;
         float odds = MolakDuel.Odds(MolakDuel.Pending, mom * MomBonus + mem);
         int o10 = Mathf.Clamp(Mathf.RoundToInt(odds / 10f), 1, 9);
-        MolakStats.Set("odds10", o10);
+        MolakStats.Set("odds10", o10); MolakStats.SetStr("odds10k", MolakDuel.Ten(o10));
         MolakStats.Set("dx_canfall", MolakMemory.HasForm("fall") && mom >= 1f && MolakStats.Get("dx_fallen") < 1 ? 1f : 0f);
-        string tail = " 마지막 한 칼, 승산은 <color=#C9A227>열에 " + o10 + "</color>.";
+        string tail = " 마지막 한 칼, 승산은 <color=#C9A227>열에 " + MolakDuel.Ten(o10) + "</color>.";
         if (MolakStats.Get("kp_on") > 0f && !MolakStory.On)
         {   // 0.4.67 간파: 기세가 둘 이상 기울면 마지막 한 칼은 주사위 없이 정해진다
             if (mom >= 2f) tail = " <color=#C9A227>마지막 한 칼은 이긴다.</color>";

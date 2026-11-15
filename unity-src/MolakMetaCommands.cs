@@ -110,7 +110,8 @@ public class DayTickCommand : Command
             if (MolakStats.Get("f_hajincold") > 0) lodg += MolakRules.LodgeColdExtra;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
             if (MolakStats.Get("f_hajindead") > 0) lodg = MolakRules.LodgeNoHajin;     // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다
             if (MolakStory.On) lodg = 0f;
-            if (MolakStats.Get("mn") >= lodg) { MolakStatLog.Why("mn", "객잔 방값 " + lodg.ToString("0") + "냥" + (n > 1 ? " × " + n + "밤" : "") + (MolakStats.Get("f_hajindead") > 0 ? "(새 주인)" : MolakStats.Get("f_hajincold") > 0 ? "(하진무가 셈을 바꿨다)" : "")); MolakStats.Add("mn", -lodg); }
+            if (lodg <= 0f) { }   // 이야기 모드: 방값 없음
+            else if (MolakStats.Get("mn") >= lodg) { MolakStatLog.Why("mn", "객잔 방값 " + lodg.ToString("0") + "냥" + (n > 1 ? " × " + n + "밤" : "") + (MolakStats.Get("f_hajindead") > 0 ? "(새 주인)" : MolakStats.Get("f_hajincold") > 0 ? "(하진무가 셈을 바꿨다)" : "")); MolakStats.Add("mn", -lodg); }
             else if (MolakStats.Get("f_gaerice") > 0 && day - MolakStats.Get("gaefedday") >= MolakRules.GaeRiceGap)
             {   // 다리 밑의 솥: 굶는 날 거지들이 한 그릇 덜어 준다(나흘에 한 번). 아침에 그 장면이 나온다.
                 MolakStatLog.Why("mn", "방값에 남은 은자를 털었다");

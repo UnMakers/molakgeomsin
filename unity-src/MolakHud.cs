@@ -60,6 +60,7 @@ public class MolakHud : MonoBehaviour
             // 0.4.66 능력치 기록: 왜 바뀌었는지 한 줄
             string why = MolakStatLog.Resolve(fkeys[k]);
             MolakStatLog.Record(fkeys[k], d, why);
+            AddWhy(fkeys[k], d, why);
             bool merged = false;
             for (int i = 0; i < floats.Count; i++)
                 if (floats[i].k == k && floats[i].t < 0.8f) { var f = floats[i]; f.d += d; f.t = 0f; if (!string.IsNullOrEmpty(why) && f.why != why) f.why = string.IsNullOrEmpty(f.why) ? why : f.why + " · " + why; floats[i] = f; merged = true; break; }
@@ -121,29 +122,50 @@ public class MolakHud : MonoBehaviour
             x += sz.x + gap;
         }
         GUI.matrix = m0;
-        // 0.4.66 패 아래 한 줄: 왜 오르내렸는지(능력치 기록과 같은 글)
-        var whys = new System.Collections.Generic.List<string>(); float wa = 0f;
-        foreach (var f in floats)
+        // 0.4.68 패 아래 까닭 판: 수치마다 한 줄씩, 길면 줄을 바꿔 다 보인다. 5초 동안(패보다 오래) 남는다.
+        for (int i = whyRows.Count - 1; i >= 0; i--) if (Time.unscaledTime - whyRows[i].t0 > WhyLife) whyRows.RemoveAt(i);
+        if (whyRows.Count > 0)
         {
-            if (string.IsNullOrEmpty(f.why)) continue;
-            foreach (var part in f.why.Split(new[] { " · " }, System.StringSplitOptions.None)) if (!whys.Contains(part)) whys.Add(part);
-            wa = Mathf.Max(wa, f.t < 0.12f ? f.t / 0.12f : (f.t > ChipLife - 0.5f ? Mathf.Clamp01((ChipLife - f.t) / 0.5f) : 1f));
-        }
-        if (whys.Count > 0)
-        {
-            if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(26, u, TextAnchor.MiddleCenter, false); sWhy.clipping = TextClipping.Clip; }
-            string wt = string.Join(" · ", whys.ToArray());
-            var wsz = sWhy.CalcSize(new GUIContent(wt));
-            float ww = Mathf.Min(W - 40f * u, wsz.x + 40f * u);
-            var wr = new Rect(X0 + (W - ww) / 2f, yTop + 64f * u, ww, 44f * u);
-            GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.80f * wa); GUI.DrawTexture(wr, MolakGui.Px);
-            MolakGui.Ink(sWhy, new Color(0.93f, 0.89f, 0.81f, wa)); GUI.color = Color.white;
-            GUI.Label(wr, wt, sWhy);
+            if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(24, u, TextAnchor.UpperLeft, true); sWhy.richText = true; }
+            float ww = W - 36f * u, pad = 14f * u;
+            var sb = new System.Text.StringBuilder();
+            float wa = 0f;
+            foreach (var r in whyRows)
+            {
+                float age = Time.unscaledTime - r.t0;
+                wa = Mathf.Max(wa, age < 0.15f ? age / 0.15f : age > WhyLife - 0.6f ? Mathf.Clamp01((WhyLife - age) / 0.6f) : 1f);
+                bool good = r.key == "curse" ? r.d < 0 : r.d > 0;
+                string col = r.key == "mn" && good ? "#F5D060" : r.key == "curse" && !good ? "#C9A0FF" : good ? "#8FE094" : "#FF8A72";
+                if (sb.Length > 0) sb.Append('\n');
+                sb.Append("<color=" + col + ">" + MolakStatLog.Name(r.key) + " " + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
+            }
+            string wt = sb.ToString();
+            float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f) + pad * 1.4f;
+            var wr = new Rect(X0 + 18f * u, yTop + 62f * u, ww, wh);
+            GUI.color = new Color(0.07f, 0.055f, 0.045f, 0.84f * wa); GUI.DrawTexture(wr, MolakGui.Px);
+            MolakGui.Ink(sWhy, new Color(0.95f, 0.92f, 0.85f, wa)); GUI.color = Color.white;
+            GUI.Label(new Rect(wr.x + pad, wr.y + pad * 0.7f, ww - pad * 2f, wh), wt, sWhy);
         }
         GUI.color = g0;
     }
-    const float ChipLife = 3.2f;
+    const float ChipLife = 3.2f, WhyLife = 5.5f;
     GUIStyle sWhy; float whyU = -1f;
+    struct WhyRow { public string key; public float d; public string why; public float t0; }
+    readonly System.Collections.Generic.List<WhyRow> whyRows = new System.Collections.Generic.List<WhyRow>();
+    void AddWhy (string key, float d, string why)
+    {
+        float now = Time.unscaledTime;
+        for (int i = 0; i < whyRows.Count; i++)
+            if (whyRows[i].key == key && now - whyRows[i].t0 < 0.8f)
+            {
+                var r = whyRows[i]; r.d += d; r.t0 = now;
+                if (!string.IsNullOrEmpty(why) && (r.why ?? "").IndexOf(why) < 0) r.why = string.IsNullOrEmpty(r.why) ? why : r.why + " · " + why;
+                if (Mathf.Round(r.d) == 0f) whyRows.RemoveAt(i); else whyRows[i] = r;
+                return;
+            }
+        whyRows.Add(new WhyRow { key = key, d = d, why = why, t0 = now });
+        while (whyRows.Count > 6) whyRows.RemoveAt(0);
+    }
 
     static Color InkD { get { return MolakTheme.InkText; } }
     static Color InkM { get { return MolakTheme.InkMid; } }

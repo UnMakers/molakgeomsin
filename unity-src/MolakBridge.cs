@@ -106,7 +106,7 @@ public static class MolakBridge
             else if (dSl >= 2f) after = Pick(Killed);
             else if (dMn >= 5f) after = Pick(CoinUp);
             else if (dMn <= -3f) after = Pick(CoinDown);
-            else if (dLearn >= 2f) after = Pick(Learned);
+            // 0.4.68 "방금 익힌 것이 손바닥에 남아 있다"는 무엇을 익혔는지 앞 장면에 없을 때가 많아 뺐다(능력치 기록이 까닭을 알려 준다)
             else if (!string.IsNullOrEmpty(snapChar) && (dAff > 0f || Random.value < 0.5f)) { string nm; if (CharName.TryGetValue(snapChar, out nm)) after = Josa(nm, Pick(Person)); }
         }
 
@@ -147,6 +147,13 @@ public static class MolakBridge
         snapDay = day;
         snapChar = null;
         if (!string.IsNullOrEmpty(nextEvent)) MolakBridgeData.EventChar.TryGetValue(nextEvent, out snapChar);
+    }
+
+    /// <summary>하루 마감·이야기 모드 채움처럼 사건 밖에서 바뀐 수치를 여운으로 착각하지 않게 지금 값으로 다시 찍는다.</summary>
+    public static void Resnap ()
+    {
+        if (snap == null) return;
+        for (int i = 0; i < Snap.Length; i++) snap[i] = G(Snap[i]);
     }
 
     /// <summary>회귀·새 생 시작 때 비운다.</summary>

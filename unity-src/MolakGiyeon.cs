@@ -37,7 +37,7 @@ public class GiyeonCommand : Command
         {
             float a = MolakStats.Get("hpmax");
             MolakStats.Set("hpmax", a + Hpmax.Value);
-            rows.Add(new MolakGiyeonCard.Row { Label = "체력의 끝", From = a, To = a + Hpmax.Value, Bad = Hpmax.Value < 0 });
+            rows.Add(new MolakGiyeonCard.Row { Label = "최대 체력", From = a, To = a + Hpmax.Value, Bad = Hpmax.Value < 0 });
         }
         Bump("sw", "검술", Sw);
         Bump("ng", "내공", Ng);
@@ -59,16 +59,20 @@ public class GiyeonCommand : Command
     }
 }
 
+/// <summary>
+/// 0.4.68 기연 판 — 종이 위의 먹 한 획(언메이커: "촌스럽다, 글씨가 잘 안 보인다"). 금빛 살·불티·흔들림을 걷어 내고,
+/// 화면을 담백한 종이로 덮은 뒤 붓으로 그은 원(MolakEnso) 안에 한 글자를 먹으로 쓰고, 붉은 인장 하나를 찍는다.
+/// 이름은 짙은 먹, 수치는 "전 → 후"를 한 줄씩 또렷하게(대비 높은 먹색), 차오르는 숫자는 짧게.
+/// </summary>
 public class MolakGiyeonCard : MonoBehaviour
 {
     public struct Row { public string Label; public float From, To; public bool Bad; public string Note; }
     static MolakGiyeonCard inst;
     string kicker = "", title = "", hanja = "", line = ""; List<Row> rows = new List<Row>();
-    float t = -1f; bool bell2;
-    struct Spark { public Vector2 p, v; public float life, size; }
-    readonly List<Spark> sparks = new List<Spark>();
+    float t = -1f, outAt = -1f; bool sealed_;
     public static bool Showing => inst != null && inst.t >= 0f;
     public static float AutoClose = -1f;
+    static Texture2D enso;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot ()
@@ -81,39 +85,22 @@ public class MolakGiyeonCard : MonoBehaviour
     public static void Show (string kick, string ttl, string hj, string ln, List<Row> rs)
     {
         if (inst == null) return;
+        if (enso == null) enso = Resources.Load<Texture2D>("MolakEnso");
         inst.kicker = kick ?? ""; inst.title = ttl ?? ""; inst.hanja = hj ?? "緣"; inst.line = ln ?? ""; inst.rows = rs ?? new List<Row>();
-        inst.t = 0f; inst.bell2 = false; inst.sparks.Clear();
-        MolakVfx.Flash(new Color(1f, 0.85f, 0.4f, 0.65f), 0.9f); MolakVfx.Shake(16f);
+        inst.t = 0f; inst.outAt = -1f; inst.sealed_ = false;
         MolakSfx.TrueBell(); MolakSfx.Vibrate();
     }
 
     void Update ()
     {
         if (t < 0f) return;
-        float dt = Time.unscaledDeltaTime; t += dt;
-        if (!bell2 && t > 0.75f) { bell2 = true; MolakSfx.Bell(); MolakSfx.Stamp(); MolakVfx.Shake(8f); Burst(60); }
-        if (t < 2.4f && Random.value < 0.55f) Burst(2);
-        for (int i = sparks.Count - 1; i >= 0; i--)
-        {
-            var s = sparks[i]; s.life -= dt; s.p += s.v * dt; s.v *= 1f - 1.4f * dt; s.v.y += 30f * dt;
-            if (s.life <= 0f) sparks.RemoveAt(i); else sparks[i] = s;
-        }
-        if (AutoClose > 0f && t > AutoClose) Close();
+        t += Time.unscaledDeltaTime;
+        if (!sealed_ && t > 0.95f) { sealed_ = true; MolakSfx.Stamp(); }
+        if (AutoClose > 0f && t > AutoClose && outAt < 0f) outAt = t;
+        if (outAt >= 0f && t - outAt > 0.4f) { t = -1f; outAt = -1f; MolakInputGuard.MuteFor(0.3f); }
     }
 
-    void Burst (int n)
-    {
-        float u = MolakGui.U;
-        for (int i = 0; i < n; i++)
-        {
-            var d = Random.insideUnitCircle.normalized;
-            sparks.Add(new Spark { p = Vector2.zero, v = d * Random.Range(180f, 720f) * u, life = Random.Range(0.6f, 1.6f), size = Random.Range(3f, 8f) * u });
-        }
-    }
-
-    void Close () { t = -1f; sparks.Clear(); MolakInputGuard.MuteFor(0.3f); }
-
-    GUIStyle sKick, sTitle, sHanja, sLine, sRow, sHint; float builtU = -1f;
+    GUIStyle sKick, sTitle, sHanja, sLine, sLab, sVal, sHint, sSeal; float builtU = -1f;
     void OnGUI ()
     {
         if (t < 0f) return;
@@ -121,92 +108,105 @@ public class MolakGiyeonCard : MonoBehaviour
         if (sTitle == null || !Mathf.Approximately(builtU, u))
         {
             builtU = u;
-            sKick = MolakGui.Label(30, u, TextAnchor.MiddleCenter, false); sKick.font = MolakTypography.Heading(sKick.font);
-            sTitle = MolakGui.Label(68, u, TextAnchor.MiddleCenter, true); sTitle.font = MolakTypography.Heading(sTitle.font); sTitle.richText = true;
-            sHanja = MolakGui.Label(200, u, TextAnchor.MiddleCenter, false); if (MolakGui.Hanja != null) sHanja.font = MolakGui.Hanja;
-            sLine = MolakGui.Label(28, u, TextAnchor.MiddleCenter, true); sLine.richText = true;
-            sRow = MolakGui.Label(38, u, TextAnchor.MiddleCenter, false); sRow.richText = true;
+            sKick = MolakGui.Label(26, u, TextAnchor.MiddleCenter, false);
+            sTitle = MolakGui.Label(54, u, TextAnchor.MiddleCenter, true); sTitle.font = MolakTypography.Heading(sTitle.font); sTitle.richText = true;
+            sHanja = MolakGui.Label(190, u, TextAnchor.MiddleCenter, false); if (MolakGui.Hanja != null) sHanja.font = MolakGui.Hanja;
+            sSeal = MolakGui.Label(40, u, TextAnchor.MiddleCenter, false); if (MolakGui.Hanja != null) sSeal.font = MolakGui.Hanja;
+            sLine = MolakGui.Label(27, u, TextAnchor.UpperCenter, true); sLine.richText = true;
+            sLab = MolakGui.Label(32, u, TextAnchor.MiddleLeft, false);
+            sVal = MolakGui.Label(32, u, TextAnchor.MiddleRight, false); sVal.richText = true;
             sHint = MolakGui.Label(22, u, TextAnchor.MiddleCenter, false);
         }
         GUI.depth = MolakGui.DepthBlackout + 7;
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         var g0 = GUI.color; var m0 = GUI.matrix;
-        float a = Mathf.Clamp01(t / 0.3f);
-        GUI.color = new Color(0.03f, 0.02f, 0.01f, 0.96f * a); GUI.DrawTexture(new Rect(0, 0, w, h), MolakGui.Px);
+        float a = Mathf.Clamp01(t / 0.35f);
+        if (outAt >= 0f) a *= Mathf.Clamp01(1f - (t - outAt) / 0.4f);
+        var ink = new Color(0.13f, 0.11f, 0.09f, 1f);
+        var grey = new Color(0.42f, 0.37f, 0.31f, 1f);
+        var red = new Color(0.66f, 0.13f, 0.09f, 1f);
 
-        // 금빛 살: 가운데에서 천천히 도는 빛줄기 열여섯
-        var c = new Vector2(w / 2f, h * 0.36f);
-        float rayA = Mathf.Clamp01((t - 0.1f) / 0.6f) * 0.06f;
-        float len = Mathf.Max(w, h) * Mathf.Lerp(0.2f, 0.9f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / 0.9f)));
-        for (int i = 0; i < 16; i++)
+        // 종이
+        GUI.color = new Color(0.955f, 0.94f, 0.905f, a); GUI.DrawTexture(new Rect(0, 0, w, h), MolakGui.Px);
+        GUI.color = new Color(0.62f, 0.5f, 0.32f, 0.12f * a); GUI.DrawTexture(new Rect(0, 0, w, 6f * u), MolakGui.Px); GUI.DrawTexture(new Rect(0, h - 6f * u, w, 6f * u), MolakGui.Px); GUI.color = Color.white;
+
+        float cw = Mathf.Min(w * 0.86f, 820f * u), cx = (w - cw) / 2f;
+        float d = Mathf.Min(w * 0.62f, 520f * u);
+        var c = new Vector2(w / 2f, h * 0.31f);
+        // 위: 奇緣 · 기연
+        MolakGui.Ink(sKick, new Color(grey.r, grey.g, grey.b, a));
+        GUI.Label(new Rect(cx, c.y - d * 0.5f - 70f * u, cw, 40f * u), kicker.Length > 0 && kicker != "기연(奇緣)" ? kicker : "奇 緣   ·   기 연", sKick);
+
+        // 붓 원: 살짝 크게 번졌다가 자리 잡는다
+        float ea = Mathf.Clamp01((t - 0.1f) / 0.55f);
+        if (enso != null && ea > 0f)
         {
+            float sc = Mathf.Lerp(1.06f, 1f, Mathf.SmoothStep(0f, 1f, ea));
+            GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), c);
+            GUI.color = new Color(1f, 1f, 1f, ea * a);
+            GUI.DrawTexture(new Rect(c.x - d / 2f, c.y - d / 2f, d, d), enso, ScaleMode.ScaleToFit, true);
+            GUI.matrix = m0; GUI.color = Color.white;
+        }
+        // 한 글자
+        float ha = Mathf.Clamp01((t - 0.4f) / 0.4f);
+        if (ha > 0f)
+        {
+            MolakGui.Ink(sHanja, new Color(ink.r, ink.g, ink.b, ha * a));
+            GUI.Label(new Rect(c.x - d / 2f, c.y - d / 2f, d, d), hanja, sHanja);
+        }
+        // 붉은 인장
+        if (t > 0.95f)
+        {
+            float sa = Mathf.Clamp01((t - 0.95f) / 0.12f);
+            float ss = Mathf.Lerp(1.35f, 1f, sa);
+            var sp = new Vector2(c.x + d * 0.36f, c.y + d * 0.34f);
+            GUIUtility.ScaleAroundPivot(new Vector2(ss, ss), sp);
+            var sr = new Rect(sp.x - 34f * u, sp.y - 34f * u, 68f * u, 68f * u);
+            GUI.color = new Color(red.r, red.g, red.b, 0.9f * sa * a); GUI.DrawTexture(sr, MolakGui.Px); GUI.color = Color.white;
+            MolakGui.Ink(sSeal, new Color(0.98f, 0.94f, 0.86f, sa * a)); GUI.Label(sr, "緣", sSeal);
             GUI.matrix = m0;
-            GUIUtility.RotateAroundPivot(i * 22.5f + t * 9f, c);
-            GUI.color = new Color(1f, 0.82f, 0.38f, rayA * (i % 2 == 0 ? 1f : 0.55f));
-            GUI.DrawTexture(new Rect(c.x - (i % 2 == 0 ? 6f : 3f) * u, c.y - len, (i % 2 == 0 ? 12f : 6f) * u, len), MolakGui.Px);
-        }
-        GUI.matrix = m0;
-        // 불티
-        foreach (var s in sparks)
-        {
-            GUI.color = new Color(1f, Random.Range(0.7f, 0.9f), 0.35f, Mathf.Clamp01(s.life) * a);
-            GUI.DrawTexture(new Rect(c.x + s.p.x - s.size / 2f, c.y + s.p.y - s.size / 2f, s.size, s.size), MolakGui.Px);
         }
 
-        // 한 글자 인장: 크게 떨어져 박힌다
-        float st = Mathf.Clamp01((t - 0.55f) / 0.22f);
-        if (st > 0f)
-        {
-            float sc = Mathf.Lerp(2.4f, 1f, Mathf.SmoothStep(0f, 1f, st));
-            var hr = new Rect(c.x - 160f * u, c.y - 150f * u, 320f * u, 300f * u);
-            GUI.matrix = m0; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), c);
-            MolakGui.Ink(sHanja, new Color(0.45f, 0.06f, 0.03f, 0.75f * st)); GUI.Label(new Rect(hr.x + 6f * u, hr.y + 6f * u, hr.width, hr.height), hanja, sHanja);
-            MolakGui.Ink(sHanja, new Color(1f, 0.86f, 0.45f, st)); GUI.Label(hr, hanja, sHanja);
-            GUI.matrix = m0;
-        }
-
-        float cw = Mathf.Min(w * 0.9f, 940f * u), cx = (w - cw) / 2f;
-        float y = c.y + 170f * u;
-        MolakGui.Ink(sKick, new Color(0.95f, 0.72f, 0.3f, a));
-        GUI.Label(new Rect(cx, c.y - 250f * u, cw, 44f * u), "─  " + kicker + "  ─", sKick);
-        float ta = Mathf.Clamp01((t - 0.8f) / 0.35f);
-        MolakGui.Ink(sTitle, new Color(0.5f, 0.06f, 0.03f, 0.6f * ta)); GUI.Label(new Rect(cx + 4f * u, y + 4f * u, cw, 90f * u), title, sTitle);
-        MolakGui.Ink(sTitle, new Color(1f, 0.93f, 0.78f, ta)); GUI.Label(new Rect(cx, y, cw, 90f * u), title, sTitle);
-        y += 92f * u;
+        float y = c.y + d * 0.5f + 34f * u;
+        float ta = Mathf.Clamp01((t - 0.65f) / 0.35f);
+        MolakGui.Ink(sTitle, new Color(ink.r, ink.g, ink.b, ta * a));
+        float th = sTitle.CalcHeight(new GUIContent(title), cw);
+        GUI.Label(new Rect(cx, y, cw, th), title, sTitle); y += th + 10f * u;
         if (line.Length > 0)
         {
-            float lh = sLine.CalcHeight(new GUIContent(line), cw - 60f * u);
-            MolakGui.Ink(sLine, new Color(0.82f, 0.76f, 0.66f, ta)); GUI.Label(new Rect(cx + 30f * u, y, cw - 60f * u, lh), line, sLine);
-            y += lh + 18f * u;
+            float lh = sLine.CalcHeight(new GUIContent(line), cw - 40f * u);
+            MolakGui.Ink(sLine, new Color(grey.r, grey.g, grey.b, ta * a));
+            GUI.Label(new Rect(cx + 20f * u, y, cw - 40f * u, lh), line, sLine); y += lh + 18f * u;
         }
-        // 능력치: 전 → 후, 숫자가 차오른다
+        // 가는 줄
+        GUI.color = new Color(0.5f, 0.4f, 0.28f, 0.35f * ta * a); GUI.DrawTexture(new Rect(cx + cw * 0.18f, y, cw * 0.64f, Mathf.Max(1f, 1.5f * u)), MolakGui.Px); GUI.color = Color.white; y += 22f * u;
+        // 수치: 한 줄씩
+        float colW = cw * 0.64f, colX = cx + cw * 0.18f;
         for (int i = 0; i < rows.Count; i++)
         {
             var r = rows[i];
-            float k0 = 1.15f + 0.22f * i;
+            float k0 = 1.05f + 0.16f * i;
             float ra = Mathf.Clamp01((t - k0) / 0.25f);
-            if (ra <= 0f) continue;
-            float p = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - k0) / 0.7f));
+            if (ra <= 0f) { y += 54f * u; continue; }
+            float p = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - k0) / 0.5f));
             float cur = Mathf.Round(Mathf.Lerp(r.From, r.To, p));
-            float d = r.To - r.From;
-            string col = r.Bad ? "#FF7A61" : "#FFD86A";
-            string txt = "<color=#CFC4B0>" + r.Label + "</color>   " + r.From.ToString("0") + "  →  <b><color=" + col + ">" + cur.ToString("0") + "</color></b>"
-                       + (string.IsNullOrEmpty(r.Note) ? "   <size=" + Mathf.RoundToInt(28 * u) + "><color=" + col + ">(" + (d > 0 ? "+" : "−") + Mathf.Abs(d).ToString("0") + ")</color></size>" : "   <size=" + Mathf.RoundToInt(26 * u) + "><color=#CFC4B0>" + r.Note + "</color></size>");
-            float sc = p < 1f && ra < 1f ? Mathf.Lerp(1.3f, 1f, ra) : 1f;
-            var rr = new Rect(cx, y, cw, 56f * u);
-            GUI.matrix = m0; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), rr.center);
-            GUI.color = new Color(1f, 0.8f, 0.35f, 0.08f * ra); GUI.DrawTexture(new Rect(cx + cw * 0.12f, y + 4f * u, cw * 0.76f, 48f * u), MolakGui.Px);
-            MolakGui.Ink(sRow, new Color(1f, 1f, 1f, ra)); GUI.Label(rr, txt, sRow);
-            GUI.matrix = m0;
-            y += 60f * u;
+            float dv = r.To - r.From;
+            string acc = r.Bad ? "#8A2A1E" : "#2F6B3A";
+            MolakGui.Ink(sLab, new Color(ink.r, ink.g, ink.b, ra * a));
+            GUI.Label(new Rect(colX, y, colW, 50f * u), r.Label, sLab);
+            string val = "<color=#7A6E60>" + r.From.ToString("0") + "</color>  →  <b><color=" + acc + ">" + cur.ToString("0") + "</color></b>"
+                       + (string.IsNullOrEmpty(r.Note) ? "  <color=" + acc + ">(" + (dv > 0 ? "+" : "−") + Mathf.Abs(dv).ToString("0") + ")</color>" : "  <color=#7A6E60>" + r.Note + "</color>");
+            MolakGui.Ink(sVal, new Color(1f, 1f, 1f, ra * a));
+            GUI.Label(new Rect(colX, y, colW, 50f * u), val, sVal);
+            y += 54f * u;
         }
-        float hold = 1.6f + 0.22f * rows.Count;
-        if (t > hold)
+        float hold = 1.3f + 0.16f * rows.Count;
+        if (t > hold && outAt < 0f)
         {
-            MolakGui.Ink(sHint, new Color(0.7f, 0.62f, 0.5f, Mathf.Clamp01((t - hold) / 0.4f)));
-            GUI.Label(new Rect(0, Mathf.Min(h - 70f * u, y + 24f * u), w, 34f * u), "눌러서 넘긴다", sHint);
+            MolakGui.Ink(sHint, new Color(grey.r, grey.g, grey.b, Mathf.Clamp01((t - hold) / 0.4f) * a));
+            GUI.Label(new Rect(0, Mathf.Min(h - 70f * u, y + 20f * u), w, 34f * u), "눌러서 넘긴다", sHint);
         }
         GUI.color = g0; GUI.matrix = m0;
-        if (GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none) && t > hold * 0.7f) Close();
+        if (GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none) && t > hold * 0.6f && outAt < 0f) outAt = t;
     }
 }

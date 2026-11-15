@@ -64,6 +64,13 @@ public class MolakInputGuard : MonoBehaviour
         }
         catch { }
     }
+    /// <summary>0.4.68 지금 누르고 있는 손은 '계속'으로 보내지 않는다(쪽 넘김 문을 연 탭이 새 쪽까지 넘기지 않게).</summary>
+    public static void BlockCurrentPress ()
+    {
+        if (inst == null) return;
+        if (PointerDown()) inst.pressBlocked = true;
+        inst.muteUntil = Mathf.Max(inst.muteUntil, Time.unscaledTime + 0.25f);
+    }
     bool wasDownInside;
     bool wasDown;            // 직전 프레임 포인터 눌림
     bool pressBlocked;       // 이번 누름은 '계속'으로 처리하지 않음(보호 영역에서 시작 / 드래그)

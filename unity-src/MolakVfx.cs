@@ -76,8 +76,30 @@ public class MolakVfx : MonoBehaviour
 
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
-    public static void Stamp (string hanja, string line, bool big) { if (instance == null) return; instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; MolakSfx.Stamp(); }
-    GUIStyle sStamp, sStampLine; Font gowun; float stampU = -1f;
+    // 0.4.68 인장은 대사와 겹쳐 뜨지 않는다(언메이커): 글자리를 빈 종이로 덮고 그 가운데 크게 찍힌다. 누르면 걷히고, 그다음에 대사가 나온다.
+    //  · 다음 글·선택지는 MolakPlayMode 의 실행 전 작업이 인장이 걷힐 때까지 붙잡는다(Holding).
+    //  · 넘기기 중엔 0.5초, 자동이면 1.6초 뒤 저절로 걷힌다.
+    bool stampHold; float stampAuto;
+    public static bool Holding => instance != null && instance.stampT >= 0f && instance.stampHold;
+    public static void Stamp (string hanja, string line, bool big)
+    {
+        if (instance == null) return;
+        instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; instance.stampOutAt = -1f; MolakSfx.Stamp();
+        var sp = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null;
+        bool skipping = sp != null && sp.Skipping;
+        instance.stampHold = Engine.Initialized && !MolakTitle.Showing;
+        instance.stampAuto = skipping ? 0.5f : MolakPlayMode.Auto ? 1.6f : -1f;
+    }
+    public static Rect TextArea ()
+    {
+        float w = Screen.width, h = Screen.height;
+        float unit = Mathf.Min(w / 900f, h / 1600f);
+        float top = Mathf.Max(0f, (h - 1600f * unit) * 0.5f);
+        float bandBottom = top + (MolakArt.BandTop + MolakArt.BandH) * unit;
+        float bottom = h - h * 0.12f - 56f * unit;   // 대화 틀 아랫선까지(행낭 띠를 덮지 않게)
+        return new Rect(w * 0.04f, bandBottom + 6f * unit, w * 0.92f, Mathf.Max(200f * unit, bottom - bandBottom - 12f * unit));
+    }
+    GUIStyle sStamp, sStampLine, sStampHint; Font gowun; float stampU = -1f; float stampOutAt = -1f;
     static Texture2D vig;
     /// <summary>가장자리만 짙은 둥근 비네트(심장 박동·사술의 숨결에 쓴다)</summary>
     static Texture2D Vig
@@ -240,32 +262,57 @@ public class MolakVfx : MonoBehaviour
         // 승부수 인장
         if (stampT >= 0f)
         {
-            stampT += Time.deltaTime;
-            const float Dur = 1.5f;
-            if (stampT > Dur) stampT = -1f;
+            if (Event.current.type == EventType.Repaint) stampT += Time.unscaledDeltaTime;
+            const float Out = 0.35f;
+            if (stampHold)
+            {
+                MolakInputGuard.Guard(new Rect(0, 0, w, h));
+                bool tap = Event.current.type == EventType.MouseDown && stampT > 0.25f;
+                bool auto = stampAuto > 0f && stampT > stampAuto;
+                if (tap || auto) { if (tap) Event.current.Use(); stampHold = false; stampOutAt = stampT; MolakInputGuard.MuteFor(0.2f); }
+            }
+            else if (stampOutAt < 0f && stampT > 1.1f) stampOutAt = stampT;   // 붙잡지 않는 인장(제목 화면 등)은 1.1초 뒤 걷힌다
+            if (!stampHold && stampOutAt >= 0f && stampT - stampOutAt > Out) { stampT = -1f; stampOutAt = -1f; }
             else
             {
                 float u = MolakTheme.U;
                 if (sStamp == null || !Mathf.Approximately(stampU, u))
                 {
                     stampU = u; if (gowun == null) gowun = MolakGui.Gowun;
-                    sStamp = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(120 * u), alignment = TextAnchor.MiddleCenter };
-                    sStampLine = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(28 * u), alignment = TextAnchor.MiddleCenter };
-                    if (gowun != null) { sStamp.font = gowun; sStampLine.font = gowun; }
+                    sStamp = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(150 * u), alignment = TextAnchor.MiddleCenter };
+                    if (MolakGui.Hanja != null) sStamp.font = MolakGui.Hanja;
+                    sStampLine = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(32 * u), alignment = TextAnchor.MiddleCenter, wordWrap = true };
+                    sStampHint = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(22 * u), alignment = TextAnchor.MiddleCenter };
+                    if (gowun != null) { sStampLine.font = gowun; sStampHint.font = gowun; }
                 }
-                float a = stampT < 0.12f ? stampT / 0.12f : (stampT > Dur - 0.5f ? (Dur - stampT) / 0.5f : 1f);
-                bool ok = stampHanja == "通" || stampHanja == "破" || stampHanja == "勢";   // 0.4.31: 합을 이긴 인장도 금빛
-                var col = ok ? MolakTheme.Gold : MolakTheme.Blood;
-                float sc = 1f + Mathf.Clamp01(1f - stampT / 0.18f) * (stampBig ? 0.6f : 0.3f);   // 찍히는 순간 크게 → 제자리
-                var piv = new Vector2(w * 0.5f, h * 0.22f);
+                float a = stampT < 0.12f ? stampT / 0.12f : 1f;
+                if (!stampHold && stampOutAt >= 0f) a = Mathf.Clamp01(1f - (stampT - stampOutAt) / Out);
+                bool ok = stampHanja == "通" || stampHanja == "破" || stampHanja == "勢" || stampHanja == "先" || stampHanja == "境";
+                var col = ok ? new Color(0.62f, 0.45f, 0.1f, 1f) : new Color(0.62f, 0.12f, 0.08f, 1f);
+                var ta = TextArea();
+                // 글자리를 빈 종이로: 아래 글이 비치지 않게
+                var bg = GUI.color; GUI.color = new Color(0.955f, 0.94f, 0.905f, 0.985f * a); GUI.DrawTexture(ta, Px);
+                GUI.color = new Color(0.55f, 0.42f, 0.25f, 0.35f * a);
+                GUI.DrawTexture(new Rect(ta.x + ta.width * 0.2f, ta.y + ta.height * 0.5f + 118f * u, ta.width * 0.6f, Mathf.Max(1f, 1.5f * u)), Px);
+                GUI.color = bg;
+                var piv = new Vector2(ta.center.x, ta.y + ta.height * 0.5f - 30f * u);
+                float sc = 1f + Mathf.Clamp01(1f - stampT / 0.18f) * (stampBig ? 0.5f : 0.25f);   // 찍히는 순간 크게 → 제자리
+                // 인장 바탕: 붉은 먹 네모(금빛 인장은 옅은 금빛 테두리)
+                var box = new Rect(piv.x - 105f * u, piv.y - 105f * u, 210f * u, 210f * u);
                 var m = GUI.matrix; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), piv);
-                MolakGui.Ink(sStamp, new Color(col.r, col.g, col.b, 0.9f * a));
-                GUI.Label(new Rect(piv.x - 120 * u, piv.y - 80 * u, 240 * u, 160 * u), stampHanja, sStamp);
+                GUI.color = new Color(col.r, col.g, col.b, 0.92f * a); GUI.DrawTexture(box, Px);
+                GUI.color = new Color(1f, 1f, 1f, 0.12f * a); GUI.DrawTexture(new Rect(box.x + 8f * u, box.y + 8f * u, box.width - 16f * u, box.height - 16f * u), Px);
+                GUI.color = bg;
+                MolakGui.Ink(sStamp, new Color(0.98f, 0.95f, 0.88f, a));
+                GUI.Label(box, stampHanja, sStamp);
                 GUI.matrix = m;
-                MolakGui.Ink(sStampLine, new Color(0.95f, 0.91f, 0.84f, 0.95f * a));
-                var sh = GUI.color; GUI.color = new Color(0f, 0f, 0f, 0.45f * a);
-                GUI.DrawTexture(new Rect(w * 0.5f - 200 * u, piv.y + 78 * u, 400 * u, 44 * u), Px); GUI.color = sh;
-                GUI.Label(new Rect(w * 0.5f - 200 * u, piv.y + 78 * u, 400 * u, 44 * u), stampLine, sStampLine);
+                MolakGui.Ink(sStampLine, new Color(0.16f, 0.13f, 0.1f, a));
+                GUI.Label(new Rect(ta.x + 20f * u, piv.y + 120f * u, ta.width - 40f * u, 90f * u), stampLine, sStampLine);
+                if (stampHold && stampAuto < 0f && stampT > 0.6f)
+                {
+                    MolakGui.Ink(sStampHint, new Color(0.45f, 0.4f, 0.34f, Mathf.Clamp01((stampT - 0.6f) / 0.4f) * a));
+                    GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sStampHint);
+                }
             }
         }
         // 날씨

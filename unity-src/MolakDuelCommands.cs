@@ -5,6 +5,10 @@ using UnityEngine;
 /// <summary>비무 시스템 — 상대 생성/판정. 서사는 전부 .nani가 담당하고 여기는 수치만 계산한다.</summary>
 public static class MolakDuel
 {
+    static readonly string[] TenK = { "영", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열" };
+    /// <summary>"열에 ○" 의 ○ — 고유어 수.</summary>
+    public static string Ten (int n) { return TenK[Mathf.Clamp(n, 0, 10)]; }
+
     public struct Foe { public string Name; public int Rank; public float P; public string Boss; }
     public static Foe Pending;
 
@@ -163,6 +167,7 @@ public class DuelInfoCommand : Command
         MolakStats.SetStr("foerank", MolakDuel.RankText(foe.Rank));
         MolakStats.SetStr("foetier", MolakDuel.TierName(foe.Rank));
         MolakStats.Set("odds10", Mathf.Clamp(Mathf.Round((MolakDuel.Odds(foe, 0) + drunkLie) / 10f), 1f, 9f));
+        MolakStats.SetStr("odds10k", MolakDuel.Ten(Mathf.RoundToInt(MolakStats.Get("odds10"))));   // 0.4.68 "열에 9" → "열에 아홉"
         MolakStats.Set("cansl", MolakStats.Get("sl") >= 3 ? 1f : 0f);
         MolakStats.Set("cancurse", MolakStats.Get("curse") >= 10 ? 1f : 0f);
         MolakStats.Set("dlethal", MolakDuel.Lethal(kind) ? 1f : 0f);

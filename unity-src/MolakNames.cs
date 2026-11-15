@@ -106,7 +106,7 @@ public static class MolakNames
         }
         rx = new Regex(sb.ToString(), RegexOptions.Compiled);
         // 은자 액수: "은자 3냥", "12냥", "열 냥", "스무 냥", "냥 반" 같은 꼴
-        coin = new Regex(@"(?:은자\s*)?(?:\d+|한|두|세|네|닷|엿|열|스무|서른|마흔|쉰|백|천)\s?냥", RegexOptions.Compiled);
+        coin = new Regex(@"(?:은자\s*)?(?:\d+|[이삼사오육칠팔구]?[백천](?:[이삼사오육칠팔구]?십)?|한|두|세|네|닷|엿|열|스무|서른|마흔|쉰)\s?냥", RegexOptions.Compiled);
     }
 
     static readonly Dictionary<string, string> cacheDay = new Dictionary<string, string>(), cacheNight = new Dictionary<string, string>();
@@ -116,11 +116,14 @@ public static class MolakNames
     public static string Paint (string text, bool night)
     {
         if (string.IsNullOrEmpty(text)) return text;
+        try { MolakGloss.Scan(text); } catch { }   // 0.4.68 무협 낱말 풀이 쪽지
         Build();
         var cache = night ? cacheNight : cacheDay;
         string hit; if (cache.TryGetValue(text, out hit)) return hit;
         var hexes = night ? nightHex : dayHex; string coinHex = night ? CoinNight : CoinDay;
         paintNight = night;
+        // 0.4.68 대사 안의 액수는 칠하지 않는다(사람의 말 속 "삼백 냥"이 반만 칠해져 어색했다). 서술의 액수만.
+        string tt = text.TrimStart(); bool dialogue = tt.Length > 0 && (tt[0] == '"' || tt[0] == '“' || tt[0] == '「');
         clueSeen.Clear();
         var outp = new StringBuilder(text.Length + 64);
         int colorDepth = 0, i = 0;
@@ -140,7 +143,7 @@ public static class MolakNames
             if (colorDepth > 0) outp.Append(seg);
             else
             {
-                seg = coin.Replace(seg, m => "<color=" + coinHex + ">" + m.Value + "</color>");
+                if (!dialogue) seg = coin.Replace(seg, m => "<color=" + coinHex + ">" + m.Value + "</color>");
                 // 은자 색을 칠한 뒤라 그 안의 글자는 다시 칠하지 않게 조각으로 나눠 이름을 칠한다
                 outp.Append(PaintNames(seg, hexes));
             }

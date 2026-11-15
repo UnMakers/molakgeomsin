@@ -130,7 +130,7 @@ public static class MolakRules
         switch (korean) { case "검술": return "sw"; case "내공": return "ng"; case "살기": return "sl"; }
         return null;
     }
-    public static string OddsText (int p) { return (p / 10) + "할"; }
+    public static string OddsText (int p) { return "열에 " + MolakDuel.Ten(Mathf.Clamp(Mathf.RoundToInt(p / 10f), 0, 10)); }   // 0.4.68 "9할" → "열에 아홉"
 
     // ---- 회귀 상점: 이번 생의 채비 ----
     public const int PrepBondCost = 3, PrepItemCost = 2, RedoCost = 12;

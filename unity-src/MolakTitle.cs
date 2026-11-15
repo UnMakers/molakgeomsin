@@ -108,7 +108,7 @@ public class MolakTitle : MonoBehaviour
     {
         if (brushes == null) brushes = new[]{ Resources.Load<Texture2D>("MolakTitleBrush0"), Resources.Load<Texture2D>("MolakTitleBrush1"), Resources.Load<Texture2D>("MolakTitleBrush2") };
         var e = Event.current;
-        if (enabled && e.type == EventType.MouseDown && r.Contains(e.mousePosition)) downIdx = idx;
+        if (enabled && e.type == EventType.MouseDown && r.Contains(e.mousePosition) && t - shownAt > 1.1f + idx * 0.12f + 0.45f) downIdx = idx;
         if (e.type == EventType.MouseUp && downIdx == idx && !r.Contains(e.mousePosition)) downIdx = -1;
         bool down = downIdx == idx && enabled;
         // 획: 버튼 칸보다 위아래로 조금 크게, 오른쪽 끝(꼬리)은 칸 밖으로 흘린다
@@ -134,7 +134,7 @@ public class MolakTitle : MonoBehaviour
         var sh = new GUIStyle(st); MolakGui.Ink(sh, new Color(0, 0, 0, 0.35f));
         GUI.Label(new Rect(lr.x + 1.5f*u, lr.y + 2*u, lr.width, lr.height), label, sh);
         GUI.Label(lr, label, st);
-        bool hit = enabled && GUI.Button(r, GUIContent.none, GUIStyle.none);
+        bool hit = enabled && reveal >= 1f && GUI.Button(r, GUIContent.none, GUIStyle.none);   // 다 그어지기 전엔 눌리지 않는다
         if (hit) { pressed = idx; pressedAt = t; downIdx = -1; MolakSfx.Confirm(); }
         return hit;
     }
@@ -175,6 +175,9 @@ public class MolakTitle : MonoBehaviour
 
         float t = Time.unscaledTime;
         if (shownAt < 0f) { shownAt = t; wakeAt = -1f; wakeFired = false; pressed = -1; motes = null; }
+        // 0.4.68 메뉴가 다 그려지기 전에 누르면: 그 누름은 버튼으로 가지 않고, 메뉴를 바로 다 펼친다
+        const float MenuReady = 2.3f;
+        if (t - shownAt < MenuReady && Event.current.type == EventType.MouseDown) { shownAt = t - MenuReady; Event.current.Use(); }
         float since = t - shownAt;
         float u = U; EnsureStyles(u);
         float w = Screen.width, h = Screen.height;

@@ -32,6 +32,7 @@ public class MolakStory : MonoBehaviour
     public static void Boost (float day)
     {
         if (!On) return;
+        MolakStatLog.Why("*", "이야기 모드 — 이 날짜의 이야기를 볼 수 있게 몸과 서열을 채웠다");
         Max("sw", 4f + day * 0.8f); Max("ng", 2f + day * 0.6f);
         Max("mn", 30f);
         if (day >= 6) RankAtMost(900000f);
@@ -49,5 +50,6 @@ public class MolakStory : MonoBehaviour
         if (day > 12) Max("chamaff", Mathf.Min(6f, Mathf.Floor((day - 12f) / 4f)));
         MolakStats.GrowBody();
         MolakStats.Set("hp", MolakStats.Get("hpmax"));
+        MolakBridge.Resnap();   // 여운 문장("방금 익힌 것…")이 이 채움을 사건의 결과로 착각하지 않게
     }
 }
