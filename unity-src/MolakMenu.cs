@@ -206,7 +206,7 @@ public class MolakMenu : MonoBehaviour
         MenuSection(bx, ref by, bw, secH, "기록");
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
-            string[] t = { "지난 기록", "원수 장부", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실" };
+            string[] t = { "지난 기록", "원수록", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실" };
             string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀", "풀다 만 실마리 " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots() };
             float tw = (bw - gap) / 2f;
             for (int i = 0; i < t.Length; i++)
@@ -270,7 +270,7 @@ public class MolakMenu : MonoBehaviour
         System.Func<string,float> gv = n => { try { return MolakStats.Get(n); } catch { return 0f; } };
         float bw = Mathf.Min(w*0.84f, 860*u), rh = 96*u, gap = 12*u;
         float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.07f);
-        GUI.Label(new Rect(bx, by, bw, 60*u), "— 원수 장부 · 청운의 빚 —", sHead);
+        GUI.Label(new Rect(bx, by, bw, 60*u), "— 원수록 · 청운의 빚 —", sHead);
         by += 76*u;
         {   // 0.4.9: 이번 생의 뜻
             int vw = Mathf.RoundToInt(gv("vow"));
@@ -312,7 +312,7 @@ public class MolakMenu : MonoBehaviour
         }
         // ---- 생을 넘어: 벤 자 · 나 때문에 죽은 자 · 살려 보낸 자 ----
         float y2 = by + 5*(rh+gap) + 10*u;
-        GUI.Label(new Rect(bx, y2, bw, 50*u), "— 생을 넘어 쌓인 장부 —", sHead);
+        GUI.Label(new Rect(bx, y2, bw, 50*u), "— 생을 넘어 쌓인 이름 —", sHead);
         y2 += 62*u;
         var rows = new System.Collections.Generic.List<string[]>();
         foreach (var e in MolakLedger.All) { var ln = MolakLedger.Line(e.Id); if (ln != null) rows.Add(new[]{ e.Name, ln }); }

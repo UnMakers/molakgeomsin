@@ -216,6 +216,7 @@
 @goto #Daytime
 # MTh3a
 징세조 붉은 끈 다섯이 아침부터 어물전을 턴다. 미처 못 걷은 좌판이 엎어진다.
+은자를 못 낸 생선장수 이마에 우두머리가 제 손가락을 깨물어 피로 점 하나를 찍는다. 다음 장날까지 그 점이 지워지면 집에 불을 놓는다고, 노래하듯 말한다. 다섯이 다 같이 웃는다.
 @goto #Daytime
 # MTh3b
 하진무가 주판을 오래 튕긴다. 셈이 안 맞는 얼굴인데, 방값 이야기는 꺼내지 않는다.
@@ -767,7 +768,7 @@
 @goto #NightChoice
 # NvHj
 @set tn_nvhj=1
-하진무가 없는 첫 밤이다. 주판 소리 대신 처마 물소리가 셈을 한다.
+하진무가 없는 첫 밤이다. 주판 소리 대신 처마 물소리만 떨어진다.
 점소이가 등잔 기름을 채우다 말고 빈 계산대를 한참 본다.
 @goto #NightChoice
 # NvGr
@@ -1604,6 +1605,10 @@
 @gosub MolakEvents#E_Search if:nextevent=="E_Search"
 @gosub MolakEvents#E_SoaPoster if:nextevent=="E_SoaPoster"
 @gosub MolakEvents#E_HerbTax if:nextevent=="E_HerbTax"
+@gosub MolakEvents#E_CultRite if:nextevent=="E_CultRite"
+@gosub MolakEvents#E_CultLaugh if:nextevent=="E_CultLaugh"
+@gosub MolakEvents#E_CultFeast if:nextevent=="E_CultFeast"
+@gosub MolakEvents#E_HerbNeedle if:nextevent=="E_HerbNeedle"
 @gosub MolakEvents#E_RingClosed if:nextevent=="E_RingClosed"
 @return
 
@@ -1723,7 +1728,7 @@
 @set b_s6=1
 @goto Molak06#SoaN6
 # BS7
-@chapter text:"장부의 첫 줄" sub:"소아"
+@chapter text:"첫 장 첫 줄" sub:"소아"
 @set b_s7=1
 @goto Molak06#SoaN7
 # BS8
@@ -1915,7 +1920,7 @@
 @set b_hajin2x=1
 @goto Molak05#Hajin2
 # A19
-@chapter text:"장의 장부" sub:"쥐눈이 장"
+@chapter text:"장의 소식첩" sub:"쥐눈이 장"
 @set b_jang2=1
 @goto Molak05#Jang2
 # A21
@@ -2250,7 +2255,7 @@
 하진무의 잔이 입술 앞에서 멎는다.
 "……객이 그걸 어찌 아시오."
 "들은 적이 있소. 오래전에."
-노인이 한참 당신을 보다 잔을 비운다. 묻지 않는 것이 이 노인의 셈법이다.
+노인이 한참 당신을 보다 잔을 비운다. 묻지 않는 것이 이 노인의 버릇이다.
 "장문인께서도 그런 눈을 하셨소. 아직 오지 않은 일을 보는 눈."
 @fx curse:-1
 @return
@@ -2258,7 +2263,7 @@
 <color=#9A70C4>지난 생, 이 손이 피 웅덩이에서 주판알을 놓쳤다.</color>
 잔을 받는다. 검버섯 셋, 엄지의 굳은살. 따뜻한 손이다.
 "……객, 늙은이 손이 뭐 볼 게 있다고."
-"셈 잘하는 손이라서."
+"국밥 잘 마는 손이라서."
 하진무가 웃는다. 이번 생에는 이 노인을 앞에 세우지 않겠다고, 술 대신 그걸 삼킨다.
 @fx curse:-2
 @return

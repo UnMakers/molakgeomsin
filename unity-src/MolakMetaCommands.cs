@@ -31,6 +31,7 @@ public class InitRunCommand : Command
             foreach (var pre in new[] { "g_lk_", "g_ld_", "g_ls_" }) MolakStats.EnsureNum(pre + le.Id);      // 강호록
         MolakStats.EnsureStr("g_lastend");
         MolakStats.EnsureStr("g_lastcause");
+        MolakStats.EnsureStr("g_nxform");   // 0.4.62 다음 생 첫 아침에 몸에 들일 검결
     }
 
 #pragma warning disable CS1998

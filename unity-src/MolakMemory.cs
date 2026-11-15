@@ -215,6 +215,7 @@ public static class MolakMemory
         // 청운검결의 조각
         string kind = MolakStats.Str("duelkind", "none");
         float lifewins = G("lifewins");
+        string nxForm = null;
         foreach (var f in Forms)
         {
             if (G("g_form_" + f.Key) > 0f) continue;
@@ -225,6 +226,7 @@ public static class MolakMemory
             else if (f.Key == "fall") get = cause == "사술 폭주" || (died && G("curse") >= 75f);
             if (!get) continue;
             MolakStats.Set("g_form_" + f.Key, 1f);
+            if (string.IsNullOrEmpty(nxForm)) { nxForm = f.Key; MolakStats.SetStr("g_nxform", f.Key); }   // 0.4.62 다음 생 첫 아침에 장면으로(Molak17)
             lines.Add("<color=#9A70C4>청운검결 「" + f.Name + "(" + f.Hanja + ")」</color> — " + f.Teach + "<br><color=#8A7A66>　" + f.Effect + ".</color>");
         }
         // 목이 기억한 칼(국밥집에서 한 번 피한다)

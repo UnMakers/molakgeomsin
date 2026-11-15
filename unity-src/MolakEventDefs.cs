@@ -178,6 +178,10 @@ public static class MolakEventDefs
             new Def("E_Search", 20, 38, 'd', "rank>0&rank<=20000&!f_hajindead", null, 0, 16),
             new Def("E_SoaPoster", 22, 40, 'd', "f_soamet&f_wanted&!f_soadead", null, 0, 14),
             new Def("E_HerbTax", 20, 36, 'd', "!f_herbdead", "E_Herb2x", 3, 14),
+            new Def("E_CultRite", 8, 50, 'n', null, null, 0, 20),    // 0.4.62 혈마교의 광기: 솥의 밤
+            new Def("E_CultLaugh", 6, 45, 'd', null, null, 0, 18),   // 웃는 교도
+            new Def("E_CultFeast", 20, 58, 'n', null, null, 0, 18),  // 붉은 술의 밤
+            new Def("E_HerbNeedle", 18, 52, 'n', "!f_herbdead&curse>=50&!f_herbtrue", "E_Herb4", 3, 26),   // 0.4.62 금침의 밤
             new Def("E_RingClosed", 21, 38, 'd', "rank>0", null, 0, 14),
     };
         public static readonly Flav[] Morning = {
