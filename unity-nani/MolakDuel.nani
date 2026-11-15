@@ -223,7 +223,7 @@
 @goto #Result
 # StCurse2
 손이 먼저 나간다. 제 손이 아닌 것처럼.
-문양이 <color=#C03434>스스로</color> 타오른다. 빈틈이 아니라 상대의 목숨 줄이 보인다.
+문양이 <color=#C03434>스스로</color> 타오른다. 빈틈 너머 상대의 목숨 줄이 보인다.
 @vfx kind:heavy
 @wait 0.35
 @duel style:curse2
