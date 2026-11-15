@@ -152,8 +152,16 @@ public class MolakScroll : MonoBehaviour
     void Layout ()
     {
         float canvasW = MolakLayout.Canvas.x, canvasH = MolakLayout.Canvas.y;
-        var root = viewport.GetComponentInParent<Canvas>();
-        if (root != null && root.rootCanvas != null) { var r = (root.rootCanvas.transform as RectTransform).rect; canvasW = r.width; canvasH = r.height; }
+        // 0.4.68 가로 화면(PC): 본문 창의 부모(PrinterPanel)는 캔버스 전체가 아니라 가운데 폭만 차지한다.
+        //   캔버스 전체 폭으로 좌우 여백을 잡으면 여백이 부모 폭보다 커져 본문 칸 폭이 0 이 되어 글이 하나도 안 보였다.
+        //   좌우 여백은 본문 창이 실제로 들어 있는 부모의 폭을 기준으로 잡는다.
+        var par = viewport.parent as RectTransform;
+        if (par != null && par.rect.width > 1f) { canvasW = par.rect.width; canvasH = par.rect.height; }
+        else
+        {
+            var root = viewport.GetComponentInParent<Canvas>();
+            if (root != null && root.rootCanvas != null) { var r = (root.rootCanvas.transform as RectTransform).rect; canvasW = r.width; canvasH = r.height; }
+        }
         float side = Mathf.Max(MolakLayout.BodySide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.BodySide);
         float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand) : -MolakLayout.BodyTop;
         topCur = Mathf.Lerp(topCur, topOff, Time.deltaTime * 6f);
