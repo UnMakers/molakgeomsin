@@ -752,7 +752,8 @@
 ; --- 밤: 며칠 밤의 선택 ---
 # Night
 @goto #DayLoop if:hp<=0
-@goto Molak18#Break if:btpend>0&&hp>0
+@realm do:check
+@goto Molak18#Wall if:btready>0&&hp>0&&btwait<day&&btdecl<day&&practice<1
 @goto #NightEnd if:storymode>0
 @art char:none
 @scene id:night

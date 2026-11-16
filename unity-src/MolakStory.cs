@@ -48,6 +48,7 @@ public class MolakStory : MonoBehaviour
         if (day > 30) Max("amhaff", Mathf.Min(6f, Mathf.Floor((day - 30f) / 2f)));
         if (day > 24) Max("cmaff", Mathf.Min(6f, Mathf.Floor((day - 24f) / 3f)));
         if (day > 12) Max("chamaff", Mathf.Min(6f, Mathf.Floor((day - 12f) / 4f)));
+        MolakRealm.StoryFill(day);   // 0.4.72 경지도 날짜에 맞춰(서열이 벽에 막혀 이야기가 멈추지 않게)
         MolakStats.GrowBody();
         MolakStats.Set("hp", MolakStats.Get("hpmax"));
         MolakBridge.Resnap();   // 여운 문장("방금 익힌 것…")이 이 채움을 사건의 결과로 착각하지 않게

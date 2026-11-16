@@ -121,6 +121,7 @@ public class MolakAutoLife : MonoBehaviour
         SaveCur();
         lines.Clear(); dayLine = "";
         mode = (!first && prev.Count > 0 && prevDay > 1 && Enabled && !MolakStory.On && !MolakPractice.Active) ? Mode.Armed : Mode.Off;
+        consent = false;   // 0.4.72 따라 걷기는 첫 저녁에 직접 고른다
     }
 
     // ---------- 흐름 ----------
@@ -161,6 +162,7 @@ public class MolakAutoLife : MonoBehaviour
             var dtc = (DayTickCommand)cmd;
             int d = Mathf.RoundToInt(MolakStats.Get("day")) + (dtc.N != null && dtc.N.HasValue ? Mathf.Max(1, dtc.N.Value) : 1);   // 실행 전이라 넘길 날을 더한다
             if (d > curDay) { curDay = d; SaveCur(); }
+            if (mode == Mode.Armed && !consent) { mode = Mode.Off; return; }   // 0.4.72 첫 저녁에 고르지 않았으면 이번 생은 직접 걷는다
             if (mode == Mode.Armed || mode == Mode.Reading || mode == Mode.Paused)
             {
                 if (prevDay > 0 && d >= prevDay) { mode = Mode.Off; return; }
@@ -240,6 +242,34 @@ public class MolakAutoLife : MonoBehaviour
         return ev.StartsWith("E_Soa") || ev.StartsWith("E_Amh") || ev.StartsWith("E_Cm") || ev.StartsWith("E_Cham") || ev.StartsWith("E_Temple");
     }
 
+    bool consent;
+    /// <summary>0.4.72 @autolife do:follow — 첫 저녁에 고른다. 그날 밤부터 지난 생을 따라 걷는다.</summary>
+    public static void Follow ()
+    {
+        var me = FindAnyObjectByType<MolakAutoLife>();
+        if (me == null || me.mode != Mode.Armed) return;
+        me.consent = true; me.startDay = Mathf.RoundToInt(MolakStats.Get("day"));
+        me.BeginFollow(Mathf.Max(1, me.startDay));
+    }
+    public static void Decline ()
+    {
+        var me = FindAnyObjectByType<MolakAutoLife>();
+        if (me != null && me.mode == Mode.Armed) me.mode = Mode.Off;
+    }
+    int startDay;
+    // 다시 걷는 마음 — 날이 넘어갈 때마다 한 줄(같은 줄이 이어서 나오지 않게)
+    static readonly string[] Resolve = {
+        "같은 칼이 같은 자리에서 온다. 이번엔 반 치 먼저 피한다.",
+        "어제 죽은 자리를 오늘 지나간다. 발이 먼저 안다.",
+        "같은 국밥, 같은 김. 손등의 흉터만 하나 늘었다.",
+        "아는 길을 걷는 것도 걷는 것이다. 한 걸음도 거저 오지 않는다.",
+        "검을 쥔 손이 기억한다. 머리는 그다음이다.",
+        "몇 번째 같은 하늘인지 세지 않는다. 대신 숨을 고른다.",
+        "지난 생의 내가 앞서 걷는다. 그 등을 놓치지 않는다.",
+        "이번엔 끝까지 간다. 그 말을 몇 번 했는지는 문양이 센다.",
+    };
+    int resolveIdx = -1;
+
     void BeginFollow (int d)
     {
         mode = Mode.Running; shownAt = Time.unscaledTime;
@@ -248,7 +278,7 @@ public class MolakAutoLife : MonoBehaviour
         NewDay(d);
         MolakPlayMode.SetSkipAll(true);
     }
-    void NewDay (int d) { dayLine = DayWord(d); lines.Add(dayLine); Trim(); }
+    void NewDay (int d) { dayLine = DayWord(d); lines.Add(dayLine); Trim(); resolveIdx = (resolveIdx + 1 + Random.Range(0, Resolve.Length - 1)) % Resolve.Length; MolakSfx.Page(); }
     void Add (string s)
     {
         if (lines.Count == 0) lines.Add(dayLine);
@@ -303,7 +333,7 @@ public class MolakAutoLife : MonoBehaviour
         cur.Add(new Entry { Key = batchKey, Label = LabelOf(b), Sig = Sig(all), Day = Mathf.RoundToInt(MolakStats.Get("day")) });
         SaveCur();
         // 회귀 아침의 맹세(이번 생엔 무엇을 하겠느냐)는 직접 고르고, 그다음부터 따라 걷는다
-        if (mode == Mode.Armed) BeginFollow(Mathf.Max(1, Mathf.RoundToInt(MolakStats.Get("day"))));
+        if (mode == Mode.Armed && !consent) MolakStats.Set("autoready", 1f);   // 0.4.72 첫 저녁에 「지난 생의 길을 다시 밟는다」를 묻는다
         else if (mode == Mode.Paused) mode = Mode.Reading;   // 직접 고른 뒤 그날 남은 일은 직접 읽는다
     }
 
@@ -394,7 +424,42 @@ public class MolakAutoLife : MonoBehaviour
             GUI.Label(new Rect(r.x, y, r.width, hh), lines[i], sLine);
             y += hh + 10f * u;
         }
+        // 0.4.72 지난 생이 끝난 날까지 — 붓 한 획이 그만큼 그어진다
+        if (prevDay > 1)
+        {
+            float cd = MolakStats.Get("day"), p = Mathf.Clamp01((cd - startDay) / Mathf.Max(1f, prevDay - startDay));
+            float bx = ta.x + 34f * u, bw = ta.width - 68f * u, by = ta.y + 62f * u;
+            var g2 = GUI.color;
+            GUI.color = new Color(0.55f, 0.48f, 0.40f, 0.35f * a); GUI.DrawTexture(new Rect(bx, by, bw, Mathf.Max(1f, 1f * u)), MolakGui.Px);
+            GUI.color = new Color(0.16f, 0.12f, 0.10f, 0.8f * a);
+            int seg = 60;
+            for (int i = 0; i < seg; i++)
+            {
+                float f0 = i / (float)seg; if (f0 > p) break;
+                float th = Mathf.Lerp(5f, 1.5f, f0) * u;
+                GUI.DrawTexture(new Rect(bx + bw * f0, by - th * 0.5f, bw / seg + 1f, th), MolakGui.Px);
+            }
+            GUI.color = g2;
+        }
+        if (resolveIdx >= 0)
+        {
+            MolakGui.Ink(sHint, new Color(0.42f, 0.30f, 0.56f, a * 0.9f));
+            GUI.Label(new Rect(ta.x + 20f * u, ta.yMax - 92f * u, ta.width - 40f * u, 40f * u), Resolve[resolveIdx], sHint);
+        }
         MolakGui.Ink(sHint, new Color(0.45f, 0.4f, 0.34f, a * (0.6f + 0.25f * Mathf.Sin(Time.unscaledTime * 2.4f))));
         GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "누르면 여기서 멈추고 직접 걷는다", sHint);
+    }
+}
+
+/// <summary>0.4.72 @autolife do:follow|off — 회귀 첫 저녁의 갈림.</summary>
+[Alias("autolife")]
+public class AutoLifeCommand : Naninovel.Command
+{
+    public Naninovel.StringParameter Do;
+#pragma warning disable CS1998
+    public override async Awaitable Execute (Naninovel.ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        if (Assigned(Do) && Do.Value == "follow") MolakAutoLife.Follow(); else MolakAutoLife.Decline();
     }
 }

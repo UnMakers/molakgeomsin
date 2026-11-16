@@ -5,6 +5,7 @@
 @set amhaff=0
 @set arenawin=0
 @set autofollow=0
+@set autoready=0
 @set b_am1=0
 @set b_am2=0
 @set b_am25=0
@@ -94,7 +95,15 @@
 @set b_wanted=0
 @set b_yong2=0
 @set b_yong3=0
+@set btdecl=0
+@set btnext=0
+@set btodds=0
+@set btoddstext=0
+@set btpass=0
+@set btpen=0
 @set btpend=0
+@set btready=0
+@set btwait=0
 @set buycx=0
 @set buyhx=0
 @set c_gamble=0
@@ -525,6 +534,7 @@
 @set raidshift=0
 @set rallyn=0
 @set rank=0
+@set rankcap=0
 @set rep_gae=0
 @set rep_heuk=0
 @set rep_maeng=0
@@ -1173,10 +1183,25 @@
 객잔으로 돌아온다. 하진무가 마당을 쓸다 말고 고개만 끄덕인다.
 서열록 맨 위에는 혈마교주가 있다. 그보다 더 위에, 당신에게 사술을 건 노인이 있다.
 당신의 이름은 아직 서열록에 없다. 맨 아래부터 올라가야 한다.
+@goto #P4AL if:autoready>0&&autofollow<1
 @goto Molak02#Night if:g_runs<1||g_bestday<10||autofollow>0
 @choice "오늘 밤부터 한 걸음씩 걷는다" goto:Molak02#Night
 @choice "기억대로 흘려보낸다 — 아는 날들을 건너뛴다 (아흐레)" goto:#FF
 @stop
+# P4AL
+<color=#9A70C4>지난 생의 발자국이 아직 이 땅에 찍혀 있다. 어디서 멈췄고 어디서 쓰러졌는지 몸이 안다.</color>
+겪은 날은 몸이 먼저 갈 것이다. 처음 보는 갈림길과 목숨이 걸린 자리에서만 걸음을 멈추면 된다.
+@choice "지난 생의 길을 다시 밟는다 — 겪은 날은 몸이 먼저 간다" goto:#P4ALGo
+@choice "오늘 밤부터 한 걸음씩 걷는다 — 처음처럼" goto:#P4ALNo
+@stop
+# P4ALGo
+@autolife do:follow
+같은 길이다. 같은 칼이 같은 자리에서 올 것이다.
+이번엔 반 치 먼저 피한다. 그 반 치를 벌려고 다시 걷는다.
+@goto Molak02#Night
+# P4ALNo
+@autolife do:off
+@goto Molak02#Night
 # FF
 @art scene:morning
 @art char:none

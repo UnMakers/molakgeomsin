@@ -23,11 +23,12 @@ public class MolakHud : MonoBehaviour
     //  · 새 생·불러오기·비무 연습 몸 고르기처럼 한꺼번에 바뀌는 때는 띄우지 않는다.
     struct Float { public int k; public float d; public float t; public string why; }
     static readonly System.Collections.Generic.List<Float> floats = new System.Collections.Generic.List<Float>();
-    static readonly string[] fkeys = { "hp", "ng", "sw", "sl", "mn", "curse" };
-    static readonly string[] fnames = { "체력", "내공", "검술", "살기", "은자", "저주" };
-    static readonly float[] flashT = { -1f, -1f, -1f, -1f, -1f, -1f };
-    static readonly float[] flashD = new float[6];
-    static readonly float[] lastV = new float[6];
+    static GUIStyle sWall, wallSrc; static float wallU;
+    static readonly string[] fkeys = { "hp", "ng", "sw", "sl", "mn", "curse", "insight" };
+    static readonly string[] fnames = { "체력", "내공", "검술", "살기", "은자", "저주", "깨달음" };
+    static readonly float[] flashT = { -1f, -1f, -1f, -1f, -1f, -1f, -1f };
+    static readonly float[] flashD = new float[7];
+    static readonly float[] lastV = new float[7];
     static bool synced, hookedReset; static float lastRuns = -1f, lastDay = -1f;
     /// <summary>옛 호출 자리(@fx). 이제는 Update 가 모든 변화를 잡으므로 아무것도 하지 않는다.</summary>
     public static void Delta (string key, float d) { }
@@ -232,8 +233,7 @@ public class MolakHud : MonoBehaviour
 
     string TierOf (float r)
     {
-        if (r <= 0) return "무명";
-        return MolakDuel.TierName(r);   // 0.4.35 경지 이름은 한곳에서
+        return MolakRealm.Current;   // 0.4.72 경지는 서열과 따로(벽과 폐관)
     }
 
     void OnGUI ()
@@ -271,7 +271,7 @@ public class MolakHud : MonoBehaviour
         // 한 줄 상태: 체력 · 내공 · 살기 + 아랫줄 검술 · 은자 · 서열 (상시)
         float pad = X0 + 84*u;
         float y = 100*u, lh = 56*u;
-        MolakInputGuard.Guard(new Rect(X0, 0, W, y+lh+16*u + (expanded ? 72*u : 0f)));
+        MolakInputGuard.Guard(new Rect(X0, 0, W, y+lh+16*u + (expanded ? 104*u : 0f)));
         string hpCol = hp/hpm <= 0.34f ? (MolakTheme.Night ? "#E06A5A" : "#A33226") : "#" + ColorUtility.ToHtmlStringRGB(MolakTheme.InkText);
         // 날짜는 보이지 않는다(0.4.3) — 시간은 문양과 바깥 풍경으로만 느낀다
         string stats =
@@ -279,7 +279,7 @@ public class MolakHud : MonoBehaviour
             "    살기 "+Num("sl", MolakStats.Get("sl"));
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
-        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 72*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 104*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 가는 구분선 + 체력 붓 획(0.4.32): 구분선 위로 남은 체력만큼 먹 획이 그어진다. 끝으로 갈수록 가늘고, 바닥이면 붉다.
         float lineW = W-168*u-112*u;
         Box(new Rect(pad, y+lh+4*u, lineW, Mathf.Max(1f,1*u)), new Color(0.55f,0.48f,0.40f,0.45f));
@@ -324,10 +324,13 @@ public class MolakHud : MonoBehaviour
             string mnCol = MolakTheme.Night ? "#E8C468" : "#6A4A00";
             string s2 = "검술 "+Num("sw", MolakStats.Get("sw"))+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
+            // 0.4.72 다음 경지의 벽 — 무엇이 얼마나 남았나(검 · 기 · 깨달음)
+            if (sWall == null || wallSrc != sStat || !Mathf.Approximately(wallU, u)) { wallU = u; wallSrc = sStat; sWall = new GUIStyle(sStat) { fontSize = Mathf.RoundToInt(sStat.fontSize * 0.78f) }; }
+            GUI.Label(new Rect(pad, y2 + lh2 - 2*u, W-168*u, 32*u), MolakRealm.WallLine(), sWall);
         }
 
         // 0.4.57 능력치 변화 패: 상태 줄 바로 밑, 그림 띠 위
-        DrawChips(X0, W, y + lh + (expanded ? 72*u : 16*u) + 18*u, u);
+        DrawChips(X0, W, y + lh + (expanded ? 104*u : 16*u) + 18*u, u);
 
         DrawRankShift(w, u);
     }

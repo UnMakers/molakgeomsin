@@ -296,7 +296,17 @@ public class DuelCommand : Command
         if (win)
         {
             float newRank = oldRank > 0 ? Mathf.Min(oldRank, foe.Rank) : foe.Rank;
-            bool tierUp = MolakDuel.TierName(oldRank) != MolakDuel.TierName(newRank);
+            // 0.4.72 경지는 서열에서 떨어졌다 — 서열은 경지 하나 위 띠까지만 오른다. 경지는 밤의 폐관(Molak18#Wall)으로만 오른다.
+            bool capped = false;
+            if (MolakStats.Get("practice") < 1f)
+            {
+                capped = MolakRealm.ClampRank(ref newRank);
+                if (oldRank > 0 && newRank > oldRank) newRank = oldRank;   // 벽 앞이라도 이미 오른 숫자는 내리지 않는다
+            }
+            MolakStats.Set("rankcap", capped ? 1f : 0f);
+            MolakStats.SetStr("btnext", MolakRealm.Name(MolakRealm.Next));
+            bool tierUp = false;
+            if (odds < 45f && MolakStats.Get("practice") < 1f) MolakRealm.Gain("넘기 힘든 판을 넘었다 — " + (foe.Name ?? "상대"));
             float dmg = Random.Range(0, Mathf.Max(1, (int)hpRisk - 1));
             float reward = kind == "unju" ? 3f : kind == "hochi" ? 8f : kind == "cheolsan" ? 100f : kind == "back" ? 3f : 1f;
             MolakStats.Set("rank", newRank);
@@ -314,10 +324,10 @@ public class DuelCommand : Command
             MolakStats.Set("tierup", tierUp ? 1f : 0f);
             MolakStats.SetStr("oldrank", MolakDuel.RankText(oldRank));
             MolakStats.SetStr("newrank", MolakDuel.RankText(newRank));
-            MolakStats.SetStr("tiername", MolakDuel.TierName(newRank));
+            MolakStats.SetStr("tiername", MolakRealm.Current);
             MolakVfx.Gold(); MolakVfx.Shake(10f); MolakSfx.Draw();
-            MolakHud.RankShift(oldRank, newRank, tierUp, MolakDuel.TierName(newRank));
-            MolakDuelCard.Show(true, foe.Name, "서열 " + MolakDuel.RankText(oldRank) + " → " + MolakDuel.RankText(newRank), tierUp ? "─ " + MolakDuel.TierName(newRank) + " 진입 ─" : "");
+            MolakHud.RankShift(oldRank, newRank, tierUp, MolakRealm.Current);
+            MolakDuelCard.Show(true, foe.Name, "서열 " + MolakDuel.RankText(oldRank) + " → " + MolakDuel.RankText(newRank), capped ? "─ " + MolakRealm.Name(MolakRealm.Next) + "의 벽 앞에서 멎는다 ─" : "");
             if (foe.Boss == "wolf") MolakStats.Set("f_wolfdown", 1f);
             if (foe.Boss == "hochi") MolakStats.Set("f_hmsaved", 1f);
             if (sit == 3 || sit == 7) MolakStatLog.Why("mn", "비무 상금에 판돈이 얹혔다");
@@ -348,6 +358,7 @@ public class DuelCommand : Command
             MolakStatLog.Why("hp", "비무에서 " + (foe.Name ?? "상대") + "에게 졌다");
             MolakStats.Add("hp", -dmg);
             if (IsBossKind(kind) && MolakStats.Get("practice") < 1f) MolakStats.Set("g_know_" + kind, 1f);   // 진 상대의 검로는 되감겨도 몸에 남는다
+            if (MolakStats.Get("practice") < 1f && !MolakDuel.Lethal(kind)) MolakRealm.Gain("진 판에서 " + (foe.Name ?? "상대") + "의 수를 보았다");   // 0.4.72
             MolakStats.Set("duelwin", 0f); MolakArt.EndDuel();
             MolakVfx.Blood(); MolakSfx.Hit(); MolakArt.Hurt();
             MolakStats.Set("tierup", 0f);

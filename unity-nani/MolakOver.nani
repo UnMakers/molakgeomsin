@@ -102,6 +102,11 @@
 서열각 대전 문 앞. 다섯째 사형이 문을 지킨다. 문이 열리고, 늑대 가죽을 입은 사내가 들어선다. 같은 명을 받은 사람이다. 늦게 온 사람이다.
 둘이 서로를 본다. 아무도 검을 뽑지 않는다. 교주의 대전 안에서 웃음소리가 난다.
 @goto #Dead
+# StoryFold
+@set deathcause="되감기"
+@black text:"……|열두 줄을 품고, 되감긴다." hold:1.8
+@regress
+@goto #Regress
 # TaxDeath
 @set deathcause="협"
 @set g_know_taxday=1
@@ -249,7 +254,11 @@
 @goto #RgSoa if:deathcause=="소아의 검"
 @goto #RgHunt if:deathcause=="추살"
 @goto #RgTown if:deathcause=="빚"||deathcause=="협"||deathcause=="자객"||deathcause=="원수"
+@goto #RgFold if:deathcause=="되감기"
 @goto #RgSword
+# RgFold
+귀에 열두 줄이 남아 있다. 관도 서쪽 산허리의 사당은 아직 서 있다.
+@goto #RgEnd
 # RgSac
 @goto #RgSacA if:sackind==2
 @goto #RgSacL if:sackind==3

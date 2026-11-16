@@ -699,7 +699,12 @@
 @set g_redverse=1
 @set f_soaverse=1
 @set aff=aff+1
+@goto #SoaN8Fold if:storymode>0&&g_hapdone<1
 @goto Molak02#AfterChapter
+# SoaN8Fold
+@choice "그 열두 줄을 품고 되감긴다 — 다음 생, 사당이 타기 전으로" goto:MolakOver#StoryFold
+@choice "이 생을 끝까지 걷는다" goto:Molak02#AfterChapter
+@stop
 
 ; --- 사당이 타다 (28일+, 사당을 다녀간 뒤) ---
 # ShrFire

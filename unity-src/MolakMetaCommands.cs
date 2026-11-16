@@ -10,7 +10,7 @@ public class InitRunCommand : Command
     /// <summary>코드에서만 쓰는 전역 수치(스크립트에는 나오지 않아 자동 목록에 없는 것).</summary>
     static readonly string[] CodeGlobals = {
         "g_pts", "g_runs", "g_clears", "g_lastday", "g_bestday", "g_bestrank", "g_hapbo", "g_samecount", "g_lasttheme",
-        "g_next_bond", "g_next_item", "g_redo", "g_lk_nameless", "g_ls_nameless",
+        "g_next_bond", "g_next_item", "g_realmbest", "g_redo", "g_lk_nameless", "g_ls_nameless",
         "g_bestsw", "g_bestng", "g_vow_rev", "g_vow_bond", "g_vow_live", "g_cursedeaths", "g_memv", "g_membuy", "g_up_mem", "g_wk_sw", "g_wk_sl", "g_wk_curse",
         "g_up_sword", "g_up_body", "g_up_core", "g_up_coin", "g_up_seal", "g_up_tea", "g_up_lodge", "g_up_vigor",
     };

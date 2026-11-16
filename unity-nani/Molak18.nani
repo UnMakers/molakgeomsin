@@ -6,24 +6,43 @@
 ;  · 노리는 자(btfoe): 원수 > 피를 많이 본 생의 원한 > 수배 > 없음
 ; 진입: MolakDuel#TierUp 이 btpend=1 → Molak02#Night 첫머리. 끝나면 Molak02#NightEnd.
 
-# Break
+# Wall
+@realm do:check
+@realm do:odds
 @set btpend=0
+@set btguard="none"
+@set btguard="town" if:f_hyeop>=6
+@set btguard="hajin" if:f_hajinbond>0&&f_hajindead<1
+@set btguard="soa" if:f_soamet>0&&f_soadead<1&&aff>=6
 @page
 @scene id:night
 @art scene:yard
 @art char:none
-판에서 돌아온 몸이 아직 뜨겁다. 낮에 열린 마디가 밤이 되어도 닫히지 않는다.
-<color=#C9A227>{tiername}</color>의 문턱을 넘은 날 밤에는 기가 제 길을 다시 찾느라 몸이 텅 빈다. 반 시진, 칼을 들 수 없다. 사부가 그렇게 일렀다. 그래서 문파마다 그 밤에는 호법(護法)을 세운다.
-청운에는 이제 호법을 서 줄 사형이 없다.
+검이 같은 자리에서 멎는다. 며칠째다. 기를 돌려도 같은 마디에서 걸린다.
+<color=#C9A227>{btnext}</color>의 벽이다. 사부는 벽 앞에서는 문을 닫고 앉으라 했다. 막힌 마디를 열고, 기가 제 길을 다시 찾을 때까지. 그 반 시진은 칼을 들 수 없다. 운기는 가슴의 문양도 같이 깨운다.
+@realm do:odds
+<color=#C9A227>폐관의 승산 {btodds}</color>
+{btoddstext}
+@choice "문을 닫고 앉는다 — 오늘 밤 벽을 넘는다" goto:#Break
+@choice "아직은 — 사흘 더 다진다" goto:#WallLater
+@stop
+# WallLater
+@set btdecl=day+2
+검을 거두고 눕는다. 벽은 어디 가지 않는다. 다지는 만큼 얇아진다.
+@goto Molak02#NightEnd
+
+# Break
+@page
+@scene id:night
+@art scene:yard
+@art char:none
+문을 닫는다. 가부좌를 틀고 기를 막힌 마디 안으로 밀어 넣는다.
+반 시진, 칼을 들 수 없다. 그래서 문파마다 이 밤에는 호법(護法)을 세운다. 청운에는 이제 호법을 서 줄 사형이 없다.
 @set btpath="sword"
 @set btpath="qi" if:ng>sw
 @set btpath="hyeop" if:f_hyeop>=4
 @set btpath="blood" if:sl>=8
 @set btpath="curse" if:curse>=60
-@set btguard="none"
-@set btguard="town" if:f_hyeop>=6
-@set btguard="hajin" if:f_hajinbond>0&&f_hajindead<1
-@set btguard="soa" if:f_soamet>0&&f_soadead<1&&aff>=6
 @set btfoe="none"
 @set btfoe="hunt" if:f_wanted>0
 @set btfoe="blood" if:killed>=3||sl>=10
@@ -188,6 +207,9 @@
 
 ; ---------- 마디가 닫힌다 ----------
 # Done
+@realm do:roll
+@goto #Fail if:btpass<1
+@realm do:up
 @goto #Done_curse if:btpath=="curse"
 @goto #Done_blood if:btpath=="blood"
 @goto #Done_hyeop if:btpath=="hyeop"
@@ -228,6 +250,16 @@
 @turn kicker:"경지의 밤" title:"{tiername}" lines:"체력의 끝 +2, 몸이 다 회복된다|내공 +1"
 @goto Molak02#NightEnd
 # DoneHalf
-@set hpmax=hpmax+1
-@turn kicker:"경지의 밤 — 반쯤" title:"{tiername}" lines:"체력의 끝 +1|운기를 끊었다 — 내공 −1"
+@set btpen=12
+@goto #Done
+
+; ---------- 넘지 못한 밤: 죽지 않는다. 벽의 모양이 몸에 남는다 ----------
+# Fail
+@vfx kind:beat
+마지막 마디 앞에서 기가 거꾸로 돈다. 목구멍으로 쇠맛이 올라온다. 주화(走火)의 문턱이다.
+운기를 거둔다. 반 치만 늦었으면 기가 엉뚱한 길로 들어 박혔을 것이다.
+벽은 그대로다. 대신 어디가 두껍고 어디가 얇은지, 손바닥으로 더듬은 것처럼 안다.
+@realm do:fail
+@fx ng:-1 hp:-3 curse:2 why:"경지의 밤 — 주화의 문턱에서 운기를 거두었다"
+@turn kicker:"경지의 밤 — 넘지 못했다" title:"{btnext}의 벽" lines:"내공 −1 · 체력 −3 · 저주 +2|깨달음 +1 — 다음 폐관의 승산 +8|사흘 뒤 다시 앉을 수 있다"
 @goto Molak02#NightEnd
