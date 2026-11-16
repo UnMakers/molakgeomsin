@@ -71,8 +71,11 @@ public class MolakVfx : MonoBehaviour
 
     // 마디 이름(@chapter): 띠 그림 위에 붓 글씨 제목, 2.6초
     float chapT = -1f; string chapText = "", chapSub = "";
+    // 0.4.71 마디 이름이 너무 빨리 지나간다(언메이커) — 누를 때까지 떠 있고, 누르면 걷혀서 그림 띠 왼쪽 위에 작게 남는다(날이 바뀌면 지운다)
+    bool chapHold; float chapOutT = -1f; bool chapWasDown; string pinText = ""; float pinDay;
+    GUIStyle sPin; float pinU;
     GUIStyle sChap, sChapSub; float chapU = -1f;
-    public static void Chapter (string text, string sub) { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapT = 0f; MolakSfx.Chapter(); }
+    public static void Chapter (string text, string sub) { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapT = 0f; instance.chapHold = true; instance.chapOutT = -1f; instance.pinText = ""; instance.pinDay = MolakStats.Get("day"); MolakSfx.Chapter(); }
 
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
@@ -184,6 +187,19 @@ public class MolakVfx : MonoBehaviour
 
     void Update ()
     {
+        // 0.4.71 마디 이름: 누르면 걷힌다. 그 누름은 글을 넘기지 않는다.
+        {
+            Vector2 pp; bool down = MolakGui.PointerScreen(out pp);
+            if (chapT >= 0f && chapHold && chapT > 0.45f && down && !chapWasDown && !MolakMenu.IsOpen)
+            {
+                chapHold = false; chapOutT = 0f; pinText = chapText;
+                MolakInputGuard.BlockCurrentPress();
+            }
+            chapWasDown = down;
+            var sp = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null;
+            if (chapT >= 0f && chapHold && sp != null && sp.Skipping) { chapHold = false; chapOutT = 0f; pinText = chapText; }
+            if (pinText.Length > 0 && !Mathf.Approximately(MolakStats.Get("day"), pinDay)) pinText = "";
+        }
         // 장면 틴트를 배경 스프라이트에 서서히 적용
         var tt = tintTarget; if (MolakTheme.Night) tt = new Color(tt.r*0.45f, tt.g*0.45f, tt.b*0.45f, 1f);
         tintCur = Color.Lerp(tintCur, tt, Time.deltaTime * 2.2f);
@@ -251,10 +267,12 @@ public class MolakVfx : MonoBehaviour
         if (chapT >= 0f)
         {
             chapT += Time.deltaTime;
-            const float CD = 2.6f;
-            if (chapT > CD) chapT = -1f;
+            const float FadeOut = 0.6f;
+            if (!chapHold) chapOutT += Time.deltaTime;
+            if (!chapHold && chapOutT > FadeOut) chapT = -1f;
             else
             {
+                if (chapHold) MolakInputGuard.Guard(new Rect(0, 0, w, h));   // 떠 있는 동안 누름은 글로 가지 않는다
                 float u = MolakTheme.U;
                 if (sChap == null || !Mathf.Approximately(chapU, u))
                 {
@@ -263,7 +281,7 @@ public class MolakVfx : MonoBehaviour
                     sChapSub = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(26 * u), alignment = TextAnchor.MiddleCenter };
                     sChap.font = MolakTypography.Heading(gowun); sChapSub.font = MolakTypography.Heading(gowun);
                 }
-                float a = chapT < 0.35f ? chapT / 0.35f : (chapT > CD - 0.7f ? (CD - chapT) / 0.7f : 1f);
+                float a = chapT < 0.35f ? chapT / 0.35f : (!chapHold ? Mathf.Clamp01(1f - chapOutT / FadeOut) : 1f);
                 float cy = h * 0.165f;
                 // 붓 자국 띠(가운데 짙고 양끝 옅게)
                 var g0 = GUI.color;
@@ -279,7 +297,33 @@ public class MolakVfx : MonoBehaviour
                 if (chapSub.Length > 0) GUI.Label(new Rect(0, cy - 54 * u, w, 34 * u), chapSub, sChapSub);
                 MolakGui.Ink(sChap, new Color(0.96f, 0.92f, 0.85f, a));
                 GUI.Label(new Rect(slide, cy - 28 * u, w, 80 * u), chapText, sChap);
+                if (chapHold && chapT > 1.2f)
+                {
+                    float blink = 0.35f + 0.25f * Mathf.Sin(Time.unscaledTime * 3f);
+                    MolakGui.Ink(sChapSub, new Color(0.96f, 0.92f, 0.85f, blink));
+                    GUI.Label(new Rect(0, cy + 34 * u, w, 30 * u), "▼", sChapSub);
+                }
             }
+        }
+        // 0.4.71 걷힌 마디 이름 — 그림 띠 왼쪽 위에 작게 남는다
+        if (pinText.Length > 0 && chapT < 0f && !MolakTitle.Showing)
+        {
+            float u = MolakTheme.U;
+            if (sPin == null || !Mathf.Approximately(pinU, u))
+            {
+                pinU = u; if (gowun == null) gowun = MolakGui.Gowun;
+                sPin = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(24 * u), alignment = TextAnchor.MiddleLeft };
+                sPin.font = MolakTypography.Heading(gowun);
+            }
+            float cu = Mathf.Min(w / 900f, h / 1600f);   // 그림 띠(MolakArt 캔버스 900×1600) 왼쪽 아래 안쪽
+            float py = (MolakArt.BandTop + MolakArt.BandH) * cu - 44 * u, px = w * 0.5f - Mathf.Min(w, 900f * cu) * 0.5f + 18 * u;
+            var sz = sPin.CalcSize(new GUIContent(pinText));
+            var g1 = GUI.color;
+            GUI.color = new Color(0.06f, 0.05f, 0.04f, 0.55f);
+            GUI.DrawTexture(new Rect(px - 12 * u, py - 4 * u, sz.x + 24 * u, 40 * u), Px);
+            GUI.color = g1;
+            MolakGui.Ink(sPin, new Color(MolakTheme.Gold.r, MolakTheme.Gold.g, MolakTheme.Gold.b, 0.92f));
+            GUI.Label(new Rect(px, py - 4 * u, sz.x + 4 * u, 40 * u), pinText, sPin);
         }
         // 승부수 인장
         if (stampT >= 0f)

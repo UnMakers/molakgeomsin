@@ -256,6 +256,7 @@
 지나간다. 조사든 문파든, 죽은 이름이 산 사람을 먹여 주지는 않는다.
 그렇게 백 걸음. 백스무 걸음에서 멈춘다.
 바람 속에 혼자 앉아 있는 사당이, 꼭 누구 같아서.
+@print "<color=#9A70C4>제단 밑 들뜬 마루 한 장, 그 밑의 석함. 귀에 남은 열두 줄이 발목을 잡는다.</color>" if:g_redverse>0&&f_hapbyeok<1
 @choice "돌아보지 않고 걷는다" goto:#ShrPassC0
 @choice "…돌아간다" goto:#ShrPassC1
 @choice "길섶 돌 틈에 안식향 한 자루를 꽂는다" if:f_incense>0 goto:#ShrPassX
