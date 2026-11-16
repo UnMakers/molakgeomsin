@@ -19,7 +19,7 @@
 @goto #ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
 @goto #ChSoa if:day>=3&&f_soamet<1&&b_soa<1
 @goto #B5 if:day>=5&&b_hajin<1
-@goto #BCh1 if:day>=6&&b_ch1<1
+@goto #BCh1 if:day>=6&&b_ch1<1&&storymode<1
 @goto #BCmBell if:day>=9&&f_jbsister<1&&f_cmglimpse<1&&b_cmbell<1
 @goto #ChAmhyang if:day>=12&&b_amhyang<1
 @goto #BCmBell2 if:day>=12&&f_cmglimpse>0&&f_jbsister<1&&b_cmbell2<1
@@ -27,6 +27,11 @@
 @goto #B8 if:day>=8&&b_wanted<1
 @goto #B11 if:day>=11&&b_jang<1
 @goto #B13 if:day>=13&&f_soamet>0&&f_soadead<1&&b_soatrain<1
+@goto #BSt5 if:g_redverse>0&&day>=7&&f_soamet>0&&f_soadead<1&&b_st5<1
+@goto #BSt1 if:day>=7&&b_s1>0&&f_soadead<1&&b_st1<1
+@goto #BSt2 if:day>=15&&b_s3>0&&f_soadead<1&&b_st2<1
+@goto #BSt3 if:day>=24&&b_s6>0&&f_soadead<1&&b_st3<1
+@goto #BSt4 if:day>=raidday-4&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s8<1&&b_st4<1
 @goto #ChUnju if:day>=15&&f_unjudone<1
 @goto #B20 if:day>=20&&rank>0&&rank<=500000&&b_fame<1
 @goto #ChShr if:day>=22&&f_shrseen<1
@@ -1756,6 +1761,26 @@
 @chapter text:"집법전주" sub:"그물"
 @set b_hunt3x=1
 @goto Molak06#Hunt3
+# BSt1
+@chapter text:"국밥 값" sub:"소아"
+@set b_st1=1
+@goto Molak06#St1
+# BSt2
+@chapter text:"이빨이 있는 자리" sub:"소아"
+@set b_st2=1
+@goto Molak06#St2
+# BSt3
+@chapter text:"웃음" sub:"소아"
+@set b_st3=1
+@goto Molak06#St3
+# BSt4
+@chapter text:"등을 대라" sub:"소아"
+@set b_st4=1
+@goto Molak06#St4
+# BSt5
+@chapter text:"비워 둔 자리" sub:"소아"
+@set b_st5=1
+@goto Molak06#St5
 # BS1
 @chapter text:"밤의 대작" sub:"소아"
 @set b_s1=1

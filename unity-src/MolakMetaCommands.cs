@@ -235,6 +235,7 @@ public class PickEventCommand : Command
         foreach (var d in MolakEventDefs.Table)
         {
             if (MolakStats.Get("seen_" + d.Id) > 0f) continue;
+            if (MolakStory.On && !MolakStory.EventAllowed(d.Id)) continue;   // 0.4.73 이야기 모드는 줄기 사건만
             if (day < d.MinDay || (d.MaxDay > 0 && day > d.MaxDay)) continue;
             if (d.Slot != 'a' && slot != 'a' && d.Slot != slot) continue;
             if (!MolakCond.Eval(d.Cond)) continue;

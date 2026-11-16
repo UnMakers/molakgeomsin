@@ -25,6 +25,14 @@ public class MolakStory : MonoBehaviour
         if (MolakStats.Get("curse") > 70f) MolakStats.Set("curse", 70f);
     }
 
+    /// <summary>0.4.73 이야기 모드에서 뽑는 사건 — 소아와 두 사내(염혁·단목결), 하진무, 쥐눈이 장, 표국, 맹의 줄기만. 나머지 저잣거리 일은 건너뛴다.</summary>
+    static readonly string[] Keep = { "E_Soa", "E_Spar", "E_Hyeok", "E_Gyeol", "E_Hajin", "E_Hostage", "E_Jang", "E_Hao", "E_Guard", "E_Maeng", "E_Rain2" };
+    public static bool EventAllowed (string id)
+    {
+        foreach (var k in Keep) if (id.StartsWith(k)) return true;
+        return false;
+    }
+
     static void Max (string k, float v) { if (MolakStats.Get(k) < v) MolakStats.Set(k, v); }
     static void RankAtMost (float v) { float r = MolakStats.Get("rank"); if (r <= 0f || r > v) MolakStats.Set("rank", v); }
 
