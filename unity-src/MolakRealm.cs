@@ -130,8 +130,8 @@ public static class MolakRealm
     {
         if (Top) return "<color=#C9A227>더 넘을 벽이 없다</color>";
         if (Ready()) return "<color=#C9A227>" + Name(Next) + "의 벽 앞 — 밤에 폐관할 수 있다</color>";
-        string Mark (float have, int need) => have >= need ? "<color=#2E6E37>" + have.ToString("0") + "/" + need + "</color>" : have.ToString("0") + "/" + need;
-        return Name(Next) + "의 벽 — 검 " + Mark(MolakStats.Get("sw"), NeedSw) + " · 기 " + Mark(MolakStats.Get("ng"), NeedNg) + " · 깨달음 " + Mark(Insight, NeedIns);
+        string Mark (float have, int need) => have >= need ? "<color=" + (MolakTheme.Night ? "#7FD08A" : "#2E6E37") + ">" + have.ToString("0") + "/" + need + "</color>" : have.ToString("0") + "/" + need;
+        return MolakHud.Tag(Name(Next), MolakHud.StatCol.Realm) + "의 벽 — " + MolakHud.Tag("검", MolakHud.StatCol.Sw) + " " + Mark(MolakStats.Get("sw"), NeedSw) + " · " + MolakHud.Tag("기", MolakHud.StatCol.Ng) + " " + Mark(MolakStats.Get("ng"), NeedNg) + " · " + MolakHud.Tag("깨달음", MolakHud.StatCol.Ins) + " " + Mark(Insight, NeedIns);
     }
 
     /// <summary>이야기 모드: 날짜에 맞춰 경지를 채운다(이야기가 서열의 벽에 막히지 않게).</summary>

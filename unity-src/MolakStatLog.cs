@@ -135,7 +135,7 @@ public static class MolakStatLog
 
     public static string Name (string key)
     {
-        switch (key) { case "hp": return "체력"; case "ng": return "내공"; case "sw": return "검술"; case "sl": return "살기"; case "mn": return "은자"; case "curse": return "저주"; }
+        switch (key) { case "hp": return "체력"; case "ng": return "내공"; case "sw": return "검술"; case "sl": return "살기"; case "mn": return "은자"; case "curse": return "저주"; case "insight": return "깨달음"; }
         return key;
     }
 

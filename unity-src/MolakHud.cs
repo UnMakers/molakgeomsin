@@ -72,6 +72,24 @@ public class MolakHud : MonoBehaviour
 
     static bool Good (int k, float d) { return fkeys[k] == "curse" ? d < 0 : d > 0; }
     /// <summary>상태 줄의 숫자: 막 바뀌었으면 굵게, 좋으면 푸르게 나쁘면 붉게.</summary>
+    /// <summary>0.4.74 능력치 이름의 빛. 낮(종이)과 먹색 화면에 각각 맞춘 두 벌.
+    /// 체력 = 연지(살아 있는 피) · 내공 = 쪽빛(단전의 물) · 살기 = 마른 피의 녹빛 · 검술 = 날 선 강철의 푸른빛 · 경지 = 금 · 깨달음 = 비취.</summary>
+    public static class StatCol
+    {
+        public static readonly string[] Hp    = { "#B0345A", "#F08FAE" };
+        public static readonly string[] Ng    = { "#3644A6", "#9AA8F5" };
+        public static readonly string[] Sl    = { "#5A2410", "#D9875C" };
+        public static readonly string[] Sw    = { "#1F6874", "#7CCBD6" };
+        public static readonly string[] Realm = { "#8A6512", "#E3C26A" };
+        public static readonly string[] Ins   = { "#256B57", "#86D4B7" };
+        public static string Of (string[] c) { return MolakTheme.Night ? c[1] : c[0]; }
+    }
+    public static string Tag (string label, string[] c, bool bold = false)
+    {
+        string t = "<color=" + StatCol.Of(c) + ">" + label + "</color>";
+        return bold ? "<b>" + t + "</b>" : t;
+    }
+
     static string Num (string key, float v)
     {
         int k = System.Array.IndexOf(fkeys, key);
@@ -110,7 +128,10 @@ public class MolakHud : MonoBehaviour
                 bool good = r.key == "curse" ? r.d < 0 : r.d > 0;
                 string col = r.key == "mn" ? "#8A6A12" : r.key == "curse" ? "#6B3FA0" : good ? "#2E6E37" : "#A33226";
                 if (sb.Length > 0) sb.Append('\n');
-                sb.Append("<b><color=" + col + ">" + MolakStatLog.Name(r.key) + " " + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
+                // 0.4.74 이름은 제 빛(종이 쪽지라 낮 빛), 숫자는 좋음/나쁨 빛
+                string[] kc = r.key == "hp" ? StatCol.Hp : r.key == "ng" ? StatCol.Ng : r.key == "sl" ? StatCol.Sl : r.key == "sw" ? StatCol.Sw : r.key == "insight" ? StatCol.Ins : null;
+                string nameCol = kc != null ? kc[0] : col;
+                sb.Append("<b><color=" + nameCol + ">" + MolakStatLog.Name(r.key) + "</color> <color=" + col + ">" + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
             }
             string wt = sb.ToString();
             float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f - 6f * u) + pad * 1.5f;
@@ -274,9 +295,12 @@ public class MolakHud : MonoBehaviour
         MolakInputGuard.Guard(new Rect(X0, 0, W, y+lh+16*u + (expanded ? 104*u : 0f)));
         string hpCol = hp/hpm <= 0.34f ? (MolakTheme.Night ? "#E06A5A" : "#A33226") : "#" + ColorUtility.ToHtmlStringRGB(MolakTheme.InkText);
         // 날짜는 보이지 않는다(0.4.3) — 시간은 문양과 바깥 풍경으로만 느낀다
+        // 0.4.74 이름마다 제 빛(언메이커: 검술·체력 같은 글씨에 각 컨셉에 맞는 색) — 숫자는 먹색, 막 바뀐 숫자만 푸르게/붉게
+        bool lowHp = hp/hpm <= 0.34f;
         string stats =
-            "<color="+hpCol+">체력 "+Num("hp", hp)+"</color>    내공 "+Num("ng", MolakStats.Get("ng"))+
-            "    살기 "+Num("sl", MolakStats.Get("sl"));
+            (lowHp ? "<color="+hpCol+">체력 "+Num("hp", hp)+"</color>" : Tag("체력", StatCol.Hp)+" "+Num("hp", hp))+
+            "    "+Tag("내공", StatCol.Ng)+" "+Num("ng", MolakStats.Get("ng"))+
+            "    "+Tag("살기", StatCol.Sl)+" "+Num("sl", MolakStats.Get("sl"));
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
         if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 104*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
@@ -318,11 +342,11 @@ public class MolakHud : MonoBehaviour
         {
             float y2 = y + lh + 10*u, lh2 = 50*u;
             Box(new Rect(pad, y2, W-168*u, lh2), MolakTheme.Night ? new Color(0.20f,0.18f,0.16f,0.85f) : new Color(0.96f,0.93f,0.87f,0.80f));
-            string rtxt = rank > 0 ? MolakDuel.RankText(rank)+" · "+TierOf(rank) : "서열록에 이름 없음";
+            string rtxt = (rank > 0 ? MolakDuel.RankText(rank) : "서열록에 이름 없음")+" · "+Tag(TierOf(rank), StatCol.Realm, true);
             { var bh = MolakStats.Str("byeolho", "none"); if (!string.IsNullOrEmpty(bh) && bh != "none") rtxt += " · <color=#8A3A30>" + bh + "</color>"; }   // 0.4.33 강호가 붙인 별호
             // 0.4.71 은자가 잘 안 보인다(언메이커) — 굵게, 낮엔 짙은 놋빛, 먹색 화면엔 밝은 금빛
             string mnCol = MolakTheme.Night ? "#E8C468" : "#6A4A00";
-            string s2 = "검술 "+Num("sw", MolakStats.Get("sw"))+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
+            string s2 = Tag("검술", StatCol.Sw)+" "+Num("sw", MolakStats.Get("sw"))+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
             // 0.4.72 다음 경지의 벽 — 무엇이 얼마나 남았나(검 · 기 · 깨달음)
             if (sWall == null || wallSrc != sStat || !Mathf.Approximately(wallU, u)) { wallU = u; wallSrc = sStat; sWall = new GUIStyle(sStat) { fontSize = Mathf.RoundToInt(sStat.fontSize * 0.78f) }; }
