@@ -171,7 +171,7 @@ public static class MolakMemory
     }
 
     static readonly HashSet<string> NotDeaths = new HashSet<string> { "등극", "합벽", "성사", "순검", "원행", "재건", "도주" };
-    static readonly HashSet<string> Blade = new HashSet<string> { "비무 패배", "소아의 검", "야습", "원수", "생사결", "자객", "협", "빚", "소아의 오인", "추살" };
+    static readonly HashSet<string> Blade = new HashSet<string> { "비무 패배", "소아의 검", "야습", "원수", "생사결", "자객", "협", "빚", "소아의 오인", "추살", "동문" };
 
     /// <summary>한 생이 끝날 때 한 번: 남는 것을 정산하고 보여 줄 줄을 만든다. 표시 변수 rm_text · rm_c · nx_sw · nx_ng · nx_hp.</summary>
     public static void OnLifeEnd ()

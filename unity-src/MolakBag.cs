@@ -118,7 +118,7 @@ public class MolakBag : MonoBehaviour
         new Entry("f_herbbond", "백초 할멈 · 지게", "산허리까지 반나절. 청운 사람들이 내 약을 많이 사갔지.", ""),
         new Entry("f_herbfriend", "백초 할멈 · 단골", "", ""),
         new Entry("f_hajinfree", "하진무 · 빈칸 방값", "셈이 안 맞는 방은 빈칸으로 둔다.", "방값을 받지 않는다"),
-        new Entry("f_sparfriend", "낭인 마충", "돌아오면 백 합.", ""),
+        new Entry("f_sparfriend", "염혁 · 장풍", "돌아오면 서열을 겁시다.", "북쪽 길에서 등을 맡는다"),
         new Entry("f_guardfriend", "표국 염가", "총표두 자리를 비워 두겠소.", ""),
         new Entry("f_rivalfriend", "곽산", "창을 쓰는 장신의 호적수.", "쫓기는 밤, 등을 받쳐 준다"),
         new Entry("f_jangfriend", "쥐눈이 장", "소식을 사고파는 사이.", ""),

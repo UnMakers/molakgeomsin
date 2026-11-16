@@ -319,6 +319,7 @@
 @goto MolakOver#GrudgeDeath if:dkind=="grudge"
 @goto MolakOver#DebtDeath if:dkind=="debt"
 @goto MolakOver#AssassinDeath if:dkind=="assassin"
+@goto MolakOver#GyeolDeath if:dkind=="gyeol"
 @goto MolakOver#TaxDeath if:dkind=="tax"
 @goto MolakOver#SangsaDeath if:dsit==7
 @goto MolakOver#DuelDeath

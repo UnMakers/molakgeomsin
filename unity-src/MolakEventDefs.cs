@@ -116,7 +116,17 @@ public static class MolakEventDefs
             new Def("E_Duelist3", 22, 0, 'd', "rank>0", "E_Duelist2", 6, 12),
             new Def("E_Spar", 5, 16, 'd', null, null, 0, 12),
             new Def("E_Spar2", 13, 0, 'd', null, "E_Spar", 5, 12),
-            new Def("E_Spar3", 26, 0, 'd', null, "E_Spar2", 7, 14),
+            new Def("E_Spar3", 26, 0, 'd', "!f_hyeoksafe", "E_Spar2", 7, 14),
+            // 0.4.70 염혁 — 문 닫은 표국의 아들(고개를 넘어 산 생에만)
+            new Def("E_Hyeok1", 22, 0, 'd', "f_hyeoksafe&!f_hyeokdead", "E_Spar2", 6, 30),
+            new Def("E_Hyeok2", 28, 0, 'd', "f_hyeoksafe&!f_hyeokdead&rank>0", "E_Hyeok1", 4, 30),
+            new Def("E_Hyeok3", 33, 0, 'n', "f_hyeoksafe&!f_hyeokdead&b_s8<1", "E_Hyeok2", 2, 40),
+            new Def("E_Hyeok4", 36, 0, 'd', "f_hyeoksafe&!f_hyeokdead&b_s8>0", "E_Hyeok2", 1, 40),
+            // 0.4.70 단목결 — 서열각의 칼, 청운 다섯째 사형(서열패의 날에 본 생에만)
+            new Def("E_Gyeol1", 9, 24, 'n', "f_gyeolseen", null, 0, 40),
+            new Def("E_Gyeol2", 18, 0, 'd', "f_gyeolmet&rank>0", "E_Gyeol1", 5, 30),
+            new Def("E_Gyeol3", 26, 0, 'n', "f_gyeolmet&!f_gyeoldead&!f_gyeolally", "E_Gyeol2", 4, 30),
+            new Def("E_Gyeol4", 40, 0, 'n', "f_gyeolmet&!f_gyeoldead&!f_gyeolally", "E_Gyeol1", 6, 30),
             new Def("E_Guard", 8, 20, 'd', null, null, 0, 12),
             new Def("E_Guard2", 18, 0, 'd', null, "E_Guard", 5, 12),
             new Def("E_Guard3", 30, 0, 'd', null, "E_Guard2", 6, 10),

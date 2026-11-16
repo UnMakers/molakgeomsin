@@ -112,7 +112,7 @@ public class MolakArt : MonoBehaviour
         {"soa","innhall"},{"soa_smile","market"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},{"kyona","valley"},
         {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},{"cheongmyo","temple"},
         {"cheongmyo_robe","temple"},{"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},{"jang","alley"},
-        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},
+        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},{"hyeok","yard"},{"gyeol","alley"},
     };
     static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
     {
@@ -120,7 +120,7 @@ public class MolakArt : MonoBehaviour
         {"soa","roofmoon"},{"soa_smile","roofmoon"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},
         {"jinbaek","alley"},{"lawlord","gate"},{"oldman","night"},{"jang","alley"},
         {"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},
-        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},
+        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},{"hyeok","alley"},{"gyeol","roofmoon"},
     };
     public static bool IsNight;
     static readonly Dictionary<string, string> SceneWeather = new Dictionary<string, string>

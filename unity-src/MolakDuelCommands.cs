@@ -76,6 +76,15 @@ public static class MolakDuel
             }
             case "wolf": return new Foe { Name = "혈쇄문주", Rank = 77, P = 53 + Random.Range(0, 5), Boss = "wolf" };
             case "lord": return new Foe { Name = "혈마교주 혈천마", Rank = 1, P = 81 + Random.Range(0, 5), Boss = "lord" };
+            case "hyeok":   // 0.4.70 염혁 — 한 칸 위의 표사
+            {
+                int t = Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.85f));
+                return new Foe { Name = "장풍표국 염혁", Rank = t, P = Mathf.Round(5 + Mathf.Log10(8000001f / t) * 11f + Random.Range(1, 4)) };
+            }
+            case "gyeolspar": // 0.4.70 단목결 — 서열각의 칼(구백구십구)
+                return new Foe { Name = "서열각의 칼 단목결", Rank = 999, P = Mathf.Round(MyPower() + Random.Range(1, 4)) };
+            case "gyeol":     // 0.4.70 숫자를 지우러 온 밤 — 지면 죽는다
+                return new Foe { Name = "다섯째 사형 단목결", Rank = 999, P = Mathf.Round(MyPower() + Random.Range(0, 4)) };
             case "rival":
             {
                 int t = Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.75f));
@@ -101,7 +110,7 @@ public static class MolakDuel
         switch (kind)
         {
             case "hochi": case "kyona": case "jinbaek": case "hunt1": case "hunt2": case "hunt3":
-            case "wolf": case "lord": case "cheolsan": case "grudge": case "debt": case "assassin": case "tax": case "soa": case "raid": return true;
+            case "wolf": case "lord": case "cheolsan": case "grudge": case "debt": case "assassin": case "tax": case "soa": case "raid": case "gyeol": return true;
         }
         return MolakStats.Get("dsit") == 7;
     }
@@ -240,6 +249,11 @@ public class DuelCommand : Command
         if (kind == "tax" && MolakStats.Get("f_taxknow") > 0) bonus += 3f;       // 지난 생에 본 우두머리의 버릇
         if (kind == "raid" && MolakStats.Get("f_raidprep") > 0) bonus += 3f;     // 그 밤이 올 줄 알고 계단에 기름을 부었다
         if (kind == "raid" && MolakStats.Get("f_amhally") > 0) bonus += 1.5f;    // 암향이 미리 기별했다
+        if (kind == "raid" && MolakStats.Get("f_hyeokally") > 0 && MolakStats.Get("f_hyeokdead") < 1) bonus += 2f;   // 0.4.70 염혁이 계단 아래 칸에 도를 걸었다
+        if (kind == "raid" && MolakStats.Get("f_gyeolraid") > 0) bonus += 1.5f;   // 0.4.70 다섯째 사형이 지붕조를 쓸었다
+        if ((kind == "hunt2" || kind == "wolf") && MolakStats.Get("f_hyeokally") > 0 && MolakStats.Get("f_hyeokdead") < 1) bonus += 1f;   // 북쪽 길은 장풍이 안다
+        if (kind == "jinbaek" && MolakStats.Get("f_gyeolally") > 0 && MolakStats.Get("f_gyeoldead") < 1) bonus += 1.5f;   // 같은 기수식을 아는 눈이 둘
+        if (kind == "lord" && MolakStats.Get("f_gyeoldoor") > 0) bonus += 1.5f;   // 다섯째 사형이 옆문을 막았다
         if (kind == "raid" && MolakStats.Get("f_hajinbond") > 0 && MolakStats.Get("f_hajindead") < 1) bonus += 2f; // 하진무가 혈랑대에게 계단 셋째 칸을 속였다
         if (kind == "lord" && MolakStats.Get("f_amhally") > 0) bonus += 1f;      // 암향과 손잡은 생(반쪽의 합벽은 f_halfhap)
         if (kind == "hochi" && MolakStats.Get("f_dokinfo") > 0) bonus += 1.5f;
