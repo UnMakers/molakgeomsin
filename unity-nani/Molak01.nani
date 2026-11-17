@@ -52,6 +52,7 @@
 @set b_ldhap=0
 @set b_ldjin=0
 @set b_leave=0
+@set b_lord=0
 @set b_nethint=0
 @set b_netk=0
 @set b_north=0
@@ -74,6 +75,7 @@
 @set b_r6=0
 @set b_ripe=0
 @set b_rival2=0
+@set b_roomfee=0
 @set b_s1=0
 @set b_s10=0
 @set b_s11=0
@@ -98,6 +100,7 @@
 @set b_st5=0
 @set b_stairs=0
 @set b_wanted=0
+@set b_yeomflag=0
 @set b_yong2=0
 @set b_yong3=0
 @set btdecl=0
@@ -320,9 +323,11 @@
 @set f_letter=0
 @set f_lordedge=0
 @set f_lordintro=0
+@set f_lordknee=0
 @set f_lordlore=0
 @set f_lordseal=0
 @set f_lordshaken=0
+@set f_lordstood=0
 @set f_maengcontact=0
 @set f_maengcost=0
 @set f_maengdeal=0
@@ -382,6 +387,7 @@
 @set f_roadblock=0
 @set f_roadinfo=0
 @set f_roofwatcher=0
+@set f_roomfee=0
 @set f_salve=0
 @set f_sangsaknow=0
 @set f_scouttoken=0
@@ -461,6 +467,7 @@
 @set f_wolfinvite=0
 @set f_wolfnear=0
 @set f_wolfseal=0
+@set f_yeomflag=0
 @set f_yeonknow=0
 @set f_yeonsaved=0
 @set f_yongally=0
@@ -545,6 +552,7 @@
 @set rallyn=0
 @set rank=0
 @set rankcap=0
+@set realm=0
 @set rep_gae=0
 @set rep_heuk=0
 @set rep_maeng=0
@@ -555,6 +563,7 @@
 @set seen_E_Childplay=0
 @set seen_E_Gamble=0
 @set seen_E_Rival=0
+@set seen_E_Spar2=0
 @set seenday_E_Gamble=0
 @set sl=0
 @set soaseal=0
@@ -650,6 +659,7 @@
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
 # Rebirth
+@pname
 @page
 @art scene:innroom
 @art char:none
@@ -789,12 +799,13 @@
 '살아 있는 자만이 다음 수를 두느니라.'
 @goto #P4
 # Prologue
+@pname
 ; ---- 0.4.12 서장 앞머리: 잃기 전의 청운. 뒤에서 돌아오는 것들(목검, 대추, 거꾸로 쥔 검, 일곱째의 패, 노인)을 여기 심는다 ----
 @art scene:yard
 @art char:none
 @chapter text:"청운산장" sub:"서장"
 새벽. 청운산장(靑雲山莊) 앞마당에 서리가 앉았다.
-당신은 청운검파(靑雲劍派)의 막내 제자다. 입문 삼 년, 마당을 쓸고 장작을 패며 제자검법 여덟 초식을 겨우 뗐다. 막내의 일은 해 뜨기 전에 마당을 다 쓰는 것이다.
+당신은 청운검파(靑雲劍派)의 막내 제자, {g_pname}. 입문 삼 년, 마당을 쓸고 장작을 패며 제자검법 여덟 초식을 겨우 뗐다. 막내의 일은 해 뜨기 전에 마당을 다 쓰는 것이다.
 빗자루 끝이 얼어 사각거린다. 삼 년을 쓸었는데도 마당은 아직 넓다.
 마당 저편 연무장엔 벌써 사람이 있다. 다섯째 사형 <color=#C03434>단목결(端木玦)</color>이다. 사형들 가운데 대사형 다음으로 검이 빠르고, 입은 그보다 빠르다.
 "장작. 쓸 거면 내 발밑부터 쓸어라. 서리에 미끄러지면 네 탓이다."
@@ -902,8 +913,8 @@
 # P2
 @art char:oldman
 노인의 손이 멱살을 잡아 일으킨다. 늙은이의 손이라고는 믿기지 않는다. 쇠집게처럼 단단하다.
-"죽음이 두려우냐."
-대답할 틈도 없이, 노인의 다른 손바닥이 <color=#C03434>가슴</color>에 닿는다.
+"죽음이 두려우냐, {g_pname_a}."
+낮에 산문 앞에서 사부와 다투던 늙은이의 입에서 제 이름이 나온다. 어찌 아느냐고 물을 틈도 없이, 노인의 다른 손바닥이 <color=#C03434>가슴</color>에 닿는다.
 타는 냄새. 제 살이 타는 냄새를 처음 맡는다.
 <color=#9A70C4>"네게 사술(邪術)을 걸어주마."</color>
 사술. 사람의 몸에 새겨 넣는 삿된 술법이다. 의식이 꺼지기 직전, 노인의 목소리가 못처럼 박힌다.

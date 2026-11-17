@@ -60,6 +60,9 @@
 @goto #BSimK if:curse>=75&&g_end_simma>0&&b_simk<1
 @goto #BNetK if:day>=52&&g_end_pobak>0&&b_netk<1&&b_capture<1
 @goto #BNetHint if:day>=52&&b_nethint<1&&b_netk<1&&b_capture<1||day>=48&&f_haoowe>0&&b_nethint<1&&b_netk<1&&b_capture<1
+@goto #BRoom if:g_runs>0&&day>=4&&b_roomfee<1&&f_hajindead<1
+@goto #BYeom if:g_know_hyeokpass>0&&f_hyeokmet>0&&day>=12&&seen_E_Spar2<1&&f_hyeokdead<1&&b_yeomflag<1
+@goto #BLord if:day>=20&&b_lord<1
 @goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
 @goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
@@ -566,7 +569,7 @@
 @choice "동쪽 처마 밑 그늘로 먼저 간다 — 상복은 지붕 동쪽으로 내려온다" if:g_end_wonsu>0 goto:#KGrAmb
 @stop
 # KGrAmb
-<color=#9A70C4>지난 생, 셋은 동쪽 처마에서 차례로 뛰어내렸다. 맨 끝의 하나가 늘 반 박자 늦었다.</color>
+<color=#9A70C4>지난 생, 셋은 동쪽 처마에서 차례로 뛰어내렸다. 맨 끝의 하나가 늘 한 걸음 늦었다.</color>
 처마 밑 그늘에 등을 붙인다. 첫 발, 둘째 발. 셋째는 아직이다.
 @set f_mournambush=1
 # KGrFight
@@ -756,6 +759,7 @@
 
 ; --- 밤: 며칠 밤의 선택 ---
 # Night
+@pname
 @goto #DayLoop if:hp<=0
 @realm do:check
 @goto Molak18#Wall if:btready>0&&hp>0&&btwait<day&&btdecl<day&&practice<1
@@ -1004,11 +1008,11 @@
 @set sv=random(1,3)
 @goto #NSwB2 if:sv==2
 @goto #NSwB3 if:sv==3
-「운검비록」의 구결대로 긋는다. 검끝이 반 치씩 깊어진다.
+「운검비록」의 구결대로 긋는다. 검끝이 손톱만큼씩 깊어진다.
 @fx sw:2 hp:-1 why:"운검비록 구결대로 긋는다 — 손은 터졌다"
 @goto #NightEnd
 # NSwB2
-손목보다 허리, 허리보다 발. 어제 몰랐던 반 치가 오늘 손에 있다.
+손목보다 허리, 허리보다 발. 어제 몰랐던 한 끗이 오늘 손에 있다.
 @fx sw:2 hp:-1 why:"운검비록 구결대로 긋는다 — 손은 터졌다"
 @goto #NightEnd
 # NSwB3
@@ -1669,6 +1673,21 @@
 @chapter text:"객잔 주인 하진무" sub:"객잔"
 @set b_hajin=1
 @gosub #S_Hajin
+@goto #Daytime
+# BLord
+@chapter text:"붉은 가마" sub:"혈마교"
+@set b_lord=1
+@gosub #S_Lord
+@goto #Daytime
+# BYeom
+@chapter text:"끈 없는 귀퉁이" sub:"장풍표국"
+@set b_yeomflag=1
+@gosub #S_Yeom
+@goto #Daytime
+# BRoom
+@chapter text:"방값" sub:"운락객잔"
+@set b_roomfee=1
+@gosub #S_Room
 @goto #Daytime
 # B7
 @chapter text:"서열각의 쇠패" sub:"서열각"
@@ -2441,6 +2460,128 @@
 @set f_gaekid=1
 @set rep_gae=rep_gae+1
 @fx curse:-1
+@return
+
+; ---------- 0.4.75 붉은 가마: 첫 생에 교주를 한 번 본다(무릎이 꺾인다). 다음 생엔 그 무릎을 펴 둔다 ----------
+# S_Lord
+@art scene:market
+@art char:none
+{dejapre}
+아침. 관아 앞 큰길이 비워진다. 징세조가 장대로 사람들을 벽 쪽으로 민다.
+"엎드려라. 고개 드는 놈은 목이 없다."
+붉은 비단 가마가 온다. 메는 자가 여덟, 앞에 선 감찰사가 넷. 문발이 반쯤 걷혀 있다. 안의 사내는 눈을 감고 있다. 그런데도 길가의 개들이 먼저 꼬리를 감춘다.
+혈마교주, 혈천마. 운락을 지나 남쪽 분타로 간다고 한다.
+@goto #S_LordK if:g_lordknee>0
+큰길 양쪽으로 사람들이 무릎을 꿇는다. 노점 할멈이, 표사가, 거지 아이가. 당신 옆의 낭인이 먼저 이마를 땅에 댄다.
+@choice "엎드린다 — 오늘은 칼을 뽑을 날이 아니다" goto:#S_LordA
+@choice "선 채로 둔다 — 열 번째 산문 앞의 장문인처럼" goto:#S_LordB
+@stop
+# S_LordA
+무릎을 꿇는다. 손바닥 밑 흙이 차다.
+가마가 앞을 지난다. 지나가다가 문발 틈의 눈이 한 번 떠진다. 엎드린 등들 사이에서 당신 등 하나를 고른 눈이다.
+"……그 밤의 막내로구나. 엎드리는 법은 배웠군."
+가마가 지나간다. 사람들이 하나둘 일어선다. 당신은 조금 더 엎드려 있다. 사부는 그 밤 서 있었다.
+@set g_lordknee=1
+@set f_lordknee=1
+@return
+# S_LordB
+선다. 길 한가운데 혼자 서 있는 사람이 된다.
+가마가 멎는다. 메는 자 여덟이 숨을 멈춘다. 문발 안의 눈이 떠진다.
+공기가 휜다. 칼은 뽑히지 않았는데 어깨 위로 산 하나가 얹힌다. 무릎이 떨린다. 떨리는 무릎을 손으로 누른다. 누른 손까지 떨린다.
+@vfx kind:heavy
+무릎이 꺾인다. 몸에 그 무게를 받을 마디가 아직 없다.
+돌바닥에 무릎이 박히는 소리를 큰길 전체가 듣는다.
+"청운의 늙은이는 끝까지 서 있었다. 그래서 본좌가 한참을 기다렸지."
+교주가 눈을 감는다.
+"너는 무릎이 먼저구나. 펴거든 오너라. 그때는 본좌가 기다리지 않으마."
+가마가 간다. 공기가 풀리고 나서야 숨이 들어온다. 입안에 피가 고여 있다.
+감찰사들 뒤에서 검은 관복 하나가 돌아보다 만다. 숫자는 구백구십구.
+@fx hp:-3 why:"교주의 기세 앞에서 무릎이 꺾였다"
+@set g_lordknee=1
+@set f_lordknee=1
+@return
+# S_LordK
+<color=#9A70C4>지난 생, 이 길 한가운데서 무릎이 꺾였다. 돌바닥에 박히던 소리를 무릎이 기억한다.</color>
+큰길 양쪽으로 사람들이 무릎을 꿇는다.
+@choice "선다 — 이번엔 무릎을 펴 둔다" if:realm>=2 goto:#S_LordS
+@choice "선다 — 무릎을 손으로 누르고라도" if:realm<2 goto:#S_LordB
+@choice "엎드린다 — 아직은 그 무게를 받을 몸이 아니다" goto:#S_LordA2
+@stop
+# S_LordS
+선다. 가마가 멎는다. 문발 안의 눈이 떠진다.
+공기가 휜다. 어깨 위로 그 산이 다시 얹힌다. 무릎이 떨린다.
+벽 앞에서 연 마디들이 하나씩 그 무게를 나누어 받는다. 숨을 아랫배에서 한 번 끊는다. 떨림이 무릎에서 멎는다.
+무릎이 꺾이지 않는다.
+큰길이 조용하다. 엎드린 사람들이 고개를 들지 못한 채 숨만 쉰다.
+"……서 있구나."
+교주의 목소리 끝에 아주 얇게 다른 것이 섞인다.
+"열 번째 산문 앞의 늙은이처럼. 그 늙은이의 무엇이냐."
+"막내요."
+문발이 천천히 내려진다. 가마가 간다. 감찰사 하나가 붓을 들어 장부에 무언가를 적는다. 운객.
+@vfx kind:gold
+@set f_lordstood=1
+@set g_lordstood=1
+@realm do:gain why:"교주의 기세 앞에서 무릎을 펴 두었다"
+@return
+# S_LordA2
+무릎을 꿇는다. 이번 생의 손바닥 밑 흙도 차다.
+가마가 지나간다. 문발 틈의 눈이 떠지지 않는다. 엎드린 등들은 다 똑같다.
+아직이다. 벽을 더 넘어야 한다. 그 무게를 받을 마디가 몸에 생길 때까지.
+@return
+
+; ---------- 0.4.75 끈 없는 귀퉁이: 지난 생에 상여를 본 생에만. 고개로 떠나기 전, 아비를 먼저 찾아간다 ----------
+# S_Yeom
+@art scene:market
+@art char:none
+{dejapre}
+<color=#9A70C4>지난 생, 이 아비는 아들의 상여 맨 뒤에서 접은 표기를 안고 너무 고르게 걸었다. 그리고 삯 주머니를 들고 끈 값을 내러 갔다.</color>
+장풍표국 마당. 총표두 염가가 평상에 앉아 표기를 접고 있다. 귀퉁이마다 교에 바친 붉은 끈이 매여 있다.
+"우리 혁이 친구요? 그놈 지금 봇짐 꾸리러 나갔소. 북쪽 고개라나."
+@choice "\"그 고개로 보내지 마시오.\"" goto:#S_YeomA
+@choice "\"그 표기, 귀퉁이 하나만 빌려 주시오.\"" goto:#S_YeomB
+@stop
+# S_YeomA
+염가의 손이 멎는다.
+"내가 보내는 거면 말리기라도 하지. 그놈이 제 발로 가는 거요. 끈 값이 석 달 밀렸소. 아비가 끈을 안 맨다고 버티니, 아들이 끈 값을 벌러 가는 거요."
+그가 접던 표기를 무릎에 놓는다.
+"말려 봤소. 그놈이 그럽디다. 아버지가 버티는 것도 표국 일이고, 내가 버는 것도 표국 일이라고."
+@goto #S_YeomB
+# S_YeomB
+"같이 넘겠소. 그 고개."
+염가가 오래 당신을 본다. 그러더니 접던 표기의 귀퉁이 하나를 칼로 끊는다. 붉은 끈이 없는 귀퉁이다. 삼십 년 동안 한 번도 끈을 매지 않은 귀퉁이.
+"이걸 그놈 봇짐에 몰래 넣어 주시오. 장풍의 표기는 귀퉁이 하나만 있어도 표기요. 고개 위에서 그놈이 이걸 보면, 아비가 따라온 줄 알 거요."
+천 조각이 손바닥에서 가볍다. 상여채보다 한참 가볍다.
+@set f_yeomflag=1
+@return
+
+; ---------- 0.4.75 방값: 회귀한 생에만. 지난 생에 끝내 치르지 못한 방값을 먼저 치른다 ----------
+# S_Room
+@art scene:innhall
+@art char:hajinmu
+{dejapre}
+<color=#9A70C4>지난 생, 이 영감의 장부 맨 아래 '운객' 칸은 끝내 빈칸으로 남았다. 셈이 안 맞는 칸은 비워 두는 법이라 했다.</color>
+저녁. 하진무가 계산대에서 주판을 튕긴다. 당신이 전낭을 통째로 계산대에 올린다.
+"이게 무엇이오."
+"방값이오. 남은 날 것까지 다."
+하진무가 전낭을 열어 보지도 않고 도로 민다.
+"객은 날마다 한 냥이오. 미리 받는 방값은 없소. 미리 받으면 객이 안 돌아올 것 같아서."
+@choice "\"그럼 하루치만.\" — 한 냥을 놓는다" if:mn>=1 goto:#S_RoomA
+@choice "\"돌아오겠소. 그 칸 비워 두지 마시오.\"" goto:#S_RoomB
+@stop
+# S_RoomA
+한 냥을 놓는다. 하진무가 장부를 펴고 '운객' 칸에 붓을 댄다. 획 하나. 오늘 치.
+"하루씩이오. 그래야 셈이 맞소."
+붓을 내려놓는 손이 조금 떨린다. 셈이 맞아서 떨리는 손이다.
+@fx mn:-1
+@set f_roomfee=1
+@return
+# S_RoomB
+하진무가 붓을 든 채로 한참 있다.
+"……그 칸이 빈칸이 될 거라고 누가 그랍디까."
+대답하지 않는다. 그가 붓을 내려놓고 주판을 다시 튕긴다. 알 하나가 제자리로 돌아가지 않는다. 그 알을 손가락으로 오래 누른다.
+"돌아오시오. 셈은 그때 하지."
+@set f_roomfee=1
+@set hajinaff=hajinaff+1
 @return
 
 # S_Knot

@@ -103,7 +103,7 @@
 그 말의 뜻을 생각하는 사이, 문이 발길에 터진다.
 @goto #HuntA4Live if:pass==1
 @vfx kind:hit
-말을 끄는 사이 칼을 고쳐 잡았어야 했다. 손이 반 박자 늦다.
+말을 끄는 사이 칼을 고쳐 잡았어야 했다. 손이 한 호흡 늦다.
 @fx hp:-6
 @goto #HuntBeaten
 # HuntA4Live

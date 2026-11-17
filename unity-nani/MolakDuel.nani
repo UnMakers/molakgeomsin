@@ -26,12 +26,12 @@
 @print "<color=#9A70C4>옷깃의 참새 깃이 흔들린다. 그녀가 미리 알아다 준 이 칼잡이의 버릇이 떠오른다.</color>" if:f_chamfeather>0&&dlethal>0
 @goto #HeadInj if:injury>0||taint>0
 @goto #RunChoices if:memwarn<1
-<color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 첫 수가 반 박자 일찍 보인다.
+<color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 첫 수가 한발 일찍 보인다.
 @goto #RunChoices
 # HeadInj
 <color=#C03434>옆구리가 당긴다.</color> 성한 몸으로 쥐던 승산이 아니다.
 @goto #RunChoices if:memwarn<1
-<color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 첫 수가 반 박자 일찍 보인다.
+<color=#9A70C4>지난 생, 이 상대의 검을 받아 보았다.</color> 첫 수가 한발 일찍 보인다.
 # RunChoices
 @set donecut=0
 @goto #ExInit if:memwarn<1&&odds10<8
@@ -231,7 +231,7 @@
 @duel style:sense
 @goto #Result
 # StCurse
-문양이 차갑게 타오른다. 세상이 반 박자 느려지고, 빈틈만 밝게 보인다.
+문양이 차갑게 타오른다. 세상이 느려지고, 빈틈만 밝게 보인다.
 @vfx kind:clash
 @wait 0.35
 @duel style:curse

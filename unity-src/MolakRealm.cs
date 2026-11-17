@@ -138,7 +138,15 @@ public static class MolakRealm
     public static void StoryFill (float day)
     {
         int want = day >= 56 ? 7 : day >= 50 ? 6 : day >= 31 ? 5 : day >= 26 ? 4 : day >= 20 ? 3 : day >= 14 ? 2 : day >= 6 ? 1 : 0;
-        if (Realm < want) { MolakStats.Set("realm", want); MolakStats.SetStr("tiername", Name(want)); }
+        // 0.4.75 날짜보다 둘 이상 처지면 그 아래까지는 조용히 채운다(밀린 벽이 한꺼번에 몰리지 않게)
+        if (Realm < want - 1) { MolakStats.Set("realm", want - 1); MolakStats.SetStr("tiername", Name(want - 1)); }
+        // 마지막 한 벽은 건너뛰지 않는다: 문턱만 채워 두면 그날 밤 벽 앞에 앉는다(벽마다 한 사람의 깨달음이 있다)
+        if (Realm < want)
+        {
+            if (MolakStats.Get("sw") < NeedSw) MolakStats.Set("sw", NeedSw);
+            if (MolakStats.Get("ng") < NeedNg) MolakStats.Set("ng", NeedNg);
+            if (Insight < NeedIns) MolakStats.Set("insight", NeedIns);
+        }
     }
 }
 
