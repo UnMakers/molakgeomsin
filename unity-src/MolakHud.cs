@@ -89,13 +89,14 @@ public class MolakHud : MonoBehaviour
     /// 칼등 쪽 어두운 쇠빛에서 날 쪽 밝은 쇠빛으로 흐르고, 몇 초마다 서슬(빛 한 줄기)이 글자를 훑고 지나간다.
     /// 낮(종이)엔 짙은 강철에 푸른 서슬, 먹색 화면엔 은빛 강철에 흰 서슬.
     /// </summary>
-    public static string SwordTag (string label, bool forceDay = false, bool bold = true)
+    public static string SwordTag (string label, bool forceDay = false, bool bold = true, bool peak = false)
     {
         bool night = !forceDay && MolakTheme.Night;
         Color back = night ? new Color(0.50f, 0.58f, 0.66f) : new Color(0.13f, 0.18f, 0.24f);   // 칼등
         Color edge = night ? new Color(0.86f, 0.91f, 0.95f) : new Color(0.25f, 0.37f, 0.50f);   // 날
         Color glint = night ? new Color(1f, 1f, 1f) : new Color(0.42f, 0.70f, 0.92f);          // 서슬
-        const float period = 3.4f, sweep = 0.6f;
+        if (peak) glint = night ? new Color(1f, 0.93f, 0.70f) : new Color(0.80f, 0.58f, 0.12f);   // 극(極): 서슬이 금빛으로, 더 자주
+        float period = peak ? 1.8f : 3.4f, sweep = 0.6f;
         float ph = Time.unscaledTime % period;
         float p = ph < sweep ? Mathf.Lerp(-0.6f, 1.6f, ph / sweep) : -9f;
         var sb = new System.Text.StringBuilder();
@@ -109,6 +110,63 @@ public class MolakHud : MonoBehaviour
             sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(c)).Append('>').Append(label[i]).Append("</color>");
         }
         return bold ? "<b>" + sb + "</b>" : sb.ToString();
+    }
+
+    /// <summary>
+    /// 0.4.78 능력치가 어느 선을 넘으면 강한 상태가 보이게(언메이커). 0 보통 · 1 강함(숫자도 제 빛, 굵게) · 2 극(이름에 빛이 흐른다).
+    /// 선은 경지의 문턱에 맞췄다 — 검술 12(절정)/21(현경), 내공 11/20, 체력의 끝 20/30. 살기는 5/8, 짙어질수록 핏빛.
+    /// </summary>
+    public static int Tier (string key)
+    {
+        float v = key == "hp" ? MolakStats.Get("hpmax") : MolakStats.Get(key);
+        switch (key)
+        {
+            case "sw": return v >= 21f ? 2 : v >= 12f ? 1 : 0;
+            case "ng": return v >= 20f ? 2 : v >= 11f ? 1 : 0;
+            case "hp": return v >= 30f ? 2 : v >= 20f ? 1 : 0;
+            case "sl": return v >= 8f ? 2 : v >= 5f ? 1 : 0;
+        }
+        return 0;
+    }
+
+    /// <summary>극(極)의 이름: 제 빛에서 밝은 빛으로 물결이 흐른다. 살기는 핏빛이 맥박처럼 짙어졌다 옅어진다.</summary>
+    static string Shimmer (string label, string[] c, bool blood)
+    {
+        Color baseC; ColorUtility.TryParseHtmlString(StatCol.Of(c), out baseC);
+        Color hi = blood ? (MolakTheme.Night ? new Color(1f, 0.30f, 0.22f) : new Color(0.62f, 0.04f, 0.02f))
+                         : (MolakTheme.Night ? Color.Lerp(baseC, Color.white, 0.75f) : Color.Lerp(baseC, new Color(0.80f, 0.58f, 0.12f), 0.65f));
+        var sb = new System.Text.StringBuilder();
+        int n = label.Length;
+        float t = Time.unscaledTime;
+        for (int i = 0; i < n; i++)
+        {
+            float k = blood ? 0.5f + 0.5f * Mathf.Sin(t * 3.2f) : 0.5f + 0.5f * Mathf.Sin(t * 2.4f - i * 1.1f);
+            sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(Color.Lerp(baseC, hi, k))).Append('>').Append(label[i]).Append("</color>");
+        }
+        return "<b>" + sb + "</b>";
+    }
+
+    /// <summary>상태 줄의 이름 — 단계에 따라.</summary>
+    static string StatName (string label, string key, string[] c)
+    {
+        int t = Tier(key);
+        if (key == "sw") return SwordTag(label, false, true, t >= 2);
+        if (t >= 2) return Shimmer(label, c, key == "sl");
+        return Tag(label, c, t >= 1);
+    }
+
+    /// <summary>상태 줄의 숫자 — 막 바뀐 숫자는 좋음/나쁨 빛이 먼저, 아니면 단계에 따라 제 빛으로 굵게.</summary>
+    static string StatNum (string key, float v, string[] c)
+    {
+        int k = System.Array.IndexOf(fkeys, key);
+        if (k >= 0 && flashT[k] >= 0f) return Num(key, v);
+        int t = Tier(key);
+        string s = v.ToString("0");
+        if (t == 0) return s;
+        string col = key == "sl" ? (MolakTheme.Night ? (t >= 2 ? "#FF5A48" : "#E07A5E") : (t >= 2 ? "#8E140C" : "#7A2A14"))
+                   : key == "sw" ? (MolakTheme.Night ? (t >= 2 ? "#E8F1F8" : "#B9CCDD") : (t >= 2 ? "#14324F" : "#2A4660"))
+                   : StatCol.Of(c);
+        return "<b><color=" + col + ">" + s + "</color></b>";
     }
 
     public static string Tag (string label, string[] c, bool bold = false)
@@ -326,9 +384,9 @@ public class MolakHud : MonoBehaviour
         // 0.4.74 이름마다 제 빛(언메이커: 검술·체력 같은 글씨에 각 컨셉에 맞는 색) — 숫자는 먹색, 막 바뀐 숫자만 푸르게/붉게
         bool lowHp = hp/hpm <= 0.34f;
         string stats =
-            (lowHp ? "<color="+hpCol+">체력 "+Num("hp", hp)+"</color>" : Tag("체력", StatCol.Hp)+" "+Num("hp", hp))+
-            "    "+Tag("내공", StatCol.Ng)+" "+Num("ng", MolakStats.Get("ng"))+
-            "    "+Tag("살기", StatCol.Sl)+" "+Num("sl", MolakStats.Get("sl"));
+            (lowHp ? "<color="+hpCol+">체력 "+Num("hp", hp)+"</color>" : StatName("체력", "hp", StatCol.Hp)+" "+StatNum("hp", hp, StatCol.Hp))+
+            "    "+StatName("내공", "ng", StatCol.Ng)+" "+StatNum("ng", MolakStats.Get("ng"), StatCol.Ng)+
+            "    "+StatName("살기", "sl", StatCol.Sl)+" "+StatNum("sl", MolakStats.Get("sl"), StatCol.Sl);
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
         if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 104*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
@@ -374,7 +432,7 @@ public class MolakHud : MonoBehaviour
             { var bh = MolakStats.Str("byeolho", "none"); if (!string.IsNullOrEmpty(bh) && bh != "none") rtxt += " · <color=#8A3A30>" + bh + "</color>"; }   // 0.4.33 강호가 붙인 별호
             // 0.4.71 은자가 잘 안 보인다(언메이커) — 굵게, 낮엔 짙은 놋빛, 먹색 화면엔 밝은 금빛
             string mnCol = MolakTheme.Night ? "#E8C468" : "#6A4A00";
-            string s2 = SwordTag("검술")+" "+Num("sw", MolakStats.Get("sw"))+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
+            string s2 = StatName("검술", "sw", StatCol.Sw)+" "+StatNum("sw", MolakStats.Get("sw"), StatCol.Sw)+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
             // 0.4.72 다음 경지의 벽 — 무엇이 얼마나 남았나(검 · 기 · 깨달음)
             if (sWall == null || wallSrc != sStat || !Mathf.Approximately(wallU, u)) { wallU = u; wallSrc = sStat; sWall = new GUIStyle(sStat) { fontSize = Mathf.RoundToInt(sStat.fontSize * 0.78f) }; }
