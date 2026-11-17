@@ -1,4 +1,5 @@
 # Wf1
+@chapter text:"혈쇄문" sub:"폐철장"
 @art scene:smithy
 ; ===== 제五장 혈쇄문 =====
 고을 외곽의 폐철장(廢鐵場)으로 간다.
@@ -68,6 +69,7 @@
 @goto #WolfAfter
 
 # Ld0
+@chapter text:"검은 산" sub:"종장"
 @scene id:blood
 ; ===== 종장 검은 산 =====
 @set tr=random(1,3)
@@ -326,6 +328,7 @@
 @goto #Ld2
 
 # Ld2
+@chapter text:"교주전" sub:"종장"
 @gosub Molak13#Stairs if:b_stairs<1
 @gosub #LdRally
 @art scene:lordhall
@@ -609,6 +612,7 @@
 @stop
 ; ===== 0.4.62 노인과의 결판 — 말로 끝내지 않는다. 몇 생을 죽게 만든 손을 둘이서 벤다 =====
 # OldFight
+@chapter text:"노인" sub:"종장"
 @set f_oldfought=1
 @set oldhit=0
 노인이 손을 든다. 손가락 하나.

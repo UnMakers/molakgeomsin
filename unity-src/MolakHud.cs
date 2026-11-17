@@ -84,6 +84,33 @@ public class MolakHud : MonoBehaviour
         public static readonly string[] Ins   = { "#256B57", "#86D4B7" };
         public static string Of (string[] c) { return MolakTheme.Night ? c[1] : c[0]; }
     }
+    /// <summary>
+    /// 0.4.78 검술 = 칼날(언메이커: 검술 색이 평범하다, 컨셉에 맞게). 한 가지 빛 대신 강철의 결 —
+    /// 칼등 쪽 어두운 쇠빛에서 날 쪽 밝은 쇠빛으로 흐르고, 몇 초마다 서슬(빛 한 줄기)이 글자를 훑고 지나간다.
+    /// 낮(종이)엔 짙은 강철에 푸른 서슬, 먹색 화면엔 은빛 강철에 흰 서슬.
+    /// </summary>
+    public static string SwordTag (string label, bool forceDay = false, bool bold = true)
+    {
+        bool night = !forceDay && MolakTheme.Night;
+        Color back = night ? new Color(0.50f, 0.58f, 0.66f) : new Color(0.13f, 0.18f, 0.24f);   // 칼등
+        Color edge = night ? new Color(0.86f, 0.91f, 0.95f) : new Color(0.25f, 0.37f, 0.50f);   // 날
+        Color glint = night ? new Color(1f, 1f, 1f) : new Color(0.42f, 0.70f, 0.92f);          // 서슬
+        const float period = 3.4f, sweep = 0.6f;
+        float ph = Time.unscaledTime % period;
+        float p = ph < sweep ? Mathf.Lerp(-0.6f, 1.6f, ph / sweep) : -9f;
+        var sb = new System.Text.StringBuilder();
+        int n = label.Length;
+        for (int i = 0; i < n; i++)
+        {
+            float x = n <= 1 ? 0.5f : i / (float)(n - 1);
+            var c = Color.Lerp(back, edge, x);
+            float g = Mathf.Exp(-Mathf.Pow((x - p) / 0.38f, 2f));
+            c = Color.Lerp(c, glint, g * 0.92f);
+            sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(c)).Append('>').Append(label[i]).Append("</color>");
+        }
+        return bold ? "<b>" + sb + "</b>" : sb.ToString();
+    }
+
     public static string Tag (string label, string[] c, bool bold = false)
     {
         string t = "<color=" + StatCol.Of(c) + ">" + label + "</color>";
@@ -131,7 +158,8 @@ public class MolakHud : MonoBehaviour
                 // 0.4.74 이름은 제 빛(종이 쪽지라 낮 빛), 숫자는 좋음/나쁨 빛
                 string[] kc = r.key == "hp" ? StatCol.Hp : r.key == "ng" ? StatCol.Ng : r.key == "sl" ? StatCol.Sl : r.key == "sw" ? StatCol.Sw : r.key == "insight" ? StatCol.Ins : null;
                 string nameCol = kc != null ? kc[0] : col;
-                sb.Append("<b><color=" + nameCol + ">" + MolakStatLog.Name(r.key) + "</color> <color=" + col + ">" + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
+                string nameTxt = r.key == "sw" ? SwordTag(MolakStatLog.Name(r.key), true, false) : "<color=" + nameCol + ">" + MolakStatLog.Name(r.key) + "</color>";
+                sb.Append("<b>" + nameTxt + " <color=" + col + ">" + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
             }
             string wt = sb.ToString();
             float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f - 6f * u) + pad * 1.5f;
@@ -346,7 +374,7 @@ public class MolakHud : MonoBehaviour
             { var bh = MolakStats.Str("byeolho", "none"); if (!string.IsNullOrEmpty(bh) && bh != "none") rtxt += " · <color=#8A3A30>" + bh + "</color>"; }   // 0.4.33 강호가 붙인 별호
             // 0.4.71 은자가 잘 안 보인다(언메이커) — 굵게, 낮엔 짙은 놋빛, 먹색 화면엔 밝은 금빛
             string mnCol = MolakTheme.Night ? "#E8C468" : "#6A4A00";
-            string s2 = Tag("검술", StatCol.Sw)+" "+Num("sw", MolakStats.Get("sw"))+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
+            string s2 = SwordTag("검술")+" "+Num("sw", MolakStats.Get("sw"))+"    <b><color="+mnCol+">은자 "+Num("mn", MolakStats.Get("mn"))+"냥</color></b>    "+rtxt;
             GUI.Label(new Rect(pad, y2, W-168*u, lh2), s2, sStat);
             // 0.4.72 다음 경지의 벽 — 무엇이 얼마나 남았나(검 · 기 · 깨달음)
             if (sWall == null || wallSrc != sStat || !Mathf.Approximately(wallU, u)) { wallU = u; wallSrc = sStat; sWall = new GUIStyle(sStat) { fontSize = Mathf.RoundToInt(sStat.fontSize * 0.78f) }; }

@@ -42,6 +42,9 @@ public class MolakTitle : MonoBehaviour
         instance = go.AddComponent<MolakTitle>();
     }
 
+    /// <summary>0.4.78 장 고르기에서 뛰어들 때, 판이 바뀌는 사이 제목 화면이 비치지 않게 잠깐 접어 둔다.</summary>
+    public static void Hold (float sec) { if (instance != null) instance.grace = sec; }
+
     static Texture2D Px { get { return MolakGui.Px; } }
     static Texture2D MakeRound (int n, bool soft)
     {
@@ -106,6 +109,7 @@ public class MolakTitle : MonoBehaviour
     Texture2D[] brushes;
     bool Item (int idx, Rect r, string label, bool enabled, float u, float t, bool primary)
     {
+        if (MolakStoryBook.Open) enabled = false;   // 0.4.78 장 고르기가 떠 있으면 뒤의 메뉴는 눌리지 않는다
         if (brushes == null) brushes = new[]{ Resources.Load<Texture2D>("MolakTitleBrush0"), Resources.Load<Texture2D>("MolakTitleBrush1"), Resources.Load<Texture2D>("MolakTitleBrush2") };
         var e = Event.current;
         if (enabled && e.type == EventType.MouseDown && r.Contains(e.mousePosition) && t - shownAt > 1.1f + idx * 0.12f + 0.45f) downIdx = idx;
@@ -330,7 +334,7 @@ public class MolakTitle : MonoBehaviour
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
         bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable || state.AutoLoadAvailable;
-        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { MolakStats.Set("g_storypick", 0f); Wake(sp, state, t); }
+        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { MolakStoryBook.RestoreGlobals(); MolakStats.Set("g_storypick", 0f); Wake(sp, state, t); }
         if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
             // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록
@@ -342,13 +346,17 @@ public class MolakTitle : MonoBehaviour
         }
         string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>" : "말로록";
         if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();
-        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "비무 연습", !busy, u, t, false) && !busy) MolakPractice.Start();   // 0.4.55 합만 겨뤄 보는 판
+        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "비무 연습", !busy, u, t, false) && !busy) { MolakStoryBook.RestoreGlobals(); MolakPractice.Start(); }   // 0.4.55 합만 겨뤄 보는 판
         // 0.4.66 이야기 모드: 죽지 않고, 밤 수련을 건너뛰고, 이야기 마디만 이어 읽는다
-        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "이야기 모드  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>죽지 않고 이야기만</color></size>", !busy, u, t, false) && !busy)
+        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "이야기 모드  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>장 고르기</color></size>", !busy, u, t, false) && !busy)
         {
-            MolakStats.Set("g_storypick", 1f);
-            var gsm = Engine.GetService<IStateManager>(); if (gsm != null) { try { _ = gsm.SaveGlobal(); } catch { } }
-            Wake(sp, state, t);
+            // 0.4.78 장 고르기: 서장부터 또는 닿아 본 마디부터
+            MolakStoryBook.Show(() =>
+            {
+                MolakStats.Set("g_storypick", 1f);
+                var gsm = Engine.GetService<IStateManager>(); if (gsm != null) { try { _ = gsm.SaveGlobal(); } catch { } }
+                Wake(sp, state, t);
+            });
         }
         if (Item(5, new Rect(rx - mw, my0 + 5 * ih, mw, bh), "환경 설정", !busy, u, t, false))
         {

@@ -664,6 +664,7 @@
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
 # Rebirth
+@chapter text:"다시, 그 아침" sub:"회귀"
 @pname
 @page
 @art scene:innroom
