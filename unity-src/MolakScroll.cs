@@ -47,7 +47,7 @@ public class MolakScroll : MonoBehaviour
         float canvasH = MolakLayout.Canvas.y;
         var root = inst.viewport.GetComponentInParent<Canvas>();
         if (root != null && root.rootCanvas != null) canvasH = (root.rootCanvas.transform as RectTransform).rect.height;
-        float top = MolakArt.HasArt ? (MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand) : MolakLayout.BodyTop;
+        float top = MolakArt.HasArt ? (MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip) : MolakLayout.BodyTop;
         float bottom = Mathf.Min(MolakLayout.BodyBottom(0, 0f), canvasH - MolakLayout.BodyMinH);
         return canvasH - bottom - top;
     }
@@ -163,7 +163,7 @@ public class MolakScroll : MonoBehaviour
             if (root != null && root.rootCanvas != null) { var r = (root.rootCanvas.transform as RectTransform).rect; canvasW = r.width; canvasH = r.height; }
         }
         float side = Mathf.Max(MolakLayout.BodySide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.BodySide);
-        float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand) : -MolakLayout.BodyTop;
+        float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip) : -MolakLayout.BodyTop;
         topCur = Mathf.Lerp(topCur, topOff, Time.deltaTime * 6f);
         if (Mathf.Abs(topCur - topOff) < 0.5f) topCur = topOff;
 

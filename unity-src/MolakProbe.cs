@@ -71,7 +71,8 @@ public class MolakProbe : MonoBehaviour
         st.ResetState(new string[0], () => {
             foreach (var n in MolakVarList.Nums) MolakStats.EnsureNum(n);
             foreach (var n in MolakVarList.Strings) MolakStats.EnsureStr(n);
-            foreach (var n in MolakVarList.Globals) MolakStats.EnsureNum(n);
+            foreach (var n in MolakVarList.Globals) if (!n.StartsWith("g_pname")) MolakStats.EnsureNum(n);
+            if (!MolakName.HasName) MolakName.Apply("연호");   // 0.4.75 탐침용 이름
             MolakStats.EnsureStr("g_lastend"); MolakStats.EnsureStr("g_lastcause"); MolakStats.EnsureStr("g_nxform"); MolakStats.EnsureStr("g_scars", "");
             MolakStats.Set("hp", 10); MolakStats.Set("hpmax", 10); MolakStats.Set("day", 20); MolakStats.Set("sw", 8); MolakStats.Set("ng", 4); MolakStats.Set("sl", 3); MolakStats.Set("mn", 20);
             foreach (var kv in sets.Split(';')) { var p = kv.Split('='); if (p.Length == 2) SetVar(p[0].Trim(), p[1].Trim()); }

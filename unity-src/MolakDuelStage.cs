@@ -95,8 +95,16 @@ public class MolakDuelStage : MonoBehaviour
         var local = new Rect(0f, 0f, band.width, band.height);
         if (tellT >= 0f) { tellT += dt; DrawTell(local, u); }
         if (strikeT >= 0f) { strikeT += dt; DrawStrike(local, u); if (strikeT > 0.9f) strikeT = -1f; }
-        if (MolakStats.Get("kp_on") > 0f) DrawBoard(local, u);
         GUI.EndGroup();
+        // 0.4.75 간파 판은 그림 띠 아래 칸에(상대 그림을 가리지 않게)
+        if (MolakLayout.DuelStrip > 0f)
+        {
+            float unit = Mathf.Min(Screen.width / 900f, Screen.height / 1600f);
+            var strip = new Rect(band.x, band.yMax + 6f * unit, band.width, (MolakLayout.DuelStripH - 6f) * unit);
+            GUI.BeginGroup(strip);
+            DrawBoard(new Rect(0f, 0f, strip.width, strip.height), u);
+            GUI.EndGroup();
+        }
     }
 
     // ---- 0.4.67 간파 판: 그림 띠 아래쪽에 상대의 세 수(위 줄)와 내 수(아래 줄) ----
@@ -120,11 +128,15 @@ public class MolakDuelStage : MonoBehaviour
         int resolved = Mathf.RoundToInt(MolakStats.Get("dx_i"));
         bool resolving = MolakStats.Get("kp_k") >= 3f;
         int sigi = Mathf.RoundToInt(MolakStats.Get("dx_sigi"));
-        float cw = Mathf.Min(band.width * 0.21f, 132f * u), ch = band.height * 0.32f, gap = cw * 0.22f;
-        float total = cw * 3f + gap * 2f, x0 = band.xMax - total - band.width * 0.04f;
-        float yTop = band.yMax - ch * 2f - band.height * 0.08f;
-        var panel = new Rect(x0 - gap * 0.6f, yTop - band.height * 0.04f, total + gap * 1.2f, ch * 2f + band.height * 0.1f);
+        float ch = band.height * 0.44f, cw = Mathf.Min(band.width * 0.2f, ch * 1.6f), gap = cw * 0.22f;
+        float total = cw * 3f + gap * 2f, x0 = band.x + (band.width - total) * 0.5f + cw * 0.2f;
+        float yTop = band.y + band.height * 0.04f;
+        var panel = new Rect(band.x, band.y, band.width, band.height);
         GUI.color = new Color(0.05f, 0.04f, 0.03f, 0.55f); GUI.DrawTexture(panel, MolakGui.Px);
+        GUI.color = Color.white;
+        MolakGui.Ink(sCardSub, new Color(0.85f, 0.78f, 0.66f, 0.9f));
+        GUI.Label(new Rect(x0 - cw * 0.8f, yTop, cw * 0.65f, ch), "상대", sCardSub);
+        GUI.Label(new Rect(x0 - cw * 0.8f, yTop + ch + band.height * 0.04f, cw * 0.65f, ch), "나", sCardSub);
         for (int i = 1; i <= 3; i++)
         {
             float x = x0 + (i - 1) * (cw + gap);
@@ -143,7 +155,7 @@ public class MolakDuelStage : MonoBehaviour
             MolakGui.Ink(sCard, new Color(0.96f, 0.93f, 0.86f, 1f)); GUI.Label(new Rect(r1.x, r1.y, r1.width, r1.height * 0.74f), hj, sCard);
             MolakGui.Ink(sCardSub, new Color(0.9f, 0.86f, 0.78f, 0.9f)); GUI.Label(new Rect(r1.x, r1.y + r1.height * 0.66f, r1.width, r1.height * 0.32f), nm, sCardSub);
             // 아래: 나
-            var r2 = new Rect(x, yTop + ch + band.height * 0.02f, cw, ch);
+            var r2 = new Rect(x, yTop + ch + band.height * 0.04f, cw, ch);
             int a = Mathf.RoundToInt(MolakStats.Get("kp_a" + i));
             GUI.color = a > 0 ? new Color(0.93f, 0.89f, 0.8f, 0.95f) : new Color(1f, 1f, 1f, 0.1f); GUI.DrawTexture(r2, MolakGui.Px);
             if (a > 0)

@@ -20,7 +20,7 @@ public class InitRunCommand : Command
     /// 목록을 손으로 적어 두면 새 변수를 빠뜨리기 쉬워, 스크립트에서 뽑은 목록(MolakVarList.Globals)과 표에서 끌어낸 이름을 쓴다.</summary>
     public static void EnsureGlobals ()
     {
-        foreach (var n in MolakVarList.Globals) MolakStats.EnsureNum(n);
+        foreach (var n in MolakVarList.Globals) if (!n.StartsWith("g_pname")) MolakStats.EnsureNum(n);   // 0.4.75 이름은 글자다
         foreach (var n in CodeGlobals) MolakStats.EnsureNum(n);
         foreach (var f in MolakMemory.Forms) MolakStats.EnsureNum("g_form_" + f.Key);                    // 청운검결의 조각
         foreach (var sg in MolakMemory.Sigs) MolakStats.EnsureNum("g_sig_" + sg.Kind);                    // 받아 본 필살 초식

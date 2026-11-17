@@ -100,7 +100,8 @@ public class MolakSettings : MonoBehaviour
     {
         try
         {
-            foreach (var n in MolakVarList.Globals) MolakStats.Set(n, 0f);
+            foreach (var n in MolakVarList.Globals) if (!n.StartsWith("g_pname")) MolakStats.Set(n, 0f);
+            foreach (var n in new[] { "g_pname", "g_pname_a", "g_pname_i", "g_pname_eun", "g_pname_eul" }) MolakStats.SetStr(n, "");   // 0.4.75 기록을 지우면 이름도 다시 적는다
             MolakStats.SetStr("g_lastend", "none"); MolakStats.SetStr("g_lastcause", "none"); MolakStats.SetStr("g_nxform", "none"); MolakStats.SetStr("g_scars", "");
             MolakGloss.Reset();
             MolakAutoLife.Reset();

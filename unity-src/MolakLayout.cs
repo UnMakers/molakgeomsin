@@ -21,6 +21,9 @@ public static class MolakLayout
     public const float BodyMinH = 300f;
     /// <summary>본문 창 좌우 여백, 삽화 띠가 없을 때의 위 여백, 삽화 띠 아래 틈.</summary>
     public const float BodySide = 70f, BodyTop = 215f, BelowBand = 24f;
+    /// <summary>0.4.75 비무의 간파 판은 그림 위가 아니라 그림 띠 바로 아래 칸에 놓는다(판이 상대 그림을 가리던 것). 판이 떠 있는 동안 본문이 그만큼 내려간다.</summary>
+    public const float DuelStripH = 210f;
+    public static float DuelStrip { get { return MolakArt.InDuel && MolakStats.Get("kp_on") > 0f ? DuelStripH : 0f; } }
     /// <summary>위로 쓸어 행낭을 여는 하단 구역 높이(선택지가 떠 있을 때 / 없을 때).</summary>
     public const float BagSwipeZoneWithChoices = 300f, BagSwipeZone = 430f;
     /// <summary>본문 글자 기본 크기(설정의 글자 크기 배율이 곱해진다).</summary>

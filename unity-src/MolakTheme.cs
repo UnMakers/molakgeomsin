@@ -259,7 +259,7 @@ public class MolakTheme : MonoBehaviour
         }
         float canvasH = MolakLayout.Canvas.y;
         var rc = dlgText.canvas != null ? dlgText.canvas.rootCanvas : null; if (rc != null) canvasH = ((RectTransform)rc.transform).rect.height;
-        float top = MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand;
+        float top = MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip;
         float bottom = MolakLayout.BodyBottom(choices);
         return dlgText.preferredHeight + 20f <= canvasH - top - bottom;
     }
