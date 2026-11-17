@@ -9,8 +9,8 @@ using UnityEngine;
 ///  · 이야기 모드로 읽다가 마디 이름(@chapter)이 뜨는 자리에 닿으면, 그 순간의 변수 전부(이번 생 + 전역)와
 ///    대본·라벨을 기기에 적어 둔다(persistentDataPath/storybook). 줄 번호가 아니라 라벨로 적으니 대본을 고쳐도 덜 어긋난다.
 ///  · 제목 화면 「이야기 모드」 → 장 목록. 「서장부터」 또는 닿아 본 장을 골라 그 자리부터 읽는다.
-///    장은 두 갈래로 묶는다 — 첫 생(소아를 잃는 길)과 둘째 생(적운의 구결을 품고 되돌리는 길).
-///  · 기기에 적힌 장이 없으면 게임에 들어 있는 기본 책갈피(Resources/MolakData/storybook)를 쓴다.
+///    장은 생마다 묶는다(「서장부터」로 시작한 생이 첫 생 — 이야기대로라면 첫 생은 소아를 잃는 길, 둘째 생은 되돌리는 길).
+///  · 게임에 기본 책갈피(Resources/MolakData/storybook)를 넣으면 기기에 같은 장이 없을 때 그것도 보인다(지금은 비어 있다).
 ///  · 장으로 뛰어들면 전역 변수가 그 장의 것으로 바뀐다. 들어가기 전 전역을 한 번 적어 두었다가,
 ///    「처음부터」·「비무 연습」·「서장부터」로 돌아갈 때 되돌린다(이름은 건드리지 않는다).
 /// </summary>
@@ -22,7 +22,7 @@ public class MolakStoryBook : MonoBehaviour
     public class Entry
     {
         public string key, title, sub, script, label;
-        public bool second;      // 둘째 생(구결을 품은 생)
+        public int life;         // 이야기 모드를 서장부터 시작한 뒤 몇째 생인가(0 = 첫 생)
         public float day;
         public long order;
         public bool bundled;
@@ -32,6 +32,9 @@ public class MolakStoryBook : MonoBehaviour
     static string Dir { get { return Path.Combine(Application.persistentDataPath, "storybook"); } }
     static string BackupPath { get { return Path.Combine(Dir, "_globals_backup.txt"); } }
     static bool jumping;
+    const string BaseKey = "molak.storybook.base";
+    /// <summary>「서장부터」로 이야기 모드를 시작할 때 — 지금 회귀 수를 첫 생의 기준으로 적는다.</summary>
+    public static void MarkFreshStart () { PlayerPrefs.SetInt(BaseKey, Mathf.RoundToInt(MolakStats.Get("g_runs"))); PlayerPrefs.Save(); }
 
     // ---------------------------------------------------------------- 적기
     /// <summary>@chapter 가 실행될 때(넘기기 중이어도) 부른다. 이야기 모드에서만 적는다.</summary>
@@ -46,8 +49,8 @@ public class MolakStoryBook : MonoBehaviour
             string script = tr.PlayedScript.Path, label = null;
             try { label = tr.PlayedScript.GetLabelForLine(cmd.PlaybackSpot.LineIndex); } catch { }
             if (string.IsNullOrEmpty(label) || string.IsNullOrEmpty(title)) return;
-            bool second = MolakStats.Get("g_redverse") > 0f;
-            string key = Safe(script + "_" + label) + (second ? "__b" : "__a");
+            int life = Mathf.Max(0, Mathf.RoundToInt(MolakStats.Get("g_runs")) - PlayerPrefs.GetInt(BaseKey, 0));
+            string key = Safe(script + "_" + label) + "__L" + life;
             Directory.CreateDirectory(Dir);
             string path = Path.Combine(Dir, key + ".txt");
             long order = System.DateTime.UtcNow.Ticks;
@@ -57,7 +60,7 @@ public class MolakStoryBook : MonoBehaviour
             sb.Append("#sub\t").Append(Esc(sub ?? "")).Append('\n');
             sb.Append("#script\t").Append(script).Append('\n');
             sb.Append("#label\t").Append(label).Append('\n');
-            sb.Append("#second\t").Append(second ? "1" : "0").Append('\n');
+            sb.Append("#life\t").Append(life).Append('\n');
             sb.Append("#day\t").Append(MolakStats.Get("day").ToString("0")).Append('\n');
             sb.Append("#order\t").Append(order).Append('\n');
             var vars = Engine.GetService<ICustomVariableManager>();
@@ -103,7 +106,7 @@ public class MolakStoryBook : MonoBehaviour
                 case "sub": e.sub = Unesc(v); break;
                 case "script": e.script = v; break;
                 case "label": e.label = v; break;
-                case "second": e.second = v == "1"; break;
+                case "life": int.TryParse(v, out e.life); break;
                 case "day": float.TryParse(v, out e.day); break;
                 case "order": long.TryParse(v, out e.order); break;
             }
@@ -137,7 +140,7 @@ public class MolakStoryBook : MonoBehaviour
         }
         catch { }
         var list = new List<Entry>(map.Values);
-        list.Sort((a, b) => a.second != b.second ? (a.second ? 1 : -1) : a.day != b.day ? a.day.CompareTo(b.day) : a.order.CompareTo(b.order));
+        list.Sort((a, b) => a.life != b.life ? a.life.CompareTo(b.life) : a.day != b.day ? a.day.CompareTo(b.day) : a.order.CompareTo(b.order));
         return list;
     }
 
@@ -199,6 +202,7 @@ public class MolakStoryBook : MonoBehaviour
             st.ResetState(new string[0], () =>
             {
                 Apply(e.body);
+                PlayerPrefs.SetInt(BaseKey, Mathf.RoundToInt(MolakStats.Get("g_runs")) - e.life); PlayerPrefs.Save();
                 MolakStats.Set("g_storypick", 1f);
                 MolakStats.Set("storymode", 1f);
                 MolakName.EnsurePairs();
@@ -280,9 +284,9 @@ public class MolakStoryBook : MonoBehaviour
         // 목록 높이
         float rowH = 116 * u, gh = 70 * u, gapR = 14 * u;
         float total = rowH + gapR + 10 * u;
-        bool anyA = false, anyB = false;
-        foreach (var e in list) { if (e.second) anyB = true; else anyA = true; }
-        total += (anyA ? gh : 0) + (anyB ? gh : 0) + list.Count * (rowH + gapR) + 140 * u;
+        int groups = 0, lastLife = -1;
+        foreach (var e in list) if (e.life != lastLife) { groups++; lastLife = e.life; }
+        total += groups * gh + list.Count * (rowH + gapR) + 140 * u;
         float maxScroll = Mathf.Max(0f, total - view.height);
 
         // 끌기(손가락·마우스)
@@ -311,29 +315,28 @@ public class MolakStoryBook : MonoBehaviour
         // 서장부터
         if (Row(new Rect(m, yy, cw, rowH), "서장부터", "청운산장의 새벽 — 처음부터 읽는다", new Color(0.12f, 0.10f, 0.08f, 1f), canTap, u))
         {
-            Close(); RestoreGlobals(); onFresh?.Invoke();
+            Close(); RestoreGlobals(); MarkFreshStart(); onFresh?.Invoke();
         }
         yy += rowH + gapR + 10 * u;
-        for (int pass = 0; pass < 2; pass++)
+        int curLife = -1;
+        foreach (var e in list)
         {
-            bool second = pass == 1;
-            if (second ? !anyB : !anyA) continue;
-            GUI.Label(new Rect(m, yy + 10 * u, cw, gh - 10 * u), second ? "둘째 생 — 되돌리는 길" : "첫 생 — 잃는 길", sGroup);
-            Box(new Rect(m, yy + gh - 6 * u, cw, Mathf.Max(1f, 1f * u)), new Color(0.55f, 0.16f, 0.12f, 0.35f));
-            yy += gh;
-            foreach (var e in list)
+            if (e.life != curLife)
             {
-                if (e.second != second) continue;
-                var r = new Rect(m, yy, cw, rowH);
-                if (r.yMax > -10f && r.y < view.height + 10f)
-                {
-                    string sub = string.IsNullOrEmpty(e.sub) ? "" : e.sub;
-                    if (Row(r, e.title, sub, second ? new Color(0.20f, 0.30f, 0.52f, 1f) : new Color(0.55f, 0.16f, 0.12f, 1f), canTap, u)) { Jump(e); GUI.EndGroup(); return; }
-                }
-                yy += rowH + gapR;
+                curLife = e.life;
+                GUI.Label(new Rect(m, yy + 10 * u, cw, gh - 10 * u), LifeName(curLife), sGroup);
+                Box(new Rect(m, yy + gh - 6 * u, cw, Mathf.Max(1f, 1f * u)), new Color(0.55f, 0.16f, 0.12f, 0.35f));
+                yy += gh;
             }
+            var r = new Rect(m, yy, cw, rowH);
+            if (r.yMax > -10f && r.y < view.height + 10f)
+            {
+                var bar = curLife == 0 ? new Color(0.55f, 0.16f, 0.12f, 1f) : curLife == 1 ? new Color(0.20f, 0.30f, 0.52f, 1f) : new Color(0.30f, 0.42f, 0.30f, 1f);
+                if (Row(r, e.title, e.sub ?? "", bar, canTap, u)) { Jump(e); GUI.EndGroup(); return; }
+            }
+            yy += rowH + gapR;
         }
-        if (!anyA && !anyB)
+        if (list.Count == 0)
             GUI.Label(new Rect(m, yy + 20 * u, cw, 120 * u), "아직 닿은 마디가 없다.\n이야기 모드로 읽다 보면, 지난 마디가 여기 하나씩 쌓인다.", sNote);
         GUI.EndGroup();
 
@@ -346,6 +349,12 @@ public class MolakStoryBook : MonoBehaviour
         GUI.Label(br, "제목으로 돌아간다", sBack);
         if (Time.realtimeSinceStartup - openedAt > 0.35f && GUI.Button(br, GUIContent.none, GUIStyle.none)) Close();
         GUI.color = Color.white;
+    }
+
+    static string LifeName (int life)
+    {
+        string[] n = { "첫 생", "둘째 생", "셋째 생", "넷째 생", "다섯째 생" };
+        return life < n.Length ? n[life] : (life + 1) + "번째 생";
     }
 
     bool Row (Rect r, string title, string sub, Color bar, bool canTap, float u)
