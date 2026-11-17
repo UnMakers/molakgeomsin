@@ -2289,6 +2289,7 @@
 @choice "북쪽 고개로 가 뼈 장식 소리를 찾는다" if:sw>=10 goto:#E_Spar3X
 @stop
 # E_Spar3C0
+@gosub #E_Spar3Yt if:f_marketyeot>0&&f_soamet>0&&f_soadead<1
 @set tr=random(1,100)
 @goto #E_Spar3C0_x1 if:tr<=17
 @goto #E_Spar3C0_x2 if:tr<=32
@@ -8180,3 +8181,14 @@
 @set f_chamledger=1
 그녀가 남은 장부를 도로 품에 넣는다. "이건 제 목숨값이에요. 한 장만이에요."
 @return
+
+; ---------- 0.4.76 장날의 엿: 상여 뒤에 소아가 놓고 가는 것 ----------
+# E_Spar3Yt
+@art char:soa_grief
+상여 뒤에 소아도 섞여 걷는다. 묏자리에서 소아가 무덤 앞에 무언가를 내려놓는다. 장날에 받은 엿이다. 싼 종이도 풀지 않았다.
+소아가 장부를 꺼내 「엿 하나」 줄을 먹으로 지운다. 그 위의 「만두 넷」은 지우지 않는다.
+"그건 왜 안 지우오."
+"받지 않는 빚은 안 지운다며. 네가 그랬다."
+@art char:none
+@return
+

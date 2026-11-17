@@ -44,6 +44,7 @@
 @set b_hunt2=0
 @set b_hunt3x=0
 @set b_hyname=0
+@set b_innday=0
 @set b_ipma=0
 @set b_jang=0
 @set b_jang2=0
@@ -53,6 +54,7 @@
 @set b_ldjin=0
 @set b_leave=0
 @set b_lord=0
+@set b_market=0
 @set b_nethint=0
 @set b_netk=0
 @set b_north=0
@@ -291,6 +293,7 @@
 @set f_hyeop=0
 @set f_incense=0
 @set f_inkcord=0
+@set f_innday=0
 @set f_insulted=0
 @set f_ipmafight=0
 @set f_ipmaknow=0
@@ -337,6 +340,8 @@
 @set f_maengraid=0
 @set f_maengsold=0
 @set f_maengvow=0
+@set f_marketbasket=0
+@set f_marketyeot=0
 @set f_mirror=0
 @set f_monklore=0
 @set f_mournambush=0
