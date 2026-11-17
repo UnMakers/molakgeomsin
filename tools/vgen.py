@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # canon 전체: 변수 선초기화 재생성 + goto/choice 대상·형식·fx·본문 함정 검사
 import io, re, glob, os, sys
-C = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'canon')
+C = os.environ.get('MOLAK_CANON', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'unity-nani'))  # 기본: 저장소의 unity-nani 를 바로 고친다
 files = sorted(glob.glob(os.path.join(C, '*.nani')))
 outs = {os.path.basename(f)[:-5]: io.open(f, encoding='utf-8').read() for f in files}
 idset = set()
@@ -12,7 +12,7 @@ for s in outs.values():
     for m in re.finditer(r'@set ([A-Za-z_][A-Za-z0-9_]*)', t): idset.add(m.group(1))
     for m in re.finditer(r'\{([A-Za-z_][A-Za-z0-9_]*)\}', s): idset.add(m.group(1))
 drop = {'random', 'true', 'false', 'pow', 'abs', 'min', 'max'}
-strings = {'knownew', 'knowsnap', 'nextevent', 'dkind', 'deathcause', 'foename', 'foerank', 'foetier', 'oldrank', 'newrank', 'tiername','prepbond','prepitem','lifesum','lifecmp','deathtip','truehint','vowline','dejapre','byeolho','insultname','dx_pretext','dx_telltext','dx_restext','dx_momtext','bridgetext','evkind','keepused','dx_keepname','dx_keepflag','dx_keeptext','rm_text','rm_1','rm_2','rm_3','rm_4','rm_5','rm_6','rm_7','rm_8','rm_9','rm_10','grname','grline'}
+strings = {'knownew', 'knowsnap', 'nextevent', 'dkind', 'deathcause', 'foename', 'foerank', 'foetier', 'oldrank', 'newrank', 'tiername','prepbond','prepitem','lifesum','lifecmp','deathtip','truehint','vowline','dejapre','byeolho','insultname','dx_pretext','dx_telltext','dx_restext','dx_momtext','bridgetext','evkind','keepused','dx_keepname','dx_keepflag','dx_keeptext','rm_text','rm_1','rm_2','rm_3','rm_4','rm_5','rm_6','rm_7','rm_8','rm_9','rm_10','grname','grline','truthsnap','tr_1','tr_2','nightteaser','tzseen','g_nxform','btpath','btguard','btfoe','comp','compline','odds10k'}
 nums = sorted(x for x in idset if x not in drop and not x.startswith('g_') and x[0].islower() and x not in strings)
 init = ['; (자동 생성) 변수 선초기화'] + ['@set %s=0' % v for v in nums] + ['@set %s="none"' % v for v in sorted(strings)]
 m01 = outs['Molak01']
@@ -43,7 +43,7 @@ for n, c in outs.items():
             if f2 not in lab or lb not in lab[f2]: bad.append('%s:%d goto 대상 없음 %s' % (n, i + 1, t))
         if l.startswith('@choice') and (not CH.match(l) or not re.match(r'^((?: (?:if|goto|set):\S+)*)\s*$', CH.match(l).group(2)) or CH.match(l).group(1) == ''): bad.append('%s:%d choice 형식' % (n, i + 1))
         if l.startswith('@fx'):
-            for kv in l.split()[1:]:
+            for kv in re.sub(r' why:"[^"]*"', '', l).split()[1:]:
                 if kv.startswith('if:'): continue
                 if ':' not in kv or kv.split(':')[0] not in FX: bad.append('%s:%d fx 키 %s' % (n, i + 1, kv))
         if l.strip() and l[0] not in '@#;':

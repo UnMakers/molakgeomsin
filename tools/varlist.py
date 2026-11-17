@@ -1,14 +1,14 @@
 # Molak01 의 자동 초기화 블록에서 변수 목록을 뽑아 MolakVarList.cs 를 만든다(옛 저장 호환용).
 import io,re,os
-here=os.path.dirname(__file__)
-m01=io.open(os.path.join(os.environ.get('MOLAK_CANON', os.path.join(here,'..','canon')),'Molak01.nani'),encoding='utf-8').read()
+here=os.path.dirname(os.path.abspath(__file__))
+m01=io.open(os.path.join(os.environ.get('MOLAK_CANON', os.path.join(here,'..','unity-nani')),'Molak01.nani'),encoding='utf-8').read()
 blk=re.search(r'; \(자동 생성\) 변수 선초기화([\s\S]*?)(?=@initrun)',m01).group(1)
 nums=re.findall(r'@set (\w+)=0\n',blk); strs=re.findall(r'@set (\w+)="none"',blk)
 # 전역(g_) 숫자 변수: 정본 스크립트 전체에서 쓰이는 이름. 조건식에서 읽기 전에 반드시 있어야 한다(없으면 문자열로 취급돼 비교가 깨진다).
 import glob
-STR_GLOBALS={'g_lastend','g_lastcause'}
+STR_GLOBALS={'g_lastend','g_lastcause','g_nxform'}
 gl=set()
-for f in glob.glob(os.path.join(os.environ.get('MOLAK_CANON', os.path.join(here,'..','canon')),'*.nani')):
+for f in glob.glob(os.path.join(os.environ.get('MOLAK_CANON', os.path.join(here,'..','unity-nani')),'*.nani')):
     gl|=set(re.findall(r'\b(g_[a-z0-9_]*[a-z0-9])\b',io.open(f,encoding='utf-8').read()))
 gl=sorted(gl-STR_GLOBALS)
 cs='''// (자동 생성: tools2/varlist.py) 회차 변수 목록 — 옛 저장을 불러왔을 때 빠진 변수를 채운다.
@@ -38,5 +38,5 @@ public class EnsureVarsCommand : Command
     }
 }
 '''%(', '.join('"%s"'%n for n in nums), ', '.join('"%s"'%n for n in strs), ', '.join('"%s"'%n for n in gl))
-io.open('/home/claude/molakgeomsin/unity-src/MolakVarList.cs','w',encoding='utf-8').write(cs)
+io.open(os.path.join(here,'..','unity-src','MolakVarList.cs'),'w',encoding='utf-8').write(cs)
 print(len(nums),len(strs),len(gl))
