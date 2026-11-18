@@ -260,6 +260,7 @@
 @set f_ev_acup3=0
 @set f_ev_acup4=0
 @set f_ev_beggar=0
+@set f_ev_beggar3=0
 @set f_ev_child=0
 @set f_ev_cold=0
 @set f_ev_cult2=0
@@ -269,6 +270,8 @@
 @set f_ev_cultrite=0
 @set f_ev_dokrev=0
 @set f_ev_dream=0
+@set f_ev_dream2=0
+@set f_ev_dream3=0
 @set f_ev_duel2=0
 @set f_ev_duel3=0
 @set f_ev_duelist=0
@@ -289,11 +292,15 @@
 @set f_ev_herb2=0
 @set f_ev_herb4=0
 @set f_ev_hunter=0
+@set f_ev_hunter2=0
+@set f_ev_hunter3=0
 @set f_ev_hyeok1=0
 @set f_ev_hyeok3=0
 @set f_ev_hyeok4=0
 @set f_ev_lostblade=0
 @set f_ev_monk=0
+@set f_ev_monk3=0
+@set f_ev_monk4=0
 @set f_ev_night=0
 @set f_ev_night2=0
 @set f_ev_night3=0
@@ -307,11 +314,14 @@
 @set f_ev_rival=0
 @set f_ev_sgrave=0
 @set f_ev_simma=0
+@set f_ev_simma2=0
+@set f_ev_simma3=0
 @set f_ev_soa2=0
 @set f_ev_spar=0
 @set f_ev_spar3=0
 @set f_ev_spy=0
 @set f_ev_story2=0
+@set f_ev_story3=0
 @set f_ev_sutra=0
 @set f_ev_sutra2=0
 @set f_ev_sutra3=0
@@ -323,6 +333,8 @@
 @set f_ev_village=0
 @set f_ev_wolf=0
 @set f_ev_yong=0
+@set f_ev_yong3=0
+@set f_ev_yongk2=0
 @set f_ferryfree=0
 @set f_ferrysafe=0
 @set f_finger=0

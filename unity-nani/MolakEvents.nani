@@ -3540,10 +3540,14 @@
 @art scene:gate
 @deja text:"\"죽은 사람은 편하오?\" 지난 생에도 이렇게 물었다. 대답은 아직 모른다."
 {dejapre}
+@goto #E_Hunter2Re if:g_ev_hunter2>0&&f_ev_hunter2<1
+@set g_ev_hunter2=1
+@set f_ev_hunter2=1
 밤. 객잔 뒷문에 현상금 사냥꾼이 혼자 서 있다. 칼은 뽑지 않았다.
 "거래를 합시다. 열 냥이면 형씨 수배서에 '사망' 도장을 찍고 삼백 냥을 받아 가겠소. 나는 돈을 벌고, 형씨는 죽은 사람이 되고."
 <align=right>"죽은 사람은 편하오?"</align>
 "살아 있는 사람보다는."
+# E_Hunter2Ch
 @choice "은자 열을 준다" if:mn>=10 goto:#E_Hunter2C0
 @choice "검을 뽑는다" goto:#E_Hunter2C1
 @choice "칼자루를 짚은 채 고개를 젓는다" goto:#E_Hunter2C2
@@ -3580,10 +3584,14 @@
 # E_Hunter3
 @deja text:"넷이 에워싼다. 누가 먼저 욕심을 내는지, 누구의 발이 먼저 묶이는지 안다."
 {dejapre}
+@goto #E_Hunter3Re if:g_ev_hunter3>0&&f_ev_hunter3<1
+@set g_ev_hunter3=1
+@set f_ev_hunter3=1
 정오. 저자 공터. 사냥꾼 넷이 당신을 에워싼다.
 @goto #E_Hunter3D if:f_deadrumor>0
 "삼백 냥. 넷이 나누면 일흔다섯. 혼자 먹으면 삼백."
 놈들이 서로를 흘끔거린다. 욕심이 발을 묶는다.
+# E_Hunter3Ch
 @choice "정면으로 뚫는다 〔검술+1〕" goto:#E_Hunter3C0
 @choice "지붕으로 오른다" goto:#E_Hunter3C1
 @choice "\"삼백 냥은 먼저 베는 놈 몫이다.\"" goto:#E_Hunter3X
@@ -3642,12 +3650,16 @@
 @art char:hajinmu
 @deja text:"엎질러진 국. 울먹이는 아이. 지난 생에도 이 아이를 울렸다. 그 눈빛이 아직 남아 있다."
 {dejapre}
+@goto #E_Simma2Re if:g_ev_simma2>0&&f_ev_simma2<1
+@set g_ev_simma2=1
+@set f_ev_simma2=1
 점소이가 밥상을 내려놓다 국을 엎는다.
 "죄, 죄송합니다요……."
 쳐다보기만 했는데 아이가 울먹인다.
 '쳐다만 봤는데. 내 눈이 그렇게 됐나.'
 하진무가 바닥을 닦으며 올려다보지 않고 말한다.
 "객. 요새 눈빛이 달라졌소."
+# E_Simma2Ch
 @choice "술상을 청한다" if:mn>=1 goto:#E_Simma2C0
 @choice "\"참견 마시오.\"" goto:#E_Simma2C1
 @choice "검을 끌러 하진무에게 맡긴다" goto:#E_Simma2X
@@ -3677,11 +3689,15 @@
 @art scene:innhall
 @deja text:"이 꿈의 끝을 안다. 세 줄. 눈을 뜨면 손에 칼이 쥐여 있을 것이다."
 {dejapre}
+@goto #E_Simma3Re if:g_ev_simma3>0&&f_ev_simma3<1
+@set g_ev_simma3=1
+@set f_ev_simma3=1
 꿈. 객잔 마당에 사형 스물셋이 줄지어 서 있다. 일곱째가 웃으며 목검을 던진다. '막내야.'
 검이 움직인다. 막내의 검은 거기 없다. 살기의 검이다. 하나. 둘. 셋—
 @page
 눈을 뜬다. 뽑힌 검이 손에 쥐여 있다. 방 안에 베인 자국이 세 줄.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_Simma3Go
 @goto #E_Simma3_au2 if:f_incense>0
 @goto #E_Simma3_au0 if:curse>=60
 @goto #E_Simma3_au0 if:hp<=hpmax/3
@@ -3717,10 +3733,14 @@
 # E_Dream2
 @deja text:"불길을 건넌다. 그을린 복면 아래 검상. 몇 번을 봐도 \"익어 가는구나\"가 귓속을 긁는다."
 {dejapre}
+@goto #E_Dream2Re if:g_ev_dream2>0&&f_ev_dream2<1
+@set g_ev_dream2=1
+@set f_ev_dream2=1
 꿈. 불타는 산장. 이번에는 불길을 건넌다.
 노인의 복면 절반이 불에 그을려 떨어져 나갔다. 왼쪽 눈 위에서 턱까지, 오래된 검상(劍傷).
 "<color=#9A70C4>익어 가는구나.</color>"
 꿈속에서 그 목소리가 들린다. 뼛속에서만 울리던 목소리가 꿈까지 따라온 적은 없었다.
+# E_Dream2Ch
 @choice "남은 복면을 벗기려 손을 뻗는다" goto:#E_Dream2C0
 @choice "눈을 돌린다" goto:#E_Dream2C1
 @stop
@@ -3738,6 +3758,9 @@
 # E_Dream3
 @deja text:"\"묻고 싶은 것이 있겠구나.\" 지난 생에도 물었다. 대답은 늘 반쪽이었다."
 {dejapre}
+@goto #E_Dream3Re if:g_ev_dream3>0&&f_ev_dream3<1
+@set g_ev_dream3=1
+@set f_ev_dream3=1
 꿈. 재만 남은 마당에 노인이 앉아 있다.
 "묻고 싶은 것이 있겠구나."
 <align=right>"왜 나인가."</align>
@@ -3745,6 +3768,7 @@
 <align=right>"다 여물면."</align>
 "거두느니라. 노부가, 아니면……."
 노인이 턱으로 북쪽을 가리킨다. 거기 누가 있는지는 안다. 꿈이 꺼진다.
+# E_Dream3Ch
 @choice "\"거두기 전에 뽑겠다.\"" goto:#E_Dream3C0
 @choice "아무 말도 하지 않는다" goto:#E_Dream3C1
 @choice "\"장문인은 끝내 검을 뽑지 않았다.\"" if:f_storylore>0 goto:#E_Dream3X
@@ -3774,9 +3798,13 @@
 @art char:yonggae
 @deja text:"고개를 돌리는 용개. 지난 생에도 이 줄에서 이 얼굴을 봤다."
 {dejapre}
+@goto #E_Yong3Re if:g_ev_yong3>0&&f_ev_yong3<1
+@set g_ev_yong3=1
+@set f_ev_yong3=1
 나루터. 독아단 둘이 짐꾼들에게 '물건'을 북쪽으로 지고 가라 윽박지른다. 고개를 젓는 짐꾼의 뺨이 터진다.
 그 줄에 용개가 있다. 눈이 마주치자, 당신을 끌어들이지 않으려 고개를 돌린다.
 그 짐을 지고 북쪽으로 간 짐꾼은 돌아온 적이 없다. 용개도 오늘 그 줄에 서 있다.
+# E_Yong3Ch
 @choice "독아단 둘을 손봐 준다 〔검술-1〕" goto:#E_Yong3C0
 @choice "용개를 조용히 빼낸다" goto:#E_Yong3C1
 @choice "용개와 눈을 맞추지 않고 지나친다" goto:#E_Yong3C2
@@ -3818,9 +3846,13 @@
 # E_YongK2
 @deja text:"\"나는 용개의 형이다.\" 또 이 얼굴이다. 벤 목은 형제를 데려온다."
 {dejapre}
+@goto #E_YongK2Re if:g_ev_yongk2>0&&f_ev_yongk2<1
+@set g_ev_yongk2=1
+@set f_ev_yongk2=1
 산길. 핏발 선 눈의 덩치가 길을 막는다.
 "나는 용개의 형이다. 네놈이 내 아우를 베었지."
 살려 달라던 그 얼굴이 이 사내의 얼굴 위로 겹친다.
+# E_YongK2Ch
 @choice "벤다" goto:#E_YongK2C0
 @choice "검 없이 제압한다 〔검술-2〕" goto:#E_YongK2C1
 @choice "은자를 던져 준다" if:mn>=4 goto:#E_YongK2C2
@@ -3858,11 +3890,15 @@
 # E_Storyteller2
 @deja text:"과장된 이야기, 추풍낙엽. 지난 생에도 이 대목 뒤에 무엇이 왔는지 안다."
 {dejapre}
+@goto #E_Storyteller2Re if:g_ev_story3>0&&f_ev_story3<1
+@set g_ev_story3=1
+@set f_ev_story3=1
 장터 이야기꾼의 부채가 펼쳐진다.
 "……하여 운객(雲客)이 비무판에 오르니, 서열 높은 칼들이 추풍낙엽이라!"
 당신 이야기다. 과장이 심하다. 낙엽은 아니었다.
 '낙엽은 아니었다. 바람 정도였다.'
 이야기꾼의 눈이 당신을 알아보고, 모른 척한다.
+# E_Storyteller2Ch
 @choice "\"낙엽은 아니었소.\"" goto:#E_Storyteller2C0
 @choice "동전을 던져 더 부풀리게 한다" if:mn>=2 goto:#E_Storyteller2C1
 @choice "부채 소리를 등지고 자리를 뜬다" goto:#E_Storyteller2C2
@@ -3898,9 +3934,13 @@
 # E_Monk3
 @deja text:"\"여섯에 아홉.\" 열병에도 같은 구결이다. 지난 생에도 이 다리 밑에 약을 들고 왔다."
 {dejapre}
+@goto #E_Monk3Re if:g_ev_monk3>0&&f_ev_monk3<1
+@set g_ev_monk3=1
+@set f_ev_monk3=1
 다리 밑. 거지 중이 열병으로 누워 있다.
 "…시주. 숨은 세어 보셨소? 여섯에 아홉."
 열병에도 구결 타령이다.
+# E_Monk3Ch
 @choice "백초당에서 약을 사다 준다 (은자 3)" if:mn>=3 goto:#E_Monk3C0
 @choice "물을 떠다 준다" goto:#E_Monk3C1
 @choice "숨 세는 소리를 못 들은 척 지나친다" goto:#E_Monk3C2
@@ -3941,6 +3981,9 @@
 # E_Monk4
 @deja text:"삼십 년 전의 토벌. 중의 입에서 그 이야기가 나오기 전에 당신이 먼저 안다."
 {dejapre}
+@goto #E_Monk4Re if:g_ev_monk4>0&&f_ev_monk4<1
+@set g_ev_monk4=1
+@set f_ev_monk4=1
 다리 밑. 거지 중이 멀쩡한 얼굴로 기다리고 있다.
 "시주. 오늘은 내가 묻겠소. 청운 장문인의 검을 본 적이 있소?"
 "있구려. 눈에 쓰여 있소. 나도 보았소. 삼십 년 전, 혈천교를 토벌할 때 그 검 곁에서 염불을 외던 중이 나요."
@@ -3956,8 +3999,12 @@
 # E_Beggar3
 @deja text:"\"붉은 끈 셋이 담 밑을 세고 갔소.\" 지난 생에도 이 귀띔을 들었다. 들은 대로 됐다."
 {dejapre}
+@goto #E_Beggar3Re if:g_ev_beggar3>0&&f_ev_beggar3<1
+@set g_ev_beggar3=1
+@set f_ev_beggar3=1
 저자 어귀에서 낯익은 거지가 소매를 잡는다.
 "나리. 붉은 끈 셋이 객잔 담 밑을 세고 갔소. 아침, 낮, 해 질 녘. 한 끼 값만 쳐 주시면 더 들은 것도 있소만."
+# E_Beggar3Ch
 @choice "한 끼 값을 준다 (은자 1)" if:mn>=1 goto:#E_Beggar3C0
 @choice "소매를 털어 뿌리친다" goto:#E_Beggar3C1
 @choice "\"골목 아이들은 뭐라던가.\"" if:f_alms>0||f_thiefkid>0 goto:#E_Beggar3X
@@ -9697,4 +9744,128 @@
 밧줄에 묶인 넷 중 하나가 고개를 든다. 이 관도에서 고개를 든 사람은 오늘 그 하나다.
 '고개를 돌리는 구경꾼들 틈에서, 이번엔 먼저 서 있었다.'
 @goto #E_Cultists2Ch
+
+# E_Hunter2Re
+@set f_ev_hunter2=1
+밤. 객잔 뒷문. 사냥꾼이 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>열 냥이면 수배서에 '사망' 도장을 찍어 주겠다는 거지요. 나는 죽은 사람이 되고.</color>"</align>
+사냥꾼의 손이 칼자루에서 미끄러진다.
+"……그 거래, 아직 아무한테도 안 꺼냈소."
+<align=right>"<color=#9A70C4>죽은 사람이 살아 있는 사람보다 편하다고 하실 거고.</color>"</align>
+"……형씨, 죽어 본 사람처럼 말하는구려."
+'몇 번.'
+@goto #E_Hunter2Ch
+
+# E_Hunter3Re
+@set f_ev_hunter3=1
+@goto #E_Hunter3D if:f_deadrumor>0
+정오. 저자 공터. 사냥꾼 넷이 둘러서기 전에 공터 한가운데 먼저 서 있다.
+<align=right>"<color=#9A70C4>삼백 냥. 넷이 나누면 일흔다섯. 혼자 먹으면 삼백.</color>"</align>
+넷이 서로를 본다. 셈은 당신이 했는데 욕심은 저들 것이다. 발이 묶인다.
+'셈을 먼저 대신 해 주면 저들끼리 눈치를 본다. 몇 번 겪고 배운 수다.'
+@goto #E_Hunter3Ch
+
+# E_Simma2Re
+@set f_ev_simma2=1
+점소이가 밥상을 들고 오기 전에 먼저 눈을 감는다. 감은 채로 밥상을 받는다.
+점소이가 국을 엎지 않는다. 대신 묻는다. "객관님, 졸리셔요?"
+<align=right>"아니. 눈이 사나워져서."</align>
+아이가 웃는다. 하진무가 계산대에서 올려다보지 않고 말한다.
+"객. 요새 눈빛이 달라졌소. 감고 있어도 알겠소."
+'<color=#9A70C4>감아도 들킨다. 이 영감 눈은 못 속인다.</color>'
+@goto #E_Simma2Ch
+
+# E_Simma3Re
+@set f_ev_simma3=1
+꿈. 객잔 마당에 사형 스물셋. 일곱째가 목검을 던지기 전에, 먼저 두 손을 등 뒤로 감춘다.
+'<color=#9A70C4>이 꿈이다. 검을 받으면 살기의 검이 움직인다. 받지 않는다.</color>'
+목검이 발치에 떨어진다. 일곱째가 웃는다. '막내야, 안 받냐.'
+@page
+눈을 뜬다. 손은 비어 있다. 그런데 방 안에 베인 자국이 한 줄. 검은 칼집에서 반쯤 나와 있다.
+'안 받아도 한 줄은 나온다. 세 줄보다는 낫다.'
+@goto #E_Simma3Go
+
+# E_Dream2Re
+@set f_ev_dream2=1
+꿈. 불타는 산장. 불길을 건너기 전에 먼저 노인의 왼쪽 얼굴을 본다.
+'<color=#9A70C4>복면 절반이 그을려 떨어진다. 왼쪽 눈 위에서 턱까지, 오래된 검상.</color>'
+그대로다. 노인이 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>익어 간다고 하실 거지요.</color>"</align>
+노인의 그을린 입꼬리가 올라간다.
+"<color=#9A70C4>……익은 열매는 나무의 말을 먼저 하느니라.</color>"
+@goto #E_Dream2Ch
+
+# E_Dream3Re
+@set f_ev_dream3=1
+꿈. 재만 남은 마당. 노인이 묻기 전에 먼저 그 앞에 앉는다.
+<align=right>"<color=#9A70C4>왜 나인가. 막내인 까닭. 가장 늦게 트는 씨앗이 가장 크게 여무니까.</color>"</align>
+노인이 침묵한다. 묻고 답할 것을 다 빼앗긴 늙은이의 얼굴이다.
+<align=right>"<color=#9A70C4>다 여물면 거두신다지요. 노인장이, 아니면 북쪽의 그가.</color>"</align>
+"……이 꿈을 몇 번 꾸었느냐."
+<align=right>"셀 만큼."</align>
+꿈이 흔들린다.
+@goto #E_Dream3Ch
+
+# E_Yong3Re
+@set f_ev_yong3=1
+나루터. 독아단 둘이 짐꾼들을 줄 세우기 전에 그 줄 끝에 먼저 가 선다. 용개 바로 뒤에.
+용개가 돌아보다 굳는다. 당신을 끌어들이지 않으려 돌리던 고개가 갈 데를 잃는다.
+"……나리, 왜 줄에 서십니까요."
+<align=right>"<color=#9A70C4>이 짐 지고 북쪽 간 짐꾼은 돌아온 적이 없지.</color>"</align>
+"……."
+<align=right>"그러니 같이 안 가면 되오."</align>
+독아단 하나가 줄 끝을 보고 눈을 부라린다.
+@goto #E_Yong3Ch
+
+# E_YongK2Re
+@set f_ev_yongk2=1
+산길. 핏발 선 덩치가 길을 막기 전에 먼저 이름을 부른다.
+<align=right>"<color=#9A70C4>용개의 형이지요.</color>"</align>
+덩치가 막아서다 반 걸음 멈춘다.
+"……네놈이 내 아우를 베었지."
+'<color=#9A70C4>이 얼굴을 또 본다. 용개를 벤 생마다 이 형이 온다.</color>'
+@goto #E_YongK2Ch
+
+# E_Storyteller2Re
+@set f_ev_story3=1
+이야기꾼이 부채를 펴기 전에 맨 앞줄에 앉는다.
+"……하여 운객이 비무판에 오르니, 서열 높은 칼들이 추풍낙엽이라!"
+<align=right>"<color=#9A70C4>낙엽은 아니었소. 바람 정도였지.</color>"</align>
+구경꾼들이 웃는다. 이야기꾼의 부채가 반 박자 멈췄다가 더 크게 펼쳐진다.
+"보시오, 운객 본인이 바람이었다 하오! 낙엽보다 바람이 더 세지 않겠소!"
+'이 사람은 고쳐 줘도 부풀린다. 장사꾼이다.'
+@goto #E_Storyteller2Ch
+
+# E_Monk3Re
+@set f_ev_monk3=1
+다리 밑. 열병으로 누운 거지 중이 숨을 세기 전에, 그 머리맡에 앉아 먼저 센다.
+<align=right>"<color=#9A70C4>여섯에 아홉. 스님, 오늘은 내가 세겠소.</color>"</align>
+중이 붙은 눈을 반쯤 뜬다.
+"……시주가 내 구결을 나한테 돌려주는구먼. 열이 나니 좋은 일도 있네."
+@goto #E_Monk3Ch
+
+# E_Monk4Re
+@set f_ev_monk4=1
+다리 밑. 거지 중이 묻기 전에 먼저 앉는다.
+<align=right>"<color=#9A70C4>청운 장문인의 검이라면, 봤소. 스님도 보셨지요. 삼십 년 전, 혈천교를 칠 때 그 곁에서.</color>"</align>
+중의 바가지가 손에서 떨어진다.
+"……그 얘기는 이 다리 밑에서 오늘 처음 꺼내려던 거요."
+<align=right>"<color=#9A70C4>그때 교주도 가슴에 그 글자를 달고 있었다는 것도.</color>"</align>
+"……밭이 밭을 키운 게요. 그러니 시주."
+<align=right>"<color=#9A70C4>거두는 자가 되지 마라. 그게 구결의 마지막 줄이고.</color>"</align>
+중이 오래 당신을 본다. 그러고는 바가지를 주워 머리에 쓴다.
+"마지막 줄까지 뺏기면 중은 뭘 하나. 염불이나 하지."
+@fx ng:2 curse:-2
+@set f_monklore=1
+'<color=#9A70C4>거두는 자가 되지 마라. 몇 생째 되뇌어도 무게가 줄지 않는다.</color>'
+@return
+
+# E_Beggar3Re
+@set f_ev_beggar3=1
+저자 어귀. 낯익은 거지가 소매를 잡기 전에 먼저 한 냥을 내민다.
+<align=right>"<color=#9A70C4>붉은 끈 셋이 객잔 담 밑을 셌지. 아침, 낮, 해 질 녘. 더 들은 것만 파시오.</color>"</align>
+거지가 소매를 잡으려던 손을 거둔다. 입을 다물지 못한다.
+"……나리, 그럼 나는 반 끼 값밖에 못 파는데요."
+'반 끼 값이라도 산다. 들은 것보다 들을 것이 비싸다.'
+@goto #E_Beggar3Ch
 
