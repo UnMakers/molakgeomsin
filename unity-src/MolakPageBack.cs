@@ -42,7 +42,7 @@ public class MolakPageBack : MonoBehaviour
     /// <summary>쪽이 넘어가기 직전, 그 쪽의 글을 적어 둔다.</summary>
     public static void Push (string text)
     {
-        if (string.IsNullOrEmpty(text) || text.Trim().Length == 0) return;
+        if (string.IsNullOrEmpty(text) || text.Replace("\u200B", "").Trim().Length == 0) return;   // 0.4.80 보이지 않는 한 글자만 있는 쪽은 적지 않는다
         if (pages.Count > 0 && pages[pages.Count - 1] == text) return;
         pages.Add(text);
         while (pages.Count > MaxPages) pages.RemoveAt(0);

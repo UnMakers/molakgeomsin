@@ -408,6 +408,9 @@ public class DejaCommand : Command
             bool seen = false;
             if (tr != null && tr.PlayedScript != null) seen = sp.HasPlayed(tr.PlayedScript.Path, tr.PlayedIndex + 1);
             bool need = !Assigned(Need) || MolakStats.Get(Need.Value) > 0f;
+            // 0.4.80: 바로 뒤에서 회귀한 생 갈래(…K / …Re, g_ev_* · g_bt_*)로 넘어가면 이 한 줄은 찍지 않는다.
+            // 갈래가 제 첫 줄로 '안다'를 보여 주는데, 앞에서 같은 앎을 먼저 말해 버리면 터질 대목이 미리 새고 두 번 말하게 된다.
+            if (seen && tr != null && GoesToRegressionBranch(tr)) seen = false;
             if (seen && need && MolakStats.Get("g_runs") >= 1f)
             {
                 string line;
@@ -432,5 +435,25 @@ public class DejaCommand : Command
         // 빈 문자열을 찍으면 나니노벨이 글자 드러내기를 끝내지 못하고 멈춘다 — 보이지 않는 한 글자(폭 없는 공백)로 둔다
         if (string.IsNullOrEmpty(pre)) pre = "\u200B";
         MolakStats.SetStr("dejapre", pre);
+    }
+
+    /// <summary>{dejapre} \uC904 \uB4A4 \uBA87 \uBA85\uB839 \uC548\uC5D0 \uD68C\uADC0\uD55C \uC0DD \uAC08\uB798\uB85C \uAC00\uB294 \uC870\uAC74 @goto \uAC00 \uC788\uACE0, \uADF8 \uC870\uAC74\uC774 \uC9C0\uAE08 \uCC38\uC778\uAC00</summary>
+    static bool GoesToRegressionBranch (IScriptTrack tr)
+    {
+        try
+        {
+            var pl = tr.Playlist; if (pl == null) return false;
+            for (int k = tr.PlayedIndex + 2; k < pl.Count && k <= tr.PlayedIndex + 4; k++)
+            {
+                var c = pl[k];
+                if (!(c is Naninovel.Commands.Goto)) { if (c is Naninovel.Commands.PrintText || c is Naninovel.Commands.AddChoice) return false; continue; }
+                if (c.ConditionalExpression == null || !c.ConditionalExpression.HasValue) return false;
+                string ex = c.ConditionalExpression.Value;
+                if (ex == null || (ex.IndexOf("g_ev_", System.StringComparison.Ordinal) < 0 && ex.IndexOf("g_bt_", System.StringComparison.Ordinal) < 0)) continue;
+                return Naninovel.ExpressionEvaluator.Evaluate<bool>(ex);
+            }
+        }
+        catch { }
+        return false;
     }
 }

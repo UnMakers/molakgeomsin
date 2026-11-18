@@ -209,7 +209,7 @@ public class MolakFlow : MonoBehaviour
         else MolakPageBack.MarkPrinted();
         pt.ResetPrinter = reset;
         bool hadText = false;
-        if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); hadText = buf.Count > 0; } }
+        if (reset) { var prp = Printer(); if (prp != null) { buf.Clear(); prp.CollectMessages(buf); hadText = buf.Count > 0; } if (hadText) { var dth = DialogueText(); if (dth != null && (dth.text ?? "").Replace("\u200B", "").Trim().Length == 0) hadText = false; } }   // 0.4.80 보이지 않는 한 글자(빈 지난 생 줄)만 있는 쪽은 빈 쪽
         // 0.4.68 읽을 틈 없이 지워지는 쪽은 붙잡는다(FlipGate). 선택지 뒤·이음 문장·검증 넘기기는 제외.
         bool unread = reset && hadText && !afterChoice && !isBridge && !lastFinalWait && lastPressAt <= lastPrintAt + 0.05f;
         var spk = player; bool skipping = MolakPlayMode.SkipAll || (spk != null && spk.Skipping);
