@@ -249,7 +249,7 @@
 @deja text:"기와 위의 술병 하나, 잔 둘. 이 밤에 그녀가 무엇을 묻는지 안다. 대답은 아직 못 정했다."
 {dejapre}
 @goto #SoaN11Re if:g_bt_soan11>0&&f_bt_soan11<1
-@set g_bt_soan11=1
+@set g_bt_soan11=g_bt_soan11+1 if:f_bt_soan11<1
 @set f_bt_soan11=1
 성문 앞 포졸이 다시 늘었다. 나루엔 관아의 배가 둘. 그물이 좁혀 오는 밤.
 지붕 위에 소아가 먼저 와 있다. 술병 하나, 잔 둘.
@@ -319,7 +319,7 @@
 @deja text:"우물가의 책. 지난 생에도 이 책을 펼쳤다. 몇 장째에서 손이 멈추는지 안다."
 {dejapre}
 @goto #SoaG1Re if:g_bt_soag1>0&&f_bt_soag1<1
-@set g_bt_soag1=1
+@set g_bt_soag1=g_bt_soag1+1 if:f_bt_soag1<1
 @set f_bt_soag1=1
 @print "그녀가 머물던 방을 하진무가 비우지 못하고 있다. 베개 밑에 책이 있다." if:f_hajindead<1
 @print "그녀가 머물던 방은 치울 사람이 없어 그대로다. 베개 밑에 책이 있다." if:f_hajindead>0
@@ -385,6 +385,7 @@
 
 # SoaN11Re
 @set f_bt_soan11=1
+@set g_bt_soan11=g_bt_soan11+1
 지붕 위에 소아가 먼저 와 있다. 술병 하나, 잔 둘. 그녀가 입을 열기 전에 잔 하나를 집는다.
 <align=right>"<color=#9A70C4>석 잔 법도는 오늘 건너뛰자는 거지. 한 잔씩만.</color>"</align>
 소아가 술병을 든 채 굳는다.
@@ -398,6 +399,7 @@
 
 # SoaG1Re
 @set f_bt_soag1=1
+@set g_bt_soag1=g_bt_soag1+1
 @print "그녀가 머물던 방을 하진무가 비우지 못하고 있다. 베개 밑에 책이 있다." if:f_hajindead<1
 @print "그녀가 머물던 방은 치울 사람이 없어 그대로다. 베개 밑에 책이 있다." if:f_hajindead>0
 책을 받아 들고 첫 장을 넘기지 않는다. 손이 마지막 장을 안다.

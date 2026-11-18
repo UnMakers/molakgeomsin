@@ -74,7 +74,7 @@
 @deja need:g_know_taxday text:"붉은 끈 둘. 지난 생, 이 한낮이 지나고 하진무의 손목이 꺾였다."
 {dejapre}
 @goto #Hajin2Re if:g_bt_hajin2>0&&f_bt_hajin2<1
-@set g_bt_hajin2=1
+@set g_bt_hajin2=g_bt_hajin2+1 if:f_bt_hajin2<1
 @set f_bt_hajin2=1
 한낮. 붉은 끈 징세조 둘이 객잔 마당에 들이닥친다. 오늘은 세금 때문이 아니다.
 "요새 이 객잔에 낯선 놈이 묵는다지."
@@ -145,7 +145,7 @@
 @deja text:"전당포 뒷골목의 소란. 지난 생에도 이 밤 쥐눈이 장에게 무슨 일이 있었는지 안다."
 {dejapre}
 @goto #Jang2Re if:g_bt_jang2>0&&f_bt_jang2<1
-@set g_bt_jang2=1
+@set g_bt_jang2=g_bt_jang2+1 if:f_bt_jang2<1
 @set f_bt_jang2=1
 밤. 전당포 뒷골목이 소란하다.
 @goto #Jang2Sold if:f_jangsold>0
@@ -745,6 +745,7 @@
 
 # Hajin2Re
 @set f_bt_hajin2=1
+@set g_bt_hajin2=g_bt_hajin2+1
 한낮. 붉은 끈 둘이 마당에 들어서기 전에, 평상에 먼저 나와 앉아 국밥을 뜬다.
 징세조가 들어선다. "요새 이 객잔에 낯선 놈이 묵는다지."
 하진무가 주판을 내려놓고 입을 열려는데, 당신이 먼저 숟가락을 든다.
@@ -762,6 +763,7 @@
 
 # Jang2Re
 @set f_bt_jang2=1
+@set g_bt_jang2=g_bt_jang2+1
 @goto #Jang2Sold if:f_jangsold>0
 @art char:jang
 밤. 전당포 뒷골목 어귀에 먼저 서 있다. 붉은 끈 셋이 쥐눈이 장을 몰아오다 당신과 마주친다.

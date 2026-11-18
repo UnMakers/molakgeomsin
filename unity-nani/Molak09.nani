@@ -10,7 +10,7 @@
 @deja text:"사당 마당의 북두칠성. 지난 생에도 이 밤 대사형이 일곱 걸음을 가르쳤다. 몇 번째에서 목소리가 무너지는지 안다."
 {dejapre}
 @goto #Rev6ARe if:g_bt_rev6a>0&&f_bt_rev6a<1
-@set g_bt_rev6a=1
+@set g_bt_rev6a=g_bt_rev6a+1 if:f_bt_rev6a<1
 @set f_bt_rev6a=1
 삼경. 버려진 사당 마당. 진백이 칼집 끝으로 흙바닥에 별 일곱 개를 그려 놓고 기다린다.
 "혈천진의 눈은 북두를 바로 밟는다. 그러니 너는 거꾸로 밟는다. 요광(搖光)에서 시작해 천추(天樞)로."
@@ -61,7 +61,7 @@
 @deja text:"북쪽 산등성이의 횃불 줄. 지난 생에도 이 밤 그 줄이 북으로 꺾였다. 맨 앞 횃불이 누구인지 안다."
 {dejapre}
 @goto #Rev6LRe if:g_bt_rev6l>0&&f_bt_rev6l<1
-@set g_bt_rev6l=1
+@set g_bt_rev6l=g_bt_rev6l+1 if:f_bt_rev6l<1
 @set f_bt_rev6l=1
 한밤. 객잔 지붕에서 보면 북쪽 산등성이에 횃불이 줄지어 간다. 혈랑대 정예다. 남쪽 관도로 와야 할 놈들이 북으로 꺾였다.
 맨 앞 횃불 하나가 유난히 빠르다. 쫓기는 척 무언가를 끌고 오는 걸음이다.
@@ -116,7 +116,7 @@
 @deja text:"사당 문간의 빈자리. 지난 생에도 이 보름엔 쌀이 없었다. 위패 밑의 편지를 안다."
 {dejapre}
 @goto #Rev6DRe if:g_bt_rev6d>0&&f_bt_rev6d<1
-@set g_bt_rev6d=1
+@set g_bt_rev6d=g_bt_rev6d+1 if:f_bt_rev6d<1
 @set f_bt_rev6d=1
 보름. 버려진 사당. 이번 보름엔 문간에 쌀자루가 없다. 놓을 사람이 없으니.
 위패가 있던 자리 밑, 돌 하나가 들려 있다. 그 아래 기름종이에 싼 편지.
@@ -152,7 +152,7 @@
 @deja text:"용마루의 그림자. 지난 생에도 이 밤 대사형이 지붕에 앉아 있었다. 그가 칼을 뽑지 않는다는 것을 안다."
 {dejapre}
 @goto #Rev6NRe if:g_bt_rev6n>0&&f_bt_rev6n<1
-@set g_bt_rev6n=1
+@set g_bt_rev6n=g_bt_rev6n+1 if:f_bt_rev6n<1
 @set f_bt_rev6n=1
 삼경. 객잔 용마루에 사람이 앉아 있다. 검을 무릎에 눕히고. 진백이다.
 "교주께서 너를 거두라 하셨다. 내 손으로."
@@ -209,7 +209,7 @@
 @deja text:"느티나무 아래 술상. 지난 생에도 이 밤 노인과 마주 앉았다. 그가 누구의 잔을 하나 더 따르는지 안다."
 {dejapre}
 @goto #Old3Re if:g_bt_old3>0&&f_bt_old3<1
-@set g_bt_old3=1
+@set g_bt_old3=g_bt_old3+1 if:f_bt_old3<1
 @set f_bt_old3=1
 객잔 마당 느티나무 아래. 노인이 술상을 차려 놓고 앉아 있다. 잔이 셋이다.
 "앉거라. 오늘은 거두러 온 것이 아니니라. 아직 덜 익었다."
@@ -258,6 +258,7 @@
 
 # Rev6ARe
 @set f_bt_rev6a=1
+@set g_bt_rev6a=g_bt_rev6a+1
 삼경. 사당 마당. 진백이 칼집을 들기 전에, 먼저 칼집 끝으로 흙바닥에 별 일곱 개를 긋는다. 요광부터, 거꾸로.
 진백이 그리려던 칼집을 든 채 굳는다.
 "……막내야. 누가 가르쳤느냐."
@@ -276,6 +277,7 @@
 
 # Rev6LRe
 @set f_bt_rev6l=1
+@set g_bt_rev6l=g_bt_rev6l+1
 @vfx kind:heavy
 횃불 줄이 산등성이에 오르기 전에, 북쪽 고개 바위틈에 먼저 와 있다.
 맨 앞 횃불이 고갯마루에 닿는다. 진백이다. 피 묻은 손이 바위틈의 당신을 보고 멈춘다.
@@ -289,6 +291,7 @@
 
 # Rev6DRe
 @set f_bt_rev6d=1
+@set g_bt_rev6d=g_bt_rev6d+1
 보름. 사당. 문간의 빈자리를 보지 않고 곧장 위패 자리 밑의 돌을 든다.
 기름종이 편지. 첫 줄은 읽지 않아도 안다. 「막내야. …… 잘했다.」
 '<color=#9A70C4>잘했다는 말을 또 받는다. 또 그 칼로 받는다.</color>'
@@ -299,6 +302,7 @@
 
 # Rev6NRe
 @set f_bt_rev6n=1
+@set g_bt_rev6n=g_bt_rev6n+1
 삼경. 용마루에 앉은 그림자가 입을 열기 전에, 먼저 지붕에 올라 그 옆에 앉는다. 등을 반쯤 보이고.
 <align=right>"<color=#9A70C4>교주께서 거두라 하셨다지요. 대사형 손으로.</color>"</align>
 진백의 손이 무릎 위 검자루에서 미끄러진다.
@@ -310,6 +314,7 @@
 
 # Old3Re
 @set f_bt_old3=1
+@set g_bt_old3=g_bt_old3+1
 느티나무 아래 술상. 노인이 셋째 잔에 손을 뻗기 전에, 그 잔을 먼저 채운다.
 <align=right>"<color=#9A70C4>사매 몫이지요.</color>"</align>
 노인의 손이 술상 위에서 멎는다. 복면 아래 눈이 한참 당신을 본다.

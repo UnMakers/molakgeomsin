@@ -2708,7 +2708,7 @@
 @deja text:"장날이다. 빈 지게를 진 표사가 객잔 문을 두드릴 것이다. 이번엔 표호 숨까지 끝까지 보고 싶다."
 {dejapre}
 @goto #S_MarketRe if:g_bt_smarket>0&&f_bt_smarket<1
-@set g_bt_smarket=1
+@set g_bt_smarket=g_bt_smarket+1 if:f_bt_smarket<1
 @set f_bt_smarket=1
 아침. 객잔 문을 두드리는 건 염혁이다. 등에 빈 지게를 지고 있다.
 "형씨! 장 구경 갑시다! 아버지 심부름이오. 숫돌 하나, 소금 두 되, 그리고 엿."
@@ -2915,7 +2915,7 @@
 @deja text:"은자 삼백 냥. 지난 생엔 이 종이 한 장 값에 칼 든 자들이 객잔 지붕에 올랐다."
 {dejapre}
 @goto #S_WantedRe if:g_bt_swanted>0&&f_bt_swanted<1
-@set g_bt_swanted=1
+@set g_bt_swanted=g_bt_swanted+1 if:f_bt_swanted<1
 @set f_bt_swanted=1
 아침. 게시벽 앞이 웅성거린다. 새 방(榜)이 붙었다.
 「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
@@ -3102,7 +3102,7 @@
 @deja text:"귀만 열어 둔 손님들. 지난 생에도 이 소문 뒤로 객잔에 칼이 들어왔다."
 {dejapre}
 @goto #S_FameRe if:g_bt_sfame>0&&f_bt_sfame<1
-@set g_bt_sfame=1
+@set g_bt_sfame=g_bt_sfame+1 if:f_bt_sfame<1
 @set f_bt_sfame=1
 객잔이 수상하다.
 낭인, 표사, 정체 모를 손님이 많은데 다들 술은 안 마시고 귀만 열어 두었다. 서열이 오른 '운객(雲客)'이 묵는다는 소문 탓이다.
@@ -3199,6 +3199,7 @@
 
 # S_MarketRe
 @set f_bt_smarket=1
+@set g_bt_smarket=g_bt_smarket+1
 @art char:hyeok
 아침. 염혁이 객잔 문을 두드리기 전에 문을 연다. 빈 지게를 진 그가 주먹을 든 채 굳는다.
 <align=right>"<color=#9A70C4>숫돌 하나, 소금 두 되, 그리고 엿. 엿은 아버지 몫이고.</color>"</align>
@@ -3214,6 +3215,7 @@
 
 # S_WantedRe
 @set f_bt_swanted=1
+@set g_bt_swanted=g_bt_swanted+1
 아침. 게시벽 앞. 붉은 끈들이 방을 펴기 전에 맨 앞줄에 선다.
 「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
 풀통을 든 포졸이 그림과 맨 앞줄의 얼굴을 번갈아 본다. 그림 쪽이 낫다는 얼굴이다.
@@ -3223,6 +3225,7 @@
 
 # S_FameRe
 @set f_bt_sfame=1
+@set g_bt_sfame=g_bt_sfame+1
 @goto #S_Fame_vm if:f_hajindead>0
 객잔이 수상하다. 술은 안 마시고 귀만 열어 둔 손님들. 그 사이를 지나 하진무가 입을 열기 전에 계산대로 간다.
 <align=right>"<color=#9A70C4>뒷마당 창고 쪽 방이 눈에 덜 띄지요.</color>"</align>
