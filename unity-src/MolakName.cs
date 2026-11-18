@@ -90,21 +90,29 @@ public class MolakName : MonoBehaviour
         Open = false;
     }
 
+    // 0.4.80 명부의 빛(MolakPaper 의 낮 빛과 같다)
+    static readonly Color Paper = new Color(0.961f, 0.941f, 0.890f, 1f), Card = new Color(1f, 0.988f, 0.961f, 1f),
+        Ink = new Color(0.122f, 0.102f, 0.078f, 1f), SubC = new Color(0.431f, 0.369f, 0.298f, 1f), Red = new Color(0.549f, 0.161f, 0.122f, 1f);
+
     void Styles ()
     {
         if (sTitle != null) return;
         var f = MolakGui.Gowun;
         sTitle = new GUIStyle { font = MolakTypography.Heading(f), alignment = TextAnchor.MiddleCenter, wordWrap = true };
-        sTitle.normal.textColor = MolakGui.InkOnBlack;
+        // 0.4.80 창의 결: 명부 한 장 — 종이 바탕, 먹 글자, 맨 끝 줄은 검붉은 띠의 흰 칸, 먹색 「적는다」(명부라 늘 낮 빛)
+        sTitle.normal.textColor = Ink;
         sSub = new GUIStyle(sTitle) { font = f };
-        sSub.normal.textColor = new Color(0.70f, 0.64f, 0.56f, 1f);
+        sSub.normal.textColor = SubC;
         sWarn = new GUIStyle(sSub);
-        sWarn.normal.textColor = new Color(0.85f, 0.42f, 0.36f, 1f);
-        sField = new GUIStyle(GUI.skin.textField) { font = f, alignment = TextAnchor.MiddleCenter };
-        sField.normal.textColor = sField.focused.textColor = sField.hover.textColor = new Color(0.12f, 0.10f, 0.08f, 1f);
-        sField.normal.background = sField.focused.background = sField.hover.background = MolakGui.Px;
-        sBtn = new GUIStyle(GUI.skin.button) { font = f };
-        sBtn.normal.textColor = sBtn.hover.textColor = sBtn.active.textColor = MolakGui.InkOnBlack;
+        sWarn.normal.textColor = Red;
+        sField = new GUIStyle(GUI.skin.label) { font = f, alignment = TextAnchor.MiddleCenter, wordWrap = false, clipping = TextClipping.Clip };   // 바탕 없는 칸(textField 피부의 짙은 바탕을 쓰지 않는다)
+        sField.normal.textColor = sField.focused.textColor = sField.hover.textColor = Ink;
+        sField.normal.background = sField.focused.background = sField.hover.background = sField.active.background = null;
+        sField.onNormal.background = sField.onFocused.background = sField.onHover.background = sField.onActive.background = null;
+        sField.active.textColor = sField.onNormal.textColor = sField.onFocused.textColor = sField.onHover.textColor = sField.onActive.textColor = Ink;
+        sField.border = new RectOffset(0, 0, 0, 0);
+        sBtn = new GUIStyle(GUI.skin.label) { font = f, alignment = TextAnchor.MiddleCenter };
+        MolakGui.Ink(sBtn, Paper);
     }
 
     void Update ()
@@ -123,7 +131,7 @@ public class MolakName : MonoBehaviour
         GUI.depth = MolakGui.DepthBlackout - 10;
         float u = MolakGui.U, W = Screen.width, H = Screen.height;
         var old = GUI.color;
-        GUI.color = MolakGui.InkBlack;
+        GUI.color = Paper;
         GUI.DrawTexture(new Rect(0, 0, W, H), MolakGui.Px);
         GUI.color = old;
 
@@ -137,6 +145,13 @@ public class MolakName : MonoBehaviour
         GUI.Label(new Rect(cx, y, cw, 130 * u), "마당을 쓸던 막내에게도 이름은 있었다.\n사형들은 부르지 않았을 뿐이다.", sSub); y += 170 * u;
 
         var fr = new Rect(cx + cw * 0.15f, y, cw * 0.7f, 110 * u);
+        {   // 맨 끝 줄: 흰 칸 · 검붉은 띠 · 아래 가는 줄
+            var o2 = GUI.color;
+            GUI.color = Card; GUI.DrawTexture(fr, MolakGui.Px);
+            GUI.color = new Color(0.55f, 0.48f, 0.40f, 0.35f); GUI.DrawTexture(new Rect(fr.x, fr.yMax - Mathf.Max(1f, u), fr.width, Mathf.Max(1f, u)), MolakGui.Px);
+            GUI.color = Red; GUI.DrawTexture(new Rect(fr.x, fr.y, Mathf.Max(2f, 10f * u), fr.height), MolakGui.Px);
+            GUI.color = o2;
+        }
         if (kb != null || Application.isMobilePlatform)
         {
             // 휴대폰: 칸을 누르면 자판이 뜬다
@@ -146,17 +161,20 @@ public class MolakName : MonoBehaviour
         else
         {
             GUI.SetNextControlName("molakname");
+            var ss = GUI.skin.settings; Color sc = ss.selectionColor, cc = ss.cursorColor;
+            ss.selectionColor = new Color(Red.r, Red.g, Red.b, 0.25f); ss.cursorColor = Ink;
             text = Clean(GUI.TextField(fr, text, MaxLen, sField));
+            ss.selectionColor = sc; ss.cursorColor = cc;
             if (Time.realtimeSinceStartup - openedAt < 0.3f) GUI.FocusControl("molakname");
             var e = Event.current;
             if (e.type == EventType.KeyDown && (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter)) { Commit(); e.Use(); }
         }
         y += 140 * u;
-        GUI.Label(new Rect(cx, y, cw, 60 * u), warn.Length > 0 ? warn : "여섯 글자까지. 회귀해도 이 이름은 남는다.", warn.Length > 0 ? sWarn : sSub); y += 100 * u;
+        GUI.Label(new Rect(cx, y, cw, 60 * u), warn.Length > 0 ? warn : "회귀해도 이 이름은 남는다.", warn.Length > 0 ? sWarn : sSub); y += 100 * u;
 
         var old2 = GUI.color;
-        GUI.color = new Color(0.55f, 0.16f, 0.13f, 1f);
-        var br = new Rect(cx + cw * 0.3f, y, cw * 0.4f, 110 * u);
+        GUI.color = Ink;
+        var br = new Rect(cx + cw * 0.3f, y, cw * 0.4f, 100 * u);
         GUI.DrawTexture(br, MolakGui.Px);
         GUI.color = old2;
         if (GUI.Button(br, "적는다", sBtn)) Commit();

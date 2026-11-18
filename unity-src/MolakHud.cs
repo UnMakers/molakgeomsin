@@ -220,14 +220,16 @@ public class MolakHud : MonoBehaviour
                 sb.Append("<b>" + nameTxt + " <color=" + col + ">" + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
             }
             string wt = sb.ToString();
-            float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f - 6f * u) + pad * 1.5f;
+            float wh = sWhy.CalcHeight(new GUIContent(wt), ww - pad * 2f - 14f * u) + pad * 1.5f;
             var wr = new Rect(ta.x, ta.yMax - wh, ww, wh);
             SlipH = wh;
-            GUI.color = new Color(0.98f, 0.96f, 0.91f, 0.96f * wa); GUI.DrawTexture(wr, MolakGui.Px);
-            GUI.color = new Color(0.45f, 0.36f, 0.24f, 0.7f * wa); GUI.DrawTexture(new Rect(wr.x, wr.y, Mathf.Max(2f, 3f * u), wr.height), MolakGui.Px);
+            // 0.4.80 창의 결: 흰 카드 · 먹 띠 · 아래 가는 줄(종이 쪽지라 먹색 화면에서도 낮 빛)
+            GUI.color = new Color(1f, 0.988f, 0.961f, 0.97f * wa); GUI.DrawTexture(wr, MolakGui.Px);
+            GUI.color = new Color(0.55f, 0.48f, 0.40f, 0.35f * wa); GUI.DrawTexture(new Rect(wr.x, wr.yMax - Mathf.Max(1f, u), wr.width, Mathf.Max(1f, u)), MolakGui.Px);
+            GUI.color = new Color(0.122f, 0.102f, 0.078f, 0.9f * wa); GUI.DrawTexture(new Rect(wr.x, wr.y, Mathf.Max(2f, 8f * u), wr.height), MolakGui.Px);
             GUI.color = Color.white;
-            MolakGui.Ink(sWhy, new Color(0.22f, 0.18f, 0.14f, wa));
-            GUI.Label(new Rect(wr.x + pad + 6f * u, wr.y + pad * 0.75f, ww - pad * 2f - 6f * u, wh), wt, sWhy);
+            MolakGui.Ink(sWhy, new Color(0.122f, 0.102f, 0.078f, wa));
+            GUI.Label(new Rect(wr.x + pad + 14f * u, wr.y + pad * 0.75f, ww - pad * 2f - 14f * u, wh), wt, sWhy);
         }
         GUI.color = Color.white;
     }

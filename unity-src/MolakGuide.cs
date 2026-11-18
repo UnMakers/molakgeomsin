@@ -139,26 +139,27 @@ public class MolakGuide : MonoBehaviour
         float w = Screen.width, h = Screen.height;
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         var g0 = GUI.color;
-        var ink = new Color(0.93f, 0.89f, 0.81f, 1f); var gold = new Color(0.85f, 0.68f, 0.3f, 1f);
-        GUI.color = new Color(0.04f, 0.035f, 0.03f, 0.95f); GUI.DrawTexture(new Rect(0, 0, w, h), MolakGui.Px); GUI.color = Color.white;
-        float cw = Mathf.Min(w * 0.88f, 900f * u), cx = (w - cw) / 2f;
+        // 0.4.80 창의 결(MolakPaper): 종이로 통째로 덮는다
+        var ink = MolakPaper.Ink;
+        MolakPaper.Backdrop(w, h);
+        float cx = MolakPaper.Margin(w, u), cw = w - cx * 2f;
+        var br = MolakPaper.BottomButton(w, h, u);
 
         if (showing >= 0 || reading >= 0)
         {
             int idx = showing >= 0 ? showing : reading;
             showT += Time.unscaledDeltaTime;
             var c = Cards[idx];
-            float y = Mathf.Max(70f * u, h * 0.1f);
-            MolakGui.Ink(sHead, gold); GUI.Label(new Rect(cx, y, cw, 70f * u), (showing >= 0 ? "<size=" + Mathf.RoundToInt(24 * u) + ">길잡이</size>\n" : "") + c.Title, sHead);
-            y += 110f * u;
+            float y = Mathf.Max(MolakPaper.Top(h, u), h * 0.08f);
+            MolakPaper.Header(ref y, cx, cw, c.Title, showing >= 0 ? "길잡이 — 처음 겪는 일이라 한 장 펼친다" : "길잡이", u);
             MolakGui.Ink(sBody, ink);
-            float bh = sBody.CalcHeight(new GUIContent(c.Body), cw);
-            GUI.Label(new Rect(cx, y, cw, bh), c.Body, sBody);
-            y += bh + 40f * u;
-            var br = new Rect(cx + cw * 0.25f, Mathf.Min(y, h - 150f * u), cw * 0.5f, 96f * u);
-            GUI.color = new Color(0.45f, 0.13f, 0.1f, 1f); GUI.DrawTexture(br, MolakGui.Px); GUI.color = Color.white;
-            MolakGui.Ink(sBtn, ink); GUI.Label(br, showing >= 0 ? "알겠다" : "돌아간다", sBtn);
-            bool close = GUI.Button(br, GUIContent.none, GUIStyle.none);
+            float bh = sBody.CalcHeight(new GUIContent(c.Body), cw - 70f * u);
+            var cr = new Rect(cx, y, cw, bh + 52f * u);
+            MolakPaper.CardFace(cr, MolakPaper.Accent, u);
+            GUI.Label(new Rect(cx + 40f * u, y + 26f * u, cw - 70f * u, bh), c.Body, sBody);
+            y = cr.yMax + 40f * u;
+            var cb = new Rect(br.x, Mathf.Min(Mathf.Max(y, h * 0.55f), br.y), br.width, br.height);
+            bool close = MolakPaper.InkButton(cb, showing >= 0 ? "알겠다" : "돌아간다", u);
             GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);
             if (close && showT > 0.35f)
             {
@@ -170,28 +171,42 @@ public class MolakGuide : MonoBehaviour
             return;
         }
 
-        // 목록
+        // 목록 — 읽은 장은 먹 띠, 아직 펼쳐지지 않은 장은 옅은 띠
         {
-            float y = Mathf.Max(60f * u, h * 0.07f);
-            MolakGui.Ink(sHead, gold); GUI.Label(new Rect(cx, y, cw, 70f * u), "길잡이", sHead);
-            y += 100f * u;
-            float rowH = 104f * u, gap = 14f * u;
+            float y = MolakPaper.Top(h, u);
+            MolakPaper.Header(ref y, cx, cw, "길잡이", "처음 겪을 때 한 장씩 펼쳐진 것. 언제든 다시 읽는다.", u);
+            float rowH = 112f * u, gap = 12f * u;
+            float avail = br.y - 24f * u - y;
+            if (Cards.Length * (rowH + gap) > avail) rowH = Mathf.Max(84f * u, avail / Cards.Length - gap);
             for (int i = 0; i < Cards.Length; i++)
             {
                 var r = new Rect(cx, y + i * (rowH + gap), cw, rowH);
-                if (r.yMax > h - 140f * u) break;
-                GUI.color = new Color(1f, 1f, 1f, 0.08f); GUI.DrawTexture(r, MolakGui.Px); GUI.color = Color.white;
-                MolakGui.Ink(sItem, Seen(Cards[i].Id) ? ink : new Color(0.7f, 0.66f, 0.6f, 1f));
-                GUI.Label(new Rect(r.x + 28f * u, r.y, r.width - 40f * u, r.height), Cards[i].Title, sItem);
-                if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { reading = i; showT = 0f; MolakSfx.Confirm(); }
+                if (r.yMax > br.y - 10f * u) break;
+                bool seen = Seen(Cards[i].Id);
+                if (MolakPaper.Card2(r, Cards[i].Title, Sub(Cards[i].Id), seen ? MolakPaper.Ink : MolakPaper.Empty, u)) { reading = i; showT = 0f; MolakSfx.Confirm(); }
             }
-            var br = new Rect(cx + cw * 0.25f, h - 130f * u, cw * 0.5f, 96f * u);
-            GUI.color = new Color(0.16f, 0.13f, 0.11f, 1f); GUI.DrawTexture(br, MolakGui.Px); GUI.color = Color.white;
-            MolakGui.Ink(sBtn, ink); GUI.Label(br, "닫는다", sBtn);
-            if (GUI.Button(br, GUIContent.none, GUIStyle.none)) { listOpen = false; MolakInputGuard.MuteFor(0.25f); }
+            if (MolakPaper.InkButton(br, "닫는다", u)) { listOpen = false; MolakInputGuard.MuteFor(0.25f); }
             GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);
             GUI.color = g0;
         }
+    }
+
+    /// <summary>0.4.80 목록 카드의 한 줄 풀이</summary>
+    static string Sub (string id)
+    {
+        switch (id)
+        {
+            case "body": return "체력 · 검술 · 내공 · 살기 · 은자 · 저주";
+            case "curse": return "자라는 빠르기, 예순 · 일흔다섯 · 백";
+            case "hurt": return "날마다 깎이는 몸, 덧나는 상처";
+            case "hunger": return "하룻밤 한 냥, 못 내면 굶는다";
+            case "rank": return "서열록과 경지";
+            case "debt": return "왕삼의 돈과 기한";
+            case "death": return "무엇이 남고 무엇이 되감기나";
+            case "duel": return "간파 · 합 · 기세 · 필살";
+            case "bag": return "물건 · 비방 · 인연";
+        }
+        return null;
     }
 }
 

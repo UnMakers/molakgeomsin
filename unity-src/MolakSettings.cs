@@ -15,7 +15,7 @@ public class MolakSettings : MonoBehaviour
     int dragId = -1;
     Font gowun;
     GUIStyle sHead, sLabel, sValue, sSection, sBtn, sHint;
-    float builtU = -1f;
+    bool builtNight; float builtU = -1f;
     static Texture2D disk;
 
     public static bool IsOpen { get { return inst != null && inst.open; } }
@@ -76,8 +76,8 @@ public class MolakSettings : MonoBehaviour
 
     void Styles (float u)
     {
-        if (sHead != null && Mathf.Approximately(builtU, u)) return;
-        builtU = u;
+        if (sHead != null && Mathf.Approximately(builtU, u) && builtNight == MolakTheme.Night) return;
+        builtU = u; builtNight = MolakTheme.Night;
         if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, Color, TextAnchor, GUIStyle> mk = (size, col, an) =>
         {
@@ -85,13 +85,13 @@ public class MolakSettings : MonoBehaviour
             if (gowun != null) s.font = gowun;
             MolakGui.Ink(s, col); return s;
         };
-        sHead = mk(40, MolakTheme.Ink, TextAnchor.MiddleCenter);
-        sSection = mk(28, MolakTheme.Gold, TextAnchor.MiddleLeft);
-        sHead.font = MolakTypography.Heading(sHead.font); sSection.font = MolakTypography.Heading(sSection.font);
-        sLabel = mk(32, MolakTheme.Ink, TextAnchor.MiddleLeft);
-        sValue = mk(28, MolakTheme.Ink3, TextAnchor.MiddleRight);
-        sBtn = mk(32, MolakTheme.Ink, TextAnchor.MiddleCenter);
-        sHint = mk(22, MolakTheme.Ink3, TextAnchor.MiddleCenter);
+        // 0.4.80 창의 결(MolakPaper)
+        sHead = mk(40, MolakPaper.Ink, TextAnchor.MiddleCenter);
+        sSection = mk(28, MolakPaper.Accent, TextAnchor.MiddleLeft);
+        sLabel = mk(32, MolakPaper.Ink, TextAnchor.MiddleLeft);
+        sValue = mk(28, MolakPaper.Sub, TextAnchor.MiddleRight);
+        sBtn = mk(32, MolakPaper.Ink, TextAnchor.MiddleCenter);
+        sHint = mk(24, MolakPaper.Sub, TextAnchor.MiddleCenter);
     }
 
     float wipeArm = -9f, wipeDone = -9f;
@@ -121,21 +121,17 @@ public class MolakSettings : MonoBehaviour
         var g0 = GUI.color; GUI.color = new Color(1, 1, 1, a);
 
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
-        Box(new Rect(0, 0, w, h), new Color(0.04f, 0.035f, 0.03f, 0.96f));
+        MolakPaper.Backdrop(w, h);   // 0.4.80 종이로 통째로 덮는다
 
         if (credits) { DrawCredits(w, h, u); GUI.color = g0; return; }
 
         IAudioManager am = Engine.Initialized ? Engine.GetService<IAudioManager>() : null;
         ITextPrinterManager tp = Engine.Initialized ? Engine.GetService<ITextPrinterManager>() : null;
 
-        float cw = Mathf.Min(w * 0.88f, 900 * u), cx = (w - cw) / 2f;
-        float rh = 112 * u, sh = 64 * u, gap = 10 * u;
-        float total = 120 * u + 3 * sh + 7 * (rh + gap) + 60 * u + 120 * u;
-        float y = Mathf.Max(70 * u, (h - total) / 2f);
-
-        GUI.Label(new Rect(cx, y, cw, 90 * u), "환경 설정", sHead);
-        Box(new Rect(cx + cw * 0.35f, y + 88 * u, cw * 0.30f, Mathf.Max(1f, 2 * u)), MolakTheme.Gold * new Color(1, 1, 1, 0.6f));
-        y += 120 * u;
+        float cx = MolakPaper.Margin(w, u), cw = w - cx * 2f;
+        float rh = 104 * u, sh = 58 * u, gap = 10 * u;
+        float y = MolakPaper.Top(h, u);
+        MolakPaper.Header(ref y, cx, cw, "환경 설정", "바꾼 값은 바로 적용된다.", u);
 
         // ── 소리
         Section(ref y, cx, cw, sh, "소리");
@@ -177,14 +173,12 @@ public class MolakSettings : MonoBehaviour
         if (Toggle(new Rect(cx, y, cw, rh), "먹색 화면 (밤에 읽기)", MolakTheme.Night, u)) MolakTheme.Night = !MolakTheme.Night;
         y += rh + gap + 30 * u;
 
-        // 닫기
-        var br = new Rect(cx + cw * 0.2f, y, cw * 0.6f, 100 * u);
-        bool over = br.Contains(Event.current.mousePosition);
-        Box(br, over ? new Color(0.30f, 0.11f, 0.09f, 1f) : new Color(0.45f, 0.13f, 0.10f, 1f));
-        GUI.Label(br, "닫기", sBtn);
-        if (GUI.Button(br, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); Close(); }
-        GUI.Label(new Rect(cx, br.yMax + 8 * u, cw, 40 * u), "바뀐 값은 바로 저장된다.", sHint);
-        var cr = new Rect(cx + cw * 0.3f, br.yMax + 56 * u, cw * 0.4f, 64 * u);
+        // 닫기 — 창마다 하나뿐인 먹색 단추. 자리가 남으면 아래쪽에 붙인다.
+        var br = MolakPaper.BottomButton(w, h, u);
+        float tail = MolakTitle.Showing ? 160 * u : 90 * u;
+        if (br.y - tail < y) br.y = y; else br.y -= tail;
+        if (MolakPaper.InkButton(br, "닫는다", u)) { MolakSfx.Confirm(); Close(); }
+        var cr = new Rect(cx + cw * 0.3f, br.yMax + 14 * u, cw * 0.4f, 64 * u);
         GUI.Label(cr, "<u>제작 정보</u>", sHint);
         if (GUI.Button(cr, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); credits = true; }
         // 0.4.66 모든 생의 기억 지우기(언메이커: 처음부터 다시 했는데 '지난 생엔…'이 나온다) — 첫 화면에서만, 두 번 눌러야
@@ -193,7 +187,7 @@ public class MolakSettings : MonoBehaviour
             bool armed = Time.unscaledTime - wipeArm < 4f;
             var wr = new Rect(cx + cw * 0.1f, cr.yMax + 10 * u, cw * 0.8f, 64 * u);
             string wl = wipeDone > 0f && Time.unscaledTime - wipeDone < 3f ? "모든 생의 기억을 지웠다. 이제 정말 처음부터다."
-                      : armed ? "<color=#E08070>한 번 더 누르면 모든 생의 기억(앎·말로·업보)이 사라진다</color>" : "<u>모든 생의 기억 지우기</u>";
+                      : armed ? "<color=#" + ColorUtility.ToHtmlStringRGB(MolakPaper.Accent) + ">한 번 더 누르면 모든 생의 기억(앎·말로·업보)이 사라진다</color>" : "<u>모든 생의 기억 지우기</u>";
             GUI.Label(wr, wl, sHint);
             if (GUI.Button(wr, GUIContent.none, GUIStyle.none))
             {
@@ -214,10 +208,9 @@ public class MolakSettings : MonoBehaviour
     /// <summary>제작 정보 — 만든 이, 엔진, 그림·소리의 출처(생성형 AI 사용 고지), 플레이 기록 파일 위치.</summary>
     void DrawCredits (float w, float h, float u)
     {
-        float cw = Mathf.Min(w * 0.86f, 860 * u), cx = (w - cw) / 2f;
-        float y = 90 * u;
-        GUI.Label(new Rect(cx, y, cw, 90 * u), "제작 정보", sHead);
-        y += 120 * u;
+        float cx = MolakPaper.Margin(w, u), cw = w - cx * 2f;
+        float y = MolakPaper.Top(h, u);
+        MolakPaper.Header(ref y, cx, cw, "제작 정보", null, u);
         var body = new GUIStyle(sLabel) { wordWrap = true, alignment = TextAnchor.UpperLeft, fontSize = Mathf.RoundToInt(27 * u) };
         string txt =
             "<b>몰락검신(沒落劍神)</b>  v" + Application.version + "\n" +
@@ -228,15 +221,12 @@ public class MolakSettings : MonoBehaviour
             "<color=#C9A44C>글꼴</color>\n고운바탕(Google Fonts, SIL Open Font License)\n\n" +
             "<color=#C9A44C>플레이 기록</color>\n생마다 한 줄씩 이 기기에만 남는다. 다른 곳으로 보내지 않는다.\n<size=" + Mathf.RoundToInt(20 * u) + ">" + MolakAutoSave.LogPath + "</size>";
         float th = body.CalcHeight(new GUIContent(txt), cw);
-        float viewH = h - y - 200 * u;
+        var br = MolakPaper.BottomButton(w, h, u);
+        float viewH = br.y - 28 * u - y;
         credScroll = GUI.BeginScrollView(new Rect(cx, y, cw, viewH), credScroll, new Rect(0, 0, cw - 20 * u, th + 20 * u), GUIStyle.none, GUIStyle.none);
         GUI.Label(new Rect(0, 0, cw - 20 * u, th), txt, body);
         GUI.EndScrollView();
-        var br = new Rect(cx + cw * 0.2f, h - 170 * u, cw * 0.6f, 100 * u);
-        bool over = br.Contains(Event.current.mousePosition);
-        Box(br, over ? new Color(0.22f, 0.19f, 0.16f, 1f) : new Color(0.17f, 0.14f, 0.12f, 1f));
-        GUI.Label(br, "돌아간다", sBtn);
-        if (GUI.Button(br, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); credits = false; }
+        if (MolakPaper.InkButton(br, "돌아간다", u)) { MolakSfx.Confirm(); credits = false; }
         GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);
     }
 
@@ -244,15 +234,12 @@ public class MolakSettings : MonoBehaviour
 
     void Section (ref float y, float cx, float cw, float sh, string title)
     {
-        GUI.Label(new Rect(cx + 6 * builtU, y, cw, sh), title, sSection);
-        Box(new Rect(cx + 90 * builtU, y + sh * 0.5f, cw - 90 * builtU, Mathf.Max(1f, 1 * builtU)), MolakTheme.Line);
-        y += sh;
+        MolakPaper.Section(ref y, cx, cw, title, builtU);
     }
 
     void Row (Rect r)
     {
-        Box(r, MolakTheme.Raise);
-        Box(new Rect(r.x, r.yMax - Mathf.Max(1f, builtU), r.width, Mathf.Max(1f, builtU)), MolakTheme.Line);
+        MolakPaper.CardFace(r, Color.clear, builtU);
     }
 
     /// <summary>줄 전체가 손잡이: 왼쪽 라벨, 오른쪽 막대. 막대 위든 줄 어디든 누르고 끌면 값이 바뀐다.</summary>
@@ -271,13 +258,7 @@ public class MolakSettings : MonoBehaviour
             v = Mathf.Round(v * 20f) / 20f;
             if (e.type != EventType.MouseUp) e.Use();
         }
-        float th = 6 * u;
-        Box(new Rect(tx, ty - th / 2f, tw, th), new Color(0.33f, 0.28f, 0.24f, 1f));
-        Box(new Rect(tx, ty - th / 2f, tw * v, th), MolakTheme.Gold);
-        float k = dragId == id ? 44 * u : 36 * u;
-        var gc = GUI.color; GUI.color = gc * MolakTheme.Ink;
-        GUI.DrawTexture(new Rect(tx + tw * v - k / 2f, ty - k / 2f, k, k), Disk);
-        GUI.color = gc;
+        MolakPaper.Slider(new Rect(tx, r.y, tw, r.height), v, dragId == id ? u * 1.2f : u);
         string vt = valueText ?? (v <= 0.001f ? "끔" : Mathf.RoundToInt(v * 100f) + "%");
         GUI.Label(new Rect(r.xMax - 150 * u, r.y, 128 * u, r.height), vt, sValue);
         return v;
@@ -288,13 +269,8 @@ public class MolakSettings : MonoBehaviour
         Row(r);
         GUI.Label(new Rect(r.x + 28 * u, r.y, r.width * 0.7f, r.height), label, sLabel);
         // 오른쪽 스위치
-        float sw = 110 * u, shh = 54 * u;
-        var srect = new Rect(r.xMax - sw - 28 * u, r.y + (r.height - shh) / 2f, sw, shh);
-        Box(srect, on ? new Color(0.45f, 0.36f, 0.12f, 1f) : new Color(0.20f, 0.17f, 0.15f, 1f));
-        float k = shh - 10 * u;
-        var gc = GUI.color; GUI.color = gc * (on ? MolakTheme.Gold : MolakTheme.Ink3);
-        GUI.DrawTexture(new Rect(on ? srect.xMax - k - 5 * u : srect.x + 5 * u, srect.y + 5 * u, k, k), Disk);
-        GUI.color = gc;
+        float sw = 104 * u, shh = 54 * u;
+        MolakPaper.ToggleKnob(new Rect(r.xMax - sw - 28 * u, r.y + (r.height - shh) / 2f, sw, shh), on);
         bool hitb = GUI.Button(r, GUIContent.none, GUIStyle.none);
         if (hitb) MolakSfx.Confirm();
         return hitb;
@@ -307,10 +283,14 @@ public class MolakSettings : MonoBehaviour
         float bw = 110 * u;
         var rDec = new Rect(r.xMax - 2 * bw - 140 * u - 28 * u, r.y + 8 * u, bw, r.height - 16 * u);
         var rInc = new Rect(r.xMax - bw - 28 * u, r.y + 8 * u, bw, r.height - 16 * u);
-        Box(rDec, new Color(0.17f, 0.14f, 0.12f, 1f)); Box(rInc, new Color(0.17f, 0.14f, 0.12f, 1f));
+        var frame = new Rect(rDec.x, rDec.y, rInc.xMax - rDec.x, rDec.height);
+        MolakPaper.Box(new Rect(frame.x, frame.y, frame.width, Mathf.Max(1f, 1.5f * u)), MolakPaper.Hair);
+        MolakPaper.Box(new Rect(frame.x, frame.yMax - Mathf.Max(1f, 1.5f * u), frame.width, Mathf.Max(1f, 1.5f * u)), MolakPaper.Hair);
+        MolakPaper.Box(new Rect(frame.x, frame.y, Mathf.Max(1f, 1.5f * u), frame.height), MolakPaper.Hair);
+        MolakPaper.Box(new Rect(frame.xMax - Mathf.Max(1f, 1.5f * u), frame.y, Mathf.Max(1f, 1.5f * u), frame.height), MolakPaper.Hair);
         GUI.Label(rDec, "－", sBtn); GUI.Label(rInc, "＋", sBtn);
         var vS = new GUIStyle(sValue) { alignment = TextAnchor.MiddleCenter };
-        MolakGui.Ink(vS, MolakTheme.Ink);
+        MolakGui.Ink(vS, MolakPaper.Sub);
         GUI.Label(new Rect(rDec.xMax, r.y, 140 * u, r.height), value, vS);
         if (GUI.Button(rDec, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); dec(); }
         if (GUI.Button(rInc, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); inc(); }

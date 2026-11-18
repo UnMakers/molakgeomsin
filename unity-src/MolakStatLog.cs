@@ -196,18 +196,16 @@ public class MolakStatLogView : MonoBehaviour
         float w = Screen.width, h = Screen.height;
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         var g0 = GUI.color;
-        var ink = new Color(0.93f, 0.89f, 0.81f, 1f); var gold = new Color(0.85f, 0.68f, 0.3f, 1f); var dim = new Color(0.62f, 0.58f, 0.52f, 1f);
-        GUI.color = new Color(0.04f, 0.035f, 0.03f, 0.97f); GUI.DrawTexture(new Rect(0, 0, w, h), MolakGui.Px); GUI.color = Color.white;
-        float cw = Mathf.Min(w * 0.9f, 940f * u), cx = (w - cw) / 2f;
-        float y = Mathf.Max(60f * u, h * 0.06f);
-        MolakGui.Ink(sHead, gold);
-        GUI.Label(new Rect(cx, y, cw, 64f * u), "능력치 기록", sHead); y += 70f * u;
+        // 0.4.80 창의 결(MolakPaper)
+        var ink = MolakPaper.Ink; var gold = MolakPaper.Accent; var dim = MolakPaper.Sub;
+        MolakPaper.Backdrop(w, h);
+        float cx = MolakPaper.Margin(w, u), cw = w - cx * 2f;
+        float y = MolakPaper.Top(h, u);
         var list = MolakStatLog.Load();
-        MolakGui.Ink(sSub, dim);
-        GUI.Label(new Rect(cx, y, cw, 40f * u), list.Count == 0 ? "이번 생에는 아직 오르내린 것이 없다" : "이번 생 · 최근 " + list.Count + "줄 · 아래가 가장 최근", sSub);
-        y += 54f * u;
+        MolakPaper.Header(ref y, cx, cw, "능력치 기록", list.Count == 0 ? "이번 생에는 아직 오르내린 것이 없다" : "이번 생 · 최근 " + list.Count + "줄 · 아래가 가장 최근", u);
+        var br = MolakPaper.BottomButton(w, h, u);
 
-        float rowH = 58f * u, top = y, bottom = h - 170f * u, viewH = bottom - top;
+        float rowH = 62f * u, top = y, bottom = br.y - 24f * u, viewH = bottom - top;
         // 날이 바뀌는 자리에 날짜 띠를 끼운다
         int rows = 0; int pd = -999;
         foreach (var e in list) { if (e.Day != pd) { rows++; pd = e.Day; } rows++; }
@@ -233,15 +231,16 @@ public class MolakStatLogView : MonoBehaviour
                 {
                     MolakGui.Ink(sDay, gold);
                     GUI.Label(new Rect(8f * u, yy + 8f * u, cw, rowH - 8f * u), e.Day <= 0 ? "첫날 전" : "제 " + e.Day + "일", sDay);
-                    GUI.color = new Color(0.85f, 0.68f, 0.3f, 0.25f); GUI.DrawTexture(new Rect(150f * u, yy + rowH * 0.6f, cw - 160f * u, 1.5f * u), MolakGui.Px); GUI.color = Color.white;
+                    MolakPaper.Box(new Rect(150f * u, yy + rowH * 0.6f, cw - 160f * u, Mathf.Max(1f, 1f * u)), new Color(gold.r, gold.g, gold.b, 0.30f));
                 }
                 yy += rowH;
             }
             if (yy > -rowH && yy < viewH)
             {
                 bool good = e.Key == "curse" ? e.D < 0 : e.D > 0;
-                string col = e.Key == "mn" && good ? "#F5D060" : e.Key == "curse" && !good ? "#C9A0FF" : good ? "#8FE094" : "#FF7A61";
-                GUI.color = new Color(1f, 1f, 1f, 0.05f); GUI.DrawTexture(new Rect(0, yy + 3f * u, cw, rowH - 6f * u), MolakGui.Px); GUI.color = Color.white;
+                bool nt = MolakTheme.Night;
+                string col = e.Key == "mn" && good ? (nt ? "#F5D060" : "#7A5A10") : e.Key == "curse" && !good ? (nt ? "#C9A0FF" : "#6E3E9E") : good ? (nt ? "#8FB4E8" : "#2E4E8C") : (nt ? "#FF7A61" : "#9C2A22");
+                MolakPaper.CardFace(new Rect(0, yy + 3f * u, cw, rowH - 6f * u), Color.clear, u);
                 MolakGui.Ink(sNum, ink);
                 GUI.Label(new Rect(18f * u, yy, 200f * u, rowH), "<color=" + col + ">" + MolakStatLog.Name(e.Key) + " " + (e.D > 0 ? "+" : "−") + Mathf.Abs(e.D) + "</color>", sNum);
                 MolakGui.Ink(sRow, string.IsNullOrEmpty(e.Why) ? dim : ink);
@@ -251,10 +250,7 @@ public class MolakStatLogView : MonoBehaviour
         }
         GUI.EndGroup();
 
-        var br = new Rect(cx + cw * 0.25f, h - 140f * u, cw * 0.5f, 96f * u);
-        GUI.color = new Color(0.16f, 0.13f, 0.11f, 1f); GUI.DrawTexture(br, MolakGui.Px); GUI.color = Color.white;
-        MolakGui.Ink(sBtn, ink); GUI.Label(br, "닫는다", sBtn);
-        if (GUI.Button(br, GUIContent.none, GUIStyle.none) && openT > 0.2f) { open = false; MolakInputGuard.MuteFor(0.25f); }
+        if (MolakPaper.InkButton(br, "닫는다", u, openT > 0.2f)) { open = false; MolakInputGuard.MuteFor(0.25f); }
         GUI.Button(new Rect(0, 0, w, h), GUIContent.none, GUIStyle.none);
         GUI.color = g0;
     }

@@ -109,7 +109,7 @@ public class MolakGloss : MonoBehaviour
     GUIStyle sT; float bu = -1f;
     void OnGUI ()
     {
-        if (!Engine.Initialized || MolakMenu.IsOpen || MolakTitle.Showing) return;
+        if (!Engine.Initialized || MolakMenu.IsOpen || MolakTitle.Showing || MolakBag.IsOpen || MolakSettings.IsOpen || MolakGuide.IsOpen || MolakTruthView.IsOpen || MolakStatLogView.IsOpen) return;   // 0.4.80 창 위로 뜨지 않게
         float now = Time.unscaledTime;
         for (int i = showing.Count - 1; i >= 0; i--) if (now - showing[i].t0 > Life) showing.RemoveAt(i);
         while (showing.Count < 2 && queue.Count > 0) { showing.Add((queue.Dequeue(), now)); MolakSfx.Gloss(); }
@@ -128,14 +128,16 @@ public class MolakGloss : MonoBehaviour
             sb.Append("<b>" + s.g.Term + "</b><color=#8A7A66>(" + s.g.Han + ")</color> — " + s.g.Text);
         }
         string txt = sb.ToString();
-        float hgt = sT.CalcHeight(new GUIContent(txt), w - pad * 2f) + pad * 1.6f;
+        float hgt = sT.CalcHeight(new GUIContent(txt), w - pad * 2f - 10f * u) + pad * 1.6f;
         float lift = MolakHud.SlipH > 0f ? MolakHud.SlipH + 6f * u : 0f;   // 0.4.70 수치 쪽지가 떠 있으면 그 위로
         var r = new Rect(ta.x, ta.yMax - hgt - lift, w, hgt);
         var g0 = GUI.color;
-        GUI.color = new Color(0.98f, 0.96f, 0.91f, 0.96f * a); GUI.DrawTexture(r, MolakGui.Px);
-        GUI.color = new Color(0.62f, 0.45f, 0.18f, 0.8f * a); GUI.DrawTexture(new Rect(r.x, r.y, Mathf.Max(2f, 3f * u), r.height), MolakGui.Px);
+        // 0.4.80 창의 결: 흰 카드 · 쪽빛 띠(낱말 풀이) · 아래 가는 줄
+        GUI.color = new Color(1f, 0.988f, 0.961f, 0.97f * a); GUI.DrawTexture(r, MolakGui.Px);
+        GUI.color = new Color(0.55f, 0.48f, 0.40f, 0.35f * a); GUI.DrawTexture(new Rect(r.x, r.yMax - Mathf.Max(1f, u), r.width, Mathf.Max(1f, u)), MolakGui.Px);
+        GUI.color = new Color(0.200f, 0.302f, 0.522f, 0.9f * a); GUI.DrawTexture(new Rect(r.x, r.y, Mathf.Max(2f, 8f * u), r.height), MolakGui.Px);
         GUI.color = g0;
-        MolakGui.Ink(sT, new Color(0.2f, 0.16f, 0.12f, a));
-        GUI.Label(new Rect(r.x + pad + 4f * u, r.y + pad * 0.8f, w - pad * 2f, hgt), txt, sT);
+        MolakGui.Ink(sT, new Color(0.122f, 0.102f, 0.078f, a));
+        GUI.Label(new Rect(r.x + pad + 14f * u, r.y + pad * 0.8f, w - pad * 2f - 10f * u, hgt), txt, sT);
     }
 }

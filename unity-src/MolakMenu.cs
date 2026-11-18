@@ -9,7 +9,7 @@ public class MolakMenu : MonoBehaviour
     public static bool IsOpen { get { return instance != null && instance.open; } }
     Font gowun;
     GUIStyle sBtn, sBtnOn, sHead, sToast, sBurger;
-    float builtU = -1f;
+    float builtU = -1f; bool builtNight;
     bool open;
     bool ledger;
     bool codex;
@@ -50,8 +50,8 @@ public class MolakMenu : MonoBehaviour
 
     void EnsureStyles (float u)
     {
-        if (sBtn != null && Mathf.Approximately(builtU, u)) return;
-        builtU = u;
+        if (sBtn != null && Mathf.Approximately(builtU, u) && builtNight == MolakTheme.Night) return;
+        builtU = u; builtNight = MolakTheme.Night;
         if (gowun == null) gowun = MolakGui.Gowun;
         System.Func<int, Color, TextAnchor, GUIStyle> mk = (size, col, an) =>
         {
@@ -59,11 +59,12 @@ public class MolakMenu : MonoBehaviour
             if (gowun != null) s.font = gowun;
             MolakGui.Ink(s, col); return s;
         };
-        sBtn = mk(34, MolakTheme.Ink, TextAnchor.MiddleCenter);
-        sBtnOn = mk(34, MolakTheme.Gold, TextAnchor.MiddleCenter);
-        sHead = mk(30, MolakTheme.Ink3, TextAnchor.MiddleCenter);
+        // 0.4.80 창의 결(MolakPaper): 종이 바탕에 먹 글자
+        sBtn = mk(34, MolakPaper.Ink, TextAnchor.MiddleCenter);
+        sBtnOn = mk(34, MolakPaper.Accent, TextAnchor.MiddleCenter);
+        sHead = mk(30, MolakPaper.Sub, TextAnchor.MiddleCenter);
         sHead.font = MolakTypography.Heading(gowun);   // 묶음 머리·제목은 송명
-        sToast = mk(28, MolakTheme.Ink, TextAnchor.MiddleCenter);
+        sToast = mk(28, MolakPaper.Ink, TextAnchor.MiddleCenter);
         sBurger = mk(58, new Color(0.28f,0.23f,0.18f,1f), TextAnchor.MiddleCenter);
     }
 
@@ -81,27 +82,41 @@ public class MolakMenu : MonoBehaviour
 
     void Toast (string msg) { toastMsg = msg; toastT = 0f; }
 
-    /// <summary>메뉴 묶음 머리: 왼쪽에 작은 제목, 그 아래 가는 금빛 선.</summary>
-    void MenuSection (float x, ref float y, float wd, float hgt, string title)
+    /// <summary>0.4.80 카드 한 장(이름 + 풀이, 왼쪽 띠). 눌리면 확인 소리.</summary>
+    bool Tile (Rect r, string title, string sub, Color bar, float u)
     {
-        var st = new GUIStyle(sHead) { alignment = TextAnchor.LowerLeft, fontSize = Mathf.RoundToInt(28 * builtU) };
-        MolakGui.Ink(st, MolakTheme.Gold);
-        GUI.Label(new Rect(x + 6 * builtU, y, wd, hgt - 10 * builtU), title, st);
-        Box(new Rect(x, y + hgt - 6 * builtU, wd, Mathf.Max(1f, 1 * builtU)), MolakTheme.Gold * new Color(1, 1, 1, 0.45f));
-        y += hgt;
+        bool hit = MolakPaper.Card2(r, title, sub, bar, u);
+        if (hit) MolakSfx.Confirm();
+        return hit;
     }
 
-    bool Btn (Rect r, string label, bool highlight, float u)
+    /// <summary>켜고 끄는 칸(진행 묶음). 켜져 있으면 붉은 점과 아래 붉은 줄.</summary>
+    bool Switch (Rect r, string label, bool on, float u)
     {
-        bool over = r.Contains(Event.current.mousePosition);
-        Box(r, over ? new Color(0.19f,0.15f,0.12f,1f) : MolakTheme.Raise);
-        Box(new Rect(r.x,r.y,r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
-        Box(new Rect(r.x,r.yMax-Mathf.Max(1f,1*u),r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
-        GUI.Label(r, label, highlight ? sBtnOn : sBtn);
+        MolakPaper.CardFace(r, Color.clear, u, MolakPaper.Pressed(r));
+        if (on) MolakPaper.Box(new Rect(r.x, r.yMax - 6 * u, r.width, 6 * u), MolakPaper.Accent);
+        var st = MolakPaper.TitleCenter(u);
+        var c = new GUIContent(label); float tw = st.CalcSize(c).x, dot = 22 * u, gapx = 14 * u;
+        float x0 = r.center.x - (tw + gapx + dot) * 0.5f;
+        GUI.Label(new Rect(x0, r.y, tw + 4 * u, r.height), label, st);
+        var dr = new Rect(x0 + tw + gapx, r.center.y - dot * 0.5f, dot, dot);
+        if (on) MolakPaper.DrawDot(dr, MolakPaper.Accent);
+        else { MolakPaper.DrawDot(dr, MolakPaper.Ink); MolakPaper.DrawDot(new Rect(dr.x + 3 * u, dr.y + 3 * u, dot - 6 * u, dot - 6 * u), MolakPaper.Card); }
         bool hit = GUI.Button(r, GUIContent.none, GUIStyle.none);
         if (hit) MolakSfx.Confirm();
         return hit;
     }
+
+    /// <summary>하위 판의 「돌아간다」 — 창마다 하나뿐인 먹색 단추.</summary>
+    bool Back (float w, float h, float u)
+    {
+        bool hit = MolakPaper.InkButton(MolakPaper.BottomButton(w, h, u), "돌아간다", u);
+        if (hit) MolakSfx.Confirm();
+        return hit;
+    }
+
+    /// <summary>하위 판의 목록 칸: 제목 아래부터 돌아간다 단추 위까지.</summary>
+    float ListBottom (float w, float h, float u) { return MolakPaper.BottomButton(w, h, u).y - 28 * u; }
 
     void OnGUI ()
     {
@@ -121,10 +136,9 @@ public class MolakMenu : MonoBehaviour
                 float a = legendT < 0.4f ? legendT / 0.4f : legendT > 6.2f ? (7f - legendT) / 0.8f : 1f;
                 var g = GUI.color; GUI.color = new Color(1, 1, 1, a);
                 float lw = Mathf.Min(w * 0.92f, 980*u), lx = (w - lw) / 2f, ly = h * 0.10f, lh = 190*u;
-                Box(new Rect(lx, ly, lw, lh), new Color(0.05f,0.04f,0.035f,0.94f));
-                Box(new Rect(lx, ly, lw, Mathf.Max(1f, 2*u)), MolakTheme.Line);
+                MolakPaper.CardFace(new Rect(lx, ly, lw, lh), MolakPaper.Accent, u);   // 0.4.80 종이 카드
                 var ls = new GUIStyle(sToast){ alignment = TextAnchor.UpperLeft, wordWrap = true, richText = true, fontSize = Mathf.RoundToInt(27*u) };
-                GUI.Label(new Rect(lx + 28*u, ly + 18*u, lw - 56*u, lh - 30*u),
+                GUI.Label(new Rect(lx + 36*u, ly + 18*u, lw - 60*u, lh - 30*u),
                     "선택지 앞 인장의 색은 그 길이 열린 까닭이다.\n" +
                     "<color=#8E62B8>■</color> 지난 생   <color=#4A7398>■</color> 물건·인연   <color=#5A524C>■</color> 능력치   <color=#B08A30>■</color> 은자   <color=#7A2A68>■</color> 사술   <color=#B03A2A>■</color> 그 밖\n" +
                     "<size=85%>회색 작은 글씨는 그 선택지를 연 조건이다.</size>", ls);
@@ -140,8 +154,8 @@ public class MolakMenu : MonoBehaviour
             {
                 float a = toastT > 1.2f ? (1.6f-toastT)/0.4f : 1f;
                 var g = GUI.color; GUI.color = new Color(1,1,1,a);
-                Box(new Rect(w/2f-220*u, h*0.78f, 440*u, 70*u), new Color(0.05f,0.04f,0.035f,0.92f));
-                GUI.Label(new Rect(w/2f-220*u, h*0.78f, 440*u, 70*u), toastMsg, sToast);
+                MolakPaper.CardFace(new Rect(w/2f-260*u, h*0.78f, 520*u, 70*u), MolakPaper.Ink, u);   // 0.4.80 종이 카드
+                GUI.Label(new Rect(w/2f-240*u, h*0.78f, 500*u, 70*u), toastMsg, sToast);
                 GUI.color = g;
             }
         }
@@ -165,8 +179,9 @@ public class MolakMenu : MonoBehaviour
         }
 
         // ===== 메뉴 오버레이 =====
+        // 0.4.80 창의 결(MolakPaper): 종이 바탕으로 통째로 덮고, 제목 · 붉은 묶음 제목 · 흰 카드 · 먹색 「닫는다」
         MolakInputGuard.Guard(new Rect(0,0,w,h));
-        Box(new Rect(0,0,w,h), new Color(0.055f,0.045f,0.038f,0.95f));   // 뒤의 본문이 비치지 않게 거의 덮는다
+        MolakPaper.Backdrop(w, h);
         if (ledger) { DrawLedger(w, h, u); return; }
         if (codex) { DrawCodex(w, h, u); return; }
         if (knowTab) { DrawKnow(w, h, u); return; }
@@ -175,26 +190,24 @@ public class MolakMenu : MonoBehaviour
         var state = Engine.GetService<IStateManager>();
         var ui = Engine.GetService<IUIManager>();
 
-        // 0.4.12: 메뉴를 네 묶음으로 정리한다 — 진행 · 기록 · 저장 · (환경 설정 / 처음으로).
-        // 글자 크기·배경음·먹색·효과음은 '환경 설정' 한 곳에만 둔다(예전엔 여기와 환경 설정 두 곳에 있어 메뉴가 열다섯 줄이었다).
-        float bw = Mathf.Min(w*0.84f, 860*u), gap = 16*u;
-        float bx = (w-bw)/2f;
-        float rowH = 96*u, tileH = 128*u, secH = 50*u;
-        float totalH = 96*u + (secH + rowH + gap) + (secH + 4*(tileH+gap)) + (secH + rowH + gap) + (rowH + 24*u);
-        float by = Mathf.Max(48*u, (h-totalH)/2f);
-        GUI.Label(new Rect(bx, by, bw, 60*u), "— 운락객잔 —", sHead);
-        if (GUI.Button(new Rect(bx+bw-70*u, by-6*u, 70*u, 70*u), "×", sHead)) { open = false; SetProcessInput(true); return; }
-        by += 96*u;
+        // 0.4.12: 네 묶음 — 진행 · 기록 · 저장 · (환경 설정 / 처음으로). 글자 크기 같은 화면 설정은 '환경 설정' 한 곳에만.
+        float bx = MolakPaper.Margin(w, u), bw = w - bx * 2f, gap = 16*u;
+        float rowH = 96*u, tileH = 124*u, saveH = 100*u;
+        var closeBtn = MolakPaper.BottomButton(w, h, u);
+        float totalH = 190*u + (58*u + rowH + gap) + (58*u + 4*(tileH+gap)) + (58*u + 2*(saveH+gap));
+        float by = Mathf.Max(MolakPaper.Top(h, u), Mathf.Min(h*0.08f, closeBtn.y - 30*u - totalH));
+        if (MolakPaper.CloseX(w, bx, by - 4*u, u)) { open = false; SetProcessInput(true); return; }
+        MolakPaper.Header(ref by, bx, bw, "운락객잔", "진행 · 기록 · 저장. 고른 칸이 바로 펼쳐진다.", u);
 
         // ── 진행
-        MenuSection(bx, ref by, bw, secH, "진행");
+        MolakPaper.Section(ref by, bx, bw, "진행", u);
         {
             float tw = (bw - 2*gap) / 3f;
             // 0.4.46: 켜 둔 동안 유지(MolakPlayMode) — 예전엔 사건이 바뀌거나 처음 보는 글이 나오면 저절로 꺼졌다
             bool auto = MolakPlayMode.Auto, skip = MolakPlayMode.Fast;
-            if (Btn(new Rect(bx, by, tw, rowH), "자동 " + (auto ? "●" : "○"), auto, u)) MolakPlayMode.SetAuto(!auto);
-            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "빨리 " + (skip ? "●" : "○"), skip, u)) { MolakPlayMode.SetFast(!skip); if (!skip) Toast("빨리 — 한 쪽씩 한꺼번에 나온다. 누르면 다음 쪽."); }
-            if (Btn(new Rect(bx+2*(tw+gap), by, tw, rowH), "읽은 글 ▶▶", false, u))
+            if (Switch(new Rect(bx, by, tw, rowH), "자동", auto, u)) MolakPlayMode.SetAuto(!auto);
+            if (Switch(new Rect(bx+tw+gap, by, tw, rowH), "빨리", skip, u)) { MolakPlayMode.SetFast(!skip); if (!skip) Toast("빨리 — 한 쪽씩 한꺼번에 나온다. 누르면 다음 쪽."); }
+            if (Tile(new Rect(bx+2*(tw+gap), by, tw, rowH), "읽은 글 ▶▶", null, Color.clear, u))
             {   // 이미 본 글은 빠르게 — 처음 보는 글과 선택지에서 멈춘다(나니노벨 읽은 글 넘기기)
                 open = false; SetProcessInput(true);
                 MolakPlayMode.SkipRead(); Toast("읽은 글을 넘긴다 — 처음 보는 글에서 멈춘다.");
@@ -202,8 +215,8 @@ public class MolakMenu : MonoBehaviour
             by += rowH + gap;
         }
 
-        // ── 기록 (두 줄 카드)
-        MenuSection(bx, ref by, bw, secH, "기록");
+        // ── 기록 (두 줄 카드, 검붉은 띠)
+        MolakPaper.Section(ref by, bx, bw, "기록", u);
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
             string[] t = { "지난 기록", "원수록", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실", "능력치 기록" };
@@ -212,7 +225,7 @@ public class MolakMenu : MonoBehaviour
             for (int i = 0; i < t.Length; i++)
             {
                 var r = new Rect(bx + (i % 2) * (tw + gap), by + (i / 2) * (tileH + gap), tw, tileH);
-                if (!Btn(r, t[i] + "\n<size=" + Mathf.RoundToInt(22*u) + "><color=#8C8378>" + sub[i] + "</color></size>", false, u)) continue;
+                if (!Tile(r, t[i], sub[i], MolakPaper.Accent, u)) continue;
                 switch (i)
                 {
                     case 0:
@@ -234,33 +247,30 @@ public class MolakMenu : MonoBehaviour
             by += 4 * (tileH + gap);
         }
 
-        // ── 저장
-        MenuSection(bx, ref by, bw, secH, "저장");
+        // ── 저장 (먹 띠) — 환경 설정 · 처음 화면으로(두 번 탭 확인)도 이 묶음에
+        MolakPaper.Section(ref by, bx, bw, "저장", u);
         {
             float tw = (bw - gap) / 2f;
-            if (Btn(new Rect(bx, by, tw, rowH), "빠른 저장", false, u) && state != null) { if (MolakPractice.Active) Toast("연습 판은 기록하지 않는다."); else { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); } }
-            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), "저장 · 불러오기", false, u))
+            if (Tile(new Rect(bx, by, tw, saveH), "빠른 저장", null, MolakPaper.Ink, u) && state != null) { if (MolakPractice.Active) Toast("연습 판은 기록하지 않는다."); else { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); } }
+            if (Tile(new Rect(bx+tw+gap, by, tw, saveH), "저장 · 불러오기", null, MolakPaper.Ink, u))
             {
                 open = false; SetProcessInput(true);
                 var sl = ui != null ? ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI : null;
                 if (sl != null) sl.ChangeVisibility(true, 0.15f);
             }
-            by += rowH + gap;
-        }
-
-        // ── 아래 줄: 환경 설정 · 처음 화면으로(두 번 탭 확인)
-        {
-            by += 8*u;
-            float tw = (bw - gap) / 2f;
-            if (Btn(new Rect(bx, by, tw, rowH), "환경 설정", false, u)) { open = false; MolakSettings.Open(); }
+            by += saveH + gap;
+            if (Tile(new Rect(bx, by, tw, saveH), "환경 설정", null, MolakPaper.Ink, u)) { open = false; MolakSettings.Open(); }
             if (confirmT > 0f) confirmT -= Time.deltaTime;
-            string rl = confirmT > 0f ? "다시 탭하면 처음으로" : "처음 화면으로";
-            if (Btn(new Rect(bx+tw+gap, by, tw, rowH), rl, confirmT > 0f, u))
+            string rl = confirmT > 0f ? "다시 누르면 처음으로" : "처음 화면으로";
+            if (Tile(new Rect(bx+tw+gap, by, tw, saveH), rl, null, confirmT > 0f ? MolakPaper.Accent : MolakPaper.Ink, u))
             {
                 if (confirmT > 0f) { confirmT = 0f; open = false; SetProcessInput(true); if (state != null) state.ResetState(); }
                 else confirmT = 3f;
             }
+            by += saveH + gap;
         }
+
+        if (MolakPaper.InkButton(closeBtn, "닫는다", u)) { open = false; SetProcessInput(true); return; }
         // 바깥 탭 → 닫기
         if (Event.current.type == EventType.MouseDown) { open = false; SetProcessInput(true); }
     }
@@ -269,17 +279,16 @@ public class MolakMenu : MonoBehaviour
     void DrawLedger (float w, float h, float u)
     {
         System.Func<string,float> gv = n => { try { return MolakStats.Get(n); } catch { return 0f; } };
-        float bw = Mathf.Min(w*0.84f, 860*u), rh = 96*u, gap = 12*u;
-        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.07f);
-        GUI.Label(new Rect(bx, by, bw, 60*u), "— 원수록 · 청운의 빚 —", sHead);
-        by += 76*u;
+        float rh = 96*u, gap = 12*u;
+        float bx = MolakPaper.Margin(w, u), bw = w - bx * 2f, by = MolakPaper.Top(h, u);
+        MolakPaper.Header(ref by, bx, bw, "원수록", "청운의 빚 — 벤 자, 살린 자, 나 때문에 죽은 자", u);
         {   // 0.4.9: 이번 생의 뜻
             int vw = Mathf.RoundToInt(gv("vow"));
             if (vw > 0)
             {
                 string vt = vw == 1 ? "복수 — 서열록 삼백 위 안" : vw == 2 ? "인연 — 등을 맡길 사람" : "생존 — 그물이 조여 올 때까지";
                 var vs = new GUIStyle(sBtn){alignment=TextAnchor.MiddleCenter, fontSize=Mathf.RoundToInt(28*u), richText=true};
-                MolakGui.Ink(vs, MolakTheme.Ink3);
+                MolakGui.Ink(vs, MolakPaper.Sub); vs.alignment = TextAnchor.MiddleLeft;
                 GUI.Label(new Rect(bx, by - 14*u, bw, 44*u), "이번 생의 뜻 · " + vt, vs);
                 by += 40*u;
             }
@@ -302,19 +311,16 @@ public class MolakMenu : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             var r = new Rect(bx, by + i*(rh+gap), bw, rh);
-            Box(r, MolakTheme.Raise);
-            Box(new Rect(r.x,r.y,r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
-            Box(new Rect(r.x,r.yMax-Mathf.Max(1f,1*u),r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
+            MolakPaper.CardFace(r, MolakPaper.Accent, u);
             var nameStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(32*u)};
             var stStyle = new GUIStyle(sBtn){alignment=TextAnchor.MiddleRight, fontSize=Mathf.RoundToInt(27*u), richText=true};
-            MolakGui.Ink(stStyle, MolakTheme.Ink3);
-            GUI.Label(new Rect(r.x+28*u, r.y, r.width*0.62f, r.height), names[i], nameStyle);
+            MolakGui.Ink(stStyle, MolakPaper.Sub);
+            GUI.Label(new Rect(r.x+34*u, r.y, r.width*0.62f, r.height), names[i], nameStyle);
             GUI.Label(new Rect(r.x+r.width*0.5f, r.y, r.width*0.5f-28*u, r.height), states[i], stStyle);
         }
         // ---- 생을 넘어: 벤 자 · 나 때문에 죽은 자 · 살려 보낸 자 ----
         float y2 = by + 5*(rh+gap) + 10*u;
-        GUI.Label(new Rect(bx, y2, bw, 50*u), "— 생을 넘어 쌓인 이름 —", sHead);
-        y2 += 62*u;
+        MolakPaper.Section(ref y2, bx, bw, "생을 넘어 쌓인 이름", u);
         var rows = new System.Collections.Generic.List<string[]>();
         foreach (var e in MolakLedger.All) { var ln = MolakLedger.Line(e.Id); if (ln != null) rows.Add(new[]{ e.Name, ln }); }
         float nk = gv("g_lk_nameless"), ns = gv("g_ls_nameless");
@@ -325,13 +331,13 @@ public class MolakMenu : MonoBehaviour
             if (ns > 0) parts.Add("<color=#3E6E8E>살려 보낸 목 " + ns.ToString("0") + "</color>");
             rows.Add(new[]{ "비무판의 이름 없는 자들", string.Join(" · ", parts.ToArray()) });
         }
-        float lh = 78*u, listH = h - y2 - 140*u;
+        float lh = 78*u, listH = ListBottom(w, h, u) - y2;
         var nmS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(27*u)};
         var cS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleRight, fontSize=Mathf.RoundToInt(24*u), richText=true};
         if (rows.Count == 0)
         {
             var em = new GUIStyle(sBtn){alignment=TextAnchor.UpperCenter, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
-            MolakGui.Ink(em, MolakTheme.Ink3);
+            MolakGui.Ink(em, MolakPaper.Sub);
             GUI.Label(new Rect(bx, y2, bw, 90*u), "아직 아무도 적히지 않았다. 생이 끝날 때마다, 벤 자와 살린 자와 나 때문에 죽은 자가 여기 남는다.", em);
         }
         else
@@ -341,14 +347,13 @@ public class MolakMenu : MonoBehaviour
             for (int i = 0; i < rows.Count; i++)
             {
                 var r = new Rect(0, i*lh, bw-24*u, lh-8*u);
-                Box(r, MolakTheme.Raise);
+                MolakPaper.CardFace(r, Color.clear, u);
                 GUI.Label(new Rect(r.x+22*u, r.y, r.width*0.55f, r.height), rows[i][0], nmS);
                 GUI.Label(new Rect(r.x+r.width*0.4f, r.y, r.width*0.6f-22*u, r.height), rows[i][1], cS);
             }
             GUI.EndScrollView();
         }
-        var back = new Rect(bx, h - 124*u, bw, 100*u);
-        if (Btn(back, "돌아간다", false, u)) ledger = false;
+        if (Back(w, h, u)) ledger = false;
     }
 
 
@@ -384,12 +389,10 @@ public class MolakMenu : MonoBehaviour
     UnityEngine.Vector2 facScroll;
     void DrawFaction (float w, float h, float u)
     {
-        float bw = Mathf.Min(w*0.88f, 900*u);
-        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.08f);
-        GUI.Label(new Rect(bx, by, bw, 56*u), "— 강호록 · " + MolakFaction.Count() + " / " + MolakFaction.All.Length + " —", sHead);
-        by += 76*u;
+        float bx = MolakPaper.Margin(w, u), bw = w - bx * 2f, by = MolakPaper.Top(h, u);
+        MolakPaper.Header(ref by, bx, bw, "강호록", "문파와 사람들 · " + MolakFaction.Count() + " / " + MolakFaction.All.Length, u);
         float gap = 14*u, lineH = 74*u;
-        float listH = h - by - 150*u;
+        float listH = ListBottom(w, h, u) - by;
         float cw = bw-24*u;
         var heights = new float[MolakFaction.All.Length];
         float total = 0;
@@ -410,10 +413,10 @@ public class MolakMenu : MonoBehaviour
         facScroll = GUI.BeginScrollView(view, facScroll, new Rect(0, 0, cw, total));
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=false, richText=true};
         var mottoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(26*u), wordWrap=true, fontStyle=FontStyle.Italic};
-        MolakGui.Ink(mottoS, MolakTheme.Ink3);
+        MolakGui.Ink(mottoS, MolakPaper.Sub);
         var lineS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true, richText=true};
         var whoS = new GUIStyle(sBtn){alignment=TextAnchor.UpperRight, fontSize=Mathf.RoundToInt(21*u)};
-        MolakGui.Ink(whoS, MolakTheme.Ink3);
+        MolakGui.Ink(whoS, MolakPaper.Sub);
         var repS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(24*u)};
         MolakGui.Ink(repS, MolakTheme.Night ? new Color(0.28f,0.44f,0.60f,1f) : new Color(0.20f,0.33f,0.47f,1f));
         float y = 0;
@@ -422,12 +425,11 @@ public class MolakMenu : MonoBehaviour
             var e = MolakFaction.All[i];
             bool met = MolakFaction.Met(e);
             var r = new Rect(0, y, cw, heights[i]);
-            Box(r, MolakTheme.Raise);
-            Box(new Rect(r.x, r.y, Mathf.Max(2f,5*u), r.height), met ? MolakChoiceMeta.SealColor(MolakChoiceMeta.Item, MolakTheme.Night) : MolakTheme.Line);
-            float x0 = r.x + 28*u, iw = r.width - 56*u;
+            MolakPaper.CardFace(r, met ? MolakPaper.Accent : MolakPaper.Empty, u);
+            float x0 = r.x + 34*u, iw = r.width - 62*u;
             if (!met)
             {
-                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, new Color(0.42f,0.37f,0.32f,1f));
+                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, MolakPaper.Empty);
                 var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
                 GUI.Label(new Rect(x0, r.y+14*u, iw, 48*u), sb.ToString(), ghost);
                 GUI.Label(new Rect(x0, r.y+62*u, iw, 40*u), "아직 만나지 못했다 · " + e.Where, mottoS);
@@ -450,27 +452,25 @@ public class MolakMenu : MonoBehaviour
             y += heights[i] + gap;
         }
         GUI.EndScrollView();
-        if (Btn(new Rect(bx, by + listH + 16*u, bw, 100*u), "돌아간다", false, u)) facTab = false;
+        if (Back(w, h, u)) facTab = false;
     }
 
     bool knowTab;
     UnityEngine.Vector2 knowScroll;
     void DrawKnow (float w, float h, float u)
     {
-        float bw = Mathf.Min(w*0.88f, 900*u);
-        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.08f);
+        float bx = MolakPaper.Margin(w, u), bw = w - bx * 2f, by = MolakPaper.Top(h, u);
         int got = MolakKnow.Count();
-        GUI.Label(new Rect(bx, by, bw, 56*u), "— 남은 기억 · " + got + " / " + MolakKnow.All.Length + " —", sHead);
-        by += 76*u;
+        MolakPaper.Header(ref by, bx, bw, "남은 기억", "죽어도 남는 앎과 초식 · " + got + " / " + MolakKnow.All.Length, u);
         float rh = 150*u, gap = 14*u;
-        float listH = h - by - 150*u;
+        float listH = ListBottom(w, h, u) - by;
         var view = new Rect(bx, by, bw, listH);
         var content = new Rect(0, 0, bw-24*u, MolakKnow.All.Length*(rh+gap));
         knowScroll = TouchScroll(3, view, knowScroll, content.height);
         knowScroll = GUI.BeginScrollView(view, knowScroll, content);
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(34*u), wordWrap=true};
         var descS = new GUIStyle(sBtn){alignment=TextAnchor.UpperLeft, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
-        MolakGui.Ink(descS, MolakTheme.Ink3);
+        MolakGui.Ink(descS, MolakPaper.Sub);
         var whereS = new GUIStyle(sBtn){alignment=TextAnchor.UpperRight, fontSize=Mathf.RoundToInt(23*u)};
         MolakGui.Ink(whereS, MolakTheme.Night ? new Color(0.62f,0.50f,0.78f,1f) : new Color(0.42f,0.27f,0.58f,1f));
         for (int i = 0; i < MolakKnow.All.Length; i++)
@@ -478,8 +478,7 @@ public class MolakMenu : MonoBehaviour
             var e = MolakKnow.All[i];
             bool has = MolakKnow.Known(e);
             var r = new Rect(0, i*(rh+gap), bw-24*u, rh);
-            Box(r, MolakTheme.Raise);
-            Box(new Rect(r.x,r.y,Mathf.Max(2f,5*u),r.height), has ? MolakChoiceMeta.SealColor(MolakChoiceMeta.Know, MolakTheme.Night) : MolakTheme.Line);
+            MolakPaper.CardFace(r, has ? MolakChoiceMeta.SealColor(MolakChoiceMeta.Know, MolakTheme.Night) : MolakPaper.Empty, u);
             if (has)
             {
                 GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), e.Name, nameS);
@@ -488,7 +487,7 @@ public class MolakMenu : MonoBehaviour
             }
             else
             {
-                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, new Color(0.42f,0.37f,0.32f,1f));
+                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, MolakPaper.Empty);
                 var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
                 GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), sb.ToString(), ghost);
                 GUI.Label(new Rect(r.x+r.width*0.45f, r.y+18*u, r.width*0.55f-24*u, 40*u), e.Where, whereS);
@@ -496,22 +495,19 @@ public class MolakMenu : MonoBehaviour
             }
         }
         GUI.EndScrollView();
-        var back = new Rect(bx, by + listH + 16*u, bw, 100*u);
-        if (Btn(back, "돌아간다", false, u)) knowTab = false;
+        if (Back(w, h, u)) knowTab = false;
     }
 
     UnityEngine.Vector2 codexScroll;
     void DrawCodex (float w, float h, float u)
     {
         System.Func<string,float> gv = n => { try { return MolakStats.Get(n); } catch { return 0f; } };
-        float bw = Mathf.Min(w*0.88f, 900*u);
-        float bx = (w-bw)/2f, by = Mathf.Max(50*u, h*0.08f);
+        float bx = MolakPaper.Margin(w, u), bw = w - bx * 2f, by = MolakPaper.Top(h, u);
         int got = 0;
         foreach (var e in MolakEnd.All) if (gv("g_end_" + e.Id) > 0) got++;
-        GUI.Label(new Rect(bx, by, bw, 56*u), "— 말로록 · " + got + " / " + MolakEnd.All.Length + " —", sHead);
-        by += 76*u;
+        MolakPaper.Header(ref by, bx, bw, "말로록", "본 말로 " + got + " / " + MolakEnd.All.Length, u);
         float rh = 124*u, gap = 14*u;
-        float listH = h - by - 150*u;
+        float listH = ListBottom(w, h, u) - by;
         var view = new Rect(bx, by, bw, listH);
         var content = new Rect(0, 0, bw-24*u, MolakEnd.All.Length*(rh+gap));
         codexScroll = TouchScroll(4, view, codexScroll, content.height);
@@ -520,15 +516,13 @@ public class MolakMenu : MonoBehaviour
         MolakGui.Ink(hj, MolakTheme.Blood);
         var nameS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(34*u)};
         var hintS = new GUIStyle(sBtn){alignment=TextAnchor.MiddleLeft, fontSize=Mathf.RoundToInt(26*u)};
-        MolakGui.Ink(hintS, MolakTheme.Ink3);
+        MolakGui.Ink(hintS, MolakPaper.Sub);
         for (int i = 0; i < MolakEnd.All.Length; i++)
         {
             var e = MolakEnd.All[i];
             bool has = gv("g_end_" + e.Id) > 0;
             var r = new Rect(0, i*(rh+gap), bw-24*u, rh);
-            Box(r, MolakTheme.Raise);
-            Box(new Rect(r.x,r.y,r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
-            Box(new Rect(r.x,r.yMax-Mathf.Max(1f,1*u),r.width,Mathf.Max(1f,1*u)), MolakTheme.Line);
+            MolakPaper.CardFace(r, has ? MolakPaper.Accent : MolakPaper.Empty, u);
             if (has)
             {
                 GUI.Label(new Rect(r.x+16*u, r.y, 130*u, r.height), e.Kor, hj);
@@ -538,18 +532,17 @@ public class MolakMenu : MonoBehaviour
             else
             {
                 // 실루엣: 한자 인장을 먹 그림자처럼, 제목은 글자 수만 남긴 빈칸
-                var dim = new GUIStyle(hj); MolakGui.Ink(dim, new Color(0.30f,0.26f,0.23f,1f)); dim.fontSize = Mathf.RoundToInt(52*u);
+                var dim = new GUIStyle(hj); MolakGui.Ink(dim, MolakPaper.Empty); dim.fontSize = Mathf.RoundToInt(52*u);
                 GUI.Label(new Rect(r.x+16*u, r.y, 130*u, r.height), e.Hanja, dim);
                 var sb = new System.Text.StringBuilder();
                 foreach (var ch in e.Title) sb.Append(ch == ' ' ? ' ' : '□');
-                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, new Color(0.42f,0.37f,0.32f,1f));
+                var ghost = new GUIStyle(nameS); MolakGui.Ink(ghost, MolakPaper.Empty);
                 GUI.Label(new Rect(r.x+160*u, r.y+8*u, r.width-180*u, r.height*0.55f), sb.ToString() + "   <size=" + Mathf.RoundToInt(20*u) + ">아직 보지 못한 말로</size>", ghost);
                 GUI.Label(new Rect(r.x+160*u, r.y+r.height*0.52f, r.width-180*u, r.height*0.42f), e.Hint, hintS);
             }
         }
         GUI.EndScrollView();
-        var back = new Rect(bx, by + listH + 16*u, bw, 100*u);
-        if (Btn(back, "돌아간다", false, u))
+        if (Back(w, h, u))
         {
             codex = false;
             float d2 = 0f; try { d2 = MolakStats.Get("day"); } catch {}

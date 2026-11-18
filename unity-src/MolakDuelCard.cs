@@ -72,12 +72,14 @@ public class MolakDuelCard : MonoBehaviour
         float a = cT < 0.25f ? cT / 0.25f : 1f;
         if (outAt >= 0f) a = Mathf.Clamp01(1f - (cT - outAt) / Out);
         var ta = MolakVfx.TextArea();
-        var accent = cWin ? new Color(0.62f, 0.45f, 0.1f, 1f) : new Color(0.6f, 0.12f, 0.08f, 1f);
+        // 0.4.80 창의 결: 글자리를 종이로 덮고 가운데에 흰 카드 한 장(왼쪽 띠). 勝은 검붉은 인장, 敗는 먹 인장.
+        var accent = cWin ? MolakPaper.Accent : MolakPaper.Ink;
         var g = GUI.color;
-        Box(ta, new Color(0.955f, 0.94f, 0.905f, 0.985f * a));
+        var gr = MolakPaper.Ground; Box(ta, new Color(gr.r, gr.g, gr.b, 0.985f * a));
         float cy = ta.y + ta.height * 0.5f - 170f * u;
         GUI.color = new Color(1, 1, 1, a);
-        MolakGui.Ink(sName, new Color(0.35f, 0.3f, 0.25f, 1f));
+        MolakPaper.CardFace(new Rect(ta.x + 30f * u, cy - 34f * u, ta.width - 60f * u, 400f * u), accent, u);
+        MolakGui.Ink(sName, MolakPaper.Sub);
         GUI.Label(new Rect(ta.x, cy, ta.width, 52 * u), "— " + cName + " —", sName);
         float sc = 1f + Mathf.Clamp01(1f - cT / 0.25f) * 0.2f;
         var pivot = new Vector2(ta.center.x, cy + 150 * u);
@@ -85,14 +87,14 @@ public class MolakDuelCard : MonoBehaviour
         var old = GUI.matrix;
         GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), pivot);
         Box(box, new Color(accent.r, accent.g, accent.b, 0.92f));
-        MolakGui.Ink(sHanja, new Color(0.98f, 0.95f, 0.88f, 1f));
+        MolakGui.Ink(sHanja, MolakPaper.Card);
         GUI.Label(box, cWin ? "勝" : "敗", sHanja);
         GUI.matrix = old;
-        MolakGui.Ink(sLine, new Color(0.16f, 0.13f, 0.1f, 1f));
+        MolakGui.Ink(sLine, MolakPaper.Ink);
         GUI.Label(new Rect(ta.x, cy + 262 * u, ta.width, 46 * u), cLine, sLine);
-        MolakGui.Ink(sSub, accent);
+        MolakGui.Ink(sSub, cWin ? MolakPaper.Accent : MolakPaper.Sub);
         if (!string.IsNullOrEmpty(cSub)) GUI.Label(new Rect(ta.x, cy + 306 * u, ta.width, 44 * u), cSub, sSub);
-        if (auto < 0f && outAt < 0f && cT > 0.8f) { MolakGui.Ink(sSub, new Color(0.45f, 0.4f, 0.34f, Mathf.Clamp01((cT - 0.8f) / 0.4f))); GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sSub); }
+        if (auto < 0f && outAt < 0f && cT > 0.8f) { var sb = MolakPaper.Sub; MolakGui.Ink(sSub, new Color(sb.r, sb.g, sb.b, Mathf.Clamp01((cT - 0.8f) / 0.4f))); GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sSub); }
         GUI.color = g;
     }
 }

@@ -287,8 +287,8 @@ public class MolakBag : MonoBehaviour
                 for (int i = 0; i < recent.Count; i++) { widths[i] = Mathf.Min(maxW, sChip.CalcSize(new GUIContent(recent[i].Name)).x + 40*u); tot += widths[i]; }
                 tot += gap * (recent.Count - 1);
                 float x = (w - tot) / 2f;
-                var chipAcc = new[] { MolakTheme.Blood, new Color(0.36f, 0.48f, 0.66f, 1f), MolakTheme.Gold };
-                var face = night ? new Color(0.16f,0.14f,0.13f,1f) : new Color(0.985f,0.97f,0.94f,1f);
+                var chipAcc = new[] { MolakPaper.Accent, MolakPaper.Blue, MolakTheme.Gold };
+                var face = MolakPaper.Card;
                 var chipEdge = night ? new Color(0.40f,0.36f,0.32f,0.8f) : new Color(0.55f,0.48f,0.40f,0.45f);
                 for (int i = 0; i < recent.Count; i++)
                 {
@@ -319,14 +319,14 @@ public class MolakBag : MonoBehaviour
         var ev = Event.current;
         if (ev.type == EventType.MouseDown && !panel.Contains(ev.mousePosition)) { open = false; ev.Use(); }
 
-        var paper = night ? new Color(0.09f, 0.08f, 0.075f, 1f) : new Color(0.965f, 0.945f, 0.905f, 1f);
+        var paper = MolakPaper.Ground;   // 0.4.80 창의 결
         Box(panel, paper);
-        Box(new Rect(0, y, w, 3*u), MolakTheme.Blood);
+        Box(new Rect(0, y, w, 3*u), MolakPaper.Accent);
         Box(new Rect(w/2f - 60*u, y + 14*u, 120*u, 6*u), night ? new Color(0.6f,0.55f,0.5f,0.8f) : new Color(0.35f,0.3f,0.25f,0.6f));
-        var ink = night ? new Color(0.92f, 0.89f, 0.84f, 1f) : new Color(0.13f, 0.10f, 0.08f, 1f);
-        var ink3 = night ? new Color(0.74f, 0.70f, 0.64f, 1f) : new Color(0.30f, 0.26f, 0.22f, 1f);
+        var ink = MolakPaper.Ink;
+        var ink3 = MolakPaper.Sub;
         var effC = night ? new Color(0.88f, 0.72f, 0.36f, 1f) : new Color(0.52f, 0.36f, 0.05f, 1f);
-        MolakGui.Ink(sHead, ink); MolakGui.Ink(sSec, MolakTheme.Blood); MolakGui.Ink(sName, ink); MolakGui.Ink(sDesc, ink3); MolakGui.Ink(sEff, effC);
+        MolakGui.Ink(sHead, ink); MolakGui.Ink(sSec, MolakPaper.Accent); MolakGui.Ink(sName, ink); MolakGui.Ink(sDesc, ink3); MolakGui.Ink(sEff, effC);
         GUI.Label(new Rect(0, y + 30*u, w, 64*u), "— 행낭(行囊) —", sHead);
         var xr = new Rect(w - 130*u, y + 20*u, 110*u, 84*u);
         var xs = new GUIStyle(sHead){ fontSize = Mathf.RoundToInt(44*u) };
@@ -337,7 +337,7 @@ public class MolakBag : MonoBehaviour
         // ---- 탭 ----
         var sections = new[] { "물건", "비방 · 소식", "인연" };
         var tables = new[] { Items, Lore, Bonds };
-        var accents = new[] { MolakTheme.Blood, new Color(0.36f, 0.48f, 0.66f, 1f), MolakTheme.Gold };
+        var accents = new[] { MolakPaper.Accent, MolakPaper.Blue, MolakTheme.Gold };
         var have = new List<Entry>[3]; int newest = -1, newestIdx = -1;
         for (int s = 0; s < 3; s++)
         {
@@ -377,7 +377,7 @@ public class MolakBag : MonoBehaviour
         listMax = Mathf.Max(0f, total + 24*u - listH);
         var view = new Rect(cx, listY, cw, listH);
         listViewGui = view; viewValid = true;   // 드래그는 Update(ScrollStep)에서 입력 시스템으로 처리
-        var card = night ? new Color(0.135f, 0.12f, 0.11f, 1f) : new Color(0.995f, 0.985f, 0.96f, 1f);
+        var card = MolakPaper.Card;
         var edge = new Color(ink3.r, ink3.g, ink3.b, night ? 0.25f : 0.22f);
         GUI.BeginGroup(view);
         float ry = -listScroll, pad = 26*u, inW = cw - pad*2 - 8*u;

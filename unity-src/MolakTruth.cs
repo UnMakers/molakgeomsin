@@ -136,62 +136,69 @@ public class MolakTruthView : MonoBehaviour
         float w = Screen.width, h = Screen.height;
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         var g0 = GUI.color;
-        var ink = new Color(0.93f, 0.89f, 0.81f, 1f); var gold = new Color(0.85f, 0.68f, 0.3f, 1f); var dim = new Color(0.62f, 0.58f, 0.52f, 1f);
-        GUI.color = new Color(0.04f, 0.035f, 0.03f, 0.97f); GUI.DrawTexture(new Rect(0, 0, w, h), MolakGui.Px); GUI.color = Color.white;
-        float cw = Mathf.Min(w * 0.88f, 900f * u), cx = (w - cw) / 2f;
-        float y = Mathf.Max(60f * u, h * 0.06f);
+        // 0.4.80 창의 결(MolakPaper): 종이로 통째로 덮고 흰 카드에 검붉은 띠, 채운 칸은 검붉게
+        var ink = MolakPaper.Ink; var gold = MolakPaper.Accent; var dim = MolakPaper.Sub;
+        MolakPaper.Backdrop(w, h);
+        float cx = MolakPaper.Margin(w, u), cw = w - cx * 2f;
+        float y = MolakPaper.Top(h, u);
         bool clicked = false;
+        var br = MolakPaper.BottomButton(w, h, u);
 
         if (detail < 0)
         {
-            MolakGui.Ink(sHead, gold);
-            GUI.Label(new Rect(cx, y, cw, 64f * u), "그 밤의 진실", sHead); y += 70f * u;
-            MolakGui.Ink(sSub, dim);
-            GUI.Label(new Rect(cx, y, cw, 40f * u), "죽어도 남는 것으로 빈칸을 채운다 · " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots(), sSub);
-            y += 56f * u;
+            MolakPaper.Header(ref y, cx, cw, "그 밤의 진실", "죽어도 남는 앎으로 빈칸을 채운다 · " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots(), u);
+            float ch = 150f * u, gap = 14f * u;
+            float avail = br.y - 24f * u - y;
+            if (MolakTruth.All.Length * (ch + gap) > avail) { ch = Mathf.Max(120f * u, avail / MolakTruth.All.Length - gap); }
             for (int i = 0; i < MolakTruth.All.Length; i++)
             {
                 var t = MolakTruth.All[i]; int k = MolakTruth.Known(t), n = t.Slots.Length, nx = MolakTruth.NextIndex(t);
-                var r = new Rect(cx, y, cw, 150f * u);
-                GUI.color = new Color(1f, 1f, 1f, 0.07f); GUI.DrawTexture(r, MolakGui.Px); GUI.color = Color.white;
+                var r = new Rect(cx, y, cw, ch);
+                MolakPaper.CardFace(r, k > 0 ? gold : MolakPaper.Empty, u, MolakPaper.Pressed(r));
                 MolakGui.Ink(sRow, k > 0 ? ink : dim);
-                GUI.Label(new Rect(r.x + 26f * u, r.y + 16f * u, r.width - 52f * u, 44f * u), t.Title, sRow);
-                // 칸: 채운 칸은 금빛, 빈칸은 테두리만
-                float bx = r.x + 26f * u, by = r.y + 66f * u, bs = 26f * u;
+                GUI.Label(new Rect(r.x + 34f * u, r.y + 14f * u, r.width - 200f * u, 44f * u), t.Title, sRow);
+                var cnt = MolakPaper.SmallRight(u);
+                GUI.Label(new Rect(r.xMax - 180f * u, r.y + 14f * u, 156f * u, 44f * u), k + " / " + n, cnt);
+                // 칸: 채운 칸은 검붉게, 빈칸은 테두리만
+                float bx = r.x + 34f * u, by = r.y + 64f * u, bs = 26f * u, lw = Mathf.Max(1f, 2f * u);
                 for (int s = 0; s < n; s++)
                 {
                     var b = new Rect(bx + s * (bs + 10f * u), by, bs, bs);
-                    GUI.color = s < n && MolakStats.Get(t.Slots[s].Key) > 0f ? gold : new Color(1f, 1f, 1f, 0.18f);
-                    GUI.DrawTexture(b, MolakGui.Px); GUI.color = Color.white;
+                    if (MolakStats.Get(t.Slots[s].Key) > 0f) MolakPaper.Box(b, gold);
+                    else
+                    {
+                        var e = MolakPaper.Empty;
+                        MolakPaper.Box(new Rect(b.x, b.y, b.width, lw), e); MolakPaper.Box(new Rect(b.x, b.yMax - lw, b.width, lw), e);
+                        MolakPaper.Box(new Rect(b.x, b.y, lw, b.height), e); MolakPaper.Box(new Rect(b.xMax - lw, b.y, lw, b.height), e);
+                    }
                 }
                 MolakGui.Ink(sSub, dim);
-                string sub = nx < 0 ? "<color=#C9A227>다 풀었다</color>" : "다음 실마리 — " + t.Slots[nx].Hint;
-                GUI.Label(new Rect(r.x + 26f * u, by + bs + 10f * u, r.width - 52f * u, 44f * u), sub, sSub);
+                string sub = nx < 0 ? "<color=#" + ColorUtility.ToHtmlStringRGB(gold) + ">다 풀었다</color>" : "다음 실마리 — " + t.Slots[nx].Hint;
+                GUI.Label(new Rect(r.x + 34f * u, by + bs + 8f * u, r.width - 60f * u, 44f * u), sub, sSub);
                 if (GUI.Button(r, GUIContent.none, GUIStyle.none) && openT > 0.25f) { detail = i; openT = 0f; clicked = true; MolakSfx.Confirm(); }
-                y += 150f * u + 14f * u;
+                y += ch + gap;
             }
         }
         else
         {
             var t = MolakTruth.All[detail]; int nx = MolakTruth.NextIndex(t);
-            MolakGui.Ink(sHead, gold);
-            GUI.Label(new Rect(cx, y, cw, 64f * u), t.Title, sHead); y += 90f * u;
+            MolakPaper.Header(ref y, cx, cw, t.Title, MolakTruth.Known(t) + " / " + t.Slots.Length, u);
+            string goldHex = ColorUtility.ToHtmlStringRGB(gold), dimHex = ColorUtility.ToHtmlStringRGB(dim), emptyHex = ColorUtility.ToHtmlStringRGB(MolakPaper.Empty);
             for (int s = 0; s < t.Slots.Length; s++)
             {
                 var sl = t.Slots[s]; bool known = MolakStats.Get(sl.Key) > 0f;
-                string head = known ? "<color=#C9A227>「" + sl.Name + "」</color>" : (s == nx ? "<color=#8A7A66>「 ? 」</color>" : "<color=#5E574F>· · ·</color>");
+                string head = known ? "<color=#" + goldHex + ">「" + sl.Name + "」</color>" : (s == nx ? "<color=#" + dimHex + ">「 ? 」</color>" : "<color=#" + emptyHex + ">· · ·</color>");
                 string body = known ? sl.Text : (s == nx ? "다음 실마리 — " + sl.Hint : "");
                 MolakGui.Ink(sBody, known ? ink : dim);
-                float bh = sBody.CalcHeight(new GUIContent(head + "  " + body), cw);
-                GUI.Label(new Rect(cx, y, cw, bh), head + "  " + body, sBody);
-                y += bh + 22f * u;
+                float bh = sBody.CalcHeight(new GUIContent(head + "  " + body), cw - 60f * u);
+                var cr = new Rect(cx, y, cw, bh + 36f * u);
+                MolakPaper.CardFace(cr, known ? gold : MolakPaper.Empty, u);
+                GUI.Label(new Rect(cx + 34f * u, y + 18f * u, cw - 60f * u, bh), head + "  " + body, sBody);
+                y += cr.height + 12f * u;
             }
         }
 
-        var br = new Rect(cx + cw * 0.25f, h - 140f * u, cw * 0.5f, 96f * u);
-        GUI.color = new Color(0.16f, 0.13f, 0.11f, 1f); GUI.DrawTexture(br, MolakGui.Px); GUI.color = Color.white;
-        MolakGui.Ink(sBtn, ink); GUI.Label(br, detail >= 0 ? "돌아간다" : "닫는다", sBtn);
-        if (!clicked && GUI.Button(br, GUIContent.none, GUIStyle.none) && openT > 0.2f)
+        if (!clicked && MolakPaper.InkButton(br, detail >= 0 ? "돌아간다" : "닫는다", u, openT > 0.2f))
         {
             if (detail >= 0) { detail = -1; openT = 0f; } else { open = false; MolakInputGuard.MuteFor(0.25f); }
         }
