@@ -4047,6 +4047,10 @@
 @art scene:alley
 @deja text:"피투성이 거지. \"몰라서 못 댄다 했지.\" 지난 생에도 이 사람이 당신 대신 맞았다."
 {dejapre}
+@goto #E_Beggar4Re if:g_ev_beggar4>0&&f_ev_beggar4<1
+@set g_ev_beggar4=1
+@set f_ev_beggar4=1
+# E_Beggar4Go
 당신 이름을 대지 않은 값으로, 거지가 맞았다.
 뒷골목에 거지가 피투성이로 쓰러져 있다.
 "…나리 얘긴 안 했소. 몰라서 못 댄다 했지."
@@ -4106,10 +4110,14 @@
 # E_Spy3
 @deja text:"채찍 자국. 지난 생에도 이 세작은 이 우물가에 왔다. 그 다음을 안다."
 {dejapre}
+@goto #E_Spy3Re if:g_ev_spy3>0&&f_ev_spy3<1
+@set g_ev_spy3=1
+@set f_ev_spy3=1
 밤. 객잔 뒤 우물가에 세작이 먼저 와 있다.
 "쫓지 마시오. 오늘은 교의 눈으로 온 게 아니오."
 그가 소매를 걷는다. 붉은 끈 자국 위로 채찍 자국.
 "교주의 몸이 성치 않소. 가슴에 글자를 단 채 백 년을 살았으니. 거둘 밭을 찾는다 하오. 젊고, 잘 여문 밭을. …당신 얘기요."
+# E_Spy3Ch
 @choice "끝까지 듣는다" goto:#E_Spy3C0
 @choice "검을 뽑는다" goto:#E_Spy3C1
 @choice "우물만 내려다보며 돌려보낸다" goto:#E_Spy3C2
@@ -4139,6 +4147,10 @@
 # E_Spy4
 @deja text:"도랑가의 등. 붉은 끈 세 가닥. 또 늦었다."
 {dejapre}
+@goto #E_Spy4Re if:g_ev_spy4>0&&f_ev_spy4<1
+@set g_ev_spy4=1
+@set f_ev_spy4=1
+# E_Spy4Go
 도랑가에 세작이 엎드려 있다. 등에 붉은 끈 세 가닥. 교가 제 사람을 치우는 방식이다. 손에 종이 조각이 쥐여 있다.
 @choice "종이를 편다" goto:#E_Spy4C0
 @choice "못 본 척 지나간다" goto:#E_Spy4C1
@@ -4174,6 +4186,10 @@
 # E_Notice2
 @deja text:"오백 냥, 생포 우선. 이번에도 지금의 얼굴이다. 누가 가까이서 보았는지 이제는 안다."
 {dejapre}
+@goto #E_Notice2Re if:g_ev_notice2>0&&f_ev_notice2<1
+@set g_ev_notice2=1
+@set f_ev_notice2=1
+# E_Notice2Go
 게시벽에 새 방이 붙었다. 「청운 잔당 '운객' — 현상금 은자 오백 — 생포 우선」
 이번엔 지금의 얼굴이다. 누군가 가까이서 보았다.
 '누가 가까이서 봤다. 이 고을에 내 얼굴을 아는 눈이 또 늘었다.'
@@ -4207,6 +4223,10 @@
 # E_Notice3
 @deja text:"북로 봉쇄. 이 방이 붙으면 그물이 조여 온다. 지난 생에도 그랬다."
 {dejapre}
+@goto #E_Notice3Re if:g_ev_notice3>0&&f_ev_notice3<1
+@set g_ev_notice3=1
+@set f_ev_notice3=1
+# E_Notice3Go
 게시벽에 붉은 인이 찍힌 교의 포고.
 「북로(北路) 봉쇄. 교의 통행패 없이 북쪽 관도를 지나는 자, 역도로 간주한다.」
 "이제 장사는 다 했구먼."
@@ -4222,9 +4242,13 @@
 @art char:hajinmu
 @deja text:"종일 비, 장기판. 하진무의 첫 수까지 안다. 지난 생에도 이 판을 끝까지 두지 못했다."
 {dejapre}
+@goto #E_Rain2Re if:g_ev_rain2>0&&f_ev_rain2<1
+@set g_ev_rain2=1
+@set f_ev_rain2=1
 종일 비. 하진무가 장기판을 들고 온다.
 "셈은 끝났소. 손이 심심하구려."
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_Rain2Go
 @goto #E_Rain2_au0 if:curse>=60
 @goto #E_Rain2_au0 if:hp<=hpmax/3
 @goto #E_Rain2_au1 if:vow==1
@@ -4257,6 +4281,9 @@
 # E_Rain3
 @deja text:"기와 위의 발소리. 처마 끝에서 끊기는 발자국. 누구의 발인지 이제는 짐작이 간다."
 {dejapre}
+@goto #E_Rain3Re if:g_ev_rain3>0&&f_ev_rain3<1
+@set g_ev_rain3=1
+@set f_ev_rain3=1
 빗소리 속, 지붕 위에서 기와를 밟는 가벼운 발소리. 고양이가 아니다.
 창을 민다. 지붕 위에는 아무도 없다.
 젖은 기와 위 발자국이 처마 끝에서 뚝 끊긴다. 날아간 것처럼.
@@ -4271,6 +4298,9 @@
 @art scene:ferry
 @deja text:"\"교의 입은 노인네.\" 사공의 하얀 얼굴. 그 노인이 누구인지, 지난 생에 알게 되었다."
 {dejapre}
+@goto #E_Ferry2Re if:g_ev_ferry2>0&&f_ev_ferry2<1
+@set g_ev_ferry2=1
+@set f_ev_ferry2=1
 나루터. 사공의 얼굴이 하얗다.
 "교의(敎衣) 입은 노인네를 혼자 건네주었소. 호위도 없이."
 <align=right>"무슨 말을 하였소."</align>
@@ -4286,6 +4316,9 @@
 @art scene:ferry
 @deja text:"\"삿대질 값은 안 받소.\" 지난 생에도 이 약속을 받았다. 쓰기 전에 죽었다."
 {dejapre}
+@goto #E_Ferry3Re if:g_ev_ferry3>0&&f_ev_ferry3<1
+@set g_ev_ferry3=1
+@set f_ev_ferry3=1
 나루터. 사공이 삿대를 내려놓는다.
 "객. 가실 때 말씀만 하시오. 밤이든 새벽이든 건네드리리다. 삿대질 값은 안 받소."
 <align=right>"어째서."</align>
@@ -4301,9 +4334,13 @@
 @art scene:teahouse
 @deja text:"연잎 석 냥, 감초 한 냥, 자하근. 비방을 노파보다 먼저 왼다."
 {dejapre}
+@goto #E_Teaseller2Re if:g_ev_tea2>0&&f_ev_tea2<1
+@set g_ev_tea2=1
+@set f_ev_tea2=1
 찻집 노파가 손짓해 부른다.
 "날마다 와서 마실 형편은 못 되겠지. 비방을 일러 주마. 연잎 석 냥, 감초 한 냥, 그리고 자하근."
 "새벽마다 한 사발. 뿌리는 못 뽑아도, 굶기는 데는 차가 약보다 낫니라. 재료 값으로 석 냥."
+# E_Teaseller2Ch
 @choice "재료를 산다 (은자 3)" if:mn>=3 goto:#E_Teaseller2C0
 @choice "\"날마다는 못 하오.\" — 사양한다" goto:#E_Teaseller2C1
 @choice "자하근 한 줌만 산다 (은자 1)" if:mn>=1 goto:#E_Teaseller2X
@@ -9868,4 +9905,93 @@
 "……나리, 그럼 나는 반 끼 값밖에 못 파는데요."
 '반 끼 값이라도 산다. 들은 것보다 들을 것이 비싸다.'
 @goto #E_Beggar3Ch
+
+# E_Beggar4Re
+@set f_ev_beggar4=1
+뒷골목으로 뛰어든다. 숨이 턱에 닿는다.
+'<color=#9A70C4>이 골목이다. 이 거지가 내 이름 대신 매를 번다. 알고 달려왔는데, 또 늦었다.</color>'
+@goto #E_Beggar4Go
+
+# E_Spy3Re
+@set f_ev_spy3=1
+밤. 객잔 뒤 우물가. 세작보다 먼저 와 우물 턱에 앉아 있다. 그가 오다 멈춘다.
+<align=right>"<color=#9A70C4>쫓지 않소. 오늘은 교의 눈으로 온 게 아니라는 것도 아오.</color>"</align>
+세작이 걷으려던 소매를 도로 내린다. 채찍 자국이 소매 끝으로 보인다.
+<align=right>"<color=#9A70C4>교주의 몸이 성치 않다는 얘기지요. 거둘 밭을 찾는다고.</color>"</align>
+"……그걸 팔러 왔는데, 값이 떨어졌구려."
+'값이 떨어져도 끝까지 들어야 하는 얘기가 있다.'
+@goto #E_Spy3Ch
+
+# E_Spy4Re
+@set f_ev_spy4=1
+도랑가로 곧장 간다. 길을 돌지 않는다.
+'<color=#9A70C4>등의 붉은 끈 세 가닥, 손에 쥔 종이. 이번엔 먼저 와서 그 손을 편다. 먼저 와도 살아 있지는 않다.</color>'
+@goto #E_Spy4Go
+
+# E_Notice2Re
+@set f_ev_notice2=1
+게시벽 앞. 새 방이 붙기 전에 먼저 그 자리를 본다.
+'<color=#9A70C4>오백 냥, 생포 우선. 이번엔 지금 얼굴이 붙는다. 누가 가까이서 봤는지, 이번엔 알아내야 한다.</color>'
+@goto #E_Notice2Go
+
+# E_Notice3Re
+@set f_ev_notice3=1
+게시벽 앞. 붉은 인이 찍히기 전에 길을 먼저 센다.
+'<color=#9A70C4>북로 봉쇄. 소금길, 나루 윗길, 폐사 뒷길. 남는 셋은 다 걸어 봤다.</color>'
+@goto #E_Notice3Go
+
+# E_Rain2Re
+@set f_ev_rain2=1
+종일 비. 하진무가 장기판을 들고 오기 전에 먼저 장기판을 펴 놓고 계산대 앞에 앉는다.
+@print "하진무가 주판을 내려놓다 말고 판을 본다. \"……셈은 끝났소. 손이 심심하— 객, 그건 내 말이오.\"" if:f_hajindead<1
+@print "계산대 뒤가 비어 있다. 펴 놓은 판 맞은편에 아무도 앉지 않는다." if:f_hajindead>0
+<align=right>"한 판 두시오. 오늘은 져 드리지 않겠소."</align>
+@goto #E_Rain2Go
+
+# E_Rain3Re
+@set f_ev_rain3=1
+빗소리 속, 지붕 위에서 기와를 밟는 가벼운 발소리. 창을 밀기 전에 지붕 위로 먼저 말을 건넨다.
+<align=right>"비 맞지 마시오."</align>
+발소리가 멎는다. 처마 끝에서 한참 아무 소리도 없다.
+그러다 기와 한 장이 톡, 한 번 울린다. 대답 대신이다.
+@fx curse:1 sl:-1
+@set f_roofwatcher=1
+'<color=#9A70C4>누군지 안다. 모른 척해 주는 게 예의다. 그래도 한 마디는 했다.</color>'
+@return
+
+# E_Ferry2Re
+@set f_ev_ferry2=1
+나루터. 사공이 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>교의 입은 노인네를 혼자 건네주셨지요. 호위도 없이.</color>"</align>
+사공의 얼굴이 하얗다 못해 파랗다.
+"……객, 그 배에 같이 탔소?"
+<align=right>"<color=#9A70C4>씨앗들이 다 익어 간다는 말을 하며, 북쪽 말고 이쪽 고을을 봤다는 것도 아오.</color>"</align>
+"……그 말은 나 혼자 품고 죽으려던 건데."
+@fx curse:1
+@set f_seedknow=1
+'거둘 때라. 누구를. 그 물음은 몇 생째 같다.'
+@return
+
+# E_Ferry3Re
+@set f_ev_ferry3=1
+나루터. 사공이 삿대를 내려놓기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>뱃삯은 안 받으신다지요. 첫 손님한테 뱃삯 받는 뱃놈은 없다고.</color>"</align>
+사공이 삿대를 쥔 채 멍하니 본다.
+"……그건 내가 아껴 둔 말인데. 그럼 둘째 손님한테 하리다."
+<align=right>"둘째는 아마 없을 거라 하실 참이었잖소."</align>
+"객이 다 해 먹었으니, 그럼 그냥 한 사람만 태우겠소. 언제든."
+@fx hp:1 curse:-1
+@set f_ferryfree=1
+'배가 있다. 미룰 핑계가 또 하나 줄었다.'
+@return
+
+# E_Teaseller2Re
+@set f_ev_tea2=1
+찻집 노파가 손짓하기 전에 먼저 앉는다.
+<align=right>"<color=#9A70C4>연잎 석 냥, 감초 한 냥, 그리고 자하근. 새벽마다 한 사발.</color>"</align>
+노파가 찻주전자를 들다 내려놓는다.
+"……내 비방을 누가 흘렸나."
+<align=right>"할머니께서."</align>
+"나는 아직 안 흘렸네. ……그래, 언젠가 흘리긴 했겠지. 늙으면 입이 헐거워지니."
+@goto #E_Teaseller2Ch
 
