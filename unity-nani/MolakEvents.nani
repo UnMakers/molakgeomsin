@@ -3,6 +3,9 @@
 @art char:granny
 @deja text:"할멈이 뿌리를 들기도 전에 그 값이 먼저 떠오른다. 스무 해 묵은 하수오, 넉 냥."
 {dejapre}
+@goto #E_HerbK if:g_ev_herb>0&&f_ev_herb<1
+@set g_ev_herb=1
+@set f_ev_herb=1
 백초당(百草堂). 등 굽은 <color=#C03434>백초 할멈</color>이 뿌리 하나를 든 채 이쪽을 본다.
 "단전이 얕구나. 발소리만 들어도 안단다."
 '발소리로 단전을 재는 할멈이라. 이 고을엔 무서운 노인이 많다.'
@@ -66,6 +69,9 @@
 # E_Peddler
 @deja text:"수레 바닥의 단내를 코가 먼저 안다. 지난 생에도 이 사내의 눈은 허리춤부터 훑었다."
 {dejapre}
+@goto #E_PeddlerK if:g_ev_peddler>0&&f_ev_peddler<1
+@set g_ev_peddler=1
+@set f_ev_peddler=1
 관도변에 행상 수레가 멈춰 있다. 사내의 눈이 허리춤과 발끝을 지나치게 정확히 훑는다.
 "약재도 팔고, 소식도 팔지요."
 '소식 값을 물으면 값이 오르겠지. 안 묻는다.'
@@ -104,6 +110,9 @@
 # E_Cultists
 @deja text:"교도가 멈칫하기도 전에 손이 칼자루로 간다. 저 입에서 나올 다음 말까지 안다."
 {dejapre}
+@goto #E_CultistsK if:g_ev_cultists>0&&f_ev_cultists<1
+@set g_ev_cultists=1
+@set f_ev_cultists=1
 외곽 길목. 붉은 끈을 두른 혈마교 교도 셋이 길을 막는다. 피하기엔 늦었다.
 맨 앞의 교도가 당신 얼굴을 보고 <color=#C03434>멈칫한다</color>.
 "…네놈. 청운산장의… 분명 그날 다……"
@@ -216,6 +225,9 @@
 @art scene:alley
 @deja text:"뼈 장식 소리. 몸이 먼저 반 보 물러선다. 이 골목에서 무엇을 잃었는지 무릎이 기억한다."
 {dejapre}
+@goto #E_ThugsK if:g_ev_thugs>0&&f_ev_thugs<1
+@set g_ev_thugs=1
+@set f_ev_thugs=1
 골목이 막힌다. 곰 가죽에 도끼, 여우 가죽에 환도. 뼈 장식이 짤랑거린다.
 "통행세. 은자 두 냥. 없으면 이빨로 받지."
 '두 냥이면 국밥 두 그릇이다. 이빨은 하나에 몇 그릇일까.'
@@ -332,6 +344,9 @@
 # E_Beggar
 @deja text:"아이가 올려다본다. 지난 생에도 이 눈을 봤다. 그때 무엇을 쥐여 주었는지는 흐릿한데, 눈만은 또렷하다."
 {dejapre}
+@goto #E_BeggarK if:g_ev_beggar>0&&f_ev_beggar<1
+@set g_ev_beggar=1
+@set f_ev_beggar=1
 다리 밑에서 뼈만 남은 아이가 올려다본다. 구걸하는 법도 모르는지 그저 쳐다본다.
 혈마교가 천하를 쥔 지 십 년, 다리 밑마다 이런 아이가 있다.
 @choice "은자 한 닢을 쥐여준다" if:mn>=1 goto:#E_BeggarC0
@@ -375,6 +390,9 @@
 # E_Monk
 @deja text:"코골이 장단을 귀가 먼저 따라 센다. 들숨 여섯, 날숨 아홉."
 {dejapre}
+@goto #E_MonkK if:g_ev_monk>0&&f_ev_monk<1
+@set g_ev_monk=1
+@set f_ev_monk=1
 무너진 성황당 앞에서 중이 깨진 바가지를 두드리며 코를 곤다. 그 코골이 장단이 묘하게 호흡법의 박자와 맞는다.
 중이 한쪽 눈을 뜬다.
 "시주. 급히 기운을 돌리고 싶은 얼굴이로군."
@@ -8587,5 +8605,133 @@
 "받지 않는 빚은 안 지운다며. 네가 그랬다."
 '내가 그랬던가. 그녀는 내 말을 나보다 잘 기억한다.'
 @art char:none
+@return
+
+; ===== 회귀한 생: 지난 생에 본 사건(g_ev_*) — 먼저 말하고 먼저 움직인다 =====
+
+# E_HerbK
+@set f_ev_herb=1
+@art scene:herbshop
+@art char:granny
+백초당 문턱을 넘으며 할멈보다 먼저 입을 연다.
+<align=right>"<color=#9A70C4>단전이 얕다는 말씀은 넣어 두시오. 발소리로 아시는 것도 압니다.</color>"</align>
+할멈이 뿌리를 든 채 굳는다.
+"……내가 그 말을 벌써 했더냐."
+<align=right>"<color=#9A70C4>스무 해 묵은 하수오. 넉 냥.</color>"</align>
+"이놈이 남의 장사 말을 다 가져가는구나. 석 냥에 들고 가라. 입 다무는 값이다."
+'한 냥 깎았다. 몇 번 죽고서 산 한 냥이다.'
+@choice "석 냥에 산다" if:mn>=3 goto:#E_HerbKA
+@choice "\"저주를 누르는 약은 없소?\"" if:curse>=30 goto:#E_HerbC2
+@choice "\"오늘은 냄새만 맡고 가겠소.\"" goto:#E_HerbKB
+@stop
+# E_HerbKA
+@fx mn:-3 ng:3
+할멈이 뿌리를 싸 주며 한 번 더 본다. 맥 짚는 눈이다.
+"……속에 든 게 하나가 아니구나. 다음엔 그 얘기를 하자."
+@return
+# E_HerbKB
+"냄새값은 안 받는다. 대신 그 입 조심해라. 노인네 놀래키면 수명 깎인다."
+'수명을 깎는 건 내 쪽 일인데.'
+@return
+
+# E_PeddlerK
+@set f_ev_peddler=1
+관도변 수레. 사내가 입을 열기 전에 수레 바닥을 발끝으로 툭 찬다.
+<align=right>"<color=#9A70C4>바닥 단내가 진하오. 루의 향은 좀 덜 쓰시지.</color>"</align>
+사내의 눈이 허리춤에서 멎는다. 손이 소매 쪽으로 간다.
+"……객이 루를 어찌 아시오."
+<align=right>"<color=#9A70C4>보름날 운주 들판, 북쪽 산골의 독아단. 그 소식은 이미 샀소.</color>"</align>
+'지난 생에 낸 은자 두 냥이 이제야 본전을 한다.'
+사내가 소매에서 손을 뺀다. 빈손이다. 웃음이 한참 늦게 붙는다.
+"……약재는 그래도 사 가시겠소?"
+@set f_unjuhint=1
+@choice "약재를 산다 (은자 4)" if:mn>=4 goto:#E_PeddlerC0
+@choice "\"루에 전하시오. 이 얼굴은 아직 안 판다고.\"" goto:#E_PeddlerKA
+@stop
+# E_PeddlerKA
+사내가 수레 채를 잡는다.
+"뵌 적 없는 분으로 하지요. 서로."
+수레가 멀어진다. 단내가 바람을 거슬러 한참 남는다.
+'뵌 적 없는 분. 그 말, 다음 생에도 들을 것 같다.'
+@fx sl:1
+@return
+
+# E_CultistsK
+@set f_ev_cultists=1
+외곽 길목. 붉은 끈 셋이 모퉁이를 돌기 전에, 먼저 길 한가운데 선다.
+맨 앞의 교도가 당신 얼굴을 보고 멈칫한다. 입이 열린다.
+<align=right>"<color=#9A70C4>'네놈, 청운산장의…… 분명 그날 다……' 그 말이오?</color>"</align>
+"……!"
+<align=right>"<color=#9A70C4>다 죽였다고 고했겠지. 하나 빠뜨렸소. 셈이 틀린 건 그쪽이오.</color>"</align>
+교도의 칼이 반 박자 늦게 뽑힌다. 놀란 칼은 늦다.
+'저 반 박자를 사려고 몇 번을 죽었다.'
+@choice "놀란 틈에 먼저 벤다 〔검술〕" goto:#E_CultistsKA
+@choice "가슴의 문양으로 사술을 끌어쓴다" goto:#E_CultistsC1
+@choice "죽립 챙을 내린다. \"사람을 잘못 보셨소.\"" if:f_hat>0 goto:#E_CultistsX
+@choice "허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다" if:f_rankplate>0 goto:#E_CultistsP
+@choice "달아난다" goto:#E_CultistsC2
+@stop
+# E_CultistsKA
+@risk on:sw need:0
+@goto #E_CultFail if:pass==0
+@goto #E_CultF
+
+# E_ThugsK
+@set f_ev_thugs=1
+@art scene:alley
+골목 어귀. 뼈 장식이 짤랑거리기도 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>통행세 두 냥. 없으면 이빨. 맞소?</color>"</align>
+곰 가죽이 도끼를 반쯤 든 채 멈춘다.
+"……어디서 들었냐."
+<align=right>"<color=#9A70C4>이빨은 안 드리오. 그건 지난번에 셈해 봤소.</color>"</align>
+여우 가죽이 곰 가죽을 본다. 곰 가죽이 여우 가죽을 본다. 둘 다 '지난번'이 언제인지 모르는 얼굴이다.
+'나도 정확히는 모른다. 몇 생 전이더라.'
+@choice "둘이 어리둥절한 틈에 골목을 빠져나간다 〔검술-1〕" goto:#E_ThugsKA
+@choice "은자 두 냥을 던진다" if:mn>=2 goto:#E_ThugsC1
+@choice "맨주먹으로 맞선다" goto:#E_ThugsC0
+@stop
+# E_ThugsKA
+@risk on:sw need:-1
+@goto #E_ThugsF if:pass==0
+두 어깨 사이로 빠진다. 도끼가 늦게 돈다. 골목 끝에서 돌아보니 둘이 아직 서로를 보고 있다.
+"……형님, 우리 저놈한테 이빨 받은 적 있소?"
+"없다. ……없을 거다."
+'없다. 받은 건 내 쪽이었다.'
+@fx sl:-1
+@return
+
+# E_BeggarK
+@set f_ev_beggar=1
+다리 밑. 아이가 고개를 들기 전에 먼저 쪼그려 앉는다.
+@goto #E_BeggarKN if:mn<1
+은자 한 닢을 아이 손바닥에 얹는다.
+"……왜 줘요? 아직 안 쳐다봤는데."
+<align=right>"쳐다볼 거잖느냐. 그 눈을 또 보기는 싫다."</align>
+'또. 아이는 그 말을 못 알아듣는다. 다행이다.'
+@set f_hyeop=f_hyeop+1
+@fx mn:-1
+@goto #E_Beggar2
+# E_BeggarKN
+빈 전낭을 뒤집어 보인다. 아이가 웃는다. 앞니가 두 개 빠졌다.
+"아저씨도 거지예요?"
+<align=right>"반쯤."</align>
+'반쯤 거지에 반쯤 귀신이다. 어느 쪽도 아이한테 할 말은 못 된다.'
+@fx curse:-1
+@return
+
+# E_MonkK
+@set f_ev_monk=1
+성황당 앞. 중의 코골이에 맞춰 먼저 숨을 쉰다. 들숨 여섯, 날숨 아홉.
+코골이가 뚝 그친다. 중이 한쪽 눈을 뜬다.
+"……시주. 그건 내가 아직 골지도 않은 장단인데."
+<align=right>"<color=#9A70C4>소림이 불탈 때 빠져나오셨지요. 저처럼.</color>"</align>
+중이 두 눈을 다 뜬다. 눈 위 흉터가 꿈틀한다.
+"……그 말은 중 된 뒤로 아무한테도 안 했다."
+<align=right>"<color=#9A70C4>구결은 코골이 값으로 치겠소. 장단 맞춰 들었으니.</color>"</align>
+"허. 내 셈까지 훔쳐 가는구먼."
+그가 바가지를 베고 다시 눕는다. 이번 코골이는 날숨 끝에서 반 박자를 쉰다.
+'덤이다. 지난 생엔 안 붙던 박자다.'
+@set f_breath=1
+@fx ng:1
 @return
 

@@ -218,6 +218,12 @@
 @set f_dokad=0
 @set f_dokinfo=0
 @set f_dreamvow=0
+@set f_ev_beggar=0
+@set f_ev_cultists=0
+@set f_ev_herb=0
+@set f_ev_monk=0
+@set f_ev_peddler=0
+@set f_ev_thugs=0
 @set f_ferryfree=0
 @set f_ferrysafe=0
 @set f_finger=0
