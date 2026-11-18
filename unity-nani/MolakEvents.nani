@@ -492,9 +492,13 @@
 @vfx kind:rain
 @deja text:"빗소리가 그 밤을 데려온다. 붉은 달, 타는 산장. 몇 번을 되감겨도 이 비는 그쳐 주지 않는다."
 {dejapre}
+@goto #E_RainRe if:g_ev_rain>0&&f_ev_rain<1
+@set g_ev_rain=1
+@set f_ev_rain=1
 비가 온다. 처마 밑에서 비를 긋는다.
 문득 그 밤이 떠오른다. 붉은 달, 타오르던 산장.
 그날의 당신은 쓰러졌고, 지금의 당신은 제 발로 서 있다.
+# E_RainGo
 @fx hp:1
 @goto #E_RainS0 if:f_soamet<1||f_soadead>0
 @art char:soa_grief
@@ -638,12 +642,16 @@
 # E_Simma
 @deja text:"시원했다는 그 감각을 지난 생에도 느꼈다. 그 끝에 무엇이 있었는지도."
 {dejapre}
+@goto #E_SimmaRe if:g_ev_simma>0&&f_ev_simma<1
+@set g_ev_simma=1
+@set f_ev_simma=1
 한밤. 잠이 오지 않는다.
 요 며칠, 사람을 눕힐 때마다 가슴 어딘가가 <color=#C03434>시원했다</color>.
 심마(心魔), 마음에 든 마귀다.
 살기는 칼날과 같아서, 품고만 있어도 안쪽부터 벤다. 스승이 늘 하던 말이다.
 '시원했다. 그 말을 누구한테도 못 하겠다.'
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_SimmaGo
 @goto #E_Simma_au1 if:curse>=60
 @goto #E_Simma_au1 if:hp<=hpmax/3
 @goto #E_Simma_au2 if:vow==1
@@ -733,8 +741,12 @@
 # E_Coldspring
 @deja text:"샘물이 닿기도 전에 살갗이 오그라든다. 이 냉기를 몸이 잊지 않았다."
 {dejapre}
+@goto #E_ColdspringRe if:g_ev_cold>0&&f_ev_cold<1
+@set g_ev_cold=1
+@set f_ev_cold=1
 산기슭의 차가운 샘. 무인들이 탁기를 씻으러 오던 자리라고 나무꾼이 일러주었다.
 한겨울 얼음장 같은 물이다.
+# E_ColdspringCh
 @choice "샘에 몸을 담근다" goto:#E_ColdspringC0
 @choice "얼음물 속에서 운기조식을 한다 〔내공〕" goto:#E_ColdspringX
 @choice "손발만 씻고 간다" goto:#E_ColdspringC1
@@ -795,9 +807,13 @@
 # E_Sutra
 @deja text:"붓을 받는 손이 떨린다. 지난 생에도 이 산사에서 마음을 가라앉히려 했다. 가라앉지 않았다."
 {dejapre}
+@goto #E_SutraRe if:g_ev_sutra>0&&f_ev_sutra<1
+@set g_ev_sutra=1
+@set f_ev_sutra=1
 반쯤 무너진 산사. 늙은 주지가 묻지도 않고 붓과 종이를 내민다.
 "불경 한 축 베껴 쓰면 마음 하나는 가라앉지요. 아미타불."
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_SutraGo
 @goto #E_Sutra_au0 if:curse>=60
 @goto #E_Sutra_au0 if:hp<=hpmax/3
 @goto #E_Sutra_au1 if:vow==1
@@ -825,10 +841,14 @@
 # E_Dream
 @deja text:"꿈인 줄 안다. 알아도 불길은 뜨겁고, 노인의 입 모양은 똑같다."
 {dejapre}
+@goto #E_DreamRe if:g_ev_dream>0&&f_ev_dream<1
+@set g_ev_dream=1
+@set f_ev_dream=1
 꿈을 꾼다. 불타는 산장을 등지고 복면의 백발이 서 있다.
 다가가려 하면 불이 길을 막는다. 노인의 입 모양만 읽힌다.
 <color=#9A70C4>'깨, 달, 았, 느, 냐.'</color>
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_DreamGo
 @goto #E_Dream_au1 if:f_incense>0
 @goto #E_Dream_au2 if:curse>=60
 @goto #E_Dream_au2 if:hp<=hpmax/3
@@ -862,6 +882,9 @@
 @art char:soa
 @deja text:"\"그 문양, 요새 얼마나 자랐지?\" 같은 물음이다. 지난 생엔 대답이 늦었다."
 {dejapre}
+@goto #E_Soa2Re if:g_ev_soa2>0&&f_ev_soa2<1
+@set g_ev_soa2=1
+@set f_ev_soa2=1
 객잔 기둥에 낯익은 쌍검이 기대 있다. 소아가 인사도 없이 묻는다.
 "그 문양, 요새 얼마나 자랐지?"
 소아가 왼팔 소매를 걷는다. 흉터 둘레로 가는 침 자국들.
@@ -878,6 +901,9 @@
 # E_VillageNews
 @deja text:"서툰 글씨를 다시 본다. 이 아이가 이 쪽지를 쓰기까지 무엇을 겪는지 안다."
 {dejapre}
+@goto #E_VillageNewsRe if:g_ev_village>0&&f_ev_village<1
+@set g_ev_village=1
+@set f_ev_village=1
 객잔으로 이름 없는 꾸러미가 와 있다. 말린 약초 한 다발과 서툰 글씨의 쪽지.
 「아전씨. 오담」
 '아저씨'를 쓰다 만 글씨다. 회목촌 밭에서 오담의 어미가 길러 말렸으리라.
@@ -927,6 +953,9 @@
 # E_Funeral
 @deja text:"곡소리가 낮다. 지난 생에 이 상여를 본 뒤로, 당신의 이름도 언젠가 이렇게 지워질 것을 안다."
 {dejapre}
+@goto #E_FuneralRe if:g_ev_funeral>0&&f_ev_funeral<1
+@set g_ev_funeral=1
+@set f_ev_funeral=1
 상여가 지나간다. 서열전에서 패해 죽은 떠돌이 무사라 한다. 곡소리가 낮다.
 서열록 맨 끝 줄에서 이름 하나가 지워졌다. 그가 몇 위였는지 기억하는 사람은 없다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
@@ -1096,9 +1125,13 @@
 # E_DokRevenge
 @deja text:"뼈 장식 소리에 이를 악문다. 이 패거리가 다시 찾아오리란 걸, 지난 생부터 알고 있었다."
 {dejapre}
+@goto #E_DokRevengeRe if:g_ev_dokrev>0&&f_ev_dokrev<1
+@set g_ev_dokrev=1
+@set f_ev_dokrev=1
 좁은 길목. 뼈 장식 소리. 지난번 그 독아단 패거리다.
 "찾았다, 이놈!"
 이번엔 처음부터 칼을 빼 들고 있다.
+# E_DokRevengeCh
 @choice "정면으로 부순다 〔검술-1〕" goto:#E_DokRevengeC0
 @choice "사술을 끌어쓴다" goto:#E_DokRevengeC1
 @choice "처마 밑의 소매치기 아이와 눈을 맞춘다" if:f_thiefkid>0 goto:#E_DokRevengeX
@@ -1398,10 +1431,14 @@
 ; ===== 제一장 붉은 달 =====
 @deja text:"\"혼자면 죽여서 뒤져 보면 되지.\" 다음 말까지 안다. 저 셋 가운데 누가 먼저 무릎을 꿇는지도."
 {dejapre}
+@goto #E_YongRe if:g_ev_yong>0&&f_ev_yong<1
+@set g_ev_yong=1
+@set f_ev_yong=1
 해 질 녘 산길. 누더기 차림의 장정 셋이 길을 막아선다. 산적이다.
 "어이, 거기. 혼자냐?"
 "혼자면 죽여서 뒤져 보면 되지."
 홀쭉한 놈이 칼을 뽑는다. 칼 쥔 손이 뻣뻣하다. 무공을 익힌 자들은 아니다.
+# E_YongCh
 @choice "맞서 싸운다" goto:#E_YongC0
 @choice "말로 풀어 본다" goto:#E_YongC1
 @choice "으름장을 놓아 쫓는다" goto:#E_YongC2
@@ -1501,6 +1538,9 @@
 # E_Pilgrim
 @deja text:"늙은이가 땅에 칸을 긋기 전에 아홉이라는 숫자가 먼저 떠오른다."
 {dejapre}
+@goto #E_PilgrimRe if:g_ev_pilgrim>0&&f_ev_pilgrim<1
+@set g_ev_pilgrim=1
+@set f_ev_pilgrim=1
 관도에서 늙은 무인을 만난다. 봇짐 하나, 지팡이 하나. 걸음에 티끌만 한 낭비가 없다.
 "젊은 객, 무공의 경지를 아는가."
 늙은이가 땅에 아홉 칸을 긋는다.
@@ -1516,9 +1556,13 @@
 # E_Swordgrave
 @deja text:"구름 문양을 다시 찾는다. 지난 생에도 이 앞에 섰다. 사형의 검은 그대로 녹슬어 간다."
 {dejapre}
+@goto #E_SwordgraveRe if:g_ev_sgrave>0&&f_ev_sgrave<1
+@set g_ev_sgrave=1
+@set f_ev_sgrave=1
 산자락의 검총(劍塚). 주인 잃은 부러진 검 수백 자루가 흙에 꽂혀 비석을 대신한다. 강호가 아직 강호였던 시절의 풍습이다.
 녹슨 검들 사이에 청운(靑雲)의 구름 문양이 보인다. 사형 중 누군가의 검이다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_SwordgraveGo
 @goto #E_Swordgrave_au0 if:curse>=60
 @goto #E_Swordgrave_au0 if:hp<=hpmax/3
 @goto #E_Swordgrave_au1 if:vow==1
@@ -1688,8 +1732,12 @@
 # E_Lostblade
 @deja text:"도랑가의 녹슨 검. 지난 생에도 이 매듭을 손끝으로 쓸었다."
 {dejapre}
+@goto #E_LostbladeRe if:g_ev_lostblade>0&&f_ev_lostblade<1
+@set g_ev_lostblade=1
+@set f_ev_lostblade=1
 비 갠 도랑가에 녹슨 검 한 자루가 반쯤 묻혀 있다. 칼자루 매듭이 어느 표국의 양식이다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_LostbladeGo
 @goto #E_Lostblade_au1 if:curse>=60
 @goto #E_Lostblade_au1 if:hp<=hpmax/3
 @goto #E_Lostblade_au0 if:vow==1
@@ -1760,10 +1808,14 @@
 # E_Echoes
 @deja text:"문양이 말을 건다. 지난 생에도 이 목소리를 받아 적었는지, 귀를 막았는지. 어느 쪽이었든 이 목소리는 돌아왔다."
 {dejapre}
+@goto #E_EchoesRe if:g_ev_echoes>0&&f_ev_echoes<1
+@set g_ev_echoes=1
+@set f_ev_echoes=1
 깊은 밤. 가슴의 문양이 <color=#9A70C4>말을 건다</color>.
 검결 비슷한 결이 핏줄을 타고 흘러든다. 사술이 삼킨 탁기가 안에서 무언가로 빚어지고 있다.
 받아 적으면 검이 늘리라.<br>받아 적은 만큼, 저것의 것이 되리라.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_EchoesGo
 @goto #E_Echoes_au2 if:f_bilok>0
 @goto #E_Echoes_au1 if:curse>=60
 @goto #E_Echoes_au0 if:hp<=hpmax/3
@@ -1797,9 +1849,13 @@
 # E_Oldvision
 @deja text:"용마루 위의 복면. 몇 번을 겪어도 저 시선 아래에서는 익어 가는 열매가 된다."
 {dejapre}
+@goto #E_OldvisionRe if:g_ev_oldvis>0&&f_ev_oldvis<1
+@set g_ev_oldvis=1
+@set f_ev_oldvis=1
 해 질 녘, 맞은편 전각 용마루 위에 사람이 서 있다.
 복면을 쓴 백발이다. 역광이라 눈은 안 보인다. 그래도 그 시선이 문양이 있는 자리에 꽂혀 있는 걸 안다.
 @set f_oldseen=1
+# E_OldvisionCh
 @choice "지붕을 타고 쫓는다" goto:#E_OldvisionA
 @choice "그 자리에 서서 시선을 받는다" goto:#E_OldvisionB
 @choice "옷깃을 풀어 문양을 보인다 — 보고 싶은 게 이것이냐" goto:#E_OldvisionC
@@ -1870,12 +1926,16 @@
 @art char:granny
 @deja text:"할멈의 얼굴이 굳기 전에 그 낱말이 먼저 떠오른다. 씨앗. 누가 심었는지도 이제는 안다."
 {dejapre}
+@goto #E_Herb4Re if:g_ev_herb4>0&&f_ev_herb4<1
+@set g_ev_herb4=1
+@set f_ev_herb4=1
 @art char:granny_grave
 할멈이 손목을 잡아채 맥을 짚는다. 한참 뒤 손을 놓는 얼굴이 굳어 있다.
 "이건 병이 아니다. <color=#9A70C4>씨앗</color>이다. 누가 심은 게야."
 <align=right>"뽑을 수 있소."</align>
 "뿌리는 심은 놈만 뽑는다. 약으로는 굶기는 게 고작이니라."
 할멈이 당신의 눈을 오래 들여다본다.
+# E_Herb4Ch
 @choice "\"심은 자를 아오.\"" goto:#E_Herb4C0
 @choice "말없이 소매를 내린다" goto:#E_Herb4C1
 @choice "\"맥이 둘이라던 그 하나 말이오.\"" if:f_herbpulse>0 goto:#E_Herb4X
@@ -1953,6 +2013,10 @@
 @art char:none
 @deja text:"장터 한가운데 솥. 붉은 끈들이 둘러서서 손바닥을 긋는다. 이 밤 누가 솥에 끌려가는지 안다."
 {dejapre}
+@goto #E_CultRiteRe if:g_ev_cultrite>0&&f_ev_cultrite<1
+@set g_ev_cultrite=1
+@set f_ev_cultrite=1
+# E_CultRiteGo
 삼경. 장터 한가운데에 쇠솥 하나가 걸렸다. 불은 없는데 솥 안이 끓는다.
 붉은 끈을 맨 교도 열둘이 솥을 둘러서서 차례로 손바닥을 긋는다. 피가 솥으로 떨어질 때마다 다 같이 웃는다. 웃음소리가 박자를 맞춘다.
 "익어라. 익어라. 우리 님 밭에서 익어라."
@@ -2026,6 +2090,9 @@
 @art char:none
 @deja text:"웃는 교도. 제 가슴에 칼로 무늬를 그리는 자. 그가 무엇을 보고 무릎을 꿇는지 안다."
 {dejapre}
+@goto #E_CultLaughRe if:g_ev_cultlaugh>0&&f_ev_cultlaugh<1
+@set g_ev_cultlaugh=1
+@set f_ev_cultlaugh=1
 한낮의 저잣거리에 사람들이 둥글게 비켜 서 있다. 가운데서 교도 하나가 웃고 있다.
 웃옷을 벗은 맨가슴에, 단도로 무늬를 그리는 중이다. 피가 배꼽까지 흐른다. 그린 무늬가 낯익다. 당신 가슴에 있는 그 모양을 서툴게 흉내 냈다.
 "우리 님도 누구의 밭이었대! 히히. 다 밭이야. 너도 밭이고 나도 밭이고. 익으면 거두러 오신대!"
@@ -2033,6 +2100,7 @@
 "형님은 벌써 싹이 났네! 히히. 부러워라."
 사람들의 눈이 당신에게 모인다.
 '싹이 났대. 축하받을 일은 아니다.'
+# E_CultLaughCh
 @choice "멱살을 잡고 골목으로 끌고 간다 — 누가 그 말을 했는지 묻는다" goto:#E_CultLaughA
 @choice "군중 틈으로 몸을 빼 사라진다" goto:#E_CultLaughB
 @choice "단도를 빼앗아 그의 손목을 묶는다 — 더 긋지 못하게" goto:#E_CultLaughC
@@ -2069,6 +2137,10 @@
 @art char:none
 @deja text:"붉은 술의 밤. 교도들이 이유 없이 문을 부수는 밤. 어느 집 문이 먼저 부서지는지 안다."
 {dejapre}
+@goto #E_CultFeastRe if:g_ev_cultfeast>0&&f_ev_cultfeast<1
+@set g_ev_cultfeast=1
+@set f_ev_cultfeast=1
+# E_CultFeastGo
 교도들이 골목의 문을 하나씩 부수기 시작했다.
 북쪽 고개에서 북소리가 내려온다. 교주가 무언가를 거둔 날이라 한다. 무엇을 거뒀는지는 아무도 모른다.
 골목마다 붉은 끈들이 쏟아진다. 붉은 술을 동이째 들고, 마시고, 끼얹고, 웃는다.
@@ -2256,9 +2328,13 @@
 # E_Peddler4
 @deja text:"뒤집힌 수레, 옆구리의 단도. 또 늦었다. 이번에도 이 자리에 늦게 왔다."
 {dejapre}
+@goto #E_Peddler4Re if:g_ev_peddler4>0&&f_ev_peddler4<1
+@set g_ev_peddler4=1
+@set f_ev_peddler4=1
 관도변에 수레가 뒤집혀 있다. 바퀴 뒤에 쓰러진 행상의 옆구리에 독아단의 뼈 장식 단도가 박혀 있다.
 "…객."
 사내가 피 묻은 손을 든다. 아직 숨이 있다.
+# E_Peddler4Ch
 @choice "지혈해 준다" goto:#E_Peddler4C0
 @choice "수레의 은자부터 챙긴다" goto:#E_Peddler4C1
 @choice "금창약을 상처에 통째로 붓는다" if:f_salve>0 goto:#E_Peddler4X
@@ -9178,4 +9254,186 @@
 @set f_wolfnear=1
 @fx sl:1 hp:-1 curse:-1
 @return
+
+# E_RainRe
+@set f_ev_rain=1
+비가 온다. 처마 밑에 들어서며 옆에 한 사람 몫을 비워 둔다.
+'<color=#9A70C4>붉은 달, 타는 산장. 이 비엔 그 밤이 온다. 기다리지 않고 먼저 떠올린다.</color>'
+떠올린 밤이 빗소리를 따라 지나간다. 지금의 당신은 제 발로 서 있다.
+@goto #E_RainGo
+
+# E_SimmaRe
+@set f_ev_simma=1
+한밤. 잠이 오지 않는다. 이 밤이 무슨 밤인지 안다.
+사람을 눕힐 때마다 가슴 어딘가가 시원하던 그 감각. 심마(心魔)다.
+'<color=#9A70C4>시원했다. 그 끝에 무엇이 있었는지 안다. 그래서 이번엔 소리 내어 말해 본다.</color>'
+<align=right>"……시원했다."</align>
+아무도 없는 방에서 그 말이 생각보다 크다. 말하고 나니 조금 덜 시원하다.
+@fx sl:-1
+@goto #E_SimmaGo
+
+# E_ColdspringRe
+@set f_ev_cold=1
+산기슭의 찬 샘. 나무꾼이 일러 주기 전에 먼저 옷을 벗는다.
+"……객, 거기 얼음장이오. 무인들이 탁기 씻던 데긴 한데."
+<align=right>"<color=#9A70C4>알고 있소. 이가 딱딱 부딪친다는 것도.</color>"</align>
+나무꾼이 지게를 고쳐 메며 혀를 찬다. "알면서 들어가는 놈이 제일 독하지."
+'독한 게 아니다. 들어가 봐서 안다. 효험은 있다.'
+@goto #E_ColdspringCh
+
+# E_SutraRe
+@set f_ev_sutra=1
+반쯤 무너진 산사. 늙은 주지가 붓을 내밀기 전에 먼저 먹을 간다.
+"……시주, 소승은 아직 아무 말도 안 했소이다."
+<align=right>"<color=#9A70C4>불경 한 축 베끼면 마음 하나는 가라앉는다 하시려고.</color>"</align>
+"허허, 아미타불. 그 말을 뺏기면 소승은 무슨 말로 먹고사나."
+@goto #E_SutraGo
+
+# E_DreamRe
+@set f_ev_dream=1
+꿈. 불타는 산장, 그 앞의 복면 백발. 노인의 입이 열리기 전에 먼저 입을 연다.
+<align=right>"<color=#9A70C4>깨달았느냐고 물으실 거지요.</color>"</align>
+노인의 입 모양이 멈춘다. 꿈속인데도 놀란 얼굴이다. 불길이 반 걸음 물러선다.
+@goto #E_DreamGo
+
+# E_Soa2Re
+@set f_ev_soa2=1
+객잔 기둥에 낯익은 쌍검이 기대 있다. 소아가 묻기 전에 먼저 옷깃을 연다.
+<align=right>"<color=#9A70C4>거웅혈, 그다음 염천. 달이 찰 때마다. 맞소?</color>"</align>
+소아의 외눈이 커진다.
+"……적운 놈이 하나 더 살아 있었냐."
+<align=right>"아니. 하나뿐이오. 그 하나한테 배웠소."</align>
+그녀가 제 왼팔 소매를 내려다본다. 흉터 둘레의 침 자국.
+"……팔이라 다행이었다는 말도 하려 했는데."
+<align=right>"<color=#9A70C4>나는 가슴이라 다행이 없다는 것까지.</color>"</align>
+"……재수 없는 놈. 내 할 말을 다 해 놓고 표정은 왜 그 모양이냐."
+@set f_soaseal=1
+@set soaseal=1
+@page
+그날 밤부터 달이 찰 때마다 거웅혈, 염천을 짚는다. 문양이 자라는 기세가 꺾인다.
+@return
+
+# E_VillageNewsRe
+@set f_ev_village=1
+객잔 계산대 앞에서 기다린다. 점소이가 이름 없는 꾸러미를 들고 들어온다.
+쪽지는 펴 보지 않아도 안다. 「아전씨. 오담」
+'<color=#9A70C4>고치지 말자고 했다. 이번에도 안 고친다.</color>'
+@fx hp:3 curse:-5
+약탕이 쓰고, 달다. 답장을 쓴다. 「오담아. 아전씨다.」
+@return
+
+# E_FuneralRe
+@set f_ev_funeral=1
+상여 행렬이 오기 전에 길가에 서서 갓을 벗는다.
+상여꾼들이 당신을 보고 걸음을 한 박자 늦춘다. 이 고을에서 모르는 자의 상여에 갓을 벗는 사람은 드물다.
+'<color=#9A70C4>몇 위였는지는 끝내 못 들었다. 그래도 한 사람은 서 있었다고 해 두자.</color>'
+요령 소리가 멀어질 때까지 갓을 쓰지 않는다.
+@fx sl:-1 curse:-1
+@return
+
+# E_DokRevengeRe
+@set f_ev_dokrev=1
+좁은 길목. 뼈 장식 소리가 나기 전에 먼저 돌아선다.
+<align=right>"<color=#9A70C4>'찾았다, 이놈!' 할 참이지.</color>"</align>
+"……찾았다, 이놈!"
+놈들이 기어이 그 말을 한다. 더 화가 난 얼굴로.
+'할 말은 끝까지 하는 놈들이다. 그 사이 반 박자는 내 것이다.'
+@goto #E_DokRevengeCh
+
+# E_YongRe
+@set f_ev_yong=1
+해 질 녘 산길. 장정 셋이 길을 막기 전에 먼저 길 한가운데 선다.
+<align=right>"<color=#9A70C4>혼자다. 죽여서 뒤져 봐야 국밥값도 안 나온다.</color>"</align>
+셋이 서로 본다. 칼 쥔 손이 뻣뻣해진다.
+"……형님, 이 사람 미쳤나 보오. 우리 할 말을 먼저 하오."
+"미친놈은 털지 말랬다. 재수 없다고."
+'털지 말라는 법이 아직 남아 있구나. 녹림도 다 망하진 않았다.'
+@goto #E_YongCh
+
+# E_PilgrimRe
+@set f_ev_pilgrim=1
+관도에서 늙은 무인을 만난다. 그가 지팡이를 들기 전에 먼저 흙에 아홉 칸을 긋는다.
+<align=right>"<color=#9A70C4>삼류, 이류, 일류, 절정, 초절정, 화경, 현경, 생사경. 아홉째는 비워 두시지요.</color>"</align>
+늙은이가 지팡이를 든 채 한참 칸을 내려다본다.
+"……허. 누가 가르쳤나."
+<align=right>"길에서 만난 어르신이."</align>
+"길에서 만난 늙은이는 다 나 같은가 보군."
+그가 웃으며 아홉째 칸을 지팡이로 지운다.
+@fx ng:1
+'아홉 칸. 지금 몇째 칸인지는 매번 새로 센다.'
+@return
+
+# E_SwordgraveRe
+@set f_ev_sgrave=1
+검총. 구름 문양을 찾지 않는다. 발이 먼저 그 자리로 간다.
+'<color=#9A70C4>셋째 사형 것인지 일곱째 것인지 끝내 모른다. 이번엔 녹이라도 털어 드린다.</color>'
+소매로 녹을 턴다. 손끝이 붉게 물든다.
+@goto #E_SwordgraveGo
+
+# E_LostbladeRe
+@set f_ev_lostblade=1
+비 갠 도랑가. 표국 매듭을 보기 전에 녹슨 검을 먼저 뽑아 든다.
+'<color=#9A70C4>이 검이 여기 묻혀 있는 줄 알았다. 주인 찾아 줄 데가 이제는 있다.</color>'
+@goto #E_LostbladeGo
+
+# E_EchoesRe
+@set f_ev_echoes=1
+깊은 밤. 문양이 말을 걸기 전에 먼저 귀를 막는다. 소용없다는 걸 안다. 그래도 막는다.
+'<color=#9A70C4>받아 적으면 검이 는다. 받아 적은 생이 어떻게 끝났는지도 안다.</color>'
+@goto #E_EchoesGo
+
+# E_OldvisionRe
+@set f_ev_oldvis=1
+해 질 녘. 맞은편 전각 용마루를 먼저 본다. 아직 아무도 없다.
+숨을 세 번 쉰다. 셋째 숨에 백발이 선다.
+'<color=#9A70C4>그 자리, 그 시각. 노인도 버릇이 있다.</color>'
+복면 아래 시선이 문양 자리에 꽂힌다. 오늘은 그 시선이 반 박자 늦게 온다. 먼저 보고 있던 눈을 만났으니.
+@set f_oldseen=1
+@goto #E_OldvisionCh
+
+# E_Herb4Re
+@set f_ev_herb4=1
+@art char:granny_grave
+할멈이 손목을 잡아채기 전에 먼저 내민다.
+<align=right>"<color=#9A70C4>씨앗이지요. 누가 심은.</color>"</align>
+할멈의 손가락이 맥 위에서 굳는다.
+<align=right>"<color=#9A70C4>뿌리는 심은 놈만 뽑는다고 하실 거고.</color>"</align>
+"……너 이놈, 누구한테 맥을 짚혀 봤느냐. 이 고을에 나 말고 그걸 아는 손이 있더냐."
+할멈이 당신 눈을 오래 들여다본다.
+@goto #E_Herb4Ch
+
+# E_CultRiteRe
+@set f_ev_cultrite=1
+해 지기 전, 국밥집 뒷문을 두드린다. 열넷쯤 된 아들에게 오늘 밤은 다락에서 내려오지 말라고 이른다.
+아이가 고개를 끄덕인다. 어미가 등 뒤에서 이상한 사람을 보는 눈을 한다.
+'<color=#9A70C4>이 아이다. 오늘 밤 솥 앞으로 끌려 나온다. 이번엔 다락이다.</color>'
+@goto #E_CultRiteGo
+
+# E_CultLaughRe
+@set f_ev_cultlaugh=1
+한낮의 저잣거리. 둥글게 비켜 선 사람들 가운데서 교도가 맨가슴에 단도로 무늬를 긋는다. 당신 가슴의 그 모양을 서툴게 흉내 냈다.
+교도가 군중을 둘러보다 당신 앞에서 멈춘다. 코를 킁킁거린다. 입을 벌리기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>벌써 싹이 났다고 하실 참이오.</color>"</align>
+교도가 단도를 떨어뜨릴 뻔한다. 웃음이 터진다. 더 커진다.
+"히히! 형님은 제 싹 소리도 듣는구나! 부러워라, 부러워라!"
+사람들의 눈이 당신에게 모인다. 미리 말했는데도 그렇다.
+'미리 말해도 쏠릴 눈은 쏠린다. 그건 몇 번을 해도 안 고쳐진다.'
+@goto #E_CultLaughCh
+
+# E_CultFeastRe
+@set f_ev_cultfeast=1
+북소리가 내려오기 전에 객잔 맞은편 짚신 영감 집 문을 먼저 두드린다.
+<align=right>"오늘 밤은 객잔으로 건너오시오."</align>
+영감이 웃는다. 오늘 같은 날 무슨 일이 있겠냐고. 짚신 삼던 손을 멈추지 않는다.
+'<color=#9A70C4>저 문이 첫 번째로 부서진다. 말해도 안 믿는다. 그럼 문 앞에 서는 수밖에.</color>'
+@goto #E_CultFeastGo
+
+# E_Peddler4Re
+@set f_ev_peddler4=1
+관도변에 수레가 뒤집혀 있다. 사내가 손을 들기 전에 먼저 닿아, 옆구리에 박힌 뼈 장식 단도 자루를 쥔다.
+<align=right>"뽑지 않소. 뽑으면 피가 쏟아지오."</align>
+"……객, 의원이오?"
+<align=right>"많이 봤을 뿐이오."</align>
+'피 냄새보다 단내가 먼저 온다. 뼈 장식은 독아단 것이다.'
+@goto #E_Peddler4Ch
 
