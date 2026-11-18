@@ -230,9 +230,10 @@ public class MolakTitle : MonoBehaviour
         }
         if (enso != null)
         {
-            // 처음 2.6초: 거꾸로 감기며 멈춘다(되감기). 그 뒤로는 아주 천천히 역방향으로.
+            // 처음 2.6초: 거꾸로 감기며 멈춘다(되감기). 멈춘 뒤로는 움직이지 않는다
+            // (계속 천천히 돌면 둥글지 않은 붓 원이라 흔들리는 것처럼 보였다).
             float k = Mathf.Clamp01(since / 2.6f), ease = 1f - Mathf.Pow(1f - k, 3f);
-            float ang = -540f * (1f - ease) - since * 1.2f;
+            float ang = -540f * (1f - ease);
             float er = mr * 2.05f * (1.12f - 0.12f * ease);
             var m = GUI.matrix; GUIUtility.RotateAroundPivot(ang, new Vector2(mcx, mcy));
             Color ec = dawn ? new Color(0.62f, 0.48f, 0.22f, 0.85f) : new Color(0.92f, 0.88f, 0.80f, 0.78f);
