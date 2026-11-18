@@ -9437,11 +9437,18 @@
 <align=right>"끼겠소. 패는 안 보고 손만 보겠소."</align>
 타짜의 손이 반 박자 멈춘다.
 "……손 보는 객은 질색인데."
-'<color=#9A70C4>이 판에서 뭘 봐야 하는지는 몸이 안다. 패는 안 본다.</color>'
+'<color=#9A70C4>지난 생엔 이 판에서 손을 못 봤다. 오늘은 손부터 본다.</color>'
+@choice "패는 버려 두고 손만 읽는다 〔살기〕" goto:#E_GambleKB
+@choice "\"농이오.\" 일어선다" goto:#E_GambleC2
+@stop
 # E_GambleKM
 @choice "셋째 판만 거르며 판을 읽는다 〔살기-1〕" goto:#E_GambleKA
 @choice "\"농이오.\" 일어선다" goto:#E_GambleC2
 @stop
+# E_GambleKB
+@risk on:sl need:0
+@goto #E_Gamble2Fail if:pass==0
+@goto #E_Gamble2
 # E_GambleKA
 @risk on:sl need:-1
 @goto #E_Gamble2Fail if:pass==0
@@ -9615,7 +9622,7 @@
 @set g_ev_peddler3=g_ev_peddler3+1
 @art scene:teahouse
 관도변. 수레 없는 행상이 입을 열기 전에 은자 두 냥을 그 손에 얹는다.
-@print "<align=right>\"<color=#9A70C4>단내는 독, 쓴내는 약. 그 말은 이미 샀소. 오늘은 '아직은'을 사겠소. 두 냥어치.</color>\"</align>" if:g_kn_amhwarn>0
+@print "<align=right>\"<color=#9A70C4>루가 내 값을 매겼다지요. 단내는 독, 쓴내는 약, 그 말은 이미 샀소. 오늘은 '아직은'을 사겠소. 두 냥어치.</color>\"</align>" if:g_kn_amhwarn>0
 @print "<align=right>\"<color=#9A70C4>암향루가 내 값을 매겼다지요. 오늘은 '아직은'을 사겠소. 두 냥어치.</color>\"</align>" if:g_kn_amhwarn<1
 사내가 은자를 쥔 채 오래 본다.
 "……객한텐 팔 말이 없구려. 루가 값을 매긴 걸 벌써 아시니."
