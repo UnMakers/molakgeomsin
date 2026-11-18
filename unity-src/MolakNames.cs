@@ -124,7 +124,8 @@ public static class MolakNames
         var hexes = night ? nightHex : dayHex; string coinHex = night ? CoinNight : CoinDay;
         paintNight = night;
         // 0.4.68 대사 안의 액수는 칠하지 않는다(사람의 말 속 "삼백 냥"이 반만 칠해져 어색했다). 서술의 액수만.
-        string tt = text.TrimStart(); bool dialogue = tt.Length > 0 && (tt[0] == '"' || tt[0] == '“' || tt[0] == '「');
+        string tt = System.Text.RegularExpressions.Regex.Replace(text, "^(\\s|<[^>]+>)*", "");   // 0.4.79 <align=right> 같은 앞 태그를 건너뛰고 본다
+        bool dialogue = tt.Length > 0 && (tt[0] == '"' || tt[0] == '“' || tt[0] == '「');
         clueSeen.Clear();
         var outp = new StringBuilder(text.Length + 64);
         int colorDepth = 0, i = 0;

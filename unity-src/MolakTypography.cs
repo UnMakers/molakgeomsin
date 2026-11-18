@@ -53,7 +53,11 @@ public static class MolakTypography
             try { text = MolakNames.Paint(text, MolakTheme.Night); } catch { }   // 0.4.59 이름·은자 액수 색
             if (text.IndexOf('"') < 0 && text.IndexOf('“') < 0 && text.IndexOf('「') < 0) return text;
             string hex = DialogueHex;
-            return Line.Replace(text, m => m.Groups[1].Value + "<color=" + hex + ">" + m.Groups[2].Value.TrimEnd('\r') + "</color>");
+            // 0.4.79 대본이 이미 색을 준 대사(지난 생에 알던 말 — <align=right><color=#9A70C4>"…")는 덮지 않는다.
+            //        짙은 먹을 덧씌우면 TMP 색 쌓기에서 먹이 위에 와 보랏빛이 사라진다.
+            return Line.Replace(text, m => m.Groups[1].Value.IndexOf("<color", System.StringComparison.OrdinalIgnoreCase) >= 0
+                ? m.Value
+                : m.Groups[1].Value + "<color=" + hex + ">" + m.Groups[2].Value.TrimEnd('\r') + "</color>");
         }
     }
     static readonly DialogueStyler styler = new DialogueStyler();
