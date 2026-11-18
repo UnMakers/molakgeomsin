@@ -25,7 +25,7 @@ public class MolakStoryBook : MonoBehaviour
         public int life;         // 이야기 모드를 서장부터 시작한 뒤 몇째 생인가(0 = 첫 생)
         public float day;
         public long order;
-        public bool bundled;
+        public bool bundled, legacy;   // legacy: 0.4.78 옛 형식
         public string body;      // 변수 줄
     }
 
@@ -107,6 +107,7 @@ public class MolakStoryBook : MonoBehaviour
                 case "script": e.script = v; break;
                 case "label": e.label = v; break;
                 case "life": int.TryParse(v, out e.life); break;
+                case "second": int.TryParse(v, out e.life); e.legacy = true; break;   // 0.4.80 0.4.78의 옛 기록(__a/__b) — 첫 생 0, 둘째 생 1
                 case "day": float.TryParse(v, out e.day); break;
                 case "order": long.TryParse(v, out e.order); break;
             }
@@ -123,7 +124,7 @@ public class MolakStoryBook : MonoBehaviour
             foreach (var ta in Resources.LoadAll<TextAsset>("MolakData/storybook"))
             {
                 var e = Parse(ta.text, ta.name, true);
-                if (e != null) map[e.key] = e;
+                if (e != null) map[e.script + "#" + e.label + "@" + e.life] = e;
             }
         }
         catch { }
@@ -135,7 +136,12 @@ public class MolakStoryBook : MonoBehaviour
                     var key = Path.GetFileNameWithoutExtension(f);
                     if (key.StartsWith("_")) continue;
                     var e = Parse(File.ReadAllText(f, Encoding.UTF8), key, false);
-                    if (e != null) map[key] = e;
+                    if (e == null) continue;
+                    // 0.4.80 같은 생의 같은 마디가 옛 형식(0.4.78)과 새 형식으로 두 번 적혀 목록에 두 번 뜨던 것 — 하나만, 새 형식을 먼저
+                    string lk = e.script + "#" + e.label + "@" + e.life;
+                    Entry had;
+                    if (map.TryGetValue(lk, out had) && !had.bundled && (had.legacy == e.legacy ? had.order >= e.order : e.legacy)) continue;
+                    map[lk] = e;
                 }
         }
         catch { }
