@@ -4,11 +4,12 @@
 @deja text:"할멈이 뿌리를 들기도 전에 그 값이 먼저 떠오른다. 스무 해 묵은 하수오, 넉 냥."
 {dejapre}
 @goto #E_HerbK if:g_ev_herb>0&&f_ev_herb<1
+@set f_herbagain=f_ev_herb
 @set g_ev_herb=g_ev_herb+1 if:f_ev_herb<1
 @set f_ev_herb=1
 백초당(百草堂). 등 굽은 <color=#C03434>백초 할멈</color>이 뿌리 하나를 든 채 이쪽을 본다.
 "단전이 얕구나. 발소리만 들어도 안단다."
-'발소리로 단전을 재는 할멈이라. 이 고을엔 무서운 노인이 많다.'
+@print "'발소리로 단전을 재는 할멈이라. 이 고을엔 무서운 노인이 많다.'" if:f_herbagain<1
 "스무 해 묵은 하수오다. 은자 넉 냥. 아니면 약초 감별 내기를 하든지. 맞히면 공짜, 틀리면 두 냥."
 @choice "산다" if:mn>=4 goto:#E_HerbC0
 @choice "감별 내기를 받는다" if:mn>=2 goto:#E_HerbC1
@@ -10258,8 +10259,8 @@
 @set f_ev_spy3=1
 @set g_ev_spy3=g_ev_spy3+1
 밤. 객잔 뒤 우물가. 세작보다 먼저 와 우물 턱에 앉아 있다. 그가 오다 멈춘다.
-<align=right>"<color=#9A70C4>쫓지 않소. 오늘은 교의 눈으로 온 게 아니라는 것도 아오.</color>"</align>
-세작이 걷으려던 소매를 도로 내린다. 채찍 자국이 소매 끝으로 보인다.
+<align=right>"<color=#9A70C4>앉으시오. 쫓을 생각 없소. 소매는 안 걷어도 되오.</color>"</align>
+세작이 걷으려던 소매를 도로 내린다. 그래도 채찍 자국이 소매 끝으로 보인다.
 <align=right>"<color=#9A70C4>교주의 몸이 성치 않다는 얘기지요. 거둘 밭을 찾는다고.</color>"</align>
 "……그걸 팔러 왔는데, 값이 떨어졌구려."
 '값이 떨어져도 끝까지 들어야 하는 얘기가 있다.'
@@ -10314,8 +10315,8 @@
 <align=right>"<color=#9A70C4>교의 입은 노인네를 혼자 건네주셨지요. 호위도 없이.</color>"</align>
 사공의 얼굴이 하얗다 못해 파랗다.
 "……객, 그 배에 같이 탔소?"
-<align=right>"<color=#9A70C4>씨앗들이 다 익어 간다는 말을 하며, 북쪽 말고 이쪽 고을을 봤다는 것도 아오.</color>"</align>
-"……그 말은 나 혼자 품고 죽으려던 건데."
+<align=right>"<color=#9A70C4>무슨 말을 하던가요. 북쪽 말고 이쪽을 보면서.</color>"</align>
+"……씨앗들이 다 익어 간다고. 거둘 때가 멀지 않았다고. 그 말은 나 혼자 품고 죽으려던 건데."
 @fx curse:1
 @set f_seedknow=1
 @print "'<color=#9A70C4>거둘 때라. 누구를. 그 물음은 지난 생과 같다.</color>'" if:g_ev_ferry2<3
@@ -10809,8 +10810,8 @@
 # E_HerbCmRe
 @set f_ev_herbcm=1
 @set g_ev_herbcm=g_ev_herbcm+1
-백초당. 청묘가 탁발 동전을 내밀기 전에, 먼저 계산대에 동전을 놓는다.
-<align=right>"<color=#9A70C4>정심단 반 알. 몸이 차고 기가 얕은 사람 몫으로. 사저 몫으로 사겠소.</color>"</align>
+백초당. 청묘가 탁발 동전을 내밀기 전에, 먼저 할멈에게 말한다.
+<align=right>"<color=#9A70C4>정심단 반 알이지요. 몸이 차고 기가 얕은 사람 몫.</color>"</align>
 청묘의 손에서 동전이 굴러떨어진다.
 할멈이 두 사람을 번갈아 본다. "……이것들 봐라. 청운은 반 알 하나에 둘이 덤비는구나."
 @goto #E_HerbCmCh
