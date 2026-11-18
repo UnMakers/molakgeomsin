@@ -2707,6 +2707,9 @@
 @art char:hyeok
 @deja text:"장날이다. 빈 지게를 진 표사가 객잔 문을 두드릴 것이다. 이번엔 표호 숨까지 끝까지 보고 싶다."
 {dejapre}
+@goto #S_MarketRe if:g_bt_smarket>0&&f_bt_smarket<1
+@set g_bt_smarket=1
+@set f_bt_smarket=1
 아침. 객잔 문을 두드리는 건 염혁이다. 등에 빈 지게를 지고 있다.
 "형씨! 장 구경 갑시다! 아버지 심부름이오. 숫돌 하나, 소금 두 되, 그리고 엿."
 <align=right>"엿은 왜."</align>
@@ -2911,6 +2914,9 @@
 @page
 @deja text:"은자 삼백 냥. 지난 생엔 이 종이 한 장 값에 칼 든 자들이 객잔 지붕에 올랐다."
 {dejapre}
+@goto #S_WantedRe if:g_bt_swanted>0&&f_bt_swanted<1
+@set g_bt_swanted=1
+@set f_bt_swanted=1
 아침. 게시벽 앞이 웅성거린다. 새 방(榜)이 붙었다.
 「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
 그림 속 얼굴은 일 년을 앓기 전의 당신이다.
@@ -3095,6 +3101,9 @@
 @goto #S_Fame_v3 if:tr==3
 @deja text:"귀만 열어 둔 손님들. 지난 생에도 이 소문 뒤로 객잔에 칼이 들어왔다."
 {dejapre}
+@goto #S_FameRe if:g_bt_sfame>0&&f_bt_sfame<1
+@set g_bt_sfame=1
+@set f_bt_sfame=1
 객잔이 수상하다.
 낭인, 표사, 정체 모를 손님이 많은데 다들 술은 안 마시고 귀만 열어 두었다. 서열이 오른 '운객(雲客)'이 묵는다는 소문 탓이다.
 @goto #S_Fame_vm
@@ -3111,6 +3120,7 @@
 @print "\"…방을 옮기시겠소? 뒷마당 창고 쪽이 눈에 덜 띄오.\"" if:f_hajindead<1
 @print "점소이가 국밥을 내려놓으며 속삭인다." if:f_hajindead>0
 @print "\"…뒷마당 창고 방이 비었어요. 영감님이 살아 계셨으면 거기로 모셨을 거예요.\"" if:f_hajindead>0
+# S_FameCh
 @choice "창고 방으로 옮긴다" goto:#S_FameC0
 @choice "그대로 지낸다 — 보란 듯이" goto:#S_FameC1
 @choice "소문의 출처부터 찾는다" if:sl>=4 goto:#S_FameC2
@@ -3184,3 +3194,40 @@
 '영감, 저 아이 매듭 솜씨는 영감 닮았소. 서툰 데까지.'
 @fx mn:-1 hp:2
 @return
+
+; ===== 회귀한 생: 지난 생에 본 장면(g_bt_*) — 먼저 말하고 먼저 움직인다 =====
+
+# S_MarketRe
+@set f_bt_smarket=1
+@art char:hyeok
+아침. 염혁이 객잔 문을 두드리기 전에 문을 연다. 빈 지게를 진 그가 주먹을 든 채 굳는다.
+<align=right>"<color=#9A70C4>숫돌 하나, 소금 두 되, 그리고 엿. 엿은 아버지 몫이고.</color>"</align>
+"……형씨! 우리 아버지 엿 얘긴 표국 담 밖에선 아무도 모르오! 어디서 들었소!"
+<align=right>"표국 담이 낮더군."</align>
+'체면 때문에 아들 이름으로 엿을 사는 총표두. 몇 번을 들어도 웃긴다.'
+@art char:soa
+계단 위 난간에 소아가 팔을 걸친다. 입을 열려는데, 먼저 올려다본다.
+<align=right>"<color=#9A70C4>안 간다고 하고 내려올 거지.</color>"</align>
+"……안 간다."
+그녀가 계단을 내려온다. 쌍검까지 챙겨서. 염혁이 당신과 소아를 번갈아 보고 입을 다문다. 눈치는 표국에서 배웠다.
+@goto #S_MarketC
+
+# S_WantedRe
+@set f_bt_swanted=1
+아침. 게시벽 앞. 붉은 끈들이 방을 펴기 전에 맨 앞줄에 선다.
+「청운검파 잔당 수배. 생사불문. 현상금 은자 삼백 냥」
+풀통을 든 포졸이 그림과 맨 앞줄의 얼굴을 번갈아 본다. 그림 쪽이 낫다는 얼굴이다.
+'<color=#9A70C4>잘 그린 그림이다. 일 년 앓기 전 얼굴. 지금 얼굴은 그 덕에 산다.</color>'
+옆의 장꾼이 혀를 찬다. "삼백 냥짜리 얼굴은 저렇게 생겼구먼." 그 장꾼은 당신 얼굴을 쳐다보지도 않는다.
+@goto #S_WM
+
+# S_FameRe
+@set f_bt_sfame=1
+@goto #S_Fame_vm if:f_hajindead>0
+객잔이 수상하다. 술은 안 마시고 귀만 열어 둔 손님들. 그 사이를 지나 하진무가 입을 열기 전에 계산대로 간다.
+<align=right>"<color=#9A70C4>뒷마당 창고 쪽 방이 눈에 덜 띄지요.</color>"</align>
+하진무가 들고 있던 열쇠를 내려다본다. 창고 방 열쇠다.
+"……객은 내 말을 내가 하기 전에 하는 버릇이 있구려. 언제 생긴 버릇이오."
+<align=right>"좀 오래됐소."</align>
+@goto #S_FameCh
+

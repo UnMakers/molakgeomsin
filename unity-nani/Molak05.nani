@@ -73,6 +73,9 @@
 @art char:hajinmu
 @deja need:g_know_taxday text:"붉은 끈 둘. 지난 생, 이 한낮이 지나고 하진무의 손목이 꺾였다."
 {dejapre}
+@goto #Hajin2Re if:g_bt_hajin2>0&&f_bt_hajin2<1
+@set g_bt_hajin2=1
+@set f_bt_hajin2=1
 한낮. 붉은 끈 징세조 둘이 객잔 마당에 들이닥친다. 오늘은 세금 때문이 아니다.
 "요새 이 객잔에 낯선 놈이 묵는다지."
 하진무가 꼿꼿이 주판을 내려놓는다.
@@ -141,6 +144,9 @@
 @art scene:alley
 @deja text:"전당포 뒷골목의 소란. 지난 생에도 이 밤 쥐눈이 장에게 무슨 일이 있었는지 안다."
 {dejapre}
+@goto #Jang2Re if:g_bt_jang2>0&&f_bt_jang2<1
+@set g_bt_jang2=1
+@set f_bt_jang2=1
 밤. 전당포 뒷골목이 소란하다.
 @goto #Jang2Sold if:f_jangsold>0
 # Jang2Go
@@ -734,3 +740,34 @@
 @set grudgeday=day+random(6,9) if:grudge<1
 @set grudge=grudge+1
 @goto Molak02#AfterChapter
+
+; ===== 회귀한 생: 지난 생에 본 장면(g_bt_*) — 먼저 말하고 먼저 움직인다 =====
+
+# Hajin2Re
+@set f_bt_hajin2=1
+한낮. 붉은 끈 둘이 마당에 들어서기 전에, 평상에 먼저 나와 앉아 국밥을 뜬다.
+징세조가 들어선다. "요새 이 객잔에 낯선 놈이 묵는다지."
+하진무가 주판을 내려놓고 입을 열려는데, 당신이 먼저 숟가락을 든다.
+<align=right>"<color=#9A70C4>객잔에 객이 묵지, 그럼 뉘가 묵소.</color>"</align>
+하진무가 당신을 노려본다. "……그건 내 말이오, 객."
+징세조 둘이 서로 본다. 수배 그림을 꺼내 국밥 뜨는 얼굴과 대 본다. 국물이 턱에 흐르는 얼굴이 그림보다 한참 못났다.
+"……딴 놈이다. 청운 잔당이 이렇게 처먹을 리가 없지."
+둘이 침을 뱉고 간다.
+'못나게 먹는 것도 무공이다.'
+하진무가 주판을 집는다. 이번엔 손이 떨리지 않는다. 대신 혀를 찬다.
+"남의 말로 목숨 건지는 객은 내 평생 처음 보오."
+@set f_hajin2=1
+@fx curse:-1
+@goto Molak02#AfterChapter
+
+# Jang2Re
+@set f_bt_jang2=1
+@goto #Jang2Sold if:f_jangsold>0
+@art char:jang
+밤. 전당포 뒷골목 어귀에 먼저 서 있다. 붉은 끈 셋이 쥐눈이 장을 몰아오다 당신과 마주친다.
+<align=right>"<color=#9A70C4>소식첩 내놓으라 하시려고. 그 소식첩, 반은 찢겨 있소. 반값이나 받으시오.</color>"</align>
+붉은 끈이 장을 본다. 장이 당신을 본다. 쥐눈이 동그랗다.
+"……객, 그 입 좀."
+'도망치라는 눈을 보내기 전에 와 버렸다. 장의 눈이 갈 데를 잃었다.'
+@goto #Jang2Ch
+
