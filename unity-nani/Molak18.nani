@@ -20,6 +20,7 @@
 @art char:none
 검이 같은 자리에서 멎는다. 며칠째다. 기를 돌려도 같은 마디에서 걸린다.
 <color=#C9A227>{btnext}</color>의 벽이다. 사부는 벽 앞에서는 문을 닫고 앉으라 했다. 막힌 마디를 열고, 기가 제 길을 다시 찾을 때까지. 그 반 시진은 칼을 들 수 없다. 운기는 가슴의 문양도 같이 깨운다.
+@print "'<color=#9A70C4>이 벽은 지난 생에 넘었다. 몸은 잊었다. 어느 마디에서 막히는지는 안다.</color>'" if:g_realmbest>realm
 @realm do:odds
 <color=#C9A227>폐관의 승산 {btodds}</color>
 {btoddstext}
