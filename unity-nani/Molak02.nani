@@ -632,7 +632,7 @@
 @set tr=random(1,100)
 @goto #KGrRunF if:tr<=45
 새벽에 돌아오니 이불이 칼에 찢겨 있고, 전낭이 없다.
-싸움을 피한 게 아니다. 미뤘을 뿐이다.
+싸움은 미뤘을 뿐이다.
 @set mn=0
 @set grudgeday=day+random(2,4) if:grudge<1
 @set grudge=grudge+1
@@ -743,7 +743,7 @@
 "모르오. 판에서 한 번 보았을 뿐이오. 그래서 이름이라도 외웠소."
 
 늙은 여자가 오래 말이 없다. 이윽고 상복들 쪽으로 손을 젓는다.
-원한이 다 풀린 건 아니다. 칼만 거두어졌다.
+칼만 거두어졌다. 원한은 남았다.
 @mark text:"상주에게 그 이름을 불렀다"
 @set grudge=0
 @set grudgevisit=0
