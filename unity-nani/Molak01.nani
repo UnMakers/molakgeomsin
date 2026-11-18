@@ -289,12 +289,15 @@
 @set f_ev_ferry3=0
 @set f_ev_frost=0
 @set f_ev_funeral=0
+@set f_ev_gae1=0
+@set f_ev_gae2=0
 @set f_ev_gamble=0
 @set f_ev_gamble3=0
 @set f_ev_gamble4=0
 @set f_ev_guard=0
 @set f_ev_guard2=0
 @set f_ev_guard3=0
+@set f_ev_gwakwife=0
 @set f_ev_gyeol2=0
 @set f_ev_gyeol3=0
 @set f_ev_hajin1=0
@@ -302,6 +305,7 @@
 @set f_ev_herb=0
 @set f_ev_herb2=0
 @set f_ev_herb4=0
+@set f_ev_herbburn=0
 @set f_ev_herbtax=0
 @set f_ev_hunter=0
 @set f_ev_hunter2=0
@@ -313,6 +317,8 @@
 @set f_ev_lastletter=0
 @set f_ev_lastmarket=0
 @set f_ev_lostblade=0
+@set f_ev_maeng2=0
+@set f_ev_maeng3=0
 @set f_ev_mirror=0
 @set f_ev_monk=0
 @set f_ev_monk3=0
