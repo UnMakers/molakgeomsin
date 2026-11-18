@@ -2410,11 +2410,15 @@
 @art scene:innhall
 @deja text:"틀린 손가락, 솟은 어깨. 십 년 전의 당신이 또 서 있다. 이 아이가 어디서 칼을 놓는지 안다."
 {dejapre}
+@goto #E_Duelist3Re if:g_ev_duel3>0&&f_ev_duel3<1
+@set g_ev_duel3=1
+@set f_ev_duel3=1
 객잔 마당에 열일곱쯤 된 소년이 목검을 들고 서 있다.
 "운객(雲客)이시지요. 한 수 청합니다."
 검 쥔 손가락은 틀렸고 어깨는 솟았다. 십 년 전의 당신이 거기 서 있다.
 <align=right>"서열을 걸 패도 없을 텐데."</align>
 "없으면 만들면 되지요."
+# E_Duelist3Ch
 @choice "목검을 받아 든다" goto:#E_Duelist3C0
 @choice "\"서열 말고 선생을 찾아라.\"" goto:#E_Duelist3C1
 @choice "살기를 실어 쫓아 보낸다" goto:#E_Duelist3C2
@@ -2524,6 +2528,10 @@
 @art char:none
 @deja text:"또 이 상여다. 베 조각의 이름까지 그대로다. 이번에도 그를 고개 앞에서 붙잡지 못했다."
 {dejapre}
+@goto #E_Spar3Re if:g_ev_spar3>0&&f_ev_spar3<1
+@set g_ev_spar3=1
+@set f_ev_spar3=1
+# E_Spar3Go
 상여가 지나간다. 베 조각에 쓰인 이름은 <color=#C03434>염혁</color>.
 "북쪽 고개에서 독아단 다섯을 상대로 혼자 수레를 막고 섰답니다. 수레는 지켰고요."
 뒤따르는 표사가 말한다. 상여 맨 뒤에서 총표두 염가가 접은 표기를 안고 걷는다. 걸음이 고르다. 너무 고르다.
@@ -2641,8 +2649,12 @@
 @art char:gyeol
 @deja text:"게시벽의 숫자 구백구십구. 그 칼이 횡소 아홉째를 어떻게 긋는지, 지난 생에 손목으로 받아 봤다."
 {dejapre}
+@goto #E_Gyeol2Re if:g_ev_gyeol2>0&&f_ev_gyeol2<1
+@set g_ev_gyeol2=1
+@set f_ev_gyeol2=1
 게시벽에 청이 붙었다. 서열 구백구십구가 '운객'을 청한다. 교법에 청을 받은 자는 물리지 못한다.
 비무장. 단목결이 관복 소매를 걷는다. 구경꾼들이 숫자를 수군댄다. 서열각의 칼이 서열록 밖의 숫자를 직접 청한 것은 드문 일이다.
+# E_Gyeol2Go
 "사형 대접은 없다고 했다."
 그가 검을 뽑는다. 청운 기수식이다. 구경꾼 누구도 알아보지 못한다. 알아볼 사람이 이제 둘뿐이다.
 @set dkind="gyeolspar"
@@ -2673,12 +2685,16 @@
 @art char:gyeol
 @deja text:"사당 들보 아래 앉은 다섯째 사형. 지난 생에 그는 이 밤 대사형 이야기를 끝까지 듣지 못하고 일어섰다."
 {dejapre}
+@goto #E_Gyeol3Re if:g_ev_gyeol3>0&&f_ev_gyeol3<1
+@set g_ev_gyeol3=1
+@set f_ev_gyeol3=1
 밤. 성 밖 버려진 사당. 단목결이 위패 자리 앞에 앉아 있다. 관복을 벗었다. 안에 입은 것은 청운의 회색 무복이다. 소매 끝이 그을렸다.
 "보름마다 여기에 쌀자루가 놓인다. 누가 놓는지 아냐."
 그가 대답을 기다리지 않는다.
 "대사형이다. 서열각 장부에 다 있다. 혈랑대주가 보름마다 성 밖에 나간다고. 나는 그걸 일 년 동안 적었다. 내 손으로."
 그가 무릎 위에서 주먹을 쥔다.
 "그 밤 왜 나를 묶었는지 아직 모른다. 다 죽는 밤에 나만 살려서 숯가마에 처박았다. 그게 살린 거냐. 나한테서 그 밤을 뺏은 거지."
+# E_Gyeol3Ch
 @choice "\"대사형은 그 밤 문을 열고, 일곱을 명부에서 뺐소. 사형이 그 일곱 중 하나요.\"" if:g_jbtruth>0||f_jinbaektruth>0 goto:#E_Gyeol3T
 @choice "\"보름 밤 이 사당에서 대사형이 사부를 부르며 우는 걸 들었소.\"" if:f_jbheard>0 goto:#E_Gyeol3H
 @choice "\"그럼 그 문 앞에서 물으시오. 나도 같이 서겠소.\"" goto:#E_Gyeol3A
@@ -2790,6 +2806,9 @@
 @art char:hyeok
 @deja text:"못 박힌 표국 문, 그 앞에 등을 돌리고 앉은 아들. 지난 생에도 이 부자는 끝내 한 마당에 서지 않았다."
 {dejapre}
+@goto #E_Hyeok1Re if:g_ev_hyeok1>0&&f_ev_hyeok1<1
+@set g_ev_hyeok1=1
+@set f_ev_hyeok1=1
 장풍표국 문에 못이 박혀 있다. 「상납 체납. 교령으로 폐업함」
 문 건너 처마 밑에 염혁이 쪼그려 앉아 있다. 고개에서 벌어 온 삯 주머니가 무릎 위에 그대로다.
 "끈 값을 벌어 왔더니, 끈 값이 그새 올랐답디다. 갑절로."
@@ -2801,6 +2820,7 @@
 "서열각이 이달 비무판 하나에 표행패(鏢行牌)를 걸었답디다. 끈 없이도 길이 열리는 패요. 그 판에 오르려면 서열부터 올려야 하고. 그거 따서 내 손으로 문을 다시 여오."
 <align=right>"교의 패요."</align>
 "교의 길이니까. 이긴 쪽 길에서 식솔 먹이는 게 표국이오. 아버지는 그걸 몰라."
+# E_Hyeok1Ch
 @choice "\"서열은 나도 오르오. 그 판, 먼저 오르는 쪽이 국밥을 사시오.\"" goto:#E_Hyeok1A
 @choice "\"문 안으로 들어가 보시오. 표기 접는 손이 어떤지.\"" goto:#E_Hyeok1B
 @choice "\"교의 패를 찬 표국이면, 그건 교의 수레요.\"" goto:#E_Hyeok1C
@@ -2894,6 +2914,9 @@
 @art char:hyeok
 @deja text:"혈랑대가 오기 며칠 전 밤, 문을 두드리는 표사. 지난 생엔 이 밤 그가 무엇을 싣고 있었는지 몰랐다."
 {dejapre}
+@goto #E_Hyeok3Re if:g_ev_hyeok3>0&&f_ev_hyeok3<1
+@set g_ev_hyeok3=1
+@set f_ev_hyeok3=1
 @goto #E_Hyeok3L if:f_hyeokplate<1
 밤. 방문을 두드리는 소리. 염혁이다. 허리에 표행패가 달려 있다. 얼굴이 굳었다.
 "첫 일이 들어왔소. 서열각에서 직접. 성 밖 창고에서 객잔 거리까지 수레 하나."
@@ -2901,6 +2924,7 @@
 "기름 다섯 독. 밧줄. 쇠갈고리. ……날짜는 안 알려 줬소. 표물에 날짜를 안 적는 일은 처음이오."
 그가 표행패를 만지작거린다. 숫자 자리에 길 이름이 새겨진 패다.
 "형씨 묵는 데가 이 객잔이지. 객잔 지붕은 쇠갈고리가 잘 걸리는 기와요."
+# E_Hyeok3Ch
 @choice "\"수레를 뒤집읍시다. 둘이면 하오.\"" goto:#E_Hyeok3A
 @choice "\"수레 길만 일러 주시오. 나머진 내가 하겠소.\"" goto:#E_Hyeok3B
 @choice "\"맡은 표물이면 끄시오. 장풍은 표물을 안 버린다며.\"" goto:#E_Hyeok3C
@@ -2954,9 +2978,13 @@
 @art char:hyeok
 @deja text:"그 밤이 지난 뒤의 표국 마당. 지난 생, 이 마당에 누가 서 있었고 누가 없었는지 안다."
 {dejapre}
+@goto #E_Hyeok4Re if:g_ev_hyeok4>0&&f_ev_hyeok4<1
+@set g_ev_hyeok4=1
+@set f_ev_hyeok4=1
 @goto #E_Hyeok4C if:f_hyeokcart>0
 @goto #E_Hyeok4N if:f_hyeokally<1
 그 밤이 지나고 사흘. 장풍표국 마당. 못 박힌 문이 열려 있다. 못은 누가 뽑았는지 모른다.
+# E_Hyeok4Go
 염혁이 마당 평상에 누워 있다. 계단 아래서 받은 칼자국이 어깨에서 허리까지다.
 머리맡에 염가가 앉아 표기를 편다. 끈 없는 귀퉁이를 아들 손에 쥐여 준다.
 "……표물은 지켰느냐."
@@ -3002,9 +3030,13 @@
 # E_Guard2
 @deja text:"\"삯은 열둘.\" 염가의 눈이 허리춤을 훑는다. 그 고개 너머 어디쯤에서 칼이 나오는지 안다."
 {dejapre}
+@goto #E_Guard2Re if:g_ev_guard2>0&&f_ev_guard2<1
+@set g_ev_guard2=1
+@set f_ev_guard2=1
 표국 문 앞. 수염 희끗한 총표두 <color=#C03434>염가(廉哥)</color>가 나온다.
 "북쪽 고개 너머 약재 수레일세. 독아단한테 두 번 털렸지. 삯은 열둘."
 그의 눈이 허리춤을 훑는다.
+# E_Guard2Ch
 @choice "\"그 고개, 내가 넘겨 드리겠소.\" 〔검술-1〕" goto:#E_Guard2C0
 @choice "\"갈 길이 따로 있소.\" — 사양한다" goto:#E_Guard2C1
 @choice "\"고개를 버리고 소금길로 도시오.\"" if:f_roadinfo>0||f_valleyroute>0 goto:#E_Guard2X
@@ -3052,8 +3084,12 @@
 # E_Guard3
 @deja text:"못 박힌 문. 삼십 년. 지난 생에도 이 늙은 표두를 이 문 앞에 혼자 두었다."
 {dejapre}
+@goto #E_Guard3Re if:g_ev_guard3>0&&f_ev_guard3<1
+@set g_ev_guard3=1
+@set f_ev_guard3=1
 표국 문에 못이 박혀 있다. 「상납 체납. 교령(敎令)으로 폐업함」
 문 앞에 염가가 표기(鏢旗)를 무릎에 접은 채 홀로 앉아 있다.
+# E_Guard3Go
 "삼십 년일세. 독아단한테도 안 뺏긴 걸 교한테 뺏겼네."
 표기 귀퉁이의 붉은 끈이 없다. 끈을 매느니 문을 닫았다.
 @print "아들의 상여를 보낸 지 며칠 되지 않았다. 표기를 접는 손은 그대로다." if:f_hyeokdead>0
@@ -3101,10 +3137,14 @@
 @art scene:alley
 @deja text:"\"다음 장날 어느 길로.\" 타짜가 입을 열기 전에 그 길이 먼저 떠오른다."
 {dejapre}
+@goto #E_Gamble3Re if:g_ev_gamble3>0&&f_ev_gamble3<1
+@set g_ev_gamble3=1
+@set f_ev_gamble3=1
 밤. 뒷골목에서 타짜가 소매를 끈다.
 "객. 패 말고 다른 걸 팔까 하오. 징세조가 다음 장날 어느 길로 은자를 실어 나르는지."
 <align=right>"왜 나한테."</align>
 "살기 띤 눈 중에 말이 통하는 눈은 객뿐이라."
+# E_Gamble3Ch
 @choice "그 귀띔을 산다 (은자 3)" if:mn>=3 goto:#E_Gamble3C0
 @choice "그의 손목을 잡는다" goto:#E_Gamble3C1
 @choice "소매를 뿌리치고 돌아선다" goto:#E_Gamble3C2
@@ -9436,4 +9476,101 @@
 <align=right>"많이 봤을 뿐이오."</align>
 '피 냄새보다 단내가 먼저 온다. 뼈 장식은 독아단 것이다.'
 @goto #E_Peddler4Ch
+
+# E_Spar3Re
+@set f_ev_spar3=1
+상여 행렬이 오기 전에 북쪽 고갯길 쪽을 먼저 본다. 저 고개다.
+'<color=#9A70C4>저 고개를 혼자 넘게 두면 이렇게 돌아온다. 알면서 또 이렇게 됐다.</color>'
+@goto #E_Spar3Go
+
+# E_Duelist3Re
+@set f_ev_duel3=1
+객잔 마당. 목검을 든 소년이 입을 열기 전에 다가가, 목검 쥔 손가락을 하나씩 고쳐 쥐여 준다. 엄지는 이렇게. 어깨는 내리고.
+"……아직 청하지도 않았는데요."
+<align=right>"청할 줄 알았다. 손가락이 틀렸으니."</align>
+소년이 고쳐 쥔 손을 내려다본다. 십 년 전의 당신이 거기 서 있다. 이번엔 그 손이 조금 덜 틀렸다.
+"그래도 한 수 청합니다. 운객이시잖아요."
+@goto #E_Duelist3Ch
+
+# E_Gyeol2Re
+@set f_ev_gyeol2=1
+게시벽의 청을 떼어 들고 비무장으로 간다. 단목결이 관복 소매를 걷기 전에, 먼저 허리를 반 박자 늦게 돌려 보인다.
+그의 손이 소매 끝에서 멈춘다.
+<align=right>"<color=#9A70C4>여덟째에서 허리가 먼저 돈다고 하실 거지요. 장작 팰 때 버릇이라고.</color>"</align>
+"……장작. 누가 그걸 일렀냐."
+<align=right>"사형이."</align>
+"나는 아직 안 일렀다."
+구경꾼들이 숫자를 수군댄다. 그가 코등이를 엄지로 반 치 민다. 버릇이다.
+@goto #E_Gyeol2Go
+
+# E_Gyeol3Re
+@set f_ev_gyeol3=1
+밤. 성 밖 사당. 관복을 벗은 단목결 곁에 먼저 앉는다. 그가 입을 열기 전에.
+<align=right>"<color=#9A70C4>보름마다 여기 쌀자루가 놓이지요. 누가 놓는지 아냐고 물으실 거고.</color>"</align>
+단목결이 위패 자리를 보다 천천히 고개를 돌린다.
+"……대사형이다. 너도 아냐."
+"나는 그걸 일 년 동안 서열각 장부에 적었다. 내 손으로."
+그가 무릎 위에서 주먹을 쥔다.
+"그 밤 왜 나를 묶었는지 아직 모른다. 다 죽는 밤에 나만 숯가마에 처박았다. 그게 살린 거냐."
+'이 물음에 답하는 길이 여럿이다. 지난 생에 어느 길로 답했든, 오늘 이 사형 얼굴은 처음 듣는 얼굴이다.'
+@goto #E_Gyeol3Ch
+
+# E_Hyeok1Re
+@set f_ev_hyeok1=1
+장풍표국 못 박힌 문 앞. 처마 밑에 쪼그린 염혁 옆에 국밥 두 그릇을 내려놓는다.
+<align=right>"<color=#9A70C4>끈 값이 그새 갑절로 올랐지요.</color>"</align>
+염혁이 삯 주머니를 쥔 채 고개를 든다.
+"……형씨, 귀신이오? 나 아직 아무 말도 안 했는데."
+<align=right>"<color=#9A70C4>서열각이 비무판 하나에 표행패를 걸었다는 것도 아오. 끈 없이 길이 열리는 패.</color>"</align>
+그가 국밥 그릇을 끌어당긴다. 숟가락을 들다 만다.
+"……교의 패요. 아버지는 그걸 몰라. 이긴 쪽 길에서 식솔 먹이는 게 표국인데."
+'이 말까지는 그대로다. 이 다음은 매번 내 대답에 달렸다.'
+@goto #E_Hyeok1Ch
+
+# E_Hyeok3Re
+@set f_ev_hyeok3=1
+@goto #E_Hyeok3L if:f_hyeokplate<1
+밤. 염혁이 문을 두드리기 전에 문을 연다. 허리에 표행패. 얼굴이 굳었다.
+<align=right>"<color=#9A70C4>기름 다섯 독. 밧줄. 쇠갈고리. 날짜는 안 적혔고.</color>"</align>
+염혁의 얼굴에서 핏기가 빠진다.
+"……그건 아직 아무한테도 안 했소. 서열각 놈 말고는."
+<align=right>"<color=#9A70C4>객잔 지붕은 쇠갈고리가 잘 걸리는 기와요.</color>"</align>
+"……그 말은 내가 하려던 말이오. 형씨 묵는 데가 여기니까."
+그가 표행패를 쥔 손을 놓지 못한다.
+@goto #E_Hyeok3Ch
+
+# E_Hyeok4Re
+@set f_ev_hyeok4=1
+@goto #E_Hyeok4C if:f_hyeokcart>0
+@goto #E_Hyeok4N if:f_hyeokally<1
+그 밤이 지나고 사흘. 장풍표국 못 박힌 문의 못은 당신이 뽑았다. 새벽에, 아무도 안 볼 때.
+'<color=#9A70C4>지난 생엔 누가 뽑았는지 몰랐다. 이번엔 안다. 별것 아니다. 뽑으면 된다.</color>'
+@goto #E_Hyeok4Go
+
+# E_Guard2Re
+@set f_ev_guard2=1
+표국 문 앞. 총표두 염가가 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>북쪽 고개 너머 약재 수레. 독아단한테 두 번 털렸고, 삯은 열둘.</color>"</align>
+염가의 눈이 허리춤을 훑다 말고 당신 얼굴에서 멎는다.
+"……내 장부를 봤나."
+<align=right>"<color=#9A70C4>고갯마루에서 나오지요. 늘 거기서.</color>"</align>
+"……표사들끼리만 아는 데를. 자네 어디 표국 출신인가."
+@goto #E_Guard2Ch
+
+# E_Guard3Re
+@set f_ev_guard3=1
+표국 문에 못이 박혀 있다. 문 앞의 염가가 입을 열기 전에 그 옆에 앉아, 무릎에 접힌 표기의 다른 쪽 끝을 쥔다.
+염가가 말없이 표기 귀퉁이를 당신 쪽으로 밀어 준다.
+'<color=#9A70C4>삼십 년. 이 다음에 그 말이 나온다. 같이 들어 주는 사람이 하나는 있어야 한다.</color>'
+@goto #E_Guard3Go
+
+# E_Gamble3Re
+@set f_ev_gamble3=1
+밤. 뒷골목. 타짜가 소매를 끌기 전에 먼저 그 앞에 선다.
+<align=right>"<color=#9A70C4>징세조가 다음 장날 은자 실어 나르는 길이지요. 패 말고 그걸 파시려고.</color>"</align>
+타짜가 소매를 끌려던 손을 허공에 둔 채 굳는다.
+"……객, 투전판에서 내 손 읽는 건 그렇다 치고, 내 입까지 읽소?"
+<align=right>"살기 띤 눈 중에 말이 통하는 눈이라서."</align>
+"……그 말도 내 거요."
+@goto #E_Gamble3Ch
 
