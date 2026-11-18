@@ -409,6 +409,7 @@
 @set f_soabond=0
 @set f_soachild=0
 @set f_soadead=0
+@set f_soadodge=0
 @set f_soadone=0
 @set f_soadream=0
 @set f_soaeve=0
