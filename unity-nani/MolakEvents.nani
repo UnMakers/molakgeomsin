@@ -92,6 +92,7 @@
 # E_PeddlerC1
 @goto #H_Peddlerbet
 # E_PeddlerC2
+@set g_kn_peddlernews=1
 @fx mn:-2
 @goto #E_Peddler2
 # E_PeddlerC3
@@ -416,6 +417,7 @@
 @return
 
 # E_Monk2
+@set g_kn_monk2=1
 "중 되기 전엔 사람이었지."
 그가 눈을 마저 뜬다. 눈 위로 칼 지나간 흉터가 있다.
 "소림이 불탈 때 빠져나왔지. 시주처럼."
@@ -1073,6 +1075,7 @@
 @return
 
 # E_Gamble2
+@set g_kn_gamble2=1
 살기를 띤 눈은 패보다 손을 본다.
 패 돌리는 자의 왼소매에서 세 판에 한 번꼴로 패가 바뀐다. 타짜다.
 그 손목을 지그시 바라보자 타짜의 손이 멎는다.
@@ -1099,6 +1102,7 @@
 @goto #E_GuardC0_x1 if:tr<=17
 @goto #E_GuardC0_x2 if:tr<=32
 # E_GuardC0_o
+@set g_kn_guardpass=1
 @fx mn:5 hp:-2 sw:1
 북쪽 고개 둘째 굽이, 소나무 셋 아래 바위 그늘에서 돌 하나가 굴러 떨어진다. 누가 엎드려 있다가 물러났다.
 수레는 무사히 닿는다. 표사가 보법을 흘끔거린다.
@@ -1901,6 +1905,7 @@
 @choice "\"지게도 할멈도 내가 지겠소.\"" if:hp>=6 goto:#E_Herb2xX
 @stop
 # E_Herb2xC0
+@set g_kn_herb2x=1
 @fx hp:-1 ng:2
 @set f_herbbond=1
 산허리까지 반나절. 할멈은 쉬지 않고, 당신도 쉬자고 하지 않는다.
@@ -2308,6 +2313,7 @@
 # E_Peddler3C0_o
 @fx mn:-3 sl:1
 @set f_amhwarn=1
+@set g_kn_amhwarn=1
 사내가 은자를 소매에 넣는다.
 "루(樓)의 향은 단내 나는 쪽이 독, 쓴내 나는 쪽이 약이오. 그 집 잔을 받을 일이 생기거든 잊지 마십쇼."
 @return
@@ -2368,6 +2374,7 @@
 "…루에 객을 판 것도 나요. 이걸로 갚아질지는 모르겠소."
 @fx ng:1 sl:-1
 @set f_amhwarn=1
+@set g_kn_amhwarn=1
 @return
 
 ; ---------- 비무꾼 ----------
@@ -2666,6 +2673,7 @@
 그가 검을 집어 자루를 당신 쪽으로 내민다. 청운에서 사형이 사제에게 검을 돌려주던 법이다. 그가 그걸 기억하고 있다.
 "허리를 반 박자 늦게 돌려. 그럼 아홉째가 나온다. ……사부한테 배운 거 아니다. 내가 혼자 찾은 거다."
 @set f_gyeolfight=1
+@set g_kn_gyeol2lose=1
 @fx sw:2 hp:-3
 @return
 # E_Gyeol2W
@@ -3049,6 +3057,7 @@
 @goto #E_Guard2C0_x1 if:tr<=17
 @goto #E_Guard2C0_x2 if:tr<=32
 # E_Guard2C0_o
+@set g_kn_guard2=1
 @fx mn:6 hp:-4 sw:1
 고갯마루에서 독아단 넷이 나온다.
 수레는 지켰지만 왼팔에 깊은 자상을 입는다. 염가가 삯을 반만 내민다.
@@ -4579,6 +4588,7 @@
 @choice "말없이 차를 마신다" goto:#E_Hajin1C2
 @stop
 # E_Hajin1C0
+@set g_kn_hajin1=1
 @set tr=random(1,100)
 @goto #E_Hajin1C0_x1 if:tr<=17
 @goto #E_Hajin1C0_x2 if:tr<=32
@@ -4868,6 +4878,7 @@
 @choice "창을 열고 늑대 울음을 되받는다 〔살기〕" goto:#E_WolfhowlY
 @stop
 # E_WolfhowlC0
+@set g_kn_wolfroof=1
 @fx sl:1 curse:1
 @set f_wolfnear=1
 지붕에 엎드려 센다. 셋, 아니 넷. 북쪽 고개 너머에서 이쪽으로 온다.
@@ -6712,6 +6723,7 @@
 @goto #E_Peddler3C0_o
 # E_Peddler3C0_x2
 @set f_amhwarn=1
+@set g_kn_amhwarn=1
 @fx mn:-3
 "루(樓)의 향 얘기요. 단내 나는 쪽이 독, 쓴내 나는 쪽이 약. 반대로 기억하면 죽소."
 단내는 독, 쓴내는 약. 두 번 되뇐다.
@@ -9145,16 +9157,19 @@
 @set f_ev_peddler=1
 @set g_ev_peddler=g_ev_peddler+1
 관도변 수레. 사내가 입을 열기 전에 수레 바닥을 발끝으로 툭 찬다.
-<align=right>"<color=#9A70C4>바닥 단내가 진하오. 루의 향은 좀 덜 쓰시지.</color>"</align>
+<align=right>"<color=#9A70C4>약재 수레치고 바닥이 달구려. 단내가 진하오.</color>"</align>
 사내의 눈이 허리춤에서 멎는다. 손이 소매 쪽으로 간다.
-"……객이 루를 어찌 아시오."
+"……코가 좋으시구려."
+@goto #E_PeddlerKN if:g_kn_peddlernews<1
 <align=right>"<color=#9A70C4>보름날 운주 들판, 북쪽 산골의 독아단. 그 소식은 이미 샀소.</color>"</align>
 '지난 생에 낸 은자 두 냥이 이제야 본전을 한다.'
+@set f_unjuhint=1
+# E_PeddlerKN
 사내가 소매에서 손을 뺀다. 빈손이다. 웃음이 한참 늦게 붙는다.
 "……약재는 그래도 사 가시겠소?"
-@set f_unjuhint=1
 @choice "약재를 산다 (은자 4)" if:mn>=4 goto:#E_PeddlerC0
-@choice "\"루에 전하시오. 이 얼굴은 아직 안 판다고.\"" goto:#E_PeddlerKA
+@choice "강호의 소식을 산다 (은자 2)" if:mn>=2&&g_kn_peddlernews<1 goto:#E_PeddlerC2
+@choice "\"단내는 좀 덜 쓰시오. 코 좋은 사람이 나만은 아닐 테니.\"" goto:#E_PeddlerKA
 @stop
 # E_PeddlerKA
 사내가 수레 채를 잡는다.
@@ -9238,9 +9253,11 @@
 성황당 앞. 중의 코골이에 맞춰 먼저 숨을 쉰다. 들숨 여섯, 날숨 아홉.
 코골이가 뚝 그친다. 중이 한쪽 눈을 뜬다.
 "……시주. 그건 내가 아직 골지도 않은 장단인데."
+@goto #E_MonkKN if:g_kn_monk2<1
 <align=right>"<color=#9A70C4>소림이 불탈 때 빠져나오셨지요. 저처럼.</color>"</align>
 중이 두 눈을 다 뜬다. 눈 위 흉터가 꿈틀한다.
 "……그 말은 중 된 뒤로 아무한테도 안 했다."
+# E_MonkKN
 <align=right>"<color=#9A70C4>구결은 코골이 값으로 치겠소. 장단 맞춰 들었으니.</color>"</align>
 "허. 내 셈까지 훔쳐 가는구먼."
 그가 바가지를 베고 다시 눕는다. 이번 코골이는 날숨 끝에서 반 박자를 쉰다.
@@ -9355,7 +9372,7 @@
 @set f_ev_talisman=1
 @set g_ev_talisman=g_ev_talisman+1
 장터 어귀 부적 좌판. 장수가 외치기 전에 깊은 먹선의 한 장을 손가락으로 누른다.
-<align=right>"<color=#9A70C4>이 한 장만 주시오. 나머지는 밀가루 풀에 숯이지요.</color>"</align>
+<align=right>"<color=#9A70C4>이 한 장만 주시오. 먹선이 깊은 건 이것뿐이니.</color>"</align>
 장수가 좌판 위로 몸을 날려 당신 입을 막을 뻔한다.
 "쉿, 쉿! 장사 망치려고 작정했소? ……두 냥. 두 냥에 가져가고 그 입은 여기 두고 가시오."
 '입을 두고 가라니. 이 고을은 입값이 제일 비싸다.'
@@ -9407,11 +9424,19 @@
 @art scene:alley
 뒷골목 투전판. 부르기도 전에 빈자리에 앉는다.
 "……한 자리 끼시오? 아, 벌써 끼셨군."
+@goto #E_GambleKN if:g_kn_gamble2<1
 <align=right>"<color=#9A70C4>끼겠소. 다만 셋째 판은 거르겠소.</color>"</align>
 패를 섞던 타짜의 손이 반 박자 멈춘다.
 "……왜 하필 셋째요."
 <align=right>"셋째는 운이 없더군."</align>
-'셋째 판에서 패가 두 번 돈다. 몇 번 털리고서야 셌다.'
+'<color=#9A70C4>세 판에 한 번꼴로 저 왼소매에서 패가 바뀐다. 지난 생에 봐 뒀다.</color>'
+@goto #E_GambleKM
+# E_GambleKN
+<align=right>"끼겠소. 패는 안 보고 손만 보겠소."</align>
+타짜의 손이 반 박자 멈춘다.
+"……손 보는 객은 질색인데."
+'<color=#9A70C4>이 판에서 뭘 봐야 하는지는 몸이 안다. 패는 안 본다.</color>'
+# E_GambleKM
 @choice "셋째 판만 거르며 판을 읽는다 〔살기-1〕" goto:#E_GambleKA
 @choice "\"농이오.\" 일어선다" goto:#E_GambleC2
 @stop
@@ -9424,18 +9449,26 @@
 @set f_ev_guard=1
 @set g_ev_guard=g_ev_guard+1
 장풍표국 앞. 표두가 외치기도 전에 그 앞에 선다.
-<align=right>"<color=#9A70C4>삯은 여덟 냥. 독아단 길이니까. 북쪽 고개 둘째 굽이는 내가 앞에 서겠소.</color>"</align>
+<align=right>"<color=#9A70C4>삯은 여덟 냥. 독아단 길이니까.</color>"</align>
 표두가 입을 벌린 채 굳는다.
+"……값을 부르기도 전에 올리는 객은 처음 보오."
+@goto #E_GuardKN if:g_kn_guardpass<1
+<align=right>"<color=#9A70C4>북쪽 고개 둘째 굽이는 내가 앞에 서겠소. 소나무 셋, 바위 그늘.</color>"</align>
 "……그 굽이를 어찌 아시오. 표사들끼리만 아는 데요."
-<align=right>"소나무 셋, 바위 그늘. 거기서 다들 한 번씩 놀라지 않소."</align>
+# E_GuardKN
 @set g_fac_pyo=1
 "……여덟 냥. 대신 수레가 상하면 깎소."
 @choice "\"맡겠소.\"" goto:#E_GuardKA
 @choice "고개를 젓고 돌아선다" goto:#E_GuardC1
 @stop
 # E_GuardKA
+@goto #E_GuardKB if:g_kn_guardpass<1
 수레가 둘째 굽이 앞에서 멎는다. 먼저 걸어 들어가 바위 그늘에 돌을 던진다.
 그늘에서 둘이 튀어나와 산 쪽으로 달아난다. 칼을 뽑을 틈도 없다.
+@goto #E_GuardKC
+# E_GuardKB
+고개 둘째 굽이, 소나무 셋 아래 바위 그늘에서 돌 하나가 굴러 떨어진다. 수레 앞으로 먼저 나선다. 그늘 속의 둘이 칼 찬 사람을 보고 물러난다.
+# E_GuardKC
 표두가 한참 그 그늘을 본다.
 "……어느 문파 출신이시오?"
 <align=right>"떠돌이오. 길눈만 밝은."</align>
@@ -9449,13 +9482,13 @@
 @set g_ev_tea=g_ev_tea+1
 @art scene:teahouse
 연잎 단이 걸린 처마 밑. 노파가 부르기도 전에 앉는다.
-<align=right>"<color=#9A70C4>청심차 한 잔. 감초는 조금만.</color>"</align>
+<align=right>"<color=#9A70C4>청심차 한 잔. 오가는 얼굴이 흉흉하다 하실 참이지요.</color>"</align>
 노파의 손이 찻주전자 위에서 멎는다.
-"……얼굴은 낯선데 시키는 건 단골이네."
+"……얼굴은 낯선데 하는 말은 단골이네."
 <align=right>"단골이오. 좀 오래 안 왔을 뿐이오."</align>
 @print "'<color=#9A70C4>오래. 한 생쯤.</color>'" if:g_ev_tea<3
 @print "'<color=#9A70C4>오래. 몇 생쯤.</color>'" if:g_ev_tea>=3
-노파가 아무것도 묻지 않고 잔을 놓는다. 감초가 정말 조금이다.
+노파가 아무것도 묻지 않고 잔을 놓는다. 연잎 냄새가 먼저 온다.
 @choice "마신다 (은자 2)" if:mn>=2 goto:#E_TeaKA
 @choice "\"다음에 오겠소.\"" goto:#E_TeasellerC1
 @stop
@@ -9471,10 +9504,10 @@
 @set g_ev_night=g_ev_night+1
 @art scene:nightmarket
 야시. 좌판 사이를 둘러보지 않고 곧장 때 묻은 검집 앞으로 간다.
-<align=right>"<color=#9A70C4>이 검집만 주시오. 흑단이지요.</color>"</align>
+<align=right>"<color=#9A70C4>이 검집만 주시오. 출처는 안 묻겠소.</color>"</align>
 좌판 주인이 등잔을 들어 당신 얼굴을 본다.
-"……출처를 안 묻는 게 야시 법인데, 객은 물건 속까지 아는구려. 석 냥."
-'검이 이 집에 딸깍 무는 소리를 손이 기억한다.'
+"……야시 법을 파는 사람보다 먼저 읊는 객이구려. 넉 냥 할 걸 석 냥."
+'법도를 먼저 지켜 주면 값이 내린다. 야시도 사람 장사다.'
 @choice "석 냥에 산다" if:mn>=3 goto:#E_NightKA
 @choice "구경만 하고 떠난다" goto:#E_NightmarketC2
 @stop
@@ -9559,12 +9592,14 @@
 @art char:granny
 백초당 앞. 할멈이 부르기도 전에 세워 둔 지게를 먼저 진다.
 "……왔느냐. 아니, 산에 간다고 말도 안 했는데."
-<align=right>"<color=#9A70C4>자하근이랑 박주가리 캐러 가시는 거 아니오. 닮은 것일수록 잘 봐야 하는.</color>"</align>
+<align=right>"<color=#9A70C4>지게 질 허리가 하나 있어야 한다 하실 참이지요. 여기 있소.</color>"</align>
 할멈이 지팡이로 당신 정강이를 툭 친다.
 "늙은이 할 말을 다 해 먹으면 산에선 무슨 말을 하라고."
+@goto #E_Herb2xKN if:g_kn_herb2x<1
 <align=right>"<color=#9A70C4>청운 사람들이 가을마다 약 사 가던 얘기를 하시면 되오.</color>"</align>
 지팡이가 멈춘다. 한참.
 "……그 얘긴 산허리쯤 가서 하려 했다."
+# E_Herb2xKN
 @fx hp:-1 ng:2
 @set f_herbbond=1
 산허리까지 반나절. 할멈이 오늘은 말이 적다. 대신 쉬는 자리마다 당신 몫의 물을 먼저 따른다.
@@ -9578,13 +9613,13 @@
 @set g_ev_peddler3=g_ev_peddler3+1
 @art scene:teahouse
 관도변. 수레 없는 행상이 입을 열기 전에 은자 두 냥을 그 손에 얹는다.
-<align=right>"<color=#9A70C4>단내는 독, 쓴내는 약. 그 말은 이미 샀소. 오늘은 '아직은'을 사겠소. 두 냥어치.</color>"</align>
+@print "<align=right>\"<color=#9A70C4>단내는 독, 쓴내는 약. 그 말은 이미 샀소. 오늘은 '아직은'을 사겠소. 두 냥어치.</color>\"</align>" if:g_kn_amhwarn>0
+@print "<align=right>\"<color=#9A70C4>암향루가 내 값을 매겼다지요. 오늘은 '아직은'을 사겠소. 두 냥어치.</color>\"</align>" if:g_kn_amhwarn<1
 사내가 은자를 쥔 채 오래 본다.
 "……객한텐 팔 말이 없구려. 루가 값을 매긴 걸 벌써 아시니."
 <align=right>"그러니 아직은, 아무 말도 하지 마시오."</align>
 "두 냥어치는 입을 다물지요. 그다음은 루가 더 내면 모르오."
 '정직한 장사꾼이다. 그래서 무섭다.'
-@set f_amhwarn=1
 @fx mn:-2
 @return
 
@@ -9615,7 +9650,8 @@
 @art char:hajinmu
 밤. 하진무가 찻잔을 들고 문 앞에 서기 전에, 먼저 문을 연다.
 "……셈은 끝났소. 한마디 해도—"
-<align=right>"<color=#9A70C4>잠꼬대 얘기지요. 삼식, 오식, 칠식. 그리고 '막내'.</color>"</align>
+@print "<align=right>\"<color=#9A70C4>잠꼬대 얘기지요. 삼식, 오식, 칠식. 그리고 '막내'.</color>\"</align>" if:g_kn_hajin1>0
+@print "<align=right>\"<color=#9A70C4>잠꼬대 얘기지요. 밤마다 같은 순서로 초식 이름을 외었다는.</color>\"</align>" if:g_kn_hajin1<1
 찻잔이 쟁반 위에서 달그락 운다.
 "……객이 그걸 어찌 아오. 제 잠꼬대를 제 귀로 듣는 사람도 있소?"
 <align=right>"<color=#9A70C4>영감이 석 달째에 손을 놓으려다 그 소리에 다시 잡으셨다는 것도 아오.</color>"</align>
@@ -9644,8 +9680,9 @@
 @set g_ev_wolf=g_ev_wolf+1
 밤. 늑대 울음이 들리기 전에 아래층으로 내려간다. 하진무가 빗장을 든 채 서 있다.
 "……객, 아직 아무 소리도 안 났소."
-<align=right>"<color=#9A70C4>곧 나오. 북쪽 고개 너머에서. 셋, 아니 넷.</color>"</align>
-멀리서 늑대 울음. 하나, 둘, 셋, 넷. 하진무가 빗장을 지르다 말고 당신을 본다.
+@print "<align=right>\"<color=#9A70C4>곧 나오. 북쪽 고개 너머에서. 셋, 아니 넷.</color>\"</align>" if:g_kn_wolfroof>0
+@print "<align=right>\"<color=#9A70C4>곧 나오. 늑대 울음이오. 이 고을에 늑대는 없는데.</color>\"</align>" if:g_kn_wolfroof<1
+멀리서 늑대 울음. 하진무가 빗장을 지르다 말고 당신을 본다.
 "……객은 늑대 말도 하시오?"
 <align=right>"들어 본 지 좀 됐을 뿐이오."</align>
 둘이 문 앞에 앉는다. 영감이 빗장 하나를 더 지른다. 그 밤 문은 열리지 않는다.
@@ -9678,9 +9715,9 @@
 @set g_ev_cold=g_ev_cold+1
 산기슭의 찬 샘. 나무꾼이 일러 주기 전에 먼저 옷을 벗는다.
 "……객, 거기 얼음장이오. 무인들이 탁기 씻던 데긴 한데."
-<align=right>"<color=#9A70C4>알고 있소. 이가 딱딱 부딪친다는 것도.</color>"</align>
+<align=right>"<color=#9A70C4>알고 있소. 탁기 씻던 데라는 것도.</color>"</align>
 나무꾼이 지게를 고쳐 메며 혀를 찬다. "알면서 들어가는 놈이 제일 독하지."
-'들어가 봐서 안다. 효험은 있다. 이는 좀 부딪친다.'
+'얼음장이라는 말을 듣고도 옷부터 벗는 사람. 지난 생엔 저 말에 한 번 망설였다.'
 @goto #E_ColdspringCh
 
 # E_SutraRe
@@ -9879,10 +9916,16 @@
 @set g_ev_gyeol2=g_ev_gyeol2+1
 게시벽의 청을 떼어 들고 비무장으로 간다. 단목결이 관복 소매를 걷기 전에, 먼저 허리를 반 박자 늦게 돌려 보인다.
 그의 손이 소매 끝에서 멈춘다.
+@goto #E_Gyeol2RN if:g_kn_gyeol2lose<1
 <align=right>"<color=#9A70C4>여덟째에서 허리가 먼저 돈다고 하실 거지요. 장작 팰 때 버릇이라고.</color>"</align>
 "……장작. 누가 그걸 일렀냐."
 <align=right>"사형이."</align>
 "나는 아직 안 일렀다."
+@goto #E_Gyeol2RM
+# E_Gyeol2RN
+<align=right>"<color=#9A70C4>기수식은 청운 것으로 하시지요. 알아볼 사람은 여기 둘이니.</color>"</align>
+"……장작. 입이 늘었구나."
+# E_Gyeol2RM
 구경꾼들이 숫자를 수군댄다. 그가 코등이를 엄지로 반 치 민다. 버릇이다.
 @goto #E_Gyeol2Go
 
@@ -9942,8 +9985,9 @@
 <align=right>"<color=#9A70C4>북쪽 고개 너머 약재 수레. 독아단한테 두 번 털렸고, 삯은 열둘.</color>"</align>
 염가의 눈이 허리춤을 훑다 말고 당신 얼굴에서 멎는다.
 "……내 장부를 봤나."
-<align=right>"<color=#9A70C4>고갯마루에서 나오지요. 늘 거기서.</color>"</align>
-"……표사들끼리만 아는 데를. 자네 어디 표국 출신인가."
+@print "<align=right>\"<color=#9A70C4>고갯마루에서 나오지요. 늘 거기서.</color>\"</align>" if:g_kn_guard2>0
+@print "<align=right>\"<color=#9A70C4>그 고개를 넘겨 드릴 허리가 필요하시지요.</color>\"</align>" if:g_kn_guard2<1
+"……남의 말을 먼저 하는 버릇이 있구먼. 자네 어디 표국 출신인가."
 @goto #E_Guard2Ch
 
 # E_Guard3Re
