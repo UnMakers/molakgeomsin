@@ -319,6 +319,7 @@ public class MolakFlow : MonoBehaviour
         for (int k = idx + 1; k < pl.Count; k++)
         {
             var c = pl[k];
+            if (Skipped(c)) continue;   // 0.4.80 조건이 거짓이라 건너뛸 명령(@print … if:)은 다음 글로 치지 않는다
             if (c is PrintText) return true;
             if (c is AddChoice) return false;           // 0.4.8: 마지막 글을 다 읽고 한 번 더 눌러야 선택지가 뜬다(선택지가 글을 가리지 않게)
             var n = c.GetType().Name;
@@ -487,8 +488,17 @@ public class MolakFlow : MonoBehaviour
     {
         if (!NextIsText(track)) return null;
         var pl = track.Playlist;
-        for (int k = track.PlayedIndex + 1; k < pl.Count; k++) if (pl[k] is PrintText) return (PrintText)pl[k];
+        for (int k = track.PlayedIndex + 1; k < pl.Count; k++) if (pl[k] is PrintText && !Skipped(pl[k])) return (PrintText)pl[k];
         return null;
+    }
+
+    /// <summary>0.4.80 조건(if:)이 지금 거짓이라 나니노벨이 건너뛸 명령인가</summary>
+    static bool Skipped (Command c)
+    {
+        if (c == null) return false;
+        bool hasCond = (c.ConditionalExpression != null && c.ConditionalExpression.HasValue) || (c.InvertedConditionalExpression != null && c.InvertedConditionalExpression.HasValue);
+        if (!hasCond) return false;
+        try { return !c.ShouldExecute; } catch { return false; }
     }
 
     static TMPro.TMP_Text DialogueText ()

@@ -30,6 +30,8 @@ public class MolakPageBack : MonoBehaviour
     bool hooked;
 
     public static bool Viewing => view >= 0;
+    /// <summary>0.4.80 검증 도구(MolakProbe)가 지난 쪽을 읽는다</summary>
+    public static IReadOnlyList<string> Pages => pages;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot ()

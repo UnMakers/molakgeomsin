@@ -68,6 +68,8 @@ public class MolakProbe : MonoBehaviour
     {
         var st = Engine.GetService<IStateManager>(); var sp = Engine.GetService<IScriptPlayer>();
         bool started = false; returned = false;
+        // 0.4.80 앞 작업이 ■ 로 선택지 앞에서 멈췄으면 그 단추가 남아 다음 작업에서 눌리던 것 — 시작 전에 걷는다
+        foreach (var ob in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) if (ob != null) ob.gameObject.SetActive(false);
         st.ResetState(new string[0], () => {
             foreach (var n in MolakVarList.Nums) MolakStats.EnsureNum(n);
             foreach (var n in MolakVarList.Strings) MolakStats.EnsureStr(n);
@@ -83,6 +85,7 @@ public class MolakProbe : MonoBehaviour
         while (!started) yield return null;
         yield return null; yield return null;
         var tr = sp.MainTrack;
+        { float tw = Time.realtimeSinceStartup; while (!tr.Playing && Time.realtimeSinceStartup - tw < 3f) yield return null; }   // 0.4.80 새 대본이 실제로 돌기 시작한 뒤부터 본다
         while (Time.realtimeSinceStartup - t0 < 40f)
         {
             MolakPlayMode.SetSkipAll(true);
@@ -106,7 +109,7 @@ public class MolakProbe : MonoBehaviour
             }
             var labels = btns.Select(b => (b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").Split('\n')[0]).ToArray();
             int k = 0;
-            if (pi < picks.Length && picks[pi] == "■") { Log.AppendLine("■ 선택지 앞에서 멈춤(화면 확인용)"); MolakPlayMode.SetSkipAll(false); Status = "done"; yield break; }
+            if (pi < picks.Length && picks[pi] == "■") { foreach (var pg in MolakPageBack.Pages) Log.AppendLine("  · 지난 쪽(" + pg.Replace("\n", " ⏎ ") + ")"); Log.AppendLine("  · 쪽(" + (dt != null ? dt.text.Replace("\n", " ⏎ ") : "") + ")"); Log.AppendLine("  · 선택지[" + string.Join(" / ", labels) + "]"); Log.AppendLine("■ 선택지 앞에서 멈춤(화면 확인용)"); MolakPlayMode.SetSkipAll(false); Status = "done"; yield break; }
             if (pi < picks.Length) { for (int i = 0; i < labels.Length; i++) if (labels[i].Contains(picks[pi])) { k = i; break; } pi++; }
             Log.AppendLine("  · 판(" + lastText.Replace("\n", " ⏎ ").Substring(Mathf.Max(0, lastText.Length - 160)) + ")");
             Log.AppendLine("▶ [" + string.Join(" / ", labels) + "] → " + labels[k]);
