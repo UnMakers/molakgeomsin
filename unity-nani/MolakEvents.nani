@@ -428,6 +428,9 @@
 # E_Notice
 @deja text:"방이 붙기도 전에 글귀를 안다. 생사불문. 삼백 냥. 지난 생의 얼굴이 또 담벼락에 붙는다."
 {dejapre}
+@goto #E_NoticeK if:g_ev_notice>0&&f_ev_notice<1
+@set g_ev_notice=1
+@set f_ev_notice=1
 며칠 전 그 수배 방이 저잣거리 담벼락마다 한 장씩 늘었다. 풀이 마르기도 전에 또 한 장이 붙는다.
 그림은 일 년을 앓기 전의 얼굴이다. 아직은 아무도 알아보지 못한다. 그래도 시간문제다.
 @set f_wanted=1
@@ -453,6 +456,9 @@
 # E_Duelist
 @deja text:"탁자가 넘어가기 전에 고함이 먼저 들린다. 저 서열 숫자까지 외우고 있다."
 {dejapre}
+@goto #E_DuelistK if:g_ev_duelist>0&&f_ev_duelist<1
+@set g_ev_duelist=1
+@set f_ev_duelist=1
 객잔 앞에서 떠돌이 무사가 탁자를 걷어찬다.
 "서열 칠백구십만 삼천이백십일위! 나보다 아래인 놈, 나와서 한 수 배워라!"
 '제 서열을 끝자리까지 외친다. 외울 만큼 아끼는 숫자다.'
@@ -509,6 +515,9 @@
 # E_Spy
 @deja text:"세 번째 눈길이 오기 전에 소맷단의 붉은 실을 찾는다. 지난 생에도 저 실은 거기 있었다."
 {dejapre}
+@goto #E_SpyK if:g_ev_spy>0&&f_ev_spy<1
+@set g_ev_spy=1
+@set f_ev_spy=1
 객잔 구석의 상인 행색 사내가 벌써 세 번째 이쪽을 본다. 세 번이면 일이다.
 소맷단 안쪽에 붉은 실. 혈마교 끄나풀의 표식이다.
 저 눈이 해 지기 전에 보고를 올리면, 객잔 앞에 붉은 끈이 서는 건 시간문제다.
@@ -566,6 +575,9 @@
 # E_Hunter
 @deja text:"세 골목째 따라붙는 걸음. 몇 번째 골목에서 칼이 나오는지 등줄기가 기억한다."
 {dejapre}
+@goto #E_HunterK if:g_ev_hunter>0&&f_ev_hunter<1
+@set g_ev_hunter=1
+@set f_ev_hunter=1
 세 골목째 기척이 따라붙는다. 소매에 붉은 끈, 걸음에 무게가 실렸다. 현상금 사냥꾼이다.
 따돌려도 사냥꾼은 내일 또 붙는다. 먼저 치면 이 골목에 피가 남는다.
 @choice "길목을 꺾어 따돌린다" goto:#E_HunterC0
@@ -684,6 +696,9 @@
 @art scene:alley
 @deja text:"\"…혈도가 탁하군.\" 늙은 의원이 입을 열기 전에 그 말을 먼저 안다. 가슴께가 또 시리다."
 {dejapre}
+@goto #E_AcupK if:g_ev_acup>0&&f_ev_acup<1
+@set g_ev_acup=1
+@set f_ev_acup=1
 골목 끝에 간판 없는 의원이 있다. 금침(金針)을 늘어놓은 늙은이의 눈이 정확히 가슴께에 멎는다.
 "…혈도가 탁하군. 그 언저리만. 금침으로 둘레를 묶으면 번지는 게 한동안 느려지지. 은자 닷 냥."
 @choice "시술을 받는다 (은자 5)" if:mn>=5 goto:#E_AcupC0
@@ -8734,4 +8749,100 @@
 @set f_breath=1
 @fx ng:1
 @return
+
+# E_NoticeK
+@set f_ev_notice=1
+담벼락 앞. 포졸이 풀통을 내려놓기도 전에 그 옆에 선다.
+<align=right>"<color=#9A70C4>생사불문, 삼백 냥. 그림은 일 년 앓기 전 얼굴.</color>"</align>
+포졸이 돌돌 만 방을 펴다 말고 본다. 방 속 얼굴과 앞의 얼굴을 번갈아 본다.
+"……글을 거꾸로 읽으시오? 아직 펴지도 않았는데."
+<align=right>"그림이 잘생겼다는 소문을 들었소."</align>
+포졸이 방을 다시 본다. 한참 본다. 고개를 젓는다.
+"그림 쪽이 훨씬 낫소. 객은 어디서 그리 얻어맞고 다니시오."
+'일 년을 앓으면 사람이 이렇게 된다. 덕분에 산다.'
+@set f_wanted=1
+@choice "풀통을 발로 엎는다" goto:#E_NoticeKA
+@choice "아이들을 시켜 그림마다 수염을 그린다 (은자 1)" if:mn>=1&&f_alms>0||mn>=1&&f_thiefkid>0 goto:#E_NoticeX
+@choice "웃고 지나간다" goto:#E_NoticeKB
+@stop
+# E_NoticeKA
+풀이 흙에 쏟아진다. 포졸이 욕을 하며 방을 맨손으로 담에 누른다. 바람이 반 장을 걷어 간다.
+'반 장은 내 몫이다.'
+@fx sl:1
+@return
+# E_NoticeKB
+등 뒤에서 포졸이 혼잣말을 한다. "……세상에 닮은 놈은 많지."
+@fx curse:-1
+@return
+
+# E_DuelistK
+@set f_ev_duelist=1
+객잔 앞. 탁자가 넘어가기 전에 그 모서리를 발로 눌러 둔다.
+무사의 발이 허공을 찬다. 탁자가 꿈쩍도 안 한다.
+<align=right>"<color=#9A70C4>칠백구십만 삼천이백십일위. 끝자리 맞소?</color>"</align>
+"……내 서열을 어찌 아오! 아직 외치지도 않았는데!"
+<align=right>"목소리가 커서 멀리까지 들렸소."</align>
+'몇 생 전부터 들렸다.'
+구경꾼들이 웃는다. 무사의 귀가 붉어진다. 칼자루를 쥔 손이 떤다.
+@choice "\"그럼 한 수 배우겠소.\" — 나선다" goto:#E_DuelistC0
+@choice "\"저기 털보가 형씨보다 아래라 하오.\" 싸움을 붙인다" goto:#E_DuelistX
+@choice "\"아끼는 숫자 같으니 잘 지키시오.\"" goto:#E_DuelistKA
+@stop
+# E_DuelistKA
+무사가 입을 달싹이다 만다. 칼자루에서 손을 뗀다. 넘어가지 않은 탁자 앞에 앉아 국수를 시킨다.
+'숫자 하나에 목숨 거는 사람이 오늘은 국수 한 그릇에 앉았다. 그거면 됐다.'
+@fx sl:-1
+@return
+
+# E_SpyK
+@set f_ev_spy=1
+객잔 구석. 상인 행색 사내의 첫 눈길이 오기 전에 그 탁자로 가 맞은편에 앉는다.
+<align=right>"<color=#9A70C4>소맷단 안쪽 붉은 실. 세 번 보고 일어나실 참이었지요.</color>"</align>
+사내의 손이 소매를 덮는다. 늦었다.
+"……무슨 말씀인지."
+<align=right>"한 번도 안 보셨으니 적을 것도 없겠소. 술이나 한 잔 하시오."</align>
+'세 번 봐야 일이 된다. 한 번도 못 보게 하면 된다.'
+@choice "술을 따라 주고 먼저 일어선다" goto:#E_SpyKA
+@choice "뒷골목으로 꾀어 입을 막는다 〔검술-2〕" goto:#E_SpyKB
+@stop
+# E_SpyKA
+사내는 그날 술값만 탁자에 두고 사라진다. 잔은 비지 않았다.
+'밀서를 쓸 손이 떨리겠지. 떨리는 손은 글씨가 틀린다.'
+@fx mn:-1 curse:-1
+@return
+# E_SpyKB
+@risk on:sw need:-2
+@goto #E_Spy2Fail if:pass==0
+@goto #E_Spy2
+
+# E_HunterK
+@set f_ev_hunter=1
+세 골목째. 기척이 붙기 전에 먼저 걸음을 멈추고 돌아선다.
+<align=right>"<color=#9A70C4>넷째 골목 말고 여기서 하시오. 넷째는 생선 좌판이 미끄럽소.</color>"</align>
+붉은 끈의 사냥꾼이 칼을 반쯤 뽑다 멈춘다.
+"……넷째에서 칠 줄은 어찌 알았나."
+'몰랐다. 등줄기가 알았다.'
+@choice "먼저 친다 〔검술-1〕" goto:#E_HunterKA
+@choice "길목을 꺾어 따돌린다" goto:#E_HunterC0
+@choice "거지 아이가 일러 준 낮은 담으로 뛴다" if:f_alms>0 goto:#E_HunterX
+@stop
+# E_HunterKA
+@risk on:sw need:-1
+@goto #E_HunterFFail if:pass==0
+@goto #E_HunterF
+
+# E_AcupK
+@set f_ev_acup=1
+@art scene:alley
+골목 끝 의원. 늙은이가 침을 늘어놓기도 전에 먼저 앉아 옷깃을 연다.
+<align=right>"<color=#9A70C4>혈도가 탁하지요. 그 언저리만. 둘레를 묶으면 번지는 게 느려지고.</color>"</align>
+늙은 의원의 손이 침통 위에서 멎는다.
+"……의술을 아시오?"
+<align=right>"닷 냥이 없으면 해 지고 뒷문으로 가면 되는 것까지는 아오."</align>
+"……내가 하려던 말을 하는구먼. 늙으면 할 말도 뺏기는구먼."
+'뺏은 게 아니다. 빌려 쓴 거다. 지난 생에 들은 걸.'
+@choice "시술을 받는다 (은자 5)" if:mn>=5 goto:#E_AcupC0
+@choice "해 지고 뒷문으로 간다" goto:#E_Acup2
+@choice "옷깃을 여미고 일어선다" goto:#E_AcupC2
+@stop
 
