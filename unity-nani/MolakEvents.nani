@@ -765,6 +765,9 @@
 # E_Talisman
 @deja text:"먹선이 깊은 그 한 장을 눈이 먼저 찾는다. 나머지가 무엇인지도 안다."
 {dejapre}
+@goto #E_TalismanK if:g_ev_talisman>0&&f_ev_talisman<1
+@set g_ev_talisman=1
+@set f_ev_talisman=1
 장터 어귀에 부적 장수가 좌판을 폈다.
 "재액을 막고 사기(邪氣)를 누르는 영부요! 한 장에 석 냥!"
 먹선이 유난히 깊은 부적이 하나 섞여 있다.
@@ -886,6 +889,9 @@
 # E_Storyteller
 @deja text:"부채가 접히기 전에 숫자가 먼저 들린다. 백스물셋. 몇 번을 들어도 숨이 멎는다."
 {dejapre}
+@goto #E_StorytellerK if:g_ev_story2>0&&f_ev_story2<1
+@set g_ev_story2=1
+@set f_ev_story2=1
 장터 이야기꾼이 부채를 폈다 접는다.
 "하여, 청운검파 백스물세 명이 하룻밤에 스러졌으니!"
 심장이 멎는다. 당신의 이야기다.
@@ -958,6 +964,9 @@
 @art char:hyeok
 @deja text:"날아오는 목도의 무게를 손이 먼저 안다. 표호를 외치기 전에 숨을 어디서 들이쉬는지까지."
 {dejapre}
+@goto #E_SparK if:g_ev_spar>0&&f_ev_spar<1
+@set g_ev_spar=1
+@set f_ev_spar=1
 객잔 뒷마당. 표사 차림의 사내가 우물가에 걸터앉아 목도(木刀)를 깎고 있다. 나이는 당신 또래다.
 당신 걸음을 보더니, 깎던 목도를 던져 준다.
 "장풍— 길을 비키시오! ……하하, 버릇이오. 장풍표국 표사 <color=#C03434>염혁(廉赫)</color>이오. 합이나 좀 맞춰 봅시다. 서열은 걸지 말고."
@@ -8844,5 +8853,52 @@
 @choice "시술을 받는다 (은자 5)" if:mn>=5 goto:#E_AcupC0
 @choice "해 지고 뒷문으로 간다" goto:#E_Acup2
 @choice "옷깃을 여미고 일어선다" goto:#E_AcupC2
+@stop
+
+# E_TalismanK
+@set f_ev_talisman=1
+장터 어귀 부적 좌판. 장수가 외치기 전에 깊은 먹선의 한 장을 손가락으로 누른다.
+<align=right>"<color=#9A70C4>이 한 장만 주시오. 나머지는 밀가루 풀에 숯이지요.</color>"</align>
+장수가 좌판 위로 몸을 날려 당신 입을 막을 뻔한다.
+"쉿, 쉿! 장사 망치려고 작정했소? ……두 냥. 두 냥에 가져가고 그 입은 여기 두고 가시오."
+'입을 두고 가라니. 이 고을은 입값이 제일 비싸다.'
+@choice "두 냥에 산다" if:mn>=2 goto:#E_TalismanKA
+@choice "웃고 지나간다" goto:#E_TalismanC2
+@stop
+# E_TalismanKA
+@fx mn:-2 curse:-5
+품에 넣자 가슴의 열이 한 김 내려앉는다. 장수가 다음 손님한테 다시 외친다. "재액을 막고 사기를 누르는 영부요! 한 장에 석 냥!"
+'석 냥짜리 종이는 오늘도 잘 팔린다.'
+@return
+
+# E_StorytellerK
+@set f_ev_story2=1
+부채가 펴지기 전에 맨 앞줄에 앉는다.
+"하여, 청운검파 백스물세 명이 하룻밤에 스러졌으니! 허나 그 밤에 산을 내려간 그림자가 하나 있었다지."
+이야기꾼의 눈이 스치듯 지나가다, 이번엔 멎는다.
+<align=right>"<color=#9A70C4>그 그림자, 지금 맨 앞줄에서 듣고 있소.</color>"</align>
+구경꾼들이 와 웃는다. 농인 줄 안다.
+이야기꾼의 부채만 웃지 않는다. 접힌 채 반 치 떨린다.
+"……객, 농이 지나치오. 그런 농은 혈마교 귀에도 들어가오."
+'농이 아니라는 걸 저 사람만 안다. 둘이면 충분하다.'
+@choice "끝까지 듣는다" goto:#E_StorytellerC0
+@choice "동전을 던지고 자리를 뜬다" if:mn>=1 goto:#E_StorytellerC1
+@choice "\"장문인이 검을 뽑지 않던 대목도 하시오.\"" if:f_storylore>0 goto:#E_StorytellerX
+@stop
+
+# E_SparK
+@set f_ev_spar=1
+@set f_hyeokmet=1
+객잔 뒷마당. 우물가에서 목도를 깎던 사내가 고개를 들기 전에, 먼저 외친다.
+<align=right>"<color=#9A70C4>장풍— 길을 비키시오!</color>"</align>
+사내가 깎던 목도를 떨어뜨린다.
+"……그거 내 버릇인데! 아니, 내가 아직 안 했는데!"
+<align=right>"<color=#9A70C4>장풍표국 표사 염혁. 합이나 좀 맞춰 보자고 하실 참이었지요.</color>"</align>
+"형씨, 무서운 사람이오. 점쟁이요, 귀신이오?"
+'반반이다.'
+그래도 그가 목도를 주워 던져 준다. 웃음이 먼저 나오는 사내다.
+@choice "목도를 받아 든다" goto:#E_SparC0
+@choice "\"진검으로 하시오.\" 숫돌에 세운 날을 보인다" if:f_whetstone>0 goto:#E_SparX
+@choice "\"오늘은 손목이 무겁소.\" 사양한다" goto:#E_SparC1
 @stop
 

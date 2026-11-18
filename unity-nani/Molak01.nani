@@ -227,7 +227,10 @@
 @set f_ev_monk=0
 @set f_ev_notice=0
 @set f_ev_peddler=0
+@set f_ev_spar=0
 @set f_ev_spy=0
+@set f_ev_story2=0
+@set f_ev_talisman=0
 @set f_ev_thugs=0
 @set f_ferryfree=0
 @set f_ferrysafe=0
