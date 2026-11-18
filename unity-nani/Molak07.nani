@@ -248,6 +248,9 @@
 @art char:soa
 @deja text:"기와 위의 술병 하나, 잔 둘. 이 밤에 그녀가 무엇을 묻는지 안다. 대답은 아직 못 정했다."
 {dejapre}
+@goto #SoaN11Re if:g_bt_soan11>0&&f_bt_soan11<1
+@set g_bt_soan11=1
+@set f_bt_soan11=1
 성문 앞 포졸이 다시 늘었다. 나루엔 관아의 배가 둘. 그물이 좁혀 오는 밤.
 지붕 위에 소아가 먼저 와 있다. 술병 하나, 잔 둘.
 "석 잔 법도는 오늘은 건너뛰자. 한 잔씩만 마시자."
@@ -255,6 +258,7 @@
 "끝나면."
 그녀가 말을 끊는다. 다시 잇는다.
 "끝나면, 너는 어디로 가지."
+# SoaN11Ch
 @choice "\"남쪽. 깃발 없는 데까지. 너하고.\"" goto:#SoaN11A
 @choice "\"끝이 나면 그때 말하겠소.\"" goto:#SoaN11B
 @choice "\"끝나는 날 나는 없을지도 모르오.\" — 문양을 본다" if:curse>=60 goto:#SoaN11C
@@ -314,6 +318,9 @@
 @art char:none
 @deja text:"우물가의 책. 지난 생에도 이 책을 펼쳤다. 몇 장째에서 손이 멈추는지 안다."
 {dejapre}
+@goto #SoaG1Re if:g_bt_soag1>0&&f_bt_soag1<1
+@set g_bt_soag1=1
+@set f_bt_soag1=1
 @print "그녀가 머물던 방을 하진무가 비우지 못하고 있다. 베개 밑에 책이 있다." if:f_hajindead<1
 @print "그녀가 머물던 방은 치울 사람이 없어 그대로다. 베개 밑에 책이 있다." if:f_hajindead>0
 적운의 글씨. 첫 장은 찢겨 나갔다. 둘째 장부터, 줄마다 날짜 대신 끼니가 적혀 있다.
@@ -373,3 +380,34 @@
 @set g_soavow=1
 @fx curse:3 sl:1
 @goto Molak02#AfterChapter
+
+; ===== 회귀한 생: 지난 생에 본 장면(g_bt_*) — 먼저 말하고 먼저 움직인다 =====
+
+# SoaN11Re
+@set f_bt_soan11=1
+지붕 위에 소아가 먼저 와 있다. 술병 하나, 잔 둘. 그녀가 입을 열기 전에 잔 하나를 집는다.
+<align=right>"<color=#9A70C4>석 잔 법도는 오늘 건너뛰자는 거지. 한 잔씩만.</color>"</align>
+소아가 술병을 든 채 굳는다.
+"……그건 내가 하려던 말이다."
+<align=right>"<color=#9A70C4>그리고 끝나면 어디로 가냐고 물을 참이었고.</color>"</align>
+"……너, 가끔 무섭다. 남의 입속을 들여다보는 놈 같다."
+그녀가 잔을 채운다. 한 잔. 정말 한 잔만.
+"그래서. 어디로 가지."
+'대답은 지난 생에도 못 정했다. 이번엔 정한다.'
+@goto #SoaN11Ch
+
+# SoaG1Re
+@set f_bt_soag1=1
+@print "그녀가 머물던 방을 하진무가 비우지 못하고 있다. 베개 밑에 책이 있다." if:f_hajindead<1
+@print "그녀가 머물던 방은 치울 사람이 없어 그대로다. 베개 밑에 책이 있다." if:f_hajindead>0
+책을 받아 들고 첫 장을 넘기지 않는다. 손이 마지막 장을 안다.
+「청운 놈이 계단에 등잔 기름 붓는 꿈을 꿨다. 웃긴 꿈. 다음엔 둘이 서자고 할 것.」
+'<color=#9A70C4>이 장을 또 읽는다. 또 그녀보다 늦었다.</color>'
+그 줄 아래 빈자리에 손톱으로 긁어 적는다. 「다음엔 내가 먼저 말할 것.」
+손톱 끝이 하얗게 갈라진다. 우물이 그 소리를 받아 한참 운다.
+@vfx kind:beat
+@fx curse:3 sl:1
+@set g_soaledger=1
+@set f_soaledger=1
+@goto Molak02#AfterChapter
+

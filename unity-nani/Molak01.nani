@@ -184,6 +184,13 @@
 @set f_bracer=0
 @set f_breath=0
 @set f_breath2=0
+@set f_bt_am1=0
+@set f_bt_am2=0
+@set f_bt_am3=0
+@set f_bt_cm2=0
+@set f_bt_cm3=0
+@set f_bt_soag1=0
+@set f_bt_soan11=0
 @set f_chaininfo=0
 @set f_chainroute=0
 @set f_chamally=0
