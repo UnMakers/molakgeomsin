@@ -3205,7 +3205,8 @@
 <align=right>"<color=#9A70C4>숫돌 하나, 소금 두 되, 그리고 엿. 엿은 아버지 몫이고.</color>"</align>
 "……형씨! 우리 아버지 엿 얘긴 표국 담 밖에선 아무도 모르오! 어디서 들었소!"
 <align=right>"표국 담이 낮더군."</align>
-'체면 때문에 아들 이름으로 엿을 사는 총표두. 몇 번을 들어도 웃긴다.'
+@print "'<color=#9A70C4>체면 때문에 아들 이름으로 엿을 사는 총표두. 두 번 들어도 웃긴다.</color>'" if:g_bt_smarket<3
+@print "'<color=#9A70C4>체면 때문에 아들 이름으로 엿을 사는 총표두. 몇 번을 들어도 웃긴다.</color>'" if:g_bt_smarket>=3
 @art char:soa
 계단 위 난간에 소아가 팔을 걸친다. 입을 열려는데, 먼저 올려다본다.
 <align=right>"<color=#9A70C4>안 간다고 하고 내려올 거지.</color>"</align>

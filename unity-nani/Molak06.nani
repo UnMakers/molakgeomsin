@@ -1977,7 +1977,8 @@
 <align=right>"<color=#9A70C4>'적운의 마지막 눈이군' 할 참이었지. 그 눈은 오늘 안 데려가오.</color>"</align>
 골목 끝에서 소아가 걸음을 멈춘다. 쌍검에 손이 간다.
 "……네가 왜 여기 있지."
-'한 걸음 먼저. 이 한 걸음을 사려고 몇 번을 늦었다.'
+@print "'<color=#9A70C4>한 걸음 먼저. 이 한 걸음을 사려고 한 번 늦었다.</color>'" if:g_bt_soan4<3
+@print "'<color=#9A70C4>한 걸음 먼저. 이 한 걸음을 사려고 몇 번을 늦었다.</color>'" if:g_bt_soan4>=3
 @fx sw:1
 @goto #SoaN4F
 
@@ -2004,7 +2005,8 @@
 "……남의 장부를 훔쳐봤냐."
 <align=right>"보여 준 거요. 그대가."</align>
 "나는 아무한테도 안 보여 준다."
-'안 보여 준다는 사람한테서 몇 번을 봤다.'
+@print "'<color=#9A70C4>안 보여 준다는 사람한테서 한 번 봤다.</color>'" if:g_bt_st1<3
+@print "'<color=#9A70C4>안 보여 준다는 사람한테서 몇 번을 봤다.</color>'" if:g_bt_st1>=3
 @goto #St1Ch
 
 # St2Re
