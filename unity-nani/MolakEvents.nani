@@ -4928,6 +4928,10 @@
 @art char:hajinmu
 @deja text:"\"맡겨 둘 것이 있으면.\" 지난 생에 무엇을 맡겼는지 기억한다. 그것은 돌아오지 않았다."
 {dejapre}
+@goto #E_LastletterRe if:g_ev_lastletter>0&&f_ev_lastletter<1
+@set g_ev_lastletter=1
+@set f_ev_lastletter=1
+# E_LastletterGo
 밤. 하진무가 붓과 종이를 들고 올라온다.
 "객. 맡겨 둘 것이 있으면 지금 맡기시오. 돌아오면 돌려드리리다. 안 돌아오면……."
 셈 밝은 영감이 셈을 못 끝낸다.
@@ -4971,6 +4975,10 @@
 # E_Mirror
 @deja text:"세숫물 속 노인의 얼굴. 지난 생에도 이 얼굴이 겹쳤다. 이번엔 조금 더 오래 머문다."
 {dejapre}
+@goto #E_MirrorRe if:g_ev_mirror>0&&f_ev_mirror<1
+@set g_ev_mirror=1
+@set f_ev_mirror=1
+# E_MirrorGo
 밤. 세숫물에 비친 얼굴의 윤곽이 다르다. 눈가에 검상. 노인의 얼굴이 겹쳐 있다.
 눈을 깜빡이자 사라진다.
 @fx curse:3
@@ -4985,6 +4993,10 @@
 # E_Swordsong
 @deja text:"칼집 속 날이 운다. 지난 생에도 이 울음 뒤에 북쪽에서 무엇이 왔다."
 {dejapre}
+@goto #E_SwordsongRe if:g_ev_swordsong>0&&f_ev_swordsong<1
+@set g_ev_swordsong=1
+@set f_ev_swordsong=1
+# E_SwordsongGo
 밤. 바람도 없는데 칼집 속 날이 가늘게 떤다.
 @goto #E_SwordsongG if:f_cheonggang>0
 검이 울 때는 피 냄새를 맡은 것이라고 사형이 말했다. 북쪽에서 바람이 분다.
@@ -5000,8 +5012,12 @@
 # E_Lastmarket
 @deja text:"마지막 장. 헐값의 자하근. 지난 생에도 이 장이 마지막이었다."
 {dejapre}
+@goto #E_LastmarketRe if:g_ev_lastmarket>0&&f_ev_lastmarket<1
+@set g_ev_lastmarket=1
+@set f_ev_lastmarket=1
 마지막 장이 선다. 떠나는 장사치들이 물건을 헐값에 턴다.
 약재 좌판에 자하근 한 뿌리가 굴러다닌다. 은자 한 냥.
+# E_LastmarketCh
 @choice "자하근을 산다 (은자 1)" if:mn>=1 goto:#E_LastmarketC0
 @choice "좌판 사이를 구경만 하고 지난다" goto:#E_LastmarketC1
 @choice "\"남은 걸 다 주시오.\" — 좌판째 산다 (은자 4)" if:mn>=4 goto:#E_LastmarketX
@@ -5031,6 +5047,9 @@
 @art scene:innhall
 @deja text:"좁은 마당에 모인 얼굴들. 지난 생에 이 얼굴 가운데 누가 끝까지 남았는지 안다."
 {dejapre}
+@goto #E_VigilRe if:g_ev_vigil>0&&f_ev_vigil<1
+@set g_ev_vigil=1
+@set f_ev_vigil=1
 새벽. 객잔 마당에 점소이, 하진무, 백초 할멈, 이름 모르는 몇이 서 있다. 당신이 내려오자 다들 딴청을 부린다.
 "…마당이 넓어서 모였소."
 하진무가 말한다. 마당은 좁다.
@@ -5047,6 +5066,9 @@
 @art char:hajinmu
 @deja text:"\"빈칸은 뭐냐.\" 하진무가 무엇이라고 답할지 안다. 그 답의 값도."
 {dejapre}
+@goto #E_SearchRe if:g_ev_search>0&&f_ev_search<1
+@set g_ev_search=1
+@set f_ev_search=1
 아침, 마당이 조용하다. 늑대 가죽을 두른 사내 둘이 하진무의 장부를 넘기고 있다. 혈마교의 추격대, 혈랑대다. 투숙객 중에 청운의 생존자가 있는지 찾는다.
 "이 방. 빈칸은 뭐냐."
 "손님이 없다는 뜻이오."
@@ -5112,11 +5134,15 @@
 @art scene:market
 @deja text:"외눈, 쌍검, 흑의. 지난 생에도 이 종이가 붙고 나서 그녀의 걸음이 바빠졌다."
 {dejapre}
+@goto #E_SoaPosterRe if:g_ev_soaposter>0&&f_ev_soaposter<1
+@set g_ev_soaposter=1
+@set f_ev_soaposter=1
 저자 벽, 당신의 수배서 옆에 종이 한 장이 붙어 있다.
 「외눈. 쌍검. 흑의(黑衣). 적운검파의 잔당. 현상금 은자 삼십 냥.」
 외눈 하나면 알아볼 사람은 다 알아본다.
 소아가 그 앞에서 제 값을 읽고 있다.
 "삼십 냥이라. 네 값의 열에 하나로군."
+# E_SoaPosterCh
 @choice "수배서를 뜯는다" goto:#E_SoaPosterC0
 @choice "\"떠나라. 운락은 이제 네가 있을 곳이 아니다.\"" goto:#E_SoaPosterC1
 @choice "나란히 서서 같이 읽는다" goto:#E_SoaPosterC2
@@ -5171,11 +5197,15 @@
 @art char:granny
 @deja text:"\"두 푼이다.\" 지난 생에도 이 셈 뒤에 백초당의 불이 하나씩 꺼졌다."
 {dejapre}
+@goto #E_HerbTaxRe if:g_ev_herbtax>0&&f_ev_herbtax<1
+@set g_ev_herbtax=1
+@set f_ev_herbtax=1
 백초당 문 앞에 패가 하나 더 걸렸다. 「교납(敎納) — 혈마교 상납가」. 징세조 셋이 약궤를 뒤진다.
 "자하근 한 근에 두 푼이다. 나머지는 교로 올린다."
 "두 푼이면 캐 오는 품삯도 안 된다."
 "그럼 캐지 마라."
 할멈이 고개를 들어 당신을 본다.
+# E_HerbTaxCh
 @choice "약값을 대신 치른다 (은자 8)" if:mn>=8 goto:#E_HerbTaxC0
 @choice "\"이 집은 내 단골이다.\"" goto:#E_HerbTaxC1
 @choice "약궤 밑으로 손을 넣는다" goto:#E_HerbTaxC2
@@ -5222,6 +5252,10 @@
 @art scene:market
 @deja text:"서열전 금지. 뒷골목 판의 판돈이 세 배라는 말이 나오기 전에 먼저 안다."
 {dejapre}
+@goto #E_RingClosedRe if:g_ev_ringclosed>0&&f_ev_ringclosed<1
+@set g_ev_ringclosed=1
+@set f_ev_ringclosed=1
+# E_RingClosedGo
 비무판 자리에 교의 방이 붙었다. 「서열전 사흘 금지 — 집법전(執法殿)」
 칼 찬 자들만 남아 방을 노려본다. 서열이 멈추면 밥줄이 멈춘다.
 "뒷골목에 판이 선다더군. 판돈은 세 배. 교의 눈이 없으니 죽어도 따지는 놈이 없고."
@@ -5354,6 +5388,9 @@
 @goto #E_SparedB if:tr<=25
 @deja text:"\"살려 준 목숨, 한 번은 갚겠소.\" 지난 생엔 이 빚을 받기 전에 죽었다."
 {dejapre}
+@goto #E_SparedRe if:g_ev_spared>0&&f_ev_spared<1
+@set g_ev_spared=1
+@set f_ev_spared=1
 아침, 객잔 문간에 보따리 하나가 놓여 있다. 말린 고기와 은자 다섯 냥, 쪽지 한 장이 들었다.
 "살려 준 목숨, 한 번은 갚겠소. — 비무판의 그 사내"
 "객관님, 원수 말고 은인도 생기십니까요."
@@ -10135,4 +10172,97 @@
 반쯤 빈 저자. 빈 좌판 위의 고양이 앞에 먼저 가서 말린 생선 한 토막을 내려놓는다.
 고양이가 생선을 보지 않고 당신을 본다. 이 눈이다.
 @goto #E_EmptytownGo
+
+# E_LastletterRe
+@set f_ev_lastletter=1
+밤. 계단 밑에서 붓 통 흔들리는 소리가 올라온다.
+'<color=#9A70C4>영감이 셈을 못 끝내는 밤이다. 이번엔 그 셈을 끝까지 들어 준다.</color>'
+@goto #E_LastletterGo
+
+# E_MirrorRe
+@set f_ev_mirror=1
+세숫물에 얼굴을 비추기 전에 먼저 눈을 감는다.
+'<color=#9A70C4>눈가에 검상, 노인의 얼굴. 뜨면 보인다. 알고 뜬다.</color>'
+@goto #E_MirrorGo
+
+# E_SwordsongRe
+@set f_ev_swordsong=1
+칼집이 떨기 전에 먼저 칼집을 쥔다.
+'<color=#9A70C4>바람도 없이 날이 운다. 북쪽에서 무언가 온다는 뜻이다. 먼저 쥐고 기다린다.</color>'
+@goto #E_SwordsongGo
+
+# E_LastmarketRe
+@set f_ev_lastmarket=1
+마지막 장. 떠나는 장사치들 좌판 사이로 곧장 약재 좌판에 간다. 굴러다니는 자하근 한 뿌리를 집는다.
+<align=right>"<color=#9A70C4>자하근 한 뿌리. 한 냥이지요.</color>"</align>
+약재상이 짐을 묶다 말고 본다.
+"……객, 마지막 장에 흥정도 안 하고 값부터 맞히면 나는 섭하오."
+'흥정은 지난 생에 다 했다. 이 사람도 떠나고, 이 장도 끝난다.'
+@goto #E_LastmarketCh
+
+# E_VigilRe
+@set f_ev_vigil=1
+새벽. 마당에 사람들이 모이기 전에 먼저 내려가 평상에 국밥 그릇을 늘어놓는다. 하나, 둘, 다섯, 여섯.
+점소이가 나오다 그릇을 센다. 하진무가, 백초 할멈이, 이름 모르는 몇이 차례로 마당에 들어서다 멈춘다.
+"……마당이 넓어서 모였소. 한데 객은 왜 상을 차리고 있소."
+<align=right>"마당이 넓어서."</align>
+하진무가 혀를 차며 앉는다. 할멈이 앉는다. 다들 앉는다. 마당은 좁다.
+@fx hp:2 curse:-2 sl:-1
+@set f_vigil=1
+아무도 가지 말라고도, 잘 다녀오라고도 하지 않는다. 국밥을 비울 때까지 앉아 있을 뿐이다.
+'<color=#9A70C4>이 배웅을 몇 번 받았다. 이번엔 상은 내가 차렸다.</color>'
+@return
+
+# E_SearchRe
+@set f_ev_search=1
+아침. 혈랑대가 들이닥치기 전, 밤사이 하진무의 장부 빈칸에 한 줄을 적어 두었다. 「짐꾼 하나 — 오늘 아침 떠남」.
+늑대 가죽 둘이 장부를 넘기다 그 칸에서 멎는다.
+"이 방. ……짐꾼? 오늘 떠난다고."
+"짐꾼 방값을 일 년이나 받았소?"
+하진무가 모른 척 주판을 튕긴다. 주판알 소리가 한 번 크다.
+"……짐꾼이 방은 비싸게도 쓰는군."
+늑대 가죽이 장부를 덮고 나간다. 그 칸에 밥상이 왜 올라가는지는 묻지 않는다.
+'<color=#9A70C4>교는 빈칸을 그냥 두지 않는다. 그럼 먼저 채워 두면 된다.</color>'
+하진무가 그 칸을 손톱으로 긁어 지운다. 다시 빈칸이다.
+@fx curse:-1
+@return
+
+# E_SoaPosterRe
+@set f_ev_soaposter=1
+저자 벽. 당신 수배서 옆의 새 종이 앞에, 소아가 먼저 서 있다. 그녀가 입을 열기 전에 말한다.
+<align=right>"<color=#9A70C4>삼십 냥. 내 값의 열에 하나라고 하실 참이지.</color>"</align>
+"……열에 하나. 맞잖아."
+<align=right>"셈이 틀렸소. 그대는 눈 하나로 둘 몫을 보니, 육십은 받아야지."</align>
+소아가 종이에서 눈을 뗀다. 당신을 본다.
+"……그게 칭찬이냐."
+<align=right>"셈이오."</align>
+@goto #E_SoaPosterCh
+
+# E_HerbTaxRe
+@set f_ev_herbtax=1
+백초당 문 앞. 징세조 셋이 약궤를 뒤지다 말고, 먼저 말을 건네는 당신을 본다.
+<align=right>"<color=#9A70C4>자하근 한 근에 두 푼. 나머지는 교로. 그 말 할 참이었지.</color>"</align>
+"……누가 고자질했냐."
+<align=right>"<color=#9A70C4>캐지 말라는 말도 할 거고.</color>"</align>
+징세조가 서로 본다. 할멈이 약궤 너머에서 고개를 든다. 웃지는 않는다. 눈가가 한 번 접힌다.
+@goto #E_HerbTaxCh
+
+# E_RingClosedRe
+@set f_ev_ringclosed=1
+비무판 쪽으로 가는 걸음이 먼저 느려진다.
+'<color=#9A70C4>교의 방이 붙는 날이다. 사흘 금지. 뒷골목 판돈은 세 배. 거기서 죽어도 아무도 안 따진다.</color>'
+@goto #E_RingClosedGo
+
+# E_SparedRe
+@set f_ev_spared=1
+아침. 점소이가 문간의 보따리를 줍기 전에 먼저 문을 연다.
+<align=right>"<color=#9A70C4>은인도 생기냐고 물을 참이지.</color>"</align>
+점소이가 보따리를 든 채 눈을 끔뻑인다.
+"……예? 아, 예. 생기십니까요?"
+<align=right>"가끔."</align>
+보따리 안에 말린 고기와 은자 다섯 냥. 「살려 준 목숨, 한 번은 갚겠소. — 비무판의 그 사내」
+@fx mn:5
+@set f_sparedally=1
+'<color=#9A70C4>살려 보낸 목숨이 한 번 갚으러 온다. 이 보따리는 몇 번 받아도 따뜻하다.</color>'
+@return
 
