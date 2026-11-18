@@ -187,6 +187,10 @@
 @set f_bt_am1=0
 @set f_bt_am2=0
 @set f_bt_am3=0
+@set f_bt_ch2=0
+@set f_bt_ch3=0
+@set f_bt_ch4=0
+@set f_bt_ch4h=0
 @set f_bt_cm2=0
 @set f_bt_cm25=0
 @set f_bt_cm3=0
