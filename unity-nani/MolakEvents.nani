@@ -6936,10 +6936,14 @@
 @art char:soa
 @deja text:"마루 끝의 숫돌 소리. 지난 생에도 이 소리를 들었다. 그녀가 고마울 때 숫돌을 꺼낸다는 것을 그때는 몰랐다."
 {dejapre}
+@goto #E_SoaWhetRe if:g_ev_whet>0&&f_ev_whet<1
+@set g_ev_whet=1
+@set f_ev_whet=1
 아침. 객잔 마루 끝에서 쇠 가는 소리가 난다. 소아가 당신 검을 무릎에 눕혀 놓고 숫돌에 물을 붓고 있다.
 "네 칼을 방에 두고 나갔더군. 날이 하도 울어서 듣고 있을 수가 없었다."
 묻지도 않고 남의 검을 간다. 그것도 적운의 손으로.
 '날이 운다니. 칼 소리를 듣는 귀다.'
+# E_SoaWhetCh
 @choice "옆에 앉아 가는 손을 본다" goto:#E_SoaWhetA
 @choice "\"고맙다는 말을 이렇게 하나.\"" if:aff>=2 goto:#E_SoaWhetB
 @choice "검을 도로 빼앗는다 — 남의 칼에 손대지 마라" goto:#E_SoaWhetC
@@ -6976,10 +6980,14 @@
 @art char:soa_smile
 @deja text:"국숫집, 젓가락이 건너오는 각도. 지난 생에도 그녀는 이 그릇부터 먹었다. 왜 그런지 이제는 안다."
 {dejapre}
+@goto #E_SoaBowlRe if:g_ev_bowl>0&&f_ev_bowl<1
+@set g_ev_bowl=1
+@set f_ev_bowl=1
 저잣거리 국숫집. 소아가 묻지도 않고 맞은편에 앉더니, 당신 그릇에서 면을 한 젓가락 집어 간다.
 "원래 남의 그릇에 든 게 더 맛있어 보이지."
 제 그릇은 손도 대지 않는다. 당신 그릇이 반쯤 비고서야 제 것을 든다.
 '남의 그릇부터 비운다. 이상한 식성이다.'
+# E_SoaBowlCh
 @choice "그릇을 통째로 밀어 준다" goto:#E_SoaBowlA
 @choice "그녀 그릇에서 한 젓가락 집어 온다" goto:#E_SoaBowlB
 @choice "\"우물에선 무얼 먹었소.\"" if:f_soatruth>0||aff>=4 goto:#E_SoaBowlC
@@ -7018,11 +7026,15 @@
 @art char:amhyang
 @deja text:"침향 한 묶음, 매화 한 묶음. 지난 생에도 그녀는 이 가게에서 둘을 함께 샀다. 어느 쪽이 누구 몫인지 이제는 안다."
 {dejapre}
+@goto #E_AmhShopRe if:g_ev_amhshop>0&&f_ev_amhshop<1
+@set g_ev_amhshop=1
+@set f_ev_amhshop=1
 약재 거리 향 가게. 앞서 온 여인이 향 두 묶음을 산다. 침향 하나, 매화 하나.
 돌아서던 여인이 당신 앞에서 걸음을 멈춘다. 코끝을 아주 조금 움직인다.
 "……독특한 냄새가 나시네요. 안쪽에서. 쇠 타는 냄새 같은."
 여인이 웃는다. 눈이 얼굴보다 먼저 웃는다. 꾸민 웃음이다.
 '쇠 타는 냄새. 코가 좋은 여자다. 조심해야겠다.'
+# E_AmhShopCh
 @choice "\"향 가게에서 남의 냄새를 맡으시오?\"" goto:#E_AmhShopA
 @choice "매화 묶음을 본다 — 이 철엔 매화가 없다" goto:#E_AmhShopB
 @choice "고개만 숙여 보이고 지나친다" goto:#E_AmhShopC
@@ -7056,11 +7068,15 @@
 @art char:amhyang
 @deja text:"엎어지는 잔. 지난 생에도 이 술은 바닥에서 거품을 물었다. 그 소매가 누구의 것인지 안다."
 {dejapre}
+@goto #E_AmhSpillRe if:g_ev_amhspill>0&&f_ev_amhspill<1
+@set g_ev_amhspill=1
+@set f_ev_amhspill=1
 주막. 낯선 사내가 건넨 잔을 받으려는데, 지나던 여인의 소매가 잔을 친다. 잔이 바닥에 엎어진다.
 술이 바닥에서 하얗게 거품을 문다.
 "어머, 송구해요. 소매가 길어서."
 사내가 얼굴을 굳히고 자리를 뜬다. 여인은 사과하는 얼굴로 당신 맞은편에 앉는다. 향 가게의 그 여인이다.
 '사과하는 얼굴로 앉는다. 사과할 생각은 없는 얼굴이다.'
+# E_AmhSpillCh
 @choice "\"왜 구했소.\"" goto:#E_AmhSpillA
 @choice "그녀의 손목을 잡는다 — 맥부터 짚는다" goto:#E_AmhSpillB
 @stop
@@ -7166,10 +7182,14 @@
 @art char:none
 @deja text:"창틀에 꽂힌 향지 한 장. 지난 생에도 이 종이를 받았다. 북쪽 골목에서 무엇이 기다렸는지 안다."
 {dejapre}
+@goto #E_AmhLetterRe if:g_ev_amhletter>0&&f_ev_amhletter<1
+@set g_ev_amhletter=1
+@set f_ev_amhletter=1
 창틀 틈에 향지(香紙) 한 장이 꽂혀 있다. 접힌 자리에서 침향 냄새가 난다.
 펼치자 글씨 대신 그림이 있다. 골목 하나, 그 위에 매화 한 송이. 북쪽 골목이다.
 매화는 오늘 갈 손님. 루의 명부가 오늘 밤 그 골목에 누군가를 세워 두었다는 뜻이다.
 '그림 편지. 글씨를 남기지 않는 사람이다.'
+# E_AmhLetterCh
 @choice "오늘 밤은 북쪽 골목을 피한다" goto:#E_AmhLetterA
 @choice "북쪽 골목으로 간다 — 세워 둔 자를 먼저 본다 〔검술+1〕" goto:#E_AmhLetterB
 @stop
@@ -7212,10 +7232,14 @@
 @art char:cheongmyo
 @deja text:"산사 마당의 비질 소리. 지난 생에도 그녀와 이 마당을 쓸었다. 어느 쪽부터 쓸어야 웃는지 안다."
 {dejapre}
+@goto #E_CmSweepRe if:g_ev_sweep>0&&f_ev_sweep<1
+@set g_ev_sweep=1
+@set f_ev_sweep=1
 새벽. 산사 마당에 낙엽이 쌓였다. 청묘가 대빗자루 둘을 들고 서 있다. 하나를 내민다.
 "막내 일이었잖아요. 오랜만에 해 봐요."
 빗자루를 받는다. 손바닥 굳은살이 빗자루 자루에 꼭 맞는다. 이 손은 칼보다 이걸 먼저 배웠다.
 '손바닥이 먼저 반가워한다.'
+# E_CmSweepCh
 @choice "그녀의 비질에 박자를 맞춘다" goto:#E_CmSweepA
 @choice "반대쪽 끝부터 쓴다 — 막내 때처럼" goto:#E_CmSweepB
 @stop
@@ -7244,11 +7268,15 @@
 @art char:none
 @deja text:"장터 모퉁이, 향 바구니를 든 아이. 지난 생에도 이 아이에게서 향을 샀다. 어떤 향을 고르는지 안다."
 {dejapre}
+@goto #E_YeonMarketRe if:g_ev_yeon>0&&f_ev_yeon<1
+@set g_ev_yeon=1
+@set f_ev_yeon=1
 장터 모퉁이에 아이 하나가 향 바구니를 들고 서 있다. 란이다. 손끝이 희다. 손톱 밑의 검은 기가 다 빠졌다.
 "아, 빗 가져간 분이다."
 아이가 바구니를 내민다. 향이 두 가지. 매화 묶음은 바구니 바닥에 깔려 있고, 침향 묶음이 위에 올라 있다.
 "언니가 그랬어요. 매화는 이제 안 판다고. 근데 매화가 더 비싸서, 버리지는 못하고 깔아만 뒀어요."
 '버리지 못하는 매화. 언니 마음도 비슷하겠지.'
+# E_YeonMarketCh
 @choice "침향 한 묶음을 산다 (은자 2)" if:mn>=2 goto:#E_YeonMarketA
 @choice "매화 묶음을 통째로 산다 — 강에 버릴 생각이다 (은자 6)" if:mn>=6 goto:#E_YeonMarketB
 @choice "\"언니는 어디 있느냐.\"" goto:#E_YeonMarketC
@@ -7283,11 +7311,15 @@
 @art char:yonggae
 @deja text:"밤 나루, 지게에 얹힌 사람. 지난 생에도 이 짐을 같이 졌다. 그 사람이 누구의 사람인지 안다."
 {dejapre}
+@goto #E_YongNightRe if:g_ev_yongnight>0&&f_ev_yongnight<1
+@set g_ev_yongnight=1
+@set f_ev_yongnight=1
 밤 나루. 지게꾼들이 지게 하나를 둘러싸고 있다. 지게에 사람이 얹혀 있다. 표사 차림. 옆구리가 젖었다.
 용개가 당신을 보자마자 달려온다.
 "나리, 관도에서 주웠습죠. 교 놈들이 표행을 털고 이 사람만 남겨 두고 갔습니다요. 살아 있는 게 이상합죠."
 표사가 눈을 뜬다. 입술이 움직인다. "……표기를, 표기를 찾아 주시오."
 '목숨보다 표기를 먼저 찾는다. 표사다.'
+# E_YongNightCh
 @choice "지게를 같이 지고 백초당까지 뛴다" goto:#E_YongNightA
 @choice "금창약을 꺼내 상처부터 싸맨다" if:f_salve>0 goto:#E_YongNightB
 @choice "\"표기는 어디 떨어졌소.\" — 관도로 간다 〔검술+1〕" goto:#E_YongNightC
@@ -7335,12 +7367,16 @@
 @art char:gwaksan
 @deja text:"공터의 막대 창 다섯 자루. 지난 생에도 곽산은 이 아이들을 가르쳤다. 어느 아이가 먼저 넘어지는지 안다."
 {dejapre}
+@goto #E_GwakKidsRe if:g_ev_gwakkids>0&&f_ev_gwakkids<1
+@set g_ev_gwakkids=1
+@set f_ev_gwakkids=1
 저자 공터. 곽산이 아이 다섯을 줄 세워 놓고 막대기를 쥐여 주었다. 창이라고 부르기엔 짧다.
 "찌를 때 발이 먼저 간다. 손은 나중이다. 손부터 나가면 손만 죽는다."
 아이들이 일제히 찌른다. 셋이 넘어진다. 곽산이 웃지 않고 일으켜 세운다.
 '웃지 않는 선생. 아이들이 더 열심이다.'
 당신을 보자 곽산이 턱짓한다.
 "네가 와서 하나 보여 줘라. 검이라도 좋다. 발 먼저 가는 걸로."
+# E_GwakKidsCh
 @choice "막대기 하나를 받아 청운 제자검법 첫 초식을 보인다" goto:#E_GwakKidsA
 @choice "\"마당 쓸기부터 시키시오. 우리 사부는 그랬소.\"" goto:#E_GwakKidsB
 @stop
@@ -7369,6 +7405,10 @@
 @art char:gwaksan
 @deja text:"생사결 마당 어귀, 천에 싼 창. 지난 생에도 곽산은 이 금 앞에 섰다. 그다음에 창이 어디에 꽂히는지 안다."
 {dejapre}
+@goto #E_GwakSangRe if:g_ev_gwaksang>0&&f_ev_gwaksang<1
+@set g_ev_gwaksang=1
+@set f_ev_gwaksang=1
+# E_GwakSangGo
 성 밖 생사결 마당. 횟가루 금이 새로 그어져 있다. 구경꾼이 비무판보다 많다. 피를 보러 오는 사람들이다.
 어귀에 곽산이 서 있다. 창을 천으로 싸 들었다. 서열각에서 이름이 지워진 자가 설 수 있는 판은 이 마당뿐이다.
 "……약값이 이레 치 남았다. 이 판 판돈이면 석 달이다."
@@ -7460,6 +7500,10 @@
 @art char:cheongmyo
 @deja text:"산사 뒤뜰의 횃불. 지난 생에도 교는 경판 있는 절 다음으로 장작 패는 절을 찾아왔다. 몇 개의 횃불인지 안다."
 {dejapre}
+@goto #E_CmFireRe if:g_ev_cmfire>0&&f_ev_cmfire<1
+@set g_ev_cmfire=1
+@set f_ev_cmfire=1
+# E_CmFireGo
 밤. 고개 너머 산사에서 종이 거꾸로 울린다. 한 번, 길게, 끊어서. 불이 났다는 소리다.
 뛰어 올라간다. 산문 밖에 횃불이 열둘. 붉은 끈들이다. 경판 있는 절을 태운 자들이 장작 패는 절까지 왔다.
 뒤뜰. 청묘가 도끼를 들고 서 있다. 등 뒤 법당에 사부의 위패가 있다. 반쪽이 탄 그 위패다. 주지와 사미들은 이미 뒷산으로 갔다.
@@ -7546,6 +7590,9 @@
 @art char:gwaksan
 @deja text:"공터 가장자리의 지게 일곱. 지난 생에도 지게꾼들이 이 수업을 훔쳐보았다. 누가 먼저 작대기를 드는지 안다."
 {dejapre}
+@goto #E_GwakYongRe if:g_ev_gwakyong>0&&f_ev_gwakyong<1
+@set g_ev_gwakyong=1
+@set f_ev_gwakyong=1
 저자 공터. 곽산의 막대 창 수업이 오늘도 한창이다. 아이들이 다섯에서 여덟으로 늘었다.
 공터 가장자리에 지게 일곱이 나란히 세워져 있다. 지게꾼들이 쉬는 척하며 수업을 본다. 하나같이 입이 반쯤 벌어져 있다.
 용개가 작대기를 만지작거리다가 끝내 일어선다.
@@ -7553,6 +7600,7 @@
 곽산이 돌아본다. 작대기를 본다. 용개의 손바닥 굳은살을 본다.
 '용개가 일어섰다. 무릎이 먼저 떨렸겠지.'
 "길이는 된다. 손은 안 된다. 짐 지는 손은 위로 받친다. 창 쥐는 손은 앞으로 민다."
+# E_GwakYongCh
 @choice "용개의 작대기를 받아 쥐는 법을 같이 보인다" goto:#E_GwYA
 @choice "\"그 밤에 나루 골목을 막을 사람들이오.\" — 곽산에게 부탁한다" goto:#E_GwYB
 @choice "끼지 않고 지켜본다" goto:#E_GwYC
@@ -7597,6 +7645,9 @@
 @art char:granny
 @deja text:"백초당 계산대의 은자 두 냥과 향 한 묶음. 지난 생에도 하진무는 이 날 혼자 왔다. 할멈이 받지 않는 돈이라는 걸 안다."
 {dejapre}
+@goto #E_HajinHerbRe if:g_ev_hajinherb>0&&f_ev_hajinherb<1
+@set g_ev_hajinherb=1
+@set f_ev_hajinherb=1
 백초당. 약을 지으러 들렀는데 먼저 온 손님이 있다. 하진무다. 객잔 문턱 밖의 하진무는 한 뼘쯤 작아 보인다.
 그가 계산대에 은자 두 냥을 올려놓는다. 할멈이 향 한 묶음을 내준다. 은자는 그대로 둔다.
 "올해도 안 받으시오."
@@ -7606,6 +7657,7 @@
 하진무가 당신을 보고 멈칫한다. 그러다 아무렇지 않은 얼굴을 한다. 장사꾼의 얼굴이다.
 "……집사람 제삿날이오. 딸아이 낳던 날이기도 하고."
 '영감이 주판 없이 말한다. 귀한 날이다.'
+# E_HajinHerbCh
 @choice "\"같이 가도 되겠소.\"" goto:#E_HHA
 @choice "할멈에게 묻는다 — \"그날 받아 내셨소?\"" goto:#E_HHB
 @choice "못 들은 척 약을 짓는다" goto:#E_HHC
@@ -7649,6 +7701,9 @@
 @art char:soa
 @deja text:"산사 뒤뜰, 쌍검과 도끼. 지난 생에도 두 사람은 이 마당에서 마주쳤다. 누가 먼저 고개를 숙이는지 안다."
 {dejapre}
+@goto #E_SoaCmRe if:g_ev_soacm>0&&f_ev_soacm<1
+@set g_ev_soacm=1
+@set f_ev_soacm=1
 산사 뒤뜰. 소아가 쌍검을 등에 멘 채 서 있다. 맞은편에 청묘가 도끼를 들고 서 있다. 둘 다 말이 없다.
 "……이 비구니가 청운 사람이라면서. 네 사저라고?"
 소아가 당신을 보지 않고 묻는다. 청묘도 당신을 보지 않고 대답한다.
@@ -7657,6 +7712,7 @@
 '둘 다 사부 얘기로 칼을 겨눈다.'
 @art char:cheongmyo
 청묘가 도끼를 내려놓는다. 합장한다. 소아는 합장하지 않는다. 대신 쌍검 하나를 풀어 땅에 꽂는다. 적운에서 손님에게 하는 인사다.
+# E_SoaCmCh
 @choice "둘 사이에 선다 — \"운검은 한 뿌리라 했소.\"" goto:#E_SoaCmA
 @choice "물러선다 — 두 사람이 알아서 하게 둔다" goto:#E_SoaCmB
 @stop
@@ -7694,6 +7750,9 @@
 @art char:amhyang
 @deja text:"창틀의 여인, 지붕의 외눈. 지난 생에도 두 사람이 이 창에서 마주쳤다. 누가 먼저 칼을 거두는지 안다."
 {dejapre}
+@goto #E_SoaAmhRe if:g_ev_soaamh>0&&f_ev_soaamh<1
+@set g_ev_soaamh=1
+@set f_ev_soaamh=1
 삼경. 창틀에 그 여인이 앉아 있다. 늘 그렇듯 기척이 없다. 그런데 오늘은 그녀가 먼저 굳어 있다.
 목덜미에 칼날이 닿아 있다. 지붕 끝에서 내려온 쌍검 한 자루. 밤마다 지붕으로 건너오던 길에, 오늘은 창틀에 사람이 있었다.
 @art char:soa_fierce
@@ -7706,6 +7765,7 @@
 "네. 아가씨도요?"
 대답이 없다. 대답이 없는 게 대답이다. 두 여인이 동시에 당신을 본다.
 '두 여자가 나를 본다. 목이 하나뿐이라 다투기도 애매하겠다.'
+# E_SoaAmhCh
 @choice "\"둘 다 들어오시오. 창틀에서 칼 들고 할 얘기는 아니오.\"" goto:#E_SoaAmhA
 @choice "\"처음엔 그랬다니. 지금은 아니란 말이오?\"" goto:#E_SoaAmhB
 @choice "소아의 칼날을 손가락으로 밀어낸다" goto:#E_SoaAmhC
@@ -7770,6 +7830,9 @@
 @art char:amhyang_soft
 @deja text:"산사의 향로 앞, 두 여인. 지난 생에도 이 향로 앞에서 이름을 불렀다. 몇 개의 이름이었는지 안다."
 {dejapre}
+@goto #E_AmhCmRe if:g_ev_amhcm>0&&f_ev_amhcm<1
+@set g_ev_amhcm=1
+@set f_ev_amhcm=1
 산사 향로 앞. 암향이 향 한 묶음을 들고 서 있다. 불을 붙이지 못하고 있다.
 청묘가 종루에서 내려와 그 옆에 선다. 묻지 않는다. 기다린다.
 "……이 절에선 어떤 향을 피워요? 매화는 안 될 것 같아서요."
@@ -7781,6 +7844,7 @@
 "……다 기억해요. 잊으려 해도 안 잊혀요."
 "그럼 이름을 불러요. 경보다 나아요. 경은 아무 이름도 안 부르거든요."
 '경보다 이름. 청묘다운 셈이다.'
+# E_AmhCmCh
 @choice "곁에 서서 함께 듣는다" goto:#E_AmhCmA
 @choice "자리를 비켜 준다 — 산문 밖에서 기다린다" goto:#E_AmhCmB
 @stop
@@ -7812,6 +7876,9 @@
 @art char:hajinmu
 @deja text:"사다리 위의 하진무, 깨진 기와 일곱 장. 지난 생에도 이 아침을 봤다. 누가 그 기와를 얹는지 안다."
 {dejapre}
+@goto #E_HajinSoaRe if:g_ev_hajinsoa>0&&f_ev_hajinsoa<1
+@set g_ev_hajinsoa=1
+@set f_ev_hajinsoa=1
 아침. 하진무가 사다리 위에서 지붕을 올려다보며 혀를 찬다. 마당에 깨진 기와 조각이 쌓여 있다.
 "객. 동쪽 방 손님이 밤마다 지붕에 올라가오. 외눈 아가씨 말이오. 기와가 일곱 장째 깨졌소."
 <align=right>"내게 왜 말하시오."</align>
@@ -7819,6 +7886,7 @@
 그가 붓을 내려놓는다. 목소리를 낮춘다.
 "……그 아가씨한테는 방값을 안 받소. 적운이라는 말을 들은 날부터. 적운이 망하던 해 이 집에 적운 손님이 셋 묵었소. 셋 다 돌아오지 못했지."
 '방값을 안 받는다. 영감 셈은 늘 사람 쪽으로 기운다.'
+# E_HajinSoaCh
 @choice "기와값을 낸다 (은자 3)" if:mn>=3 goto:#E_HajinSoaA
 @choice "\"그 아가씨한테 직접 받으시오.\"" goto:#E_HajinSoaB
 @choice "\"기와는 내가 얹겠소.\" — 지붕에 오른다" goto:#E_HajinSoaC
@@ -7862,6 +7930,9 @@
 @art char:jang
 @deja text:"전당포 뒷골목, 매화 향이 밴 은자. 지난 생에도 장은 이 밤 무엇을 팔았는지 털어놓았다. 누구에게 팔았는지 안다."
 {dejapre}
+@goto #E_JangAmhRe if:g_ev_jangamh>0&&f_ev_jangamh<1
+@set g_ev_jangamh=1
+@set f_ev_jangamh=1
 전당포 뒷골목. 쥐눈이 장이 담에 기대 서 있다. 손에 은자 한 냥을 굴린다. 은자에서 매화 향이 난다.
 "객. 털어놓을 게 하나 있소. 장사꾼이 이런 말 하는 건 처음이오."
 '장사꾼이 털어놓는다. 비가 오려나.'
@@ -7870,6 +7941,7 @@
 은자를 당신 손바닥에 놓는다. 매화 향.
 "그 열 냥 중 한 냥이오. 나머지 아홉은 이미 술이 됐소. 대신 이걸 팔겠소. 공짜로. 루의 해약이 보름마다 어느 길로 들어오는지."
 '아홉 냥은 술. 한 냥은 양심.'
+# E_JangAmhCh
 @choice "\"그 길을 말하시오.\" — 해약 짐을 턴다 〔검술+1〕" goto:#E_JangAmhA
 @choice "\"그 은자, 가지시오. 덕분에 침향 냄새를 알았소.\"" goto:#E_JangAmhB
 @stop
@@ -7909,12 +7981,16 @@
 @art char:yonggae
 @deja text:"셋째 배 바닥의 보따리 셋. 지난 생에도 용개는 이 보따리를 숨겨 두었다. 누구 것인지 안다."
 {dejapre}
+@goto #E_YongAmhRe if:g_ev_yongamh>0&&f_ev_yongamh<1
+@set g_ev_yongamh=1
+@set f_ev_yongamh=1
 나루. 용개가 짐을 내리다 말고 당신을 구석으로 끈다.
 "나리. 그 향 가게 아씨 말입죠. 요새 밤마다 보따리를 하나씩 들고 옵니다요. 셋째 배 바닥에 넣어 달라고."
 <align=right>"그래서."</align>
 "넣어 드렸습죠. 삯은 안 받았습니다요. 근데 루 놈들이 나루를 보기 시작했습니다요. 매화 냄새 나는 놈들이요."
 지게꾼 일곱이 일하는 척 나루 어귀를 막고 서 있다. 이미 알아서 하고 있다.
 '알아서 막고 선 일곱. 시키지 않았다.'
+# E_YongAmhCh
 @choice "\"보따리를 지게꾼 숙소로 옮기게. 배에 두면 들킨다.\"" goto:#E_YongAmhA
 @choice "\"루 놈들이 오면 나를 부르게.\"" goto:#E_YongAmhB
 @stop
@@ -7947,6 +8023,9 @@
 @art char:granny
 @deja text:"백초당 약궤 앞의 승복. 지난 생에도 이 비구니는 반 알을 사러 왔다. 누구 몫인지 안다."
 {dejapre}
+@goto #E_HerbCmRe if:g_ev_herbcm>0&&f_ev_herbcm<1
+@set g_ev_herbcm=1
+@set f_ev_herbcm=1
 백초당에 들어서니 약궤 앞에 회색 승복이 서 있다. 청묘다. 탁발 그릇에서 동전을 세어 할멈에게 내민다.
 "정심단 반 알이요. 몸이 차고 기가 얕은 사람 몫으로요."
 할멈이 동전을 받지 않는다. 당신을 본다. 청묘를 본다.
@@ -7955,6 +8034,7 @@
 @art char:cheongmyo
 청묘가 당신을 보고 굳는다. 들켰다는 얼굴이다.
 '보름마다 사형들이 주던 엿이 떠오른다. 이상하게 쓴맛이 섞여 있었다.'
+# E_HerbCmCh
 @choice "\"반 알은 내가 사겠소. 사저 몫으로.\"" goto:#E_HerbCmA
 @choice "아무 말 없이 할멈과 사저를 번갈아 본다" goto:#E_HerbCmB
 @stop
@@ -7985,6 +8065,9 @@
 @art char:soa_fierce
 @deja text:"지붕 위, 쌍검을 뽑은 외눈. 지난 생에도 이 밤 그녀는 혈랑대주의 이름을 들었다. 어디로 뛰어가는지 안다."
 {dejapre}
+@goto #E_SoaJinRe if:g_ev_soajin>0&&f_ev_soajin<1
+@set g_ev_soajin=1
+@set f_ev_soajin=1
 지붕 위. 소아가 쌍검을 뽑아 들고 서 있다. 술병이 기와 위를 굴러 떨어진다.
 "혈랑대주 진백. 장 영감한테서 들었다. 네 대사형이라면서?"
 <align=right>"……그렇소."</align>
@@ -7992,6 +8075,7 @@
 외눈이 붉다. 울지 않는 눈이다.
 '울지 않는 눈. 울 데가 없어서 그렇다.'
 "그 늑대가 네 사형이든 아니든, 오늘 밤 그 목을 딴다."
+# E_SoaJinCh
 @choice "앞을 막는다 — \"십 년 전엔 그가 혈랑대가 아니었소.\"" goto:#E_SoaJinA
 @choice "\"같이 가겠소. 대신 베기 전에 한 마디만 듣게 해 주시오.\"" goto:#E_SoaJinB
 @choice "\"그 사람이 살린 사람이 하나 있소. 산사에.\"" if:f_jbsister>0 goto:#E_SoaJinC
@@ -8042,6 +8126,9 @@
 @art char:gwaksan
 @deja text:"객잔 마당의 창과 쌍검. 지난 생에도 두 사람은 이 마당에서 백 합을 겨뤘다. 몇 합째에 누가 웃는지 안다."
 {dejapre}
+@goto #E_GwakSoaRe if:g_ev_gwaksoa>0&&f_ev_gwaksoa<1
+@set g_ev_gwaksoa=1
+@set f_ev_gwaksoa=1
 객잔 마당. 곽산이 창을 짚고 서 있다. 맞은편 우물 덮개 위에 소아가 쌍검을 무릎에 눕혀 놓고 앉아 있다.
 "운객. 저 외눈이 네 동행이냐. 서열에 이름도 없는데 눈이 서열 백 안이다."
 @art char:soa
@@ -8050,6 +8137,7 @@
 "……집사람 약값. 이기면 네가 백초당에 반 달 치 내라. 지면 내가 너 술 한 달 사마."
 소아가 웃는다. 반쯤 비웃는.
 '판돈 얘기만 나오면 둘 다 눈이 빛난다.'
+# E_GwakSoaCh
 @choice "판을 지켜본다" goto:#E_GwakSoaA
 @choice "\"판돈 없이 하시오. 약값은 내가 반 내겠소.\" (은자 4)" if:mn>=4 goto:#E_GwakSoaB
 @stop
@@ -8082,12 +8170,16 @@
 @art char:soa_grief
 @deja text:"지붕 위, 떨리는 외눈. 지난 생에도 이 밤 그녀는 백발 노인을 보았다. 그 노인이 적운에 무엇을 하러 왔었는지 안다."
 {dejapre}
+@goto #E_OldSoaRe if:g_ev_oldsoa>0&&f_ev_oldsoa<1
+@set g_ev_oldsoa=1
+@set f_ev_oldsoa=1
 새벽. 지붕 위에서 소아가 무릎을 끌어안고 앉아 있다. 쌍검이 기와 위에 아무렇게나 놓였다.
 "……어젯밤 맞은편 용마루에 웬 노인이 서 있었다. 복면을 썼는데 머리가 하얗더군."
 가슴의 문양이 낮게 운다.
 "십 년 전 그 밤 전날에도 봤다. 적운 산문에서 사부랑 밤새 다투던 노인. 아이 하나를 내놓으라고."
 그녀가 당신 가슴께를 본다. 옷 아래 문양이 있는 자리를.
 "사부는 거절했다. 다음 날 늑대들이 왔다. ……너희 청운도 그랬냐."
+# E_OldSoaCh
 @choice "\"그랬소. 대사형이 들려주었소.\"" if:g_jbtruth>0 goto:#E_OldSoaA
 @choice "옷깃을 풀어 문양을 보인다" goto:#E_OldSoaB
 @choice "\"그 노인이 원한 아이가 누구였소. 적운에서.\"" goto:#E_OldSoaC
@@ -8137,6 +8229,9 @@
 @art char:hajinmu
 @deja text:"창 빗장 하나, 고치지 않은 채. 지난 생에도 하진무는 이 빗장을 두고 셈을 했다. 누구 몫인지 안다."
 {dejapre}
+@goto #E_HajinAmhRe if:g_ev_hajinamh>0&&f_ev_hajinamh<1
+@set g_ev_hajinamh=1
+@set f_ev_hajinamh=1
 아침. 하진무가 주판 대신 망치를 들고 이층에서 내려온다. 손에 녹슨 빗장 하나.
 "객 방 창 빗장이오. 고치려다 말았소."
 <align=right>"왜 말았소."</align>
@@ -8144,6 +8239,7 @@
 그가 빗장을 탁자에 내려놓는다.
 "그 향 냄새, 이 객잔에서 처음 맡은 게 아니오. 오 년 전 이층 끝방 손님이 매화 향 속에서 죽었소. 방값은 빈칸이고."
 '영감은 다 기억한다. 손님 얼굴, 향, 빗장.'
+# E_HajinAmhCh
 @choice "\"그 손님은 이제 침향만 피우오.\"" goto:#E_HajinAmhA
 @choice "\"빗장을 고치시오. 그 사람이 문으로 들어오게.\"" goto:#E_HajinAmhB
 @stop
@@ -10338,4 +10434,222 @@
 저자 공터로 가는 길. 걸음이 공터 앞에서 먼저 무거워진다.
 '<color=#9A70C4>이레. 약값이 끊긴 지 이레. 알면서도 이 창을 또 본다.</color>'
 @goto #E_GwakWifeGo
+
+# E_SoaWhetRe
+@set f_ev_whet=1
+아침. 방을 나서며 검을 일부러 마루 끝에 두고 간다. 숫돌과 물그릇도 옆에.
+돌아오니 소아가 그 앞에 쪼그려 앉아 있다. 숫돌은 아직 젖지 않았다.
+"……이건 뭐냐. 갈라고 둔 거냐."
+<align=right>"<color=#9A70C4>날이 하도 울어서 듣고 있을 수가 없다면서.</color>"</align>
+"내가 아직 그 말 안 했다."
+<align=right>"할 거잖소."</align>
+그녀가 투덜거리며 숫돌에 물을 붓는다. 적운의 손이 검을 무릎에 눕힌다.
+@goto #E_SoaWhetCh
+
+# E_SoaBowlRe
+@set f_ev_bowl=1
+국숫집. 소아가 맞은편에 앉아 젓가락을 뻗기 전에, 그릇을 반쯤 그녀 쪽으로 밀어 둔다.
+소아의 젓가락이 허공에서 멎는다.
+"……남의 그릇이 맛있어 보이는 건 남의 그릇이라서다. 밀어 주면 내 그릇이 되잖아."
+<align=right>"그럼 다시 가져가겠소."</align>
+"놔둬."
+그녀가 그릇을 끌어간다. 그래도 제 그릇은 손도 대지 않는다.
+'<color=#9A70C4>남의 그릇을 먼저 본다. 왜 그러는지는 그녀 입으로 들어야 한다.</color>'
+@goto #E_SoaBowlCh
+
+# E_AmhShopRe
+@set f_ev_amhshop=1
+약재 거리 향 가게. 앞서 온 여인이 향을 고르기 전에, 침향 한 묶음을 먼저 집는다.
+여인이 돌아서다 당신 손의 침향을 본다. 코끝을 아주 조금 움직인다.
+"……쇠 타는 냄새 나시는 분이 침향을 고르시네요."
+<align=right>"<color=#9A70C4>매화는 이 철에 없으니까.</color>"</align>
+여인의 꾸민 웃음이 반 호흡 늦게 붙는다. 소매 속의 매화 묶음을 쥔 손이 보인다.
+@goto #E_AmhShopCh
+
+# E_AmhSpillRe
+@set f_ev_amhspill=1
+주막. 낯선 사내가 잔을 건넨다. 받기 전에 먼저 옆으로 지나가는 여인 쪽을 본다.
+여인의 소매가 잔을 치려다 허공에서 멈춘다. 둘의 눈이 마주친다.
+<align=right>"그 잔, 그쪽이 드시오."</align>
+사내의 얼굴이 굳는다. 잔을 내려놓지도 들지도 못하다, 자리를 뜬다.
+여인이 길던 소매를 걷으며 맞은편에 앉는다.
+"……소매를 치기도 전에 들켰네요. 이런 일 처음이에요."
+@goto #E_AmhSpillCh
+
+# E_AmhLetterRe
+@set f_ev_amhletter=1
+창틀 틈의 향지를 펴기 전에, 북쪽 창부터 닫는다.
+펼친다. 골목 하나, 그 위에 매화 한 송이. 북쪽 골목이다.
+'<color=#9A70C4>오늘 밤 그 골목에 누가 서 있는지 안다. 글씨 대신 그림을 보내는 사람이 누군지도.</color>'
+@goto #E_AmhLetterCh
+
+# E_CmSweepRe
+@set f_ev_sweep=1
+새벽. 산사 마당. 청묘가 빗자루를 내밀기 전에, 들고 온 대빗자루로 먼저 마당 한쪽을 쓸고 있다.
+"……막내."
+<align=right>"막내 일이었으니 막내가 먼저 왔소."</align>
+"제가 하려던 말이 반은 남았네요. 오랜만에 해 보라는 말."
+그녀도 빗자루를 든다.
+@goto #E_CmSweepCh
+
+# E_YeonMarketRe
+@set f_ev_yeon=1
+장터 모퉁이. 란이 바구니를 내밀기 전에 먼저 쪼그려 앉아 바구니 바닥을 본다.
+<align=right>"<color=#9A70C4>매화는 바닥에 깔았지. 언니가 이제 안 판다고 해서.</color>"</align>
+"……아저씨, 우리 언니랑 얘기했어요? 언니가 아저씨 얘기하면 귀가 빨개지던데."
+'<color=#9A70C4>그건 몰랐다. 몇 생을 와도 모르는 게 남는다.</color>'
+@goto #E_YeonMarketCh
+
+# E_YongNightRe
+@set f_ev_yongnight=1
+밤 나루. 용개가 달려오기 전에 먼저 지게 앞에 무릎을 꿇고 표사 옆구리를 누른다.
+"나, 나리! 어떻게 아시고 벌써—"
+<align=right>"<color=#9A70C4>관도에서 주웠지. 교 놈들이 표행을 털고 이 사람만 남겨 두고.</color>"</align>
+용개의 입이 다물어지지 않는다. 표사가 눈을 뜬다.
+"……표기를, 표기를 찾아 주시오."
+@goto #E_YongNightCh
+
+# E_GwakKidsRe
+@set f_ev_gwakkids=1
+저자 공터. 곽산이 턱짓하기 전에 막대기 하나를 먼저 집어 든다.
+"……부르지도 않았는데 왜 나서냐."
+<align=right>"<color=#9A70C4>발 먼저 가는 걸로 하나 보여 달라고 하실 거잖소.</color>"</align>
+곽산이 입을 다문다. 아이 다섯이 당신과 곽산을 번갈아 본다.
+"……그래. 보여 줘라. 대신 틀리면 애들 앞에서 망신이다."
+@goto #E_GwakKidsCh
+
+# E_GwakSangRe
+@set f_ev_gwaksang=1
+성 밖 생사결 마당으로 가는 길. 걸음이 저절로 빨라진다.
+'<color=#9A70C4>이레 치 약값, 떨리는 손, 금 안의 백정 마. 곽산 혼자 서면 이 판은 끝이 나쁘다.</color>'
+@goto #E_GwakSangGo
+
+# E_CmFireRe
+@set f_ev_cmfire=1
+해가 지기 전에 고개를 넘기 시작한다. 산사 쪽으로.
+'<color=#9A70C4>경판 있는 절 다음은 장작 패는 절이다. 이번엔 종보다 먼저 간다.</color>'
+@goto #E_CmFireGo
+
+# E_GwakYongRe
+@set f_ev_gwakyong=1
+저자 공터. 용개가 작대기를 만지작거리기 전에, 그 작대기를 먼저 집어 건넨다.
+<align=right>"창 나리한테 물어보시오. 작대기도 창이 되는지."</align>
+"……나리, 제 속을 어찌 아십니까요."
+곽산이 돌아본다. 작대기를 본다. 용개의 손바닥 굳은살을 본다.
+"길이는 된다. 손은 안 된다. 짐 지는 손은 위로 받친다. 창 쥐는 손은 앞으로 민다."
+@goto #E_GwakYongCh
+
+# E_HajinHerbRe
+@set f_ev_hajinherb=1
+백초당. 하진무가 계산대에 은자 두 냥을 올려놓는다. 할멈이 향 한 묶음을 내준다.
+"올해도 안 받으시오." "그 사람 받아 낸 손으로 그 사람 향값을 받으면, 내 손이 뭐가 되나."
+하진무가 당신을 보고 멈칫하기 전에, 먼저 말한다.
+<align=right>"<color=#9A70C4>제삿날이지요. 따님 낳던 날이기도 하고.</color>"</align>
+하진무가 은자 위에 손을 얹은 채 굳는다.
+"……그 얘긴 아무한테도 안 했소."
+할멈이 하진무를 보지 않고 당신을 본다. 같은 데를 보는 사람이 하나 늘었다는 얼굴이다.
+@goto #E_HajinHerbCh
+
+# E_SoaCmRe
+@set f_ev_soacm=1
+산사 뒤뜰. 쌍검의 소아와 도끼의 청묘가 마주 서 있다. 둘 중 누가 입을 열기 전에, 그 사이에 먼저 선다.
+<align=right>"<color=#9A70C4>한 뿌리요. 두 사부 다.</color>"</align>
+소아가 당신을 노려본다. 청묘가 도끼를 내려놓는다.
+"……이 비구니가 청운 사람이라면서. 네 사저라고?"
+"적운의 눈이시군요. 막내가 먼저 말해 버려서 제 인사가 없어졌네요."
+@goto #E_SoaCmCh
+
+# E_SoaAmhRe
+@set f_ev_soaamh=1
+삼경. 창틀의 여인 목덜미에 지붕에서 내려온 쌍검이 닿아 있다. 소아가 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>칼 거두시오. 맥 짚으러 온 사람이오.</color>"</align>
+소아의 칼끝이 흔들린다.
+"……네가 그걸 어떻게 아냐."
+암향이 웃는다. 이번엔 꾸민 웃음이 아니다.
+"공자는 늘 제 말을 먼저 하시네요."
+두 여인이 동시에 당신을 본다.
+@goto #E_SoaAmhCh
+
+# E_AmhCmRe
+@set f_ev_amhcm=1
+산사 향로 앞. 향을 든 채 불을 못 붙이는 암향 옆에, 청묘보다 먼저 선다.
+<align=right>"<color=#9A70C4>경 대신 이름을 부르시오. 경은 아무 이름도 안 부르니.</color>"</align>
+종루에서 내려오던 청묘가 걸음을 멈춘다.
+"……막내, 그거 제가 하려던 말이에요."
+암향이 둘을 번갈아 본다. 향 끝이 떨린다.
+"……이름을 다 기억해요. 잊으려 해도 안 잊혀요."
+@goto #E_AmhCmCh
+
+# E_HajinSoaRe
+@set f_ev_hajinsoa=1
+아침. 하진무가 사다리 위에서 혀를 차기 전에, 사다리 밑에 기와 일곱 장을 지고 선다.
+"……객, 내가 아직 말도 안 했소."
+<align=right>"<color=#9A70C4>동쪽 방 손님이 밤마다 지붕에 오르지요. 외눈 아가씨.</color>"</align>
+하진무가 사다리를 내려온다. 기와를 한 장 들어 본다.
+"그 아가씨한테는 방값을 안 받소. 적운이라는 말을 들은 날부터."
+@goto #E_HajinSoaCh
+
+# E_JangAmhRe
+@set f_ev_jangamh=1
+전당포 뒷골목. 장이 매화 향 밴 은자를 굴리기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>내가 어느 방에 묵는지 루에 팔았지요. 보름 전, 열 냥에.</color>"</align>
+장의 손에서 은자가 떨어진다.
+"……객은 내 고해를 내 입에서 듣지도 않을 셈이오."
+<align=right>"들으러 왔소. 끝까지 하시오."</align>
+"그 열 냥 중 한 냥이오. 나머지 아홉은 이미 술이 됐소. 대신 이걸 아시오."
+@goto #E_JangAmhCh
+
+# E_YongAmhRe
+@set f_ev_yongamh=1
+나루. 용개가 구석으로 끌기 전에 먼저 구석에 가 선다.
+<align=right>"<color=#9A70C4>향 가게 아씨가 밤마다 보따리를 셋째 배 바닥에 넣어 달라 했지.</color>"</align>
+"……나리는 나루에도 귀를 심어 두셨습니까요."
+<align=right>"루 놈들이 나루를 보기 시작했다는 것도."</align>
+지게꾼 일곱이 일하는 척 나루 어귀를 막고 서 있다. 이미 알아서 하고 있다.
+@goto #E_YongAmhCh
+
+# E_HerbCmRe
+@set f_ev_herbcm=1
+백초당. 청묘가 탁발 동전을 내밀기 전에, 먼저 계산대에 동전을 놓는다.
+<align=right>"<color=#9A70C4>정심단 반 알. 몸이 차고 기가 얕은 사람 몫으로. 사저 몫으로 사겠소.</color>"</align>
+청묘의 손에서 동전이 굴러떨어진다.
+할멈이 두 사람을 번갈아 본다. "……이것들 봐라. 청운은 반 알 하나에 둘이 덤비는구나."
+@goto #E_HerbCmCh
+
+# E_SoaJinRe
+@set f_ev_soajin=1
+지붕 위. 소아가 쌍검을 뽑기 전에, 먼저 용마루에 올라 그 앞에 선다.
+<align=right>"<color=#9A70C4>혈랑대주 진백. 내 대사형이오. 장 영감한테 들었지.</color>"</align>
+소아의 손이 쌍검 자루에서 멎는다. 술병이 기와 위를 굴러 떨어진다.
+"……네 입으로 듣고 싶진 않았다."
+"혈랑대는 적운에도 왔다. 십 년 전. 오늘 밤 그 목을 딴다."
+@goto #E_SoaJinCh
+
+# E_GwakSoaRe
+@set f_ev_gwaksoa=1
+객잔 마당. 곽산이 판돈을 말하기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>판돈은 집사람 약값. 이기면 저 외눈이 백초당에 반 달 치를 내라는 거지요.</color>"</align>
+"……네가 왜 내 판돈을 말하냐."
+우물 덮개 위의 소아가 웃는다. 반쯤 비웃는.
+"창잡이. 동행이 네 속을 다 읽는다. 나는 그냥 이기기만 하면 되겠군."
+@goto #E_GwakSoaCh
+
+# E_OldSoaRe
+@set f_ev_oldsoa=1
+새벽. 지붕 위. 무릎을 끌어안은 소아 곁에 먼저 앉는다. 그녀가 입을 열기 전에.
+<align=right>"<color=#9A70C4>맞은편 용마루의 노인. 복면. 적운 산문에서 사부랑 밤새 다투던.</color>"</align>
+소아의 외눈이 떨린다.
+"……너도 봤냐."
+<align=right>"여러 번."</align>
+"사부는 거절했다. 다음 날 늑대들이 왔다. ……너희 청운도 그랬냐."
+@goto #E_OldSoaCh
+
+# E_HajinAmhRe
+@set f_ev_hajinamh=1
+아침. 녹슨 빗장을 든 하진무가 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>창 빗장, 고치려다 마셨지요. 밤마다 창틀로 드나드는 손님 때문에.</color>"</align>
+하진무가 빗장을 탁자에 내려놓는다.
+"……객은 영감 속을 다 보는구려. 그럼 빗장 값은 객이 내시오."
+"그 향 냄새, 이 객잔에서 처음 맡은 게 아니오. 오 년 전 이층 끝방에서도."
+@goto #E_HajinAmhCh
 
