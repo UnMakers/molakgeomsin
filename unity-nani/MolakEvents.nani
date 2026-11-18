@@ -1008,6 +1008,9 @@
 @art scene:alley
 @deja text:"\"한 자리 끼시오?\" 이 판의 끝을 안다. 그래도 발이 판 쪽으로 간다."
 {dejapre}
+@goto #E_GambleK if:g_ev_gamble>0&&f_ev_gamble<1
+@set g_ev_gamble=1
+@set f_ev_gamble=1
 뒷골목 투전판. 좋은 날은 하루 품삯이 반 시진에 나오고, 나쁜 날은 그 반대다.
 "한 자리 끼시오?"
 '끼면 잃는다. 안 끼면 궁금하다. 둘 다 손해다.'
@@ -1051,6 +1054,9 @@
 # E_Guard
 @deja text:"\"삯은 닷 냥!\" 지난 생에도 이 외침을 들었다. 북쪽 길 어디쯤에 무엇이 숨어 있는지도."
 {dejapre}
+@goto #E_GuardK if:g_ev_guard>0&&f_ev_guard<1
+@set g_ev_guard=1
+@set f_ev_guard=1
 장풍표국(長風鏢局) 앞이 분주하다. 표기 귀퉁이에 교에 통행세를 냈다는 붉은 끈이 매여 있다.
 @set g_fac_pyo=1
 "반나절 길, 호위 하나 급히 구하오! 삯은 닷 냥!"
@@ -1541,6 +1547,9 @@
 @art scene:teahouse
 @deja text:"연잎 냄새를 맡자 혀끝이 쓰다. 지난 생엔 이 차 한 잔을 너무 늦게 마셨다."
 {dejapre}
+@goto #E_TeasellerK if:g_ev_tea>0&&f_ev_tea<1
+@set g_ev_tea=1
+@set f_ev_tea=1
 저자 모퉁이에 찻집이 있다. 처마에 간판 대신 마른 연잎 한 단이 걸렸다.
 "청심차(淸心茶) 한 잔 들고 가게. 요새 오가는 얼굴이 죄다 흉흉하이."
 @choice "한 잔 마신다 (은자 2)" if:mn>=2 goto:#E_TeasellerC0
@@ -1562,6 +1571,9 @@
 @art scene:nightmarket
 @deja text:"때 묻은 검집이 눈에 걸린다. 어느 좌판에 무엇이 놓일지 발이 먼저 안다."
 {dejapre}
+@goto #E_NightmarketK if:g_ev_night>0&&f_ev_night<1
+@set g_ev_night=1
+@set f_ev_night=1
 해가 지자 골목에 야시(夜市)가 선다. 관의 눈을 피한 좌판들. 법도는 하나, 출처를 묻지 않는다.
 단약 꾸러미와 때 묻은 검집 하나가 눈에 띈다.
 @choice "출처 모를 단약을 산다 (은자 3)" if:mn>=3 goto:#E_NightmarketC0
@@ -1580,6 +1592,9 @@
 # E_Childplay
 @deja text:"\"내가 교주 할래!\" 아이들의 다툼까지 그대로다. 이 아이들이 커서 무엇이 되는지 보지 못하고 늘 먼저 죽었다."
 {dejapre}
+@goto #E_ChildplayK if:g_ev_child>0&&f_ev_child<1
+@set g_ev_child=1
+@set f_ev_child=1
 공터에서 아이들이 목검을 들고 서로 교주를 하겠다고 다툰다.
 대협 노릇을 하겠다는 아이는 없다. 혈마교 천하 십 년이면 아이들 꿈도 이렇게 자란다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
@@ -8901,4 +8916,93 @@
 @choice "\"진검으로 하시오.\" 숫돌에 세운 날을 보인다" if:f_whetstone>0 goto:#E_SparX
 @choice "\"오늘은 손목이 무겁소.\" 사양한다" goto:#E_SparC1
 @stop
+
+# E_GambleK
+@set f_ev_gamble=1
+@art scene:alley
+뒷골목 투전판. 부르기도 전에 빈자리에 앉는다.
+"……한 자리 끼시오? 아, 벌써 끼셨군."
+<align=right>"<color=#9A70C4>끼겠소. 다만 셋째 판은 거르겠소.</color>"</align>
+패를 섞던 타짜의 손이 반 박자 멈춘다.
+"……왜 하필 셋째요."
+<align=right>"셋째는 운이 없더군."</align>
+'셋째 판에서 패가 두 번 돈다. 몇 번 털리고서야 셌다.'
+@choice "셋째 판만 거르며 판을 읽는다 〔살기-1〕" goto:#E_GambleKA
+@choice "\"농이오.\" 일어선다" goto:#E_GambleC2
+@stop
+# E_GambleKA
+@risk on:sl need:-1
+@goto #E_Gamble2Fail if:pass==0
+@goto #E_Gamble2
+
+# E_GuardK
+@set f_ev_guard=1
+장풍표국 앞. 표두가 외치기도 전에 그 앞에 선다.
+<align=right>"<color=#9A70C4>삯은 여덟 냥. 독아단 길이니까. 북쪽 고개 둘째 굽이는 내가 앞에 서겠소.</color>"</align>
+표두가 입을 벌린 채 굳는다.
+"……그 굽이를 어찌 아시오. 표사들끼리만 아는 데요."
+<align=right>"소나무 셋, 바위 그늘. 거기서 다들 한 번씩 놀라지 않소."</align>
+@set g_fac_pyo=1
+"……여덟 냥. 대신 수레가 상하면 깎소."
+@choice "\"맡겠소.\"" goto:#E_GuardKA
+@choice "고개를 젓고 돌아선다" goto:#E_GuardC1
+@stop
+# E_GuardKA
+수레가 둘째 굽이 앞에서 멎는다. 먼저 걸어 들어가 바위 그늘에 돌을 던진다.
+그늘에서 둘이 튀어나와 산 쪽으로 달아난다. 칼을 뽑을 틈도 없다.
+표두가 한참 그 그늘을 본다.
+"……어느 문파 출신이시오?"
+<align=right>"떠돌이오. 길눈만 밝은."</align>
+'돌 하나로 세 냥을 더 벌었다. 몇 번 죽은 값까지 치면 싼 장사다.'
+@fx mn:8 hp:-1 sw:1
+@return
+
+# E_TeasellerK
+@set f_ev_tea=1
+@art scene:teahouse
+연잎 단이 걸린 처마 밑. 노파가 부르기도 전에 앉는다.
+<align=right>"<color=#9A70C4>청심차 한 잔. 감초는 조금만.</color>"</align>
+노파의 손이 찻주전자 위에서 멎는다.
+"……얼굴은 낯선데 시키는 건 단골이네."
+<align=right>"단골이오. 좀 오래 안 왔을 뿐이오."</align>
+'오래. 몇 생쯤.'
+노파가 아무것도 묻지 않고 잔을 놓는다. 감초가 정말 조금이다.
+@choice "마신다 (은자 2)" if:mn>=2 goto:#E_TeaKA
+@choice "\"다음에 오겠소.\"" goto:#E_TeasellerC1
+@stop
+# E_TeaKA
+@fx mn:-2 curse:-3 hp:1
+쓰고 맑다. 더운 김이 가슴의 열을 쓸어내린다.
+노파가 빈 잔을 거두며 한마디만 한다. "오래 안 오면 내가 먼저 가네."
+'그 말은 지난 생엔 못 들었다. 오래 안 왔었나 보다.'
+@return
+
+# E_NightmarketK
+@set f_ev_night=1
+@art scene:nightmarket
+야시. 좌판 사이를 둘러보지 않고 곧장 때 묻은 검집 앞으로 간다.
+<align=right>"<color=#9A70C4>이 검집만 주시오. 흑단이지요.</color>"</align>
+좌판 주인이 등잔을 들어 당신 얼굴을 본다.
+"……출처를 안 묻는 게 야시 법인데, 객은 물건 속까지 아는구려. 석 냥."
+'검이 이 집에 딸깍 무는 소리를 손이 기억한다.'
+@choice "석 냥에 산다" if:mn>=3 goto:#E_NightKA
+@choice "구경만 하고 떠난다" goto:#E_NightmarketC2
+@stop
+# E_NightKA
+@fx mn:-3 sw:1
+검이 딸깍 제집처럼 문다. 뽑는 손이 반 호흡 빨라진다.
+@return
+
+# E_ChildplayK
+@set f_ev_child=1
+공터. 아이들이 서로 교주를 하겠다고 다투기 전에, 목검 하나를 집어 든다.
+<align=right>"교주는 내가 하마. 너희는 다 대협 해라."</align>
+아이들이 멈춘다. 서로 본다.
+"……대협은 다 죽잖아요."
+<align=right>"그러니 이번엔 안 죽는 대협을 해 봐라."</align>
+아이 다섯이 한꺼번에 덤빈다. 목검이 정강이, 엉덩이, 정수리에 떨어진다. 교주가 공터 흙바닥에 눕는다.
+"교주 죽었다! 대협 만세!"
+'이 아이들이 커서 무엇이 되는지는 늘 못 봤다. 오늘은 대협 한 판은 봤다.'
+@fx sl:-1 curse:-2 hp:-1
+@return
 
