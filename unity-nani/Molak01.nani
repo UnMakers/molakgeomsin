@@ -262,8 +262,12 @@
 @set f_ev_beggar=0
 @set f_ev_beggar3=0
 @set f_ev_beggar4=0
+@set f_ev_caravan=0
 @set f_ev_child=0
+@set f_ev_child2=0
+@set f_ev_child3=0
 @set f_ev_cold=0
+@set f_ev_cold2=0
 @set f_ev_cult2=0
 @set f_ev_cultfeast=0
 @set f_ev_cultists=0
@@ -277,9 +281,13 @@
 @set f_ev_duel3=0
 @set f_ev_duelist=0
 @set f_ev_echoes=0
+@set f_ev_echoes2=0
+@set f_ev_eclipse=0
+@set f_ev_empty=0
 @set f_ev_ferry=0
 @set f_ev_ferry2=0
 @set f_ev_ferry3=0
+@set f_ev_frost=0
 @set f_ev_funeral=0
 @set f_ev_gamble=0
 @set f_ev_gamble3=0
@@ -300,6 +308,7 @@
 @set f_ev_hyeok1=0
 @set f_ev_hyeok3=0
 @set f_ev_hyeok4=0
+@set f_ev_lantern=0
 @set f_ev_lostblade=0
 @set f_ev_monk=0
 @set f_ev_monk3=0
@@ -320,6 +329,7 @@
 @set f_ev_rain3=0
 @set f_ev_rival=0
 @set f_ev_sgrave=0
+@set f_ev_sgrave2=0
 @set f_ev_simma=0
 @set f_ev_simma2=0
 @set f_ev_simma3=0
@@ -337,10 +347,12 @@
 @set f_ev_tal2=0
 @set f_ev_talisman=0
 @set f_ev_tax=0
+@set f_ev_tax2=0
 @set f_ev_tea=0
 @set f_ev_tea2=0
 @set f_ev_thugs=0
 @set f_ev_village=0
+@set f_ev_wine=0
 @set f_ev_wolf=0
 @set f_ev_yong=0
 @set f_ev_yong3=0

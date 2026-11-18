@@ -4381,6 +4381,10 @@
 # E_Swordgrave2
 @deja text:"시든 들꽃, 작은 발자국. 지난 생에도 이 꽃을 봤다. 누가 두고 가는지 끝내 보지 못했다."
 {dejapre}
+@goto #E_Swordgrave2Re if:g_ev_sgrave2>0&&f_ev_sgrave2<1
+@set g_ev_sgrave2=1
+@set f_ev_sgrave2=1
+# E_Swordgrave2Go
 검총에 간다. 사형의 검이 묻힌 자리에 하루쯤 시든 들꽃 한 묶음이 놓여 있다. 작은 여자 발자국도 남았다.
 @goto #E_Swordgrave2H if:f_hmsaved>0
 사형들에게도 당신이 모르는 사람이 있었을 것이다. 스물셋, 저마다.
@@ -4400,11 +4404,15 @@
 # E_Childplay2
 @deja text:"\"내가 운객 할래!\" 지난 생에도 아이들은 이 이름을 다퉜다. 그 이름의 주인이 어떻게 죽는지는 모른 채."
 {dejapre}
+@goto #E_Childplay2Re if:g_ev_child2>0&&f_ev_child2<1
+@set g_ev_child2=1
+@set f_ev_child2=1
 공터.
 "내가 운객 할래!"
 '운객 역할이 인기다. 출세했다.'
 교주 역을 다투던 아이들이 이제 당신 역을 다툰다.
 퍽. 한 아이가 목검에 이마를 맞고 쓰러진다. 피가 난다.
+# E_Childplay2Ch
 @choice "백초당으로 안고 간다 (은자 2)" if:mn>=2 goto:#E_Childplay2C0
 @choice "소매를 찢어 이마를 동여맨다" goto:#E_Childplay2C1
 @choice "아이들 소란을 등지고 지나친다" goto:#E_Childplay2C2
@@ -4441,6 +4449,9 @@
 # E_Childplay3
 @deja text:"\"이제 교주보다 세요?\" 지난 생에도 이 물음에 제대로 대답하지 못했다."
 {dejapre}
+@goto #E_Childplay3Re if:g_ev_child3>0&&f_ev_child3<1
+@set g_ev_child3=1
+@set f_ev_child3=1
 공터에서 이마에 흉터가 남은 그 아이가 혼자 목검을 휘두른다.
 당신을 보더니 묻는다.
 "아저씨. 이제 교주보다 세요?"
@@ -4467,6 +4478,10 @@
 @goto #E_Bloodtax2H if:f_taxhelp>0
 @deja text:"못질한 문짝. 그날 그냥 지나친 자리다. 지난 생에도 그랬다. 몇 번을 되감겨도 지나친다."
 {dejapre}
+@goto #E_Bloodtax2Re if:g_ev_tax2>0&&f_ev_tax2<1
+@set g_ev_tax2=1
+@set f_ev_tax2=1
+# E_Bloodtax2Go
 포목전이 문을 닫았다. 못질한 문짝에 붉은 끈. 「체납—몰수」.
 @fx curse:1
 그날 당신이 그냥 지나친 자리다. 멈췄더라면 달랐을지는 알 수 없다.
@@ -4486,9 +4501,13 @@
 # E_Echoes2
 @deja text:"대낮의 속삭임. 검이 반 치 뽑히는 감각을 손이 기억한다. 지난 생엔 몇 치까지 뽑혔던가."
 {dejapre}
+@goto #E_Echoes2Re if:g_ev_echoes2>0&&f_ev_echoes2<1
+@set g_ev_echoes2=1
+@set f_ev_echoes2=1
 대낮의 저자. 밤도 아닌데 속삭임이 온다. 손이 저 혼자 검 자루를 쥔다.
 눈앞에 생선 장수와 아이 손을 잡은 아낙이 있다. 검이 반 치 뽑힌다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_Echoes2Go
 @goto #E_Echoes2_au2 if:f_incense>0
 @goto #E_Echoes2_au0 if:curse>=60
 @goto #E_Echoes2_au1 if:hp<=hpmax/3
@@ -4530,6 +4549,10 @@
 # E_Coldspring2
 @deja text:"샘물이 붉어지는 것을 또 본다. 문양이 풀려 나온다. 나무꾼이 달아나는 방향까지 같다."
 {dejapre}
+@goto #E_Coldspring2Re if:g_ev_cold2>0&&f_ev_cold2<1
+@set g_ev_cold2=1
+@set f_ev_cold2=1
+# E_Coldspring2Go
 차가운 샘에 들어간다.
 물이 <color=#C03434>붉어진다</color>. 피가 아니다. 문양이 물속에서 먹물처럼 풀려 나온다.
 바위 위의 나무꾼이 지게를 버리고 달아난다.
@@ -4619,9 +4642,13 @@
 # E_Eclipse
 @deja text:"붉은 달. 산장이 타던 밤의 색. 몇 번을 되감아도 이 달은 같은 날 뜬다."
 {dejapre}
+@goto #E_EclipseRe if:g_ev_eclipse>0&&f_ev_eclipse<1
+@set g_ev_eclipse=1
+@set f_ev_eclipse=1
 달이 붉다. 산장이 타던 밤의 색이다.
 가슴의 문양이 달빛에 답하듯 달아오른다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_EclipseGo
 @goto #E_Eclipse_au2 if:f_incense>0
 @goto #E_Eclipse_au1 if:curse>=60
 @goto #E_Eclipse_au1 if:hp<=hpmax/3
@@ -4661,6 +4688,10 @@
 # E_Caravan
 @deja text:"붉은 가마. 엎드리지 않은 무릎이 저리다. 지난 생에도 이 가마 앞에서 무릎을 세웠다."
 {dejapre}
+@goto #E_CaravanRe if:g_ev_caravan>0&&f_ev_caravan<1
+@set g_ev_caravan=1
+@set f_ev_caravan=1
+# E_CaravanGo
 관도로 붉은 가마가 온다. 붉은 끈을 맨 자가 마흔이다. 교주의 사신 행렬이다. 사람들이 일제히 엎드린다.
 엎드리지 않은 것은 당신뿐이다. 가마가 바로 앞에서 멎는다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
@@ -4705,6 +4736,10 @@
 # E_Wine
 @deja text:"스승의 기일. 이 탁주를 몇 번째 사 드는지 센다. 스승은 매번 한 번도 오지 않는다."
 {dejapre}
+@goto #E_WineRe if:g_ev_wine>0&&f_ev_wine<1
+@set g_ev_wine=1
+@set f_ev_wine=1
+# E_WineGo
 밤. 스승의 기일이다. 제사 지낼 사람은 당신뿐이다. 탁주 한 병을 사 들고 마당에 선다.
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
 @goto #E_Wine_au3 if:f_relicpae>0
@@ -4750,6 +4785,10 @@
 # E_Frost
 @deja text:"첫서리. \"겨울옷은 장만하셨습죠?\" 지난 생엔 겨울을 다 보지 못하고 죽었다."
 {dejapre}
+@goto #E_FrostRe if:g_ev_frost>0&&f_ev_frost<1
+@set g_ev_frost=1
+@set f_ev_frost=1
+# E_FrostGo
 첫서리. 느티나무 잎이 하룻밤에 다 졌다.
 "객관님. 겨울옷은 장만하셨습죠?"
 없다. 겨울까지 살아 있을 줄 몰랐다.
@@ -4759,6 +4798,7 @@
 하진무가 말없이 솜옷 한 벌을 방 앞에 두고 갔다. 입어 보니 맞는다. 올겨울은 넘겨 보기로 한다.
 안주머니에 접힌 쪽지. 「솜값은 장부에 안 적소. 대신 봄까지 계시오.」
 '장부에 안 적는다. 이 영감, 갈수록 셈이 엉망이다.'
+# E_FrostHb
 @goto #E_FrostH0 if:f_herbfriend<1||f_herbdead>0
 저녁엔 백초당 꼬마가 생강 달인 물 한 통을 들고 온다. 할멈 심부름이다. 뚜껑에 할멈 글씨. 「서리 오면 사부 무릎이 먼저 시렸다. 너도 그 무릎이다.」
 @fx hp:1
@@ -4768,8 +4808,12 @@
 # E_Lantern
 @deja text:"붉은 등불 천 개. 이 웃음들이 어디서 멈추는지 안다."
 {dejapre}
+@goto #E_LanternRe if:g_ev_lantern>0&&f_ev_lantern<1
+@set g_ev_lantern=1
+@set f_ev_lantern=1
 밤. 교의 창교일(創敎日). 저자에 붉은 등불이 천 개 걸렸다. 사람들은 웃어야 하니 웃는다.
 붉은 빛이 가슴의 문양과 같은 색이다.
+# E_LanternCh
 @choice "등불 하나를 끈다" goto:#E_LanternC0
 @choice "구경꾼 틈에 섞인다" goto:#E_LanternC1
 @choice "등 줄을 끊어 만수 휘장에 불을 옮긴다 〔검술-1〕" goto:#E_LanternX
@@ -4858,6 +4902,10 @@
 # E_Emptytown
 @deja text:"반쯤 빈 저자. 지난 생에도 이 고양이가 빈 좌판에 앉아 당신을 봤다."
 {dejapre}
+@goto #E_EmptytownRe if:g_ev_empty>0&&f_ev_empty<1
+@set g_ev_empty=1
+@set f_ev_empty=1
+# E_EmptytownGo
 저자가 반쯤 비었다. 봉쇄 뒤로 장사치들이 남쪽으로 떠났다. 떠날 수 없는 사람들만 남았다.
 빈 좌판 위에 고양이가 앉아 당신을 본다.
 @fx curse:1
@@ -9994,4 +10042,97 @@
 <align=right>"할머니께서."</align>
 "나는 아직 안 흘렸네. ……그래, 언젠가 흘리긴 했겠지. 늙으면 입이 헐거워지니."
 @goto #E_Teaseller2Ch
+
+# E_Swordgrave2Re
+@set f_ev_sgrave2=1
+검총으로 오르는 길에 들꽃 한 묶음을 꺾는다.
+'<color=#9A70C4>꽃을 두고 간 사람이 있다. 이번엔 그 옆에 하나 더 놓는다.</color>'
+@goto #E_Swordgrave2Go
+
+# E_Childplay2Re
+@set f_ev_child2=1
+공터. "내가 운객 할래!" 아이들이 당신 역을 다툰다. 목검이 높이 드는 순간을 안다.
+그 사이로 손바닥을 넣는다. 반 박자 늦다. 목검 끝이 손등을 스치고 아이 이마에 닿는다.
+피가 난다. 덜 난다.
+'<color=#9A70C4>반 박자. 이 반 박자를 줄이려고 왔는데, 아이 이마는 그래도 터진다.</color>'
+@goto #E_Childplay2Ch
+
+# E_Childplay3Re
+@set f_ev_child3=1
+@goto #E_Childplay3R if:rank>0&&rank<=1000
+공터. 이마에 흉터가 남은 그 아이가 목검을 휘두르다 당신을 본다. 입을 열기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>아직이다. 네가 그 목검을 진짜 검으로 바꾸기 전에.</color>"</align>
+아이가 목검을 내린다.
+"……아직 안 물어봤는데요."
+<align=right>"물어볼 얼굴이었다."</align>
+아이가 웃는다. 흉터가 같이 웃는다.
+@fx curse:-1
+'<color=#9A70C4>같은 약속을 또 한다. 이 아이는 처음 듣는다. 이번엔 지켜야 한다.</color>'
+@return
+
+# E_Bloodtax2Re
+@set f_ev_tax2=1
+포목전 앞을 지나기 전에 걸음이 먼저 느려진다.
+'<color=#9A70C4>이 문짝을 또 본다. 못 자국까지 그대로다.</color>'
+@goto #E_Bloodtax2Go
+
+# E_Echoes2Re
+@set f_ev_echoes2=1
+대낮의 저자. 속삭임이 오기 전에 왼손으로 오른 손목을 먼저 쥔다. 손이 저 혼자 검 자루로 가려다 붙들린다.
+'<color=#9A70C4>이 장터, 이 생선 장수, 이 아낙. 검이 반 치 나오던 자리다. 오늘은 한 푼도 안 나온다.</color>'
+손목이 저리도록 쥔다. 아낙이 아이 손을 잡고 지나간다. 아무것도 모른다.
+@goto #E_Echoes2Go
+
+# E_Coldspring2Re
+@set f_ev_cold2=1
+샘가의 나무꾼에게 먼저 다가가 이른다.
+<align=right>"오늘 물이 붉어져도 귀신 아니오. 마을엔 운객이라고만 하시오."</align>
+나무꾼이 눈을 끔뻑인다. 알아들은 건지 모르겠다.
+@goto #E_Coldspring2Go
+
+# E_EclipseRe
+@set f_ev_eclipse=1
+달이 붉어지기 전에 문양 위에 손바닥을 얹고 마당에 선다.
+'<color=#9A70C4>붉은 달. 그 밤의 색. 몇 번을 봐도 눈을 못 뗀다. 그러니 먼저 쥐고 있는다.</color>'
+가슴의 문양이 달빛에 답하듯 달아오른다. 손바닥이 그 열을 받는다.
+@goto #E_EclipseGo
+
+# E_CaravanRe
+@set f_ev_caravan=1
+관도 저편에서 붉은 깃발이 보이기 전에 귀가 먼저 듣는다. 가마꾼 마흔의 발소리.
+'<color=#9A70C4>붉은 가마. 엎드리지 않으면 가마가 멎는다. 알면서도 무릎이 안 굽는다.</color>'
+@goto #E_CaravanGo
+
+# E_WineRe
+@set f_ev_wine=1
+스승의 기일. 탁주를 사러 가기 전에 잔부터 꺼낸다. 둘.
+'<color=#9A70C4>사부님은 매번 안 오신다. 그래도 잔은 둘이다.</color>'
+@goto #E_WineGo
+
+# E_FrostRe
+@set f_ev_frost=1
+@goto #E_FrostGo if:f_hajindead>0
+첫서리. 느티나무 잎이 하룻밤에 다 졌다. 점소이가 묻기 전에 먼저 말한다.
+<align=right>"겨울옷은 없다. 영감이 방 앞에 두고 갈 거다."</align>
+"……예?"
+점소이가 계산대 쪽을 돌아본다. 하진무가 솜옷을 개던 손을 멈춘다. 들었다.
+@fx curse:1 hp:-1
+@set f_frost=1
+그날 저녁, 방 앞에 솜옷 한 벌. 안주머니의 쪽지가 한 줄 길다.
+「솜값은 장부에 안 적소. 대신 봄까지 계시오. ……남이 둘 걸 먼저 말하지 마시오.」
+'<color=#9A70C4>영감 글씨가 삐쳤다. 다음 생엔 입 다물고 받아야겠다.</color>'
+@goto #E_FrostHb
+
+# E_LanternRe
+@set f_ev_lantern=1
+밤. 교의 창교일. 붉은 등불 천 개 아래, 웃어야 하니 웃는 사람들 틈에 선다.
+'<color=#9A70C4>이 웃음들이 어디서 멈추는지 안다. 오늘은 내가 먼저 안 웃는다.</color>'
+옆의 장꾼이 웃지 않는 당신을 보고, 저도 모르게 웃음을 반쯤 거둔다.
+@goto #E_LanternCh
+
+# E_EmptytownRe
+@set f_ev_empty=1
+반쯤 빈 저자. 빈 좌판 위의 고양이 앞에 먼저 가서 말린 생선 한 토막을 내려놓는다.
+고양이가 생선을 보지 않고 당신을 본다. 이 눈이다.
+@goto #E_EmptytownGo
 
