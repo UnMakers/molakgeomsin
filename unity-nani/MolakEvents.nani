@@ -3190,10 +3190,14 @@
 # E_Gamble4
 @deja text:"없는 손목. 지난 생에도 이 골목에서 이 사내를 봤다. 붙잡을 손이 하나 모자랐다."
 {dejapre}
+@goto #E_Gamble4Re if:g_ev_gamble4>0&&f_ev_gamble4<1
+@set g_ev_gamble4=1
+@set f_ev_gamble4=1
 골목 어귀에 타짜가 쓰러져 있다. 오른 손목이 없다. 지혈은 되어 있다.
 "교의 돈을 속였다고…."
 그가 웃으려다 신음한다.
 "속인 건 맞소. 그놈들은 손목으로 받더군."
+# E_Gamble4Ch
 @choice "백초당으로 업고 간다" if:mn>=2 goto:#E_Gamble4C0
 @choice "금창약을 꺼내 그 자리에서 싸맨다" if:f_salve>0 goto:#E_Gamble4X
 @choice "피 웅덩이를 비켜 디딘다" goto:#E_Gamble4C1
@@ -3224,9 +3228,13 @@
 @art scene:nightmarket
 @deja text:"구름 문양의 패. 손이 먼저 전낭으로 간다. 이번에는 놓치지 않는다."
 {dejapre}
+@goto #E_Nightmarket2Re if:g_ev_night2>0&&f_ev_night2<1
+@set g_ev_night2=1
+@set f_ev_night2=1
 야시. 장물아비의 좌판 끝에 청운(靑雲)의 구름 문양이 새겨진 패가 놓여 있다.
 "이거? 북쪽 골짜기에서 내려온 짐에 섞여 있었소. 은자 다섯."
 북쪽 골짜기, 혈마곡이다. 사형들의 물건이 거기서 흘러나온다.
+# E_Nightmarket2Ch
 @choice "값을 치르고 패를 거둔다 (은자 5)" if:mn>=5 goto:#E_Nightmarket2C0
 @choice "말없이 패를 집어 든다" goto:#E_Nightmarket2C1
 @choice "\"그 짐, 언제 또 내려오오.\"" goto:#E_Nightmarket2C2
@@ -3256,6 +3264,9 @@
 @art scene:alley
 @deja text:"빈 골목. 좌판 자리마다 같은 방이 붙어 있다. 이 장이 다시 서지 않는다는 걸 안다."
 {dejapre}
+@goto #E_Nightmarket3Re if:g_ev_night3>0&&f_ev_night3<1
+@set g_ev_night3=1
+@set f_ev_night3=1
 야시 골목이 비어 있다. 좌판 자리마다 「교령. 무허가 야시 철폐」.
 얼굴이 반쪽이 된 장물아비가 골목 끝에서 부른다.
 "객. 이거 받으시오. 어차피 다음 장은 못 서오."
@@ -3272,6 +3283,9 @@
 # E_Acup3
 @deja text:"\"옷을 벗어 보게.\" 늙은 의원의 손가락이 지나갈 획을 살갗이 먼저 안다."
 {dejapre}
+@goto #E_Acup3Re if:g_ev_acup3>0&&f_ev_acup3<1
+@set g_ev_acup3=1
+@set f_ev_acup3=1
 간판 없는 의원. 늙은이가 이번에는 침통을 열지 않는다.
 "옷을 벗어 보게."
 늙은 의원이 손가락으로 문양의 획을 따라 긋는다.
@@ -3280,6 +3294,7 @@
 "<color=#9A70C4>종(種)</color>. 씨앗 종. 교의 전신인 혈천교가 제자에게 힘을 심을 때 쓰던 수법이지. 심은 자가 거두면, 그 힘은 심은 자의 것이 되네."
 "자네는 밭일세, 젊은이. 누군가의."
 '밭. 누군가의 밭. 듣기 좋은 말은 아니다.'
+# E_Acup3Ch
 @choice "\"거두지 못하게 하려면.\"" goto:#E_Acup3C0
 @choice "침이나 맞는다 (은자 5)" if:mn>=5 goto:#E_Acup3C1
 @choice "\"산사 경판에서 같은 그림을 봤소.\"" if:f_sutraknow>0 goto:#E_Acup3X
@@ -3308,8 +3323,12 @@
 # E_Acup4
 @deja text:"빈 의원, 못 박힌 종이. 또 늙은 의원을 놓쳤다. 북으로 간 사람은 돌아오지 않는다."
 {dejapre}
+@goto #E_Acup4Re if:g_ev_acup4>0&&f_ev_acup4<1
+@set g_ev_acup4=1
+@set f_ev_acup4=1
 간판 없는 의원이 비어 있다. 벽에 종이 한 장이 못 박혀 있다.
 「북으로 가네. 자네 몸에 글을 쓴 자를 아네. 젊어서 그자의 맥을 짚은 적이 있지. 살아 있으면 다시 보세.」
+# E_Acup4Go
 종이 뒤에 금침 한 쌈이 매달려 있다. 늙은 의원의 마지막 처방이다.
 @fx curse:-4 ng:1
 @set f_acupgone=1
@@ -3320,11 +3339,15 @@
 # E_Talisman2
 @deja text:"\"지난번엔 반이 가짜였지 뭐요.\" 장수의 너스레까지 그대로다."
 {dejapre}
+@goto #E_Talisman2Re if:g_ev_tal2>0&&f_ev_tal2<1
+@set g_ev_tal2=1
+@set f_ev_tal2=1
 부적 장수가 먼저 손을 든다.
 "객! 지난번엔 반이 가짜였지 뭐요."
 먹선이 아주 깊은 부적 한 장을 내민다.
 "내 손으로 쓴 거요. 사죄의 뜻이오. 값은 없소."
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
+# E_Talisman2Go
 @goto #E_Talisman2_au2 if:curse>=60
 @goto #E_Talisman2_au0 if:hp<=hpmax/3
 @goto #E_Talisman2_au1 if:vow==1
@@ -3363,6 +3386,9 @@
 # E_Sutra2
 @deja text:"경판 창고의 먼지 냄새. 그 그림을 다시 봐야 한다. 가슴에 씨앗을 새긴 사람."
 {dejapre}
+@goto #E_Sutra2Re if:g_ev_sutra2>0&&f_ev_sutra2<1
+@set g_ev_sutra2=1
+@set f_ev_sutra2=1
 산사의 주지가 당신을 경판 창고로 끌고 간다.
 "지난번 사경하실 때, 시주의 소매 틈으로 보았소이다."
 백 년 묵은 경판에 그림이 새겨져 있다. 가슴에 <color=#9A70C4>씨앗 문양</color>을 새긴 사람, 그 위에 손을 얹은 복면의 사람.
@@ -3378,6 +3404,10 @@
 # E_Sutra3
 @deja text:"또 산사가 탔다. 지난 생에도 이 재 속에서 주지를 찾았다. 그 두 줄만 살았다."
 {dejapre}
+@goto #E_Sutra3Re if:g_ev_sutra3>0&&f_ev_sutra3<1
+@set g_ev_sutra3=1
+@set f_ev_sutra3=1
+# E_Sutra3Go
 산사가 불탔다. 문기둥에 「사교(邪敎) 경전 소각」. 저들이 사교를 말한다.
 재 속에 다리가 꺾인 주지가 경판 조각 하나를 쥐고 앉아 있다.
 "…그 두 줄은 살렸소이다."
@@ -3415,10 +3445,14 @@
 # E_Cultists2
 @deja text:"밧줄에 묶인 넷. 지난 생에도 고개를 돌리지 않았다. 돌리지 않은 값이 무엇이었는지 안다."
 {dejapre}
+@goto #E_Cultists2Re if:g_ev_cult2>0&&f_ev_cult2<1
+@set g_ev_cult2=1
+@set f_ev_cult2=1
 관도. 붉은 끈 교도 셋이 밧줄에 묶인 청년 넷을 끌고 간다.
 "교의 역사(役事)다. 북쪽 골짜기에 일손이 모자란다. 비켜."
 구경꾼들은 고개를 돌린다. 당신만 돌리지 않는다.
 북쪽 골짜기로 끌려간 사람은 돌아오지 않는다. 밧줄에 묶인 넷은 아직 관도 위에 있다.
+# E_Cultists2Ch
 @choice "골목으로 유인해 셋을 눕힌다 〔검술+1〕" goto:#E_Cultists2C0
 @choice "밤에 뒤를 밟아 어디로 가는지 본다" goto:#E_Cultists2C1
 @choice "눈을 감는다" goto:#E_Cultists2C2
@@ -9573,4 +9607,94 @@
 <align=right>"살기 띤 눈 중에 말이 통하는 눈이라서."</align>
 "……그 말도 내 거요."
 @goto #E_Gamble3Ch
+
+# E_Gamble4Re
+@set f_ev_gamble4=1
+골목 어귀에 타짜가 쓰러져 있다. 오른 손목이 없다. 지혈은 되어 있다.
+'<color=#9A70C4>교의 돈은 속이지 말라고 일렀어야 했다. 이번 생엔 그 말을 할 틈을 못 냈다.</color>'
+"교의 돈을 속였다고…… 속인 건 맞소. 그놈들은 손목으로 받더군."
+<align=right>"……알고 있소."</align>
+타짜가 웃으려다 신음한다.
+"알면서 늦었소? 객답지 않구려."
+@goto #E_Gamble4Ch
+
+# E_Nightmarket2Re
+@set f_ev_night2=1
+야시. 장물아비 좌판 끝의 구름 문양 패를 그가 값을 부르기 전에 집어 든다.
+<align=right>"<color=#9A70C4>북쪽 골짜기에서 내려온 짐에 섞여 있었지요. 은자 다섯.</color>"</align>
+장물아비가 등잔을 내려놓는다.
+"……객이 그 짐을 보냈소?"
+<align=right>"아니. 그 짐을 받으러 가는 사람이오."</align>
+'사형들 물건이 저 골짜기에서 흘러나온다. 언젠가 거꾸로 거슬러 올라간다.'
+@goto #E_Nightmarket2Ch
+
+# E_Nightmarket3Re
+@set f_ev_night3=1
+야시 골목이 비어 있다. 좌판 자리마다 「교령. 무허가 야시 철폐」.
+골목 끝의 장물아비가 부르기 전에 먼저 그 앞에 가 손을 내민다.
+"……객은 내가 뭘 줄지 아는 얼굴이구려."
+<align=right>"<color=#9A70C4>검은 결끈. 누구 건지는 안 묻겠소.</color>"</align>
+장물아비가 반쪽 얼굴로 웃는다. 끈을 손바닥에 얹는다.
+"묻지 말라는 말까지 가져가시네. 그럼 나는 이 고을에서 할 말이 다 떨어졌소."
+@fx sw:1
+@set f_nightmarketgone=1
+@set f_inkcord=1
+끈을 검집에 묶는다. 검을 뽑는 손이 반 호흡 빨라진다.
+'<color=#9A70C4>이 끈 주인이 누군지 몇 생째 안 물었다. 이번에도 안 묻는다.</color>'
+@return
+
+# E_Acup3Re
+@set f_ev_acup3=1
+간판 없는 의원. 늙은이가 옷을 벗어 보라 하기 전에 먼저 옷깃을 푼다.
+<align=right>"<color=#9A70C4>병이 아니고 글자지요. 종(種). 씨앗 종.</color>"</align>
+문양의 획을 따라 긋던 늙은 의원의 손가락이 공중에서 멎는다.
+"……자네 어디서."
+<align=right>"<color=#9A70C4>나는 밭이고. 누군가의.</color>"</align>
+"……그 말은 늙은이가 하기도 미안한 말인데, 자네가 먼저 하니 덜 미안하구먼."
+'덜 미안하다니 다행이다. 밭 소리는 몇 번을 들어도 기분이 나쁘다.'
+@goto #E_Acup3Ch
+
+# E_Acup4Re
+@set f_ev_acup4=1
+간판 없는 의원 앞. 문을 두드리지 않는다. 벽의 종이를 먼저 뜯는다.
+「북으로 가네. 자네 몸에 글을 쓴 자를 아네. 젊어서 그자의 맥을 짚은 적이 있지. 살아 있으면 다시 보세.」
+'<color=#9A70C4>읽지 않아도 안다. 그래도 끝까지 읽는다. 늙은이 글씨가 떨린다는 걸 이번에 봤다.</color>'
+@goto #E_Acup4Go
+
+# E_Talisman2Re
+@set f_ev_tal2=1
+부적 장수가 손을 들기 전에 먼저 손을 든다.
+<align=right>"<color=#9A70C4>반이 가짜였다는 말은 안 하셔도 되오. 그 손으로 쓴 한 장이나 주시오.</color>"</align>
+장수가 들던 손을 머리 뒤로 가져가 긁는다.
+"……이거 원, 사죄할 틈도 안 주시네. 사죄를 못 하면 이건 그냥 선물이오."
+먹선이 아주 깊은 부적 한 장이 당신 손에 놓인다.
+@goto #E_Talisman2Go
+
+# E_Sutra2Re
+@set f_ev_sutra2=1
+산사의 주지가 소매를 끌기 전에 먼저 경판 창고 문 앞에 선다.
+<align=right>"<color=#9A70C4>혈천교. 심은 자 죽으면 씨 또한 죽는다. 씨가 다 익으면 심은 자가 거둔다.</color>"</align>
+주지가 열쇠를 든 채 굳는다.
+"……시주, 소승의 경판을 소승보다 먼저 읽으시는구려. 아미타불."
+그래도 그가 문을 연다. 백 년 묵은 경판. 가슴에 씨앗 문양을 새긴 사람, 그 위에 손을 얹은 복면의 사람.
+@fx curse:-2
+@set f_sutraknow=1
+'<color=#9A70C4>누굴 베면 되는지는 안다. 벨 수 있느냐가 매번 다르다.</color>'
+@return
+
+# E_Sutra3Re
+@set f_ev_sutra3=1
+산사로 오르는 길. 연기 냄새가 산 아래까지 내려와 있다.
+'<color=#9A70C4>또 늦었다. 경판 있는 이 절은 매번 먼저 탄다.</color>'
+@goto #E_Sutra3Go
+
+# E_Cultists2Re
+@set f_ev_cult2=1
+관도. 붉은 끈 셋이 청년 넷을 끌고 오기 전에, 길 한가운데 먼저 선다.
+<align=right>"<color=#9A70C4>교의 역사다, 북쪽 골짜기에 일손이 모자란다, 비켜. 그 말이오?</color>"</align>
+맨 앞 교도의 입이 반쯤 열린 채 멈춘다.
+"……네놈이 그걸 어찌."
+밧줄에 묶인 넷 중 하나가 고개를 든다. 이 관도에서 고개를 든 사람은 오늘 그 하나다.
+'고개를 돌리는 구경꾼들 틈에서, 이번엔 먼저 서 있었다.'
+@goto #E_Cultists2Ch
 
