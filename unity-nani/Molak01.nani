@@ -227,6 +227,8 @@
 @set f_ev_ferry=0
 @set f_ev_gamble=0
 @set f_ev_guard=0
+@set f_ev_hajin1=0
+@set f_ev_hajin3=0
 @set f_ev_herb=0
 @set f_ev_herb2=0
 @set f_ev_hunter=0
@@ -243,6 +245,7 @@
 @set f_ev_tax=0
 @set f_ev_tea=0
 @set f_ev_thugs=0
+@set f_ev_wolf=0
 @set f_ferryfree=0
 @set f_ferrysafe=0
 @set f_finger=0
