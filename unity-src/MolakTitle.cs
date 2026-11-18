@@ -220,7 +220,7 @@ public class MolakTitle : MonoBehaviour
         // ---- 달 · 원상 ----
         float mcx = X(0.494f), mcy = Y(0.1213f), mr = aw * 0.0529f;
         Color moonCol = dawn ? new Color(0.98f, 0.80f, 0.45f, 0.95f) : new Color(0.74f, 0.16f, 0.12f, 0.92f);
-        Tex(new Rect(mcx - mr * 3.2f, mcy - mr * 3.2f, mr * 6.4f, mr * 6.4f), Dot, new Color(moonCol.r, moonCol.g, moonCol.b, (0.20f + 0.05f * Mathf.Sin(t * 0.6f)) * fadeIn));
+        Tex(new Rect(mcx - mr * 3.2f, mcy - mr * 3.2f, mr * 6.4f, mr * 6.4f), Dot, new Color(moonCol.r, moonCol.g, moonCol.b, 0.20f * fadeIn));
         Tex(new Rect(mcx - mr * 1.02f, mcy - mr * 1.02f, mr * 2.04f, mr * 2.04f), Disk, new Color(moonCol.r, moonCol.g, moonCol.b, moonCol.a * fadeIn));
         if (moonCut && !dawn)
         {
@@ -230,14 +230,10 @@ public class MolakTitle : MonoBehaviour
         }
         if (enso != null)
         {
-            // 처음 2.6초: 거꾸로 감기며 멈춘다(되감기). 그 뒤로는 아주 천천히 역방향으로.
-            float k = Mathf.Clamp01(since / 2.6f), ease = 1f - Mathf.Pow(1f - k, 3f);
-            float ang = -540f * (1f - ease) - since * 1.2f;
-            float er = mr * 2.05f * (1.12f - 0.12f * ease);
-            var m = GUI.matrix; GUIUtility.RotateAroundPivot(ang, new Vector2(mcx, mcy));
+            // 원상은 제자리에 가만히(돌거나 감기지 않는다). 옅게 떠오르기만.
+            float er = mr * 2.05f;
             Color ec = dawn ? new Color(0.62f, 0.48f, 0.22f, 0.85f) : new Color(0.92f, 0.88f, 0.80f, 0.78f);
             Tex(new Rect(mcx - er, mcy - er, er * 2f, er * 2f), enso, new Color(ec.r, ec.g, ec.b, ec.a * Mathf.Clamp01(since / 1.2f)));
-            GUI.matrix = m;
         }
 
         // ---- 겪은 일의 그림자 ----
