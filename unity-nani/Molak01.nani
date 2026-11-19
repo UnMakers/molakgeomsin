@@ -845,7 +845,7 @@
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
 # Rebirth
-@chapter text:"다시, 그 아침" sub:"회귀"
+@chapter text:"다시, 그 아침" sub:"회귀" desc:"모든 것이 시작되던 날로 돌아왔다"
 @pname
 @page
 @art scene:innroom
@@ -1032,7 +1032,7 @@
 ; ---- 0.4.12 서장 앞머리: 잃기 전의 청운. 뒤에서 돌아오는 것들(목검, 대추, 거꾸로 쥔 검, 일곱째의 패, 노인)을 여기 심는다 ----
 @art scene:yard
 @art char:none
-@chapter text:"청운산장" sub:"서장"
+@chapter text:"청운산장" sub:"서장" desc:"청운검파 막내 제자의 하루"
 새벽. 청운산장(靑雲山莊) 앞마당에 서리가 앉았다.
 당신은 청운검파(靑雲劍派)의 막내 제자, {g_pname}. 입문 삼 년, 마당을 쓸고 장작을 패며 제자검법 여덟 초식을 겨우 뗐다. 막내의 일은 해 뜨기 전에 마당을 다 쓰는 것이다.
 빗자루 끝이 얼어 사각거린다. 삼 년을 쓸었는데도 마당은 아직 넓다.

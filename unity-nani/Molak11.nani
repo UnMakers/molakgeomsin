@@ -146,6 +146,7 @@
 @goto #Yong3Tail
 # Yong3C
 @goto #Yong3CD if:f_hajindead>0
+@art char:hajinmu
 일곱이 지게째 객잔 뒷마당에 들어선다. 하진무가 주판을 내려놓는다. 오래 본다.
 "……객. 셈이 안 맞는 식구가 일곱이나 늘었소."
 <align=right>"쌀값은 내가 대겠소."</align>

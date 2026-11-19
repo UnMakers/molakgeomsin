@@ -5,7 +5,7 @@
 # Eve
 @goto Molak04#Ld0 if:b_eve>0
 @set b_eve=1
-@chapter text:"떠나기 전 밤" sub:"종장"
+@chapter text:"떠나기 전 밤" sub:"종장" desc:"운락에서 보내는 마지막 밤"
 @scene id:night
 @art scene:innroom
 @art char:none
@@ -94,7 +94,9 @@
 "나도 간다."
 <align=right>"그대는—"</align>
 "묻지 마라. 적운의 마지막 눈이 청운의 마지막 검 하나 못 지키면, 우물 속의 사형들한테 뭐라고 하겠냐."
-그녀가 외눈으로 달을 본다. 같은 달이다. 몇 번을 되감아도.
+@print "그녀가 외눈으로 달을 본다. 산장이 타던 밤에도 저 달이 떠 있었다." if:g_runs<1
+@print "그녀가 외눈으로 달을 본다. 같은 달이다. 지난 생에도 저 달이 떴다." if:g_runs==1
+@print "그녀가 외눈으로 달을 본다. 같은 달이다. 몇 번을 되감아도." if:g_runs>=2
 @goto #EveSoaL if:f_twoledgers<1
 "향 계집이 다녀갔다. 창틀에 침향 한 대 꽂아 두고. 돌아오면 셋이 차 한잔 하자더라. 이번엔 잔 바꾸지 말라고 해 둬라."
 # EveSoaL
@@ -107,7 +109,9 @@
 # EveSoaA
 소아가 손을 내민다. 손을 잡는다. 굳은살이 굳은살에 닿는다.
 "좋다. 같은 달 아래, 이번엔 같은 길로."
-'같은 길. 몇 번을 되감아도 이 말은 처음 듣는 것 같다.'
+@print "'같은 길. 이 사람 입에서 그 말이 나올 줄은 몰랐다.'" if:g_runs<1
+@print "'같은 길. 두 번째 생인데도 이 말은 처음 듣는 것 같다.'" if:g_runs==1
+@print "'같은 길. 몇 번을 되감아도 이 말은 처음 듣는 것 같다.'" if:g_runs>=2
 @set f_soaeve=1
 @set aff=aff+1
 @fx curse:-3

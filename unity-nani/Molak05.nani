@@ -37,6 +37,7 @@
 # Yong2Y
 은자 주머니를 도로 쥐여 주고, 그를 앞마당으로 데려간다.
 @goto #Yong2YD if:f_hajindead>0
+@art char:hajinmu
 하진무가 주판 너머로 용개의 덩치를 훑는다.
 "물지게는 질 줄 아시오?"
 "지게라면 자신 있습죠!"

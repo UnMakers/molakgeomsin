@@ -1,5 +1,5 @@
 # Wf1
-@chapter text:"혈쇄문" sub:"폐철장"
+@chapter text:"혈쇄문" sub:"폐철장" desc:"운검류를 사슬에 묶어 모으는 문파"
 @art scene:smithy
 ; ===== 제五장 혈쇄문 =====
 고을 외곽의 폐철장(廢鐵場)으로 간다.
@@ -70,7 +70,7 @@
 @goto #WolfAfter
 
 # Ld0
-@chapter text:"검은 산" sub:"종장"
+@chapter text:"검은 산" sub:"종장" desc:"혈마교 총단으로 가는 마지막 고개"
 @scene id:blood
 ; ===== 종장 검은 산 =====
 @set tr=random(1,3)
@@ -329,7 +329,7 @@
 @goto #Ld2
 
 # Ld2
-@chapter text:"교주전" sub:"종장"
+@chapter text:"교주전" sub:"종장" desc:"혈천마가 기다리는 대전"
 @gosub Molak13#Stairs if:b_stairs<1
 @gosub #LdRally
 @art scene:lordhall
@@ -545,6 +545,7 @@
 # LdHapJ
 @set f_soaatlord=1
 소아가 반 보 뒤에 서지 않고 당신 옆에 나란히 선다.
+@art char:lord
 교주의 눈이 그녀에게 간다.
 "……적운의 계집이 살아 있었더냐."
 "살아 있다. 이번엔."
@@ -615,7 +616,7 @@
 @stop
 ; ===== 0.4.62 노인과의 결판 — 말로 끝내지 않는다. 몇 생을 죽게 만든 손을 둘이서 벤다 =====
 # OldFight
-@chapter text:"노인" sub:"종장"
+@chapter text:"노인" sub:"종장" desc:"두 자루의 검이 노인 앞에 선다"
 @set f_oldfought=1
 @set oldhit=0
 노인이 손을 든다. 손가락 하나.
@@ -785,6 +786,7 @@
 @goto MolakOver#ShopTrue
 
 # Ld2C2
+@art char:lord
 @set f_lordedge=1
 @fx curse:-2
 교주의 얼굴에서 표정이 사라진다. 지겨움조차.
@@ -793,6 +795,7 @@
 "거두는 자가 되지 마라, 그리 말했겠지. 그 중놈은 늘 반만 말하느니라. 거두지 않으면, 거둬진다."
 @goto #Ld3c
 # Ld2C3
+@art char:lord
 @set f_lordedge=1
 @set f_northstep=1
 "……누가 가르쳤느냐."
@@ -802,6 +805,7 @@
 대사형이 남긴 일곱 걸음을 머릿속으로 밟는다. 진의 눈이 보인다.
 @goto #Ld3d
 # Ld3c
+@art char:lord
 "그 늙은이가 본좌를 심은 것은 삼십 년 전이니라."
 교주가 흉터조차 없는 제 가슴을 두드린다.
 "익기 전에 베어냈다. 그래서 거두어지지 않았고, 이 자리에 앉았다. 네 가슴의 그것은 아직 뿌리가 있구나. 가엾게도."
@@ -824,6 +828,7 @@
 @goto #Ld3b
 
 # Ld2C4
+@art char:lord
 교주의 입꼬리가 올라간다.
 "그 늑대 말이냐. 본좌의 개가 아니었느니라. 사매의 개였지."
 "……"
@@ -837,6 +842,7 @@
 @goto #LordAfter
 
 # Ld3
+@art char:lord
 교주의 눈이 아주 잠깐 흔들린다. 긴 침묵.
 "그 이름을 아는 낯으로 여기까지 왔다면."
 '흔들렸다. 서열록 일위의 눈이.'
@@ -848,6 +854,7 @@
 @goto #LordAfter
 
 # Ld3b
+@art char:lord
 말은 필요 없다. 검을 뽑는 소리가 대전에 길게 운다.
 교주가 피식 웃는다.
 "말보다 검이 앞서는 것. 그 문파의 버릇이로다."
@@ -857,6 +864,7 @@
 @goto #LordAfter
 
 # LdRe
+@art char:lord
 다시, 혈마곡. 혈천진도, 열린 문도 이제는 낯익다. 이번이 마지막이라는 마음으로 온다.
 대전의 교주가 같은 자세로 일어선다.
 "…또 왔느냐."
@@ -965,6 +973,7 @@
 혈천진 밖으로 기어 나온다. 둘 다 살아 있다. 그거면, 다음이 있다.
 @goto Molak02#AfterChapter
 # LordLose0
+@art char:lord
 멸도(滅道)의 벽이 당신을 대전 밖으로 내동댕이친다.
 교주는 쫓아오지 않는다.
 "익거든 다시 오너라."
@@ -972,6 +981,7 @@
 @goto Molak02#AfterChapter
 # Victory
 @black text:"……|베었다." hold:1.7
+@art char:lord
 혈마교주 혈천마(血天魔)가 무릎을 꿇는다.
 신화경(神化境), 서열록의 일위. 그 사내가 제 가슴의 검을 내려다보다, 당신의 풀어진 옷깃 아래 문양을 본다.
 "…그 늙은이의 사술이로구나."

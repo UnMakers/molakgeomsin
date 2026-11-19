@@ -506,6 +506,7 @@
 @set g_bt_cm2=g_bt_cm2+1
 @goto #Cm2NR if:f_jinbaekdead>0||f_jinally>0||f_jinleft>0||f_jbrice>0
 보름. 사당 문간에 그녀보다 먼저 앉아 있다. 무릎 앞에 이름 없는 쌀자루.
+@art char:cheongmyo
 청묘가 올라오다 당신을 보고 멈춘다.
 "……막내가 왜 여기 있어요."
 대답 대신 쌀자루 매듭을 푼다. 쌀 위에 아이 손에 맞는 목검 하나.
@@ -519,6 +520,7 @@
 # Cm3Re
 @set f_bt_cm3=1
 @set g_bt_cm3=g_bt_cm3+1
+@art char:cheongmyo
 산사 뒤뜰. 청묘가 낡은 청운 무복을 입고 서 있다. 그녀가 입을 열기 전에 먼저 말한다.
 <align=right>"<color=#9A70C4>머리는, 자라려면 오래 걸리겠지요.</color>"</align>
 청묘가 짧은 머리에 손을 얹는다. 그러다 웃음을 터뜨린다.

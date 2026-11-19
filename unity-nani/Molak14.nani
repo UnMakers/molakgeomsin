@@ -6,7 +6,7 @@
 # North
 @goto Molak04#Ld0 if:b_north>0
 @set b_north=1
-@chapter text:"북행(北行)" sub:"종장 · 닷새"
+@chapter text:"북행(北行)" sub:"종장 · 닷새" desc:"검은 산까지 닷새 길"
 @scene id:day
 @art scene:ferry
 @art char:none

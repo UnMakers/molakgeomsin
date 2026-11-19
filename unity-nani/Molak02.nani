@@ -677,7 +677,6 @@
 # KGrWakeX
 "불이야!"
 아무도 나오지 않는다. 점소이 방에서 빗장 거는 소리가 난다.
-@art char:hajinmu
 하진무가 없는 객잔은 이제 남의 집이다. 소리친 만큼 상복들이 웃는다.
 "부를 사람도 없는 놈이로군."
 @goto #KGrFight
@@ -1749,283 +1748,283 @@
 
 ; --- 비트 진입 블록 ---
 # ChSoa
-@chapter text:"소아, 첫 만남" sub:"소아"
+@chapter text:"소아, 첫 만남" sub:"소아" desc:"외눈에 쌍검을 멘 여인"
 @set b_soa=1
 @goto Molak03#Soa1
 # B5
-@chapter text:"객잔 주인 하진무" sub:"객잔"
+@chapter text:"객잔 주인 하진무" sub:"객잔" desc:"일 년 치 방값을 외상으로 둔 객잔 주인"
 @set b_hajin=1
 @gosub #S_Hajin
 @goto #Daytime
 # BLord
-@chapter text:"붉은 가마" sub:"혈마교"
+@chapter text:"붉은 가마" sub:"혈마교" desc:"혈마교주가 운락을 지나간다"
 @set b_lord=1
 @gosub #S_Lord
 @goto #Daytime
 # BYeom
-@chapter text:"끈 없는 귀퉁이" sub:"장풍표국"
+@chapter text:"끈 없는 귀퉁이" sub:"장풍표국" desc:"총표두 염가와 그 아들 혁"
 @set b_yeomflag=1
 @gosub #S_Yeom
 @goto #Daytime
 # BRoom
-@chapter text:"방값" sub:"운락객잔"
+@chapter text:"방값" sub:"운락객잔" desc:"객잔 주인은 방값을 미리 받지 않는다"
 @set b_roomfee=1
 @gosub #S_Room
 @goto #Daytime
 # BMarket
-@chapter text:"장날" sub:"운락 저잣거리"
+@chapter text:"장날" sub:"운락 저잣거리" desc:"염혁과 소아, 셋이 나선 장 구경"
 @set b_market=1
 @gosub #S_Market
 @goto #Daytime
 # BInn
-@chapter text:"비 오는 날" sub:"운락객잔"
+@chapter text:"비 오는 날" sub:"운락객잔" desc:"손님 없는 객잔의 하루"
 @set b_innday=1
 @gosub #S_Inn
 @goto #Daytime
 # B7
-@chapter text:"서열각의 쇠패" sub:"서열각"
+@chapter text:"서열각의 쇠패" sub:"서열각" desc:"서열각에 이름을 올리는 날"
 @set b_plate=1
 @gosub #S_Plate
 @goto #Daytime
 # BKnot
-@chapter text:"꼬지의 매듭" sub:"개방"
+@chapter text:"꼬지의 매듭" sub:"개방" desc:"거지 아이가 남긴 혈랑대의 신호"
 @set b_knot=1
 @gosub #S_Knot
 @goto #Daytime
 # BKnotK
-@chapter text:"꼬지의 매듭" sub:"개방"
+@chapter text:"꼬지의 매듭" sub:"개방" desc:"혈랑대가 온다. 사흘 남았다"
 @set b_knot=1
 @gosub #S_KnotK
 @goto #Daytime
 # B8
-@chapter text:"수배서" sub:"수배"
+@chapter text:"수배서" sub:"수배" desc:"청운 잔당, 생사불문"
 @set b_wanted=1
 @gosub #S_Wanted
 @goto #Daytime
 # B11
-@chapter text:"쥐눈이 장" sub:"쥐눈이 장"
+@chapter text:"쥐눈이 장" sub:"쥐눈이 장" desc:"하오문 운락 줄의 소식꾼"
 @set b_jang=1
 @gosub #S_Jang
 @goto #Daytime
 # B13
-@chapter text:"소아와의 대련" sub:"소아"
+@chapter text:"소아와의 대련" sub:"소아" desc:"적운의 쌍검과 겨룬다"
 @set b_soatrain=1
 @gosub #S_Soatrain
 @goto #Daytime
 # B20
-@chapter text:"이름이 돌다" sub:"서열각"
+@chapter text:"이름이 돌다" sub:"서열각" desc:"운객의 소문이 저잣거리를 돈다"
 @set b_fame=1
 @gosub #S_Fame
 @goto #Daytime
 # B32
-@chapter text:"떠날 채비" sub:"객잔"
+@chapter text:"떠날 채비" sub:"객잔" desc:"운락을 떠날 날이 다가온다"
 @set b_depart=1
 @gosub #S_Depart
 @goto #Daytime
 # ChUnju
-@chapter text:"운주 들판의 무인 모임" sub:"사당"
+@chapter text:"운주 들판의 무인 모임" sub:"사당" desc:"보름마다 열리는 비무판"
 @set f_unjudone=1
 @goto Molak03#Unju0
 # ChShr
-@chapter text:"운검사태의 사당" sub:"사당"
+@chapter text:"운검사태의 사당" sub:"사당" desc:"청운과 적운의 뿌리, 운검사태"
 @scene id:shrine
 @set f_shrseen=1
 @goto Molak03#Shr1
 # ChBilok
-@chapter text:"운검비록" sub:"청운의 유산"
+@chapter text:"운검비록" sub:"청운의 유산" desc:"사부의 사부가 남긴 검결"
 @set b_bilok=1
 @gosub MolakEvents#E_Bilok
 @goto #Night
 # ChHm
-@chapter text:"회목촌" sub:"회목촌"
+@chapter text:"회목촌" sub:"회목촌" desc:"불에 그을린 산골 마을"
 @set b_hm=1
 @goto Molak03#Hm1
 # BCmBell
-@chapter text:"산사의 종" sub:"청묘"
+@chapter text:"산사의 종" sub:"청묘" desc:"산사의 비구니, 낯익은 박자"
 @set b_cmbell=1
 @gosub MolakEvents#E_TempleBell
 @goto #Daytime
 # BCmBell2
-@chapter text:"빗자루 쥐는 손" sub:"청묘"
+@chapter text:"빗자루 쥐는 손" sub:"청묘" desc:"청운 연무장의 비질을 아는 사람"
 @set b_cmbell2=1
 @gosub MolakEvents#E_TempleBell2
 @goto #Daytime
 # ChAmhyang
-@chapter text:"암향루의 향" sub:"암향루"
+@chapter text:"암향루의 향" sub:"암향루" desc:"향을 쓰는 살수"
 @set b_amhyang=1
 @gosub MolakEvents#E_Amhyang
 @goto #Night
 # ChOld
-@chapter text:"노인의 얼굴" sub:"노인"
+@chapter text:"노인의 얼굴" sub:"노인" desc:"문양을 지켜보는 복면의 백발"
 @set b_old=1
 @gosub MolakEvents#E_Oldvision
 @goto #Night
 
 # BH1
-@chapter text:"그물" sub:"그물"
+@chapter text:"그물" sub:"그물" desc:"혈마교의 추격이 시작된다"
 @set b_hunt1=1
 @goto Molak06#Hunt1
 # BH2
-@chapter text:"몰이" sub:"그물"
+@chapter text:"몰이" sub:"그물" desc:"혈랑대가 객잔을 에워싼다"
 @set b_hunt2=1
 @goto Molak06#Hunt2
 # BH3
-@chapter text:"집법전주" sub:"그물"
+@chapter text:"집법전주" sub:"그물" desc:"혈랑대도 다가서지 못하는 늙은이"
 @set b_hunt3x=1
 @goto Molak06#Hunt3
 # BSt1
-@chapter text:"국밥 값" sub:"소아"
+@chapter text:"국밥 값" sub:"소아" desc:"소아의 장부에 적힌 첫 끼니"
 @set b_st1=1
 @goto Molak06#St1
 # BSt2
-@chapter text:"이빨이 있는 자리" sub:"소아"
+@chapter text:"이빨이 있는 자리" sub:"소아" desc:"지붕 위에서 나누는 사문 이야기"
 @set b_st2=1
 @goto Molak06#St2
 # BSt3
-@chapter text:"웃음" sub:"소아"
+@chapter text:"웃음" sub:"소아" desc:"장기판 옆에서 샌 웃음"
 @set b_st3=1
 @goto Molak06#St3
 # BSt4
-@chapter text:"등을 대라" sub:"소아"
+@chapter text:"등을 대라" sub:"소아" desc:"등을 맞대고 서는 적운의 법"
 @set b_st4=1
 @goto Molak06#St4
 # BSt5
-@chapter text:"비워 둔 자리" sub:"소아"
+@chapter text:"비워 둔 자리" sub:"소아" desc:"지난 생의 국밥집, 이번 생의 그릇"
 @set b_st5=1
 @goto Molak06#St5
 # BS1
-@chapter text:"밤의 대작" sub:"소아"
+@chapter text:"밤의 대작" sub:"소아" desc:"수련 뒤의 석 잔"
 @set b_s1=1
 @goto Molak06#SoaN1
 # BS2
-@chapter text:"저자 동행" sub:"소아"
+@chapter text:"저자 동행" sub:"소아" desc:"소아와 저자를 걷는다"
 @set b_s2=1
 @goto Molak06#SoaN2
 # BS3
-@chapter text:"비 오는 밤" sub:"소아"
+@chapter text:"비 오는 밤" sub:"소아" desc:"적운이 무너진 밤의 이야기"
 @set b_s3=1
 @goto Molak06#SoaN3
 # BS4
-@chapter text:"사슬은 그녀를 노린다" sub:"소아"
+@chapter text:"사슬은 그녀를 노린다" sub:"소아" desc:"혈쇄문의 명단에 소아의 이름이 있다"
 @set b_s4=1
 @goto Molak06#SoaN4
 # BS5
-@chapter text:"지붕 위의 달" sub:"소아"
+@chapter text:"지붕 위의 달" sub:"소아" desc:"복수 다음의 날을 묻는 밤"
 @set b_s5=1
 @goto Molak06#SoaN5
 # BS6
-@chapter text:"우물" sub:"소아"
+@chapter text:"우물" sub:"소아" desc:"사형들이 그녀를 숨겼던 우물"
 @set b_s6=1
 @goto Molak06#SoaN6
 # BS7
-@chapter text:"첫 장 첫 줄" sub:"소아"
+@chapter text:"첫 장 첫 줄" sub:"소아" desc:"적운의 책에 적힌 사부의 한 줄"
 @set b_s7=1
 @goto Molak06#SoaN7
 # BS8
-@chapter text:"그 밤" sub:"소아"
+@chapter text:"그 밤" sub:"소아" desc:"혈랑대 열넷이 객잔 지붕에 오른다"
 @set b_s8=1
 @goto Molak06#SoaN8
 # BS9
-@chapter text:"꿰맨 자리" sub:"소아"
+@chapter text:"꿰맨 자리" sub:"소아" desc:"그 밤 계단에서 받은 칼자리"
 @set b_s9=1
 @goto Molak07#SoaN9
 # BS10
-@chapter text:"사슬 창고" sub:"소아"
+@chapter text:"사슬 창고" sub:"소아" desc:"북쪽으로 실려 갈 아이들"
 @set b_s10=1
 @goto Molak07#SoaN10
 # BS11
-@chapter text:"같은 달 아래, 마지막" sub:"소아"
+@chapter text:"같은 달 아래, 마지막" sub:"소아" desc:"그물이 좁혀 오는 밤, 지붕 위의 두 사람"
 @set b_s11=1
 @goto Molak07#SoaN11
 # BG1
-@chapter text:"빈 계단" sub:"소아"
+@chapter text:"빈 계단" sub:"소아" desc:"그녀가 남긴 끼니의 장부"
 @set b_g1=1
 @goto Molak07#SoaG1
 # BG2
-@chapter text:"다음 생에" sub:"소아"
+@chapter text:"다음 생에" sub:"소아" desc:"그녀가 없는 객잔의 지붕"
 @set b_g2=1
 @goto Molak07#SoaG2
 # BAm1
-@chapter text:"손목의 맥" sub:"암향"
+@chapter text:"손목의 맥" sub:"암향" desc:"검푸른 입술의 살수가 찾아왔다"
 @set b_am1=1
 @goto Molak08#Am1
 # BAm2
-@chapter text:"해약이 떨어진 달" sub:"암향"
+@chapter text:"해약이 떨어진 달" sub:"암향" desc:"루주가 내건 해약의 값"
 @set b_am2=1
 @goto Molak08#Am2
 # BAm25
-@chapter text:"란의 머리" sub:"암향"
+@chapter text:"란의 머리" sub:"암향" desc:"암향의 동생 란"
 @set b_am25=1
 @goto Molak10#Am25
 # BAm3
-@chapter text:"향 없는 곳" sub:"암향"
+@chapter text:"향 없는 곳" sub:"암향" desc:"남쪽 차 고을로 가자는 말"
 @set b_am3=1
 @goto Molak08#Am3
 # BCm1
-@chapter text:"허리로 긋는 장작" sub:"청묘"
+@chapter text:"허리로 긋는 장작" sub:"청묘" desc:"청운의 사저, 청묘"
 @set b_cm1=1
 @goto Molak08#Cm1
 # BCm2
-@chapter text:"보름의 쌀" sub:"청묘"
+@chapter text:"보름의 쌀" sub:"청묘" desc:"누가 보름마다 쌀을 두고 가는가"
 @set b_cm2=1
 @goto Molak08#Cm2
 # BCm25
-@chapter text:"곳간의 문" sub:"청묘"
+@chapter text:"곳간의 문" sub:"청묘" desc:"그 밤 이후 처음 들어서는 산문"
 @set b_cm25=1
 @goto Molak10#Cm25
 # BCm3
-@chapter text:"산문 밖의 봄" sub:"청묘"
+@chapter text:"산문 밖의 봄" sub:"청묘" desc:"청묘가 청운의 검을 다시 든다"
 @set b_cm3=1
 @goto Molak08#Cm3
 # BCh1
-@chapter text:"참새" sub:"참새"
+@chapter text:"참새" sub:"참새" desc:"쥐눈이 장의 제자라는 여자"
 @set b_ch1=1
 @goto Molak15#Ch1
 # BCh2
-@chapter text:"소식의 값" sub:"참새"
+@chapter text:"소식의 값" sub:"참새" desc:"관아 창고의 징세 장부"
 @set b_ch2=1
 @goto Molak15#Ch2
 # BCh3
-@chapter text:"이름을 판 날" sub:"참새"
+@chapter text:"이름을 판 날" sub:"참새" desc:"하오문이 당신을 값으로 매겼다"
 @set b_ch3=1
 @goto Molak15#Ch3
 # BCh4
-@chapter text:"참새의 이름" sub:"참새"
+@chapter text:"참새의 이름" sub:"참새" desc:"이름 없는 둘이 떠나는 배"
 @set b_ch4=1
 @goto Molak15#Ch4
 # BR6A
-@chapter text:"북두를 거꾸로" sub:"복수"
+@chapter text:"북두를 거꾸로" sub:"복수" desc:"혈천진을 깨는 걸음"
 @set b_r6=1
 @goto Molak09#Rev6A
 # BR6L
-@chapter text:"북쪽 고개의 횃불" sub:"복수"
+@chapter text:"북쪽 고개의 횃불" sub:"복수" desc:"혈랑대 정예를 북으로 끌고 가는 횃불"
 @set b_r6=1
 @goto Molak09#Rev6L
 # BR6D
-@chapter text:"쌀자루의 편지" sub:"복수"
+@chapter text:"쌀자루의 편지" sub:"복수" desc:"위패 밑에 남은 편지"
 @set b_r6=1
 @goto Molak09#Rev6D
 # BR6N
-@chapter text:"지붕 위의 사형" sub:"복수"
+@chapter text:"지붕 위의 사형" sub:"복수" desc:"달 아래 마주 앉은 사형"
 @set b_r6=1
 @goto Molak09#Rev6N
 # BOld25
-@chapter text:"사당의 두 번째 손님" sub:"노인"
+@chapter text:"사당의 두 번째 손님" sub:"노인" desc:"복면을 벗은 노인"
 @set b_old25=1
 @goto Molak13#Old25
 # BOld3
-@chapter text:"셋째 잔" sub:"노인"
+@chapter text:"셋째 잔" sub:"노인" desc:"노인과 마주한 술상"
 @set b_old3=1
 @goto Molak09#Old3
 # BHintShr
-@chapter text:"열두 줄의 귀띔" sub:"사당"
+@chapter text:"열두 줄의 귀띔" sub:"사당" desc:"다음 걸음을 일러 주는 그녀의 목소리"
 @set b_hintshr=1
 @page
 <color=#9A70C4>귀에 그 목소리가 남아 있다.</color> 지난 생의 그녀에게서 받은 열두 줄. 한 줄도 잊지 않았다.
 관도 서쪽에 운검사태의 사당이 있다. 머지않아 불탄다. 그 전에 가야 한다.
 @goto #Daytime
 # BSimK
-@chapter text:"심마의 기억" sub:"노인"
+@chapter text:"심마의 기억" sub:"노인" desc:"이번 생엔 미리 막을 것들"
 @set b_simk=1
 @page
 <color=#9A70C4>지난 생, 이 열에서 마음이 먼저 꺾였다.</color>
@@ -2033,7 +2032,7 @@
 @fx curse:-2
 @goto #Daytime
 # BNetHint
-@chapter text:"그물의 아침" sub:"그물"
+@chapter text:"그물의 아침" sub:"그물" desc:"운락의 성문과 나루가 막혀 간다"
 @set b_nethint=1
 @page
 @deja text:"포졸이 넷. 묶인 관아의 배. 지난 생에도 이 아침을 봤다. 그때는 이 아침이 끝의 시작인 줄 몰랐다."
@@ -2048,7 +2047,7 @@
 @choice "남는다 — 그물이 닫히기 전에 끝을 보러 간다" goto:#BNetC
 @stop
 # BNetK
-@chapter text:"그물의 아침" sub:"그물"
+@chapter text:"그물의 아침" sub:"그물" desc:"되풀이되는 그물의 아침"
 @set b_netk=1
 @set b_nethint=1
 @page
@@ -2074,100 +2073,100 @@
 # BNetC
 @goto #Daytime
 # BShrFire
-@chapter text:"사당이 타다" sub:"사당"
+@chapter text:"사당이 타다" sub:"사당" desc:"불길에 사라진 운검사태의 사당"
 @set b_shrfire=1
 @goto Molak06#ShrFire
 # BR1
-@chapter text:"소문" sub:"복수"
+@chapter text:"소문" sub:"복수" desc:"혈랑대주에 관한 소문"
 @set b_r1x=1
 @goto Molak06#Rev1
 # BR2
-@chapter text:"혈랑대" sub:"복수"
+@chapter text:"혈랑대" sub:"복수" desc:"청운의 검을 쓰는 혈랑대주"
 @set b_r2x=1
 @goto Molak06#Rev2
 # BR3
-@chapter text:"늑대의 그림자" sub:"복수"
+@chapter text:"늑대의 그림자" sub:"복수" desc:"혈랑대의 척후가 가까이 있다"
 @set b_r3x=1
 @goto Molak06#Rev3
 # BR4
-@chapter text:"이름" sub:"복수"
+@chapter text:"이름" sub:"복수" desc:"혈랑대주의 손목에 새겨진 것"
 @set b_r4x=1
 @goto Molak06#Rev4
 # BR45
-@chapter text:"보름의 사당" sub:"복수"
+@chapter text:"보름의 사당" sub:"복수" desc:"쌀자루를 두고 가는 사람을 기다린다"
 @set b_r45=1
 @goto Molak13#Rev45
 # BR5
-@chapter text:"대사형" sub:"복수"
+@chapter text:"대사형" sub:"복수" desc:"혈랑대주와 마주 선다"
 @set b_r5x=1
 @goto Molak06#Rev5
 # A12
-@chapter text:"용개의 보은" sub:"용개"
+@chapter text:"용개의 보은" sub:"용개" desc:"산길에서 살려 준 산적이 찾아왔다"
 @set b_yong2=1
 @goto Molak05#Yong2
 # A17
-@chapter text:"객잔의 위기" sub:"객잔"
+@chapter text:"객잔의 위기" sub:"객잔" desc:"청운 잔당을 찾는 징세조"
 @set b_hajin2x=1
 @goto Molak05#Hajin2
 # A19
-@chapter text:"장의 소식첩" sub:"쥐눈이 장"
+@chapter text:"장의 소식첩" sub:"쥐눈이 장" desc:"붉은 끈이 쥐눈이 장의 소식첩을 노린다"
 @set b_jang2=1
 @goto Molak05#Jang2
 # A21
-@chapter text:"사당의 향" sub:"소아"
+@chapter text:"사당의 향" sub:"소아" desc:"제단에 향을 피운 사람"
 @set b_soa3=1
 @goto Molak05#Soa3
 # AYong3
-@chapter text:"나루의 지게꾼들" sub:"용개"
+@chapter text:"나루의 지게꾼들" sub:"용개" desc:"회목채를 나온 장정 일곱"
 @set b_yong3=1
 @goto Molak11#Yong3
 # AHerb3
-@chapter text:"운검사태의 처방" sub:"백초 할멈"
+@chapter text:"운검사태의 처방" sub:"백초 할멈" desc:"백초 할멈이 간직해 온 처방지"
 @set b_herb3=1
 @goto Molak11#Herb3
 # AGwak3
-@chapter text:"창잡이의 집" sub:"곽산"
+@chapter text:"창잡이의 집" sub:"곽산" desc:"곽산의 초가에서 먹는 밥 한 끼"
 @set b_gwak3=1
 @goto Molak11#Gwak3
 # AHajin3
-@chapter text:"장부의 빈칸" sub:"객잔"
+@chapter text:"장부의 빈칸" sub:"객잔" desc:"돌아오지 않은 손님들의 방값"
 @set b_hajin3=1
 @goto Molak11#Hajin3
 # AJang3
-@chapter text:"쥐의 마지막 소식" sub:"쥐눈이 장"
+@chapter text:"쥐의 마지막 소식" sub:"쥐눈이 장" desc:"쥐눈이 장이 운락을 떠난다"
 @set b_jang3=1
 @goto Molak11#Jang3
 # A23
-@chapter text:"할멈의 약궤" sub:"백초 할멈"
+@chapter text:"할멈의 약궤" sub:"백초 할멈" desc:"정심단 재료가 끊겼다"
 @set b_herb2=1
 @goto Molak05#Herb2
 # A24
-@chapter text:"사슬의 전령" sub:"혈쇄문"
+@chapter text:"사슬의 전령" sub:"혈쇄문" desc:"혈쇄문의 사슬잡이"
 @set b_chain=1
 @goto Molak05#Chain1
 # A27
-@chapter text:"곽산의 재도전" sub:"곽산"
+@chapter text:"곽산의 재도전" sub:"곽산" desc:"창잡이가 한 판 더 청한다"
 @set b_rival2=1
 @goto Molak05#Rival2
 # A28
-@chapter text:"소아의 부탁" sub:"소아"
+@chapter text:"소아의 부탁" sub:"소아" desc:"혈쇄문에 끌려간 적운의 아이들"
 @set b_soa4=1
 @goto Molak05#Soa4
 # A33
-@chapter text:"향의 값" sub:"암향루"
+@chapter text:"향의 값" sub:"암향루" desc:"암향루가 흥정을 걸어온다"
 @set b_amh2=1
 @goto Molak05#Amh2
 # A34
-@chapter text:"오치의 행방" sub:"회목촌"
+@chapter text:"오치의 행방" sub:"회목촌" desc:"독아단이 끌고 간 회목촌의 젊은이들"
 @set b_ochi=1
 @goto Molak05#Ochi1
 # A40
-@chapter text:"바위의 각자" sub:"노인"
+@chapter text:"바위의 각자" sub:"노인" desc:"노인이 남긴 사(邪) 한 글자"
 @set b_old2x=1
 @goto Molak05#Old2
 
 # ChWolf
-@chapter text:"혈쇄문주의 초대" sub:"복수"
+@chapter text:"혈쇄문주의 초대" sub:"복수" desc:"서열 백위에 든 자에게 오는 서찰"
 @set f_wolfinvite=1
 @deja need:g_died_wolf text:"녹슨 사슬 고리를 보자 손목부터 저린다. 지난 생, 이 초대장 끝에서 사슬에 감겼다."
 {dejapre}
@@ -2738,6 +2737,7 @@
 <align=right>"엿은 왜."</align>
 "아버지가 엿을 좋아하시오. 표두가 엿 좋아한다고 하면 체면이 안 선다고, 늘 내가 사 오는 거로 하고."
 '체면 때문에 아들 이름으로 엿을 사는 총표두. 표국 사람들은 다 이런가.'
+@art char:soa
 계단 위 난간에 소아가 팔을 걸치고 내려다본다.
 "……장?"
 @choice "\"같이 가겠소?\"" goto:#S_MarketA
@@ -2877,6 +2877,7 @@
 "장풍— 길을 비키시오!"
 염혁이 커다란 솥을 들고 서 있다. 온몸이 젖었다.
 "표국에서 끓인 국이오. 아버지가, 비 오는 날 장사 안 될 테니 객들 먹이라고."
+@art char:hajinmu
 하진무가 계산대 뒤에서 말한다.
 "객은 하나뿐이오. 객 아닌 사람들만 있지."
 솥뚜껑을 열자 김이 오른다. 고기는 별로 없고 무가 많다. 다들 말없이 그릇을 내민다. 소아가 제일 먼저 내민다. 국수 세 그릇을 먹은 사람이다.
@@ -3259,6 +3260,7 @@
 @goto #S_Fame_vm if:f_hajindead>0
 객잔이 수상하다. 술은 안 마시고 귀만 열어 둔 손님들. 그 사이를 지나 하진무가 입을 열기 전에 계산대로 간다.
 <align=right>"<color=#9A70C4>뒷마당 창고 쪽 방이 눈에 덜 띄지요.</color>"</align>
+@art char:hajinmu
 하진무가 들고 있던 열쇠를 내려다본다. 창고 방 열쇠다.
 "……객은 내 말을 내가 하기 전에 하는 버릇이 있구려. 언제 생긴 버릇이오."
 <align=right>"좀 오래됐소."</align>
