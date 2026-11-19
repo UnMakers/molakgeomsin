@@ -198,6 +198,8 @@ public class MolakHud : MonoBehaviour
         // 0.4.70 그림 위에 검은 패를 띄우지 않는다(언메이커: 그림 위로 수치가 뜨는 건 아니다).
         //   바뀐 수치와 까닭은 글자리 맨 아래 종이 쪽지 한 장에(낱말 풀이 쪽지와 같은 모양), 수치마다 한 줄.
         for (int i = whyRows.Count - 1; i >= 0; i--) if (Time.unscaledTime - whyRows[i].t0 > WhyLife) whyRows.RemoveAt(i);
+        // 0.4.80 선택지가 뜨면 쪽지를 걷는다 — 글자리 맨 아래에 붙어 있어 아래 선택지 카드를 가렸다(0.4.79 검토). 지나간 까닭은 능력치 기록에 남는다.
+        if (MolakTheme.ChoiceCount > 0 && whyRows.Count > 0) whyRows.Clear();
         SlipH = 0f;
         if (whyRows.Count > 0 && !MolakVfx.Holding && !MolakDuelCard.Visible && !MolakGiyeonCard.Showing)
         {

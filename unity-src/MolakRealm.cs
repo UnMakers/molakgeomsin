@@ -122,6 +122,8 @@ public static class MolakRealm
             if (p.Label == "벽 앞에 앉는 몸") continue;
             sb.Append("<color=").Append(c).Append(">").Append(p.V >= 0 ? "+" : "−").Append(Mathf.Abs(p.V).ToString("0")).Append("</color> ").Append(p.Label).Append('\n');
         }
+        // 0.4.80 더하고 뺄 것이 하나도 없으면 빈 줄이 되어 나니노벨이 오류를 냈다(「{btoddstext}」 줄) — 한 줄을 둔다.
+        if (sb.Length == 0) return "<color=#8A7A66>더할 것도 뺄 것도 없다.</color>";
         return sb.ToString().TrimEnd('\n');
     }
 

@@ -111,6 +111,12 @@ public class MolakGloss : MonoBehaviour
     {
         if (!Engine.Initialized || MolakMenu.IsOpen || MolakTitle.Showing || MolakBag.IsOpen || MolakSettings.IsOpen || MolakGuide.IsOpen || MolakTruthView.IsOpen || MolakStatLogView.IsOpen) return;   // 0.4.80 창 위로 뜨지 않게
         float now = Time.unscaledTime;
+        // 0.4.80 선택지가 떠 있는 동안은 쪽지를 접어 두고 시간을 멈춘다(아래 선택지 카드를 가리지 않게). 고르고 나면 남은 만큼 다시 뜬다.
+        if (MolakTheme.ChoiceCount > 0)
+        {
+            if (Event.current.type == EventType.Repaint) for (int i = 0; i < showing.Count; i++) showing[i] = (showing[i].Item1, showing[i].Item2 + Time.unscaledDeltaTime);
+            return;
+        }
         for (int i = showing.Count - 1; i >= 0; i--) if (now - showing[i].t0 > Life) showing.RemoveAt(i);
         while (showing.Count < 2 && queue.Count > 0) { showing.Add((queue.Dequeue(), now)); MolakSfx.Gloss(); }
         if (showing.Count == 0) return;
