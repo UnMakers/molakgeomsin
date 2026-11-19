@@ -271,7 +271,16 @@ public class MolakScroll : MonoBehaviour
         {   // 마디 이름이 떠 있는 동안 글자리를 감췄다가, 걷히면 떠오른다
             bool thr = MolakTheme.TheaterNow;
             float a = cine || thr ? 1f - MolakVfx.ChapterCover : 1f;
-            if (thr && MolakTheme.ChoiceCount > 0) a = 0f;   // 극장판: 선택지가 뜨면 본문 대신 한두 줄 요약(OnGUI)
+            // 극장판: 선택지가 뜨면 본문 대신 한두 줄 요약(OnGUI). 고른 뒤에도 새 글이 찍힐 때까지는 옛 쪽을 다시 비추지 않는다
+            //   (선택지가 사라지는 동안 옛 본문이 잠깐 떴다가 새 쪽으로 바뀌어 잔상처럼 보이던 것).
+            if (thr)
+            {
+                string curTx = spkTx != null ? spkTx.text : null;
+                if (MolakTheme.ChoiceCount > 0) { thHold = true; thHoldText = curTx; thHoldT = Time.unscaledTime; }
+                else if (thHold && (!ReferenceEquals(curTx, thHoldText) || Time.unscaledTime - thHoldT > 2f)) thHold = false;
+                if (MolakTheme.ChoiceCount > 0 || thHold) a = 0f;
+            }
+            else thHold = false;
             if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
             if (vpCg != null && Mathf.Abs(vpCg.alpha - a) > 0.002f) vpCg.alpha = a;
         }
@@ -341,6 +350,7 @@ public class MolakScroll : MonoBehaviour
     public static float TheaterChoiceY = MolakLayout.BagStripH;
     /// <summary>극장판 글 칸의 화면 자리(GUI 좌표). 요약·인장·쪽지가 쓴다.</summary>
     public static Rect TheaterTextGui;
+    static bool thHold; static string thHoldText; static float thHoldT; static float thSumTopC = MolakLayout.ThTextTop;
     void LayoutTheater (float canvasW, float canvasH)
     {
         float side = Mathf.Max(MolakLayout.ThTextSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.ThTextSide);
@@ -352,7 +362,13 @@ public class MolakScroll : MonoBehaviour
         int choices = MolakTheme.ChoiceCount;
         float listH = 0f;
         if (choices > 0) { var bl = MolakUi.ChoiceList; var cp = bl != null ? bl.transform.Find("ContentPanel") as RectTransform : null; listH = cp != null ? cp.rect.height : MolakLayout.ChoiceListH(choices); }
-        TheaterChoiceY = Mathf.Max(bot, canvasH - top - MolakLayout.ThSummaryH - MolakLayout.ThChoiceGap - listH);
+        if (choices > 0)
+        {   // 고른 뒤 사라지는 동안엔 자리를 옮기지 않는다
+            TheaterChoiceY = Mathf.Max(bot, canvasH - top - MolakLayout.ThSummaryH - MolakLayout.ThChoiceGap - listH);
+            // 선택지가 많아 글 칸에 다 안 들어가면: 선택지는 아래 띠 위에 붙이고, 요약은 선택지 바로 위로(그림 창 아래쪽에 걸친다)
+            float sumTop = Mathf.Min(top, canvasH - (TheaterChoiceY + listH) - MolakLayout.ThChoiceGap - MolakLayout.ThSummaryH);
+            thSumTopC = Mathf.Max(MolakLayout.ThTopBand + 12f, sumTop);
+        }
         var cs = new Vector3[4]; viewport.GetWorldCorners(cs);
         var rc = viewport.GetComponentInParent<Canvas>();
         Camera cam = rc != null && rc.rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? rc.rootCanvas.worldCamera : null;
@@ -411,7 +427,7 @@ public class MolakScroll : MonoBehaviour
     }
     void DrawSummary ()
     {
-        if (!MolakTheme.TheaterNow || MolakTheme.ChoiceCount <= 0 || TheaterTextGui.width < 2f || MolakMenu.IsOpen) return;
+        if (!MolakTheme.TheaterNow || (MolakTheme.ChoiceCount <= 0 && !thHold) || TheaterTextGui.width < 2f || MolakMenu.IsOpen) return;
         if (sumLine1.Length == 0 && sumLine2.Length == 0) return;
         float u = MolakTheme.U;
         if (sSum1 == null || !Mathf.Approximately(sumU, u))
@@ -426,7 +442,16 @@ public class MolakScroll : MonoBehaviour
             MolakGui.Ink(sSum2, new Color(0.75f, 0.70f, 0.62f, 1f));
             MolakGui.Ink(sSumN, new Color(0.88f, 0.48f, 0.53f, 1f));
         }
-        var r = TheaterTextGui; float y = r.y, x = r.x, w = r.width;
+        var r = TheaterTextGui; float x = r.x, w = r.width;
+        float y = Mathf.Min(r.y, thSumTopC * MolakLayout.CanvasPx);
+        if (y < r.y - 1f)
+        {   // 그림 창에 걸쳤으면 뒤를 먹으로 눌러 읽히게(위로 갈수록 스러진다)
+            float bandTop = y - 40 * u, full = Mathf.Min(r.y, y + (MolakLayout.ThSummaryH - 10f) * MolakLayout.CanvasPx) - bandTop;   // 선택지(uGUI)를 덮지 않게 요약 칸까지만
+            var g0 = GUI.color;
+            for (int i = 0; i < 12; i++) { float f = i / 11f; GUI.color = new Color(0.067f, 0.059f, 0.055f, 0.92f * Mathf.SmoothStep(0f, 1f, f)); GUI.DrawTexture(new Rect(0, bandTop + 40 * u * f, Screen.width, 40 * u / 11f + 1f), MolakGui.Px); }
+            GUI.color = new Color(0.067f, 0.059f, 0.055f, 0.92f); GUI.DrawTexture(new Rect(0, bandTop + 40 * u, Screen.width, full - 40 * u), MolakGui.Px);
+            GUI.color = g0;
+        }
         if (sumLine1.Length > 0)
         {
             float nx = 0f;
