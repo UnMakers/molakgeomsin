@@ -18,12 +18,12 @@ public class MolakTheme : MonoBehaviour
     /// <summary>0.4.82 읽는 화면: 0 종이(예전) · 1 그림 화면(F1) · 2 극장판(D, 시안 DE4).</summary>
     public static int ScreenMode
     {
-        get { if (modeC < 0) modeC = PlayerPrefs.HasKey("molak_screen") ? PlayerPrefs.GetInt("molak_screen") : PlayerPrefs.GetInt("molak_cinema", 1); return modeC; }
-        set { modeC = Mathf.Clamp(value, 0, 2); PlayerPrefs.SetInt("molak_screen", modeC); PlayerPrefs.Save(); }
+        get { if (modeC < 0) modeC = PlayerPrefs.GetInt("molak_screen2", 2); return modeC; }   // 0.4.83 극장판이 기본(예전에 고른 값은 한 번 무시하고 극장판으로 시작)
+        set { modeC = Mathf.Clamp(value, 0, 2); PlayerPrefs.SetInt("molak_screen2", modeC); PlayerPrefs.Save(); }
     }
     public static bool Theater { get { return ScreenMode == 2; } }
     /// <summary>지금 극장판으로 그리나(비무 판은 예전 띠 배치).</summary>
-    public static bool TheaterNow { get { return Theater && !MolakArt.InDuel; } }
+    public static bool TheaterNow { get { return Theater; } }   // 0.4.83 비무도 극장판 창에서(간파 판은 그림 창 바로 아래)
     /// <summary>지금 그림 화면으로 그리나. 비무 판은 예전 띠 배치(기세·간파 판 자리)를 그대로 쓴다.</summary>
     public static bool CinemaNow { get { return Cinema && !MolakArt.InDuel; } }
     // 글자 크기: -2(80%) ~ +4(140%), 10% 단위. 예전 3단계 설정(molak_font 0/1/2)은 -1/0/+1 로 이관.

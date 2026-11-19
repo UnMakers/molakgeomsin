@@ -615,7 +615,7 @@ public class MolakHud : MonoBehaviour
     public static Rect TheaterMenuButton (float w, float u)
     {
         float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, s = MolakLayout.CanvasPx;
-        float cy = string.IsNullOrEmpty(MolakVfx.PinText) ? MolakLayout.ThTopBand * 0.5f * s : 46f * s;   // 마디 이름이 없으면 띠 가운데 한 줄로
+        float cy = (MolakLayout.ThInsetTop + MolakLayout.ThTopBandH * 0.5f) * s;   // 수치 줄과 같은 높이(고정)
         return new Rect(X0 + W - 20*u - 96*u, cy - 42*u, 96*u, 84*u);
     }
     GUIStyle sThPin, sThChip, sThBag; float thU = -1f;
@@ -648,20 +648,29 @@ public class MolakHud : MonoBehaviour
         }
         float x = X0 + 40*u;
         var menuR = TheaterMenuButton(w, u);
-        // 첫 줄: 마디 이름(걷힌 것) — 없으면 비운다. 몸의 업보는 오른쪽에 붉게.
-        float l1 = 46f * s;
+        // 0.4.83 위 띠는 수치 한 줄로 고정(마디 이름이 떠도 움직이지 않게). 마디 이름은 그림 창 왼쪽 위, 몸의 업보는 그림 창 오른쪽 위.
+        float artTop = MolakLayout.ThArtTop * s;
         string pin = MolakVfx.PinText;
-        if (!string.IsNullOrEmpty(pin)) GUI.Label(new Rect(x, l1 - 26*u, menuR.x - x - 20*u, 52*u), pin, sThPin);
+        if (!string.IsNullOrEmpty(pin))
+        {
+            var psz = sThPin.CalcSize(new GUIContent(pin));
+            var pr = new Rect(x - 14*u, artTop + 16*u, psz.x + 28*u, 52*u);
+            Box(pr, new Color(0.067f, 0.059f, 0.055f, 0.62f));
+            Box(new Rect(pr.x, pr.y, Mathf.Max(1f, 3*u), pr.height), new Color(0.83f, 0.71f, 0.42f, 0.9f));
+            GUI.Label(new Rect(pr.x + 14*u, pr.y, psz.x + 4*u, pr.height), pin, sThPin);
+        }
         string warn = Warn(); WarnShown = false;
         if (warn.Length > 0)
         {
             var wsz = sCW.CalcSize(new GUIContent(warn));
-            var ws = sCW.alignment; sCW.alignment = TextAnchor.MiddleRight;
-            GUI.Label(new Rect(menuR.x - 16*u - wsz.x - 4*u, l1 - 22*u, wsz.x + 4*u, 44*u), warn, sCW);
+            var wr = new Rect(X0 + W - 30*u - wsz.x - 24*u, artTop + 16*u, wsz.x + 24*u, 52*u);
+            Box(wr, new Color(0.067f, 0.059f, 0.055f, 0.62f));
+            var ws = sCW.alignment; sCW.alignment = TextAnchor.MiddleCenter;
+            GUI.Label(wr, warn, sCW);
             sCW.alignment = ws;
         }
-        // 둘째 줄: 수치
-        float l2 = string.IsNullOrEmpty(pin) ? MolakLayout.ThTopBand * 0.5f * s : 122f * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
+        // 수치 한 줄
+        float l2 = (MolakLayout.ThInsetTop + MolakLayout.ThTopBandH * 0.5f) * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
         bool lowHp = hp/hpm <= 0.34f;
         string[] keys = { "hp", "ng", "sl", "sw", "mn" };
         string[] hz = { "體", "氣", "殺", "劍", "銀" };

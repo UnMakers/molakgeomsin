@@ -67,6 +67,7 @@ public class MolakDuelStage : MonoBehaviour
         float top = (Screen.height - 1600f * unit) * 0.5f;   // 세로가 남으면 위아래로 나눠 남는다(Expand)
         if (top < 0f) top = 0f;
         float w = Mathf.Min(Screen.width, 900f * unit);
+        if (MolakTheme.TheaterNow) { float s = MolakLayout.CanvasPx; return new Rect(0f, MolakLayout.ThArtTop * s, Screen.width, MolakLayout.ThArtH * s); }   // 0.4.83 극장판 그림 창
         return new Rect((Screen.width - w) * 0.5f, top + MolakArt.BandTop * unit, w, MolakArt.BandH * unit);
     }
 

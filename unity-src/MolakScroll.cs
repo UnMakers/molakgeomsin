@@ -350,11 +350,11 @@ public class MolakScroll : MonoBehaviour
     public static float TheaterChoiceY = MolakLayout.BagStripH;
     /// <summary>극장판 글 칸의 화면 자리(GUI 좌표). 요약·인장·쪽지가 쓴다.</summary>
     public static Rect TheaterTextGui;
-    static bool thHold; static string thHoldText; static float thHoldT; static float thSumTopC = MolakLayout.ThTextTop;
+    static bool thHold; static string thHoldText; static float thHoldT; static float thSumTopC = 800f;
     void LayoutTheater (float canvasW, float canvasH)
     {
         float side = Mathf.Max(MolakLayout.ThTextSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.ThTextSide);
-        float top = MolakLayout.ThTextTop, bot = MolakLayout.ThBottomBand + 20f;
+        float top = MolakLayout.ThTextTop + MolakLayout.DuelStrip, bot = MolakLayout.ThBottomBand + 20f;   // 비무의 간파 판이 떠 있으면 글을 그만큼 내린다
         var wantMin = new Vector2(side, bot); var wantMax = new Vector2(-side, -top);
         if ((viewport.offsetMin - wantMin).sqrMagnitude > 0.01f) viewport.offsetMin = wantMin;
         if ((viewport.offsetMax - wantMax).sqrMagnitude > 0.01f) viewport.offsetMax = wantMax;

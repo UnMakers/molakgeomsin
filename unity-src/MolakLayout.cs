@@ -44,7 +44,16 @@ public static class MolakLayout
 
     // ---- 0.4.82 D 화면(극장판, 시안 DE4): 위 옻칠 띠(마디 이름·수치) · 금줄 사이 그림 창 · 아래 글 · 맨 아래 행낭 띠 ----
     /// <summary>캔버스 단위(위에서부터). 위 띠 끝 · 그림 창 위/아래 · 글 시작 · 아래 행낭 띠 높이 · 글 좌우 여백.</summary>
-    public const float ThTopBand = 168f, ThArtTop = 176f, ThArtBottom = 836f, ThTextTop = 876f, ThBottomBand = 116f, ThTextSide = 60f;
+    /// 0.4.83 극장판을 기본으로(언메이커: 위 공백이 너무 크다, 소제목이 나오면 체력 줄이 내려간다) — 위 띠는 수치 한 줄로 고정, 그림을 위로.
+    ///   마디 이름은 그림 창 왼쪽 위에 얹는다. 휴대폰 노치·제스처 바 자리(안전 영역)만큼 위·아래 띠가 자란다.
+    public const float ThTopBandH = 104f, ThArtGap = 6f, ThArtH = 660f, ThTextGap = 36f, ThBottomBandH = 116f, ThTextSide = 60f;
+    public static float ThInsetTop { get { var sa = Screen.safeArea; return Mathf.Max(0f, (Screen.height - sa.yMax) / CanvasPx); } }
+    public static float ThInsetBottom { get { return Mathf.Max(0f, Screen.safeArea.y / CanvasPx); } }
+    public static float ThTopBand { get { return ThInsetTop + ThTopBandH; } }
+    public static float ThArtTop { get { return ThTopBand + ThArtGap; } }
+    public static float ThArtBottom { get { return ThArtTop + ThArtH; } }
+    public static float ThTextTop { get { return ThArtBottom + ThTextGap; } }
+    public static float ThBottomBand { get { return ThBottomBandH + ThInsetBottom; } }
     /// <summary>선택지가 떠 있을 때 글 대신 보이는 한두 줄 요약의 높이(캔버스 단위) · 선택지 묶음과의 틈.</summary>
     public const float ThSummaryH = 150f, ThChoiceGap = 20f;
     public const float ThBandRatio = 0.87f, ThBandMaxW = 800f;

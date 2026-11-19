@@ -1,0 +1,120 @@
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+using System.Collections;
+using System.Linq;
+using System.Text;
+using Naninovel;
+using UnityEngine;
+
+/// <summary>
+/// 0.4.83 글 드러내기 점검(에디터 전용). 한 장면을 라벨에서 '보통 속도'로 틀고, 글이 다 드러나면 계속을 눌러 끝까지 간다.
+/// 새 글마다 몇 프레임에 걸쳐 드러났는지 적는다 — 긴 글이 1~2프레임에 다 나오면 "한꺼번에"로 표시.
+/// 마디 이름은 0.8초 뒤 누른 셈 치고 걷는다. 선택지는 첫 번째 열린 것.
+///  · Run("Molak01", "Pro1", "", 60) → Status/Log
+/// </summary>
+public class MolakRevealTest : MonoBehaviour
+{
+    static MolakRevealTest I;
+    public static string Status = "idle";
+    public static readonly StringBuilder Log = new StringBuilder();
+    public static int Instant, Messages;
+
+    public static void Run (string script, string label, string sets, float seconds)
+    {
+        if (I == null) { var go = new GameObject("MolakRevealTest"); DontDestroyOnLoad(go); I = go.AddComponent<MolakRevealTest>(); }
+        I.StopAllCoroutines();
+        Log.Length = 0; Instant = 0; Messages = 0; Status = "running";
+        I.StartCoroutine(I.Go(script, label, sets ?? "", seconds));
+    }
+
+    static TMPro.TMP_Text Dlg ()
+    {
+        foreach (var t in FindObjectsByType<TMPro.TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) if (t.gameObject.name == "DialogueText") return t;
+        return null;
+    }
+
+    IEnumerator Go (string script, string label, string sets, float seconds)
+    {
+        var st = Engine.GetService<IStateManager>(); var sp = Engine.GetService<IScriptPlayer>();
+        var pm = Engine.GetService<ITextPrinterManager>(); var im = Engine.GetService<IInputManager>();
+        bool started = false;
+        MolakPlayMode.SetSkipAll(false);
+        st.ResetState(new string[0], () => {
+            foreach (var n in MolakVarList.Nums) MolakStats.EnsureNum(n);
+            foreach (var n in MolakVarList.Strings) MolakStats.EnsureStr(n);
+            foreach (var n in MolakVarList.Globals) if (!n.StartsWith("g_pname")) MolakStats.EnsureNum(n);
+            if (!MolakName.HasName) MolakName.Apply("연호");
+            MolakStats.EnsureStr("g_lastend"); MolakStats.EnsureStr("g_lastcause"); MolakStats.EnsureStr("g_nxform"); MolakStats.EnsureStr("g_scars", "");
+            MolakStats.Set("hp", 10); MolakStats.Set("hpmax", 10); MolakStats.Set("day", 20); MolakStats.Set("sw", 8); MolakStats.Set("ng", 4); MolakStats.Set("sl", 3); MolakStats.Set("mn", 20);
+            foreach (var kv in sets.Split(';')) { var p = kv.Split('='); if (p.Length == 2) { float f; if (float.TryParse(p[1], out f)) MolakStats.Set(p[0].Trim(), f); else MolakStats.SetStr(p[0].Trim(), p[1].Trim()); } }
+            started = true;
+            return ScriptTrackExtensions.LoadAndPlayAtLabel(sp.MainTrack, script, label);
+        });
+        while (!started) yield return null;
+        float t0 = Time.realtimeSinceStartup, chapSeen = -1f;
+        string lastText = null; int frames = 0, startLen = 0; bool tracking = false; float revStart = 0f;
+        var cont = im.GetInput("Continue");
+        while (Time.realtimeSinceStartup - t0 < seconds)
+        {
+            yield return null;
+            var tr = sp.MainTrack;
+            var printer = pm.GetActor(pm.DefaultPrinterId);
+            var dt = Dlg();
+            string txt = dt != null ? dt.text : null;
+            float prog = printer != null ? printer.RevealProgress : 1f;
+            // 새 글
+            if (txt != null && !ReferenceEquals(txt, lastText) && txt != lastText)
+            {
+                if (tracking) Finish(frames, startLen, revStart);
+                int prevLen = Plain(lastText).Length, nowLen = Plain(txt).Length;
+                startLen = lastText != null && Plain(txt).StartsWith(Plain(lastText).TrimEnd()) ? nowLen - prevLen : nowLen;   // 이어 쓴 글이면 늘어난 만큼
+                lastText = txt; tracking = true; frames = 0; revStart = prog;
+                string spot = tr != null ? tr.PlaybackSpot.ToString() : "";
+                Log.Append(spot + " | " + Short(LastPara(txt)) + " | 시작 " + prog.ToString("0.00"));
+            }
+            if (tracking) { frames++; if (prog >= 0.999f) { Finish(frames, startLen, revStart); tracking = false; } }
+            // 마디 이름: 0.8초 뒤 걷는다
+            if (MolakVfx.ChapterHolding)
+            {
+                if (chapSeen < 0f) { chapSeen = Time.realtimeSinceStartup; Log.AppendLine("  [마디 이름] 뒤의 글: " + (dt != null ? Short(LastPara(dt.text)) : "-")); }
+                else if (Time.realtimeSinceStartup - chapSeen > 0.8f)
+                {
+                    var v = FindFirstObjectByType<MolakVfx>(); var bf = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+                    typeof(MolakVfx).GetField("chapHold", bf).SetValue(v, false); typeof(MolakVfx).GetField("chapOutT", bf).SetValue(v, 0f);
+                    chapSeen = -1f;
+                }
+                continue;
+            }
+            // 선택지
+            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+            if (btns.Length > 0 && MolakTheme.ChoiceCount > 0)
+            {
+                yield return new WaitForSecondsRealtime(0.5f);
+                btns = btns.Where(b => b != null && b.isActiveAndEnabled).ToArray();
+                if (btns.Length > 0) { Log.AppendLine("  [선택] " + Short(btns[0].GetComponentInChildren<TMPro.TMP_Text>().text)); btns[0].GetComponent<UnityEngine.UI.Button>().onClick.Invoke(); }
+                yield return new WaitForSecondsRealtime(0.3f);
+                continue;
+            }
+            // 다 드러나고 입력을 기다리면 계속
+            if (tr != null && tr.AwaitingInput && prog >= 0.999f && !tracking)
+            {
+                yield return new WaitForSecondsRealtime(0.25f);
+                if (cont != null) { cont.Activate(1f); yield return null; cont.Activate(0f); }
+                yield return new WaitForSecondsRealtime(0.1f);
+            }
+            if (tr != null && !tr.Playing && btns.Length == 0 && !tr.AwaitingInput && Time.realtimeSinceStartup - t0 > 3f) { Log.AppendLine("■ 멈춤"); break; }
+        }
+        Status = "done";
+    }
+
+    static void Finish (int frames, int len, float start)
+    {
+        Messages++;
+        bool inst = len > 12 && frames <= 2;
+        if (inst) Instant++;
+        Log.AppendLine(" → " + frames + "프레임" + (inst ? "  ★한꺼번에" : ""));
+    }
+    static string Plain (string t) { return System.Text.RegularExpressions.Regex.Replace(t ?? "", "<[^>]+>", ""); }
+    static string LastPara (string t) { var ps = (t ?? "").Split('\n').Where(x => x.Trim().Length > 0).ToArray(); return ps.Length > 0 ? ps[ps.Length - 1] : ""; }
+    static string Short (string t) { t = Plain(t).Replace("\n", " ").Trim(); return t.Length > 24 ? t.Substring(0, 24) + "…" : t; }
+}
+#endif

@@ -109,5 +109,13 @@ public class ChapterCommand : Command
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp != null && sp.Skipping) return;
         MolakVfx.Chapter(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "", Assigned(Desc) ? Desc.Value : "");
+        // 0.4.83 마디 이름을 누를 때까지 다음 글을 찍지 않는다 — 전에는 마디 이름 뒤에서 글이 이미 다 나와 있어서, 걷으면 한꺼번에 보였다(언메이커)
+        while (MolakVfx.ChapterHolding)
+        {
+            if (sp != null && sp.Skipping) break;
+            if (MolakPlayMode.SkipAll) break;
+            if (!Engine.Initialized || (sp != null && sp.MainTrack != null && !sp.MainTrack.Playing)) break;   // 불러오기·처음으로 등으로 멈췄으면
+            await Awaitable.NextFrameAsync();
+        }
     }
 }

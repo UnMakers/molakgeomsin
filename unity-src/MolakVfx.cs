@@ -76,6 +76,8 @@ public class MolakVfx : MonoBehaviour
     GUIStyle sPin; float pinU;
     GUIStyle sChap, sChapSub; float chapU = -1f;
     /// <summary>0.4.82 마디 이름이 글자리를 덮는 정도(1 = 글자리 숨김). 떠 있는 동안 1, 누르면 0.6초에 걸쳐 0 으로.</summary>
+    /// <summary>0.4.83 마디 이름이 떠 있고 아직 누르지 않았다(@chapter 가 이게 풀릴 때까지 다음 글을 붙잡는다).</summary>
+    public static bool ChapterHolding { get { return instance != null && instance.chapT >= 0f && instance.chapHold; } }
     public static float ChapterCover
     {
         get
@@ -235,6 +237,7 @@ public class MolakVfx : MonoBehaviour
             chapWasDown = down;
             var sp = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null;
             if (chapT >= 0f && chapHold && sp != null && sp.Skipping) { chapHold = false; chapOutT = 0f; pinText = chapText; }
+            if (chapT >= 0f && chapHold && MolakPlayMode.Auto && chapT > 2.6f) { chapHold = false; chapOutT = 0f; pinText = chapText; }   // 0.4.83 자동 진행이면 잠깐 보여 주고 걷는다
             if (pinText.Length > 0 && !Mathf.Approximately(MolakStats.Get("day"), pinDay)) pinText = "";
         }
         // 장면 틴트를 배경 스프라이트에 서서히 적용
