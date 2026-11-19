@@ -25,6 +25,8 @@ public class MolakScroll : MonoBehaviour
     public static bool DraggedThisPress { get; private set; }
     public static bool ScrolledUp => inst != null && inst.userScroll > 1f;
     bool pressing; Vector2 pressPos; float pressScroll; bool pressInBottomZone;
+    // 0.4.81 행낭 서랍 끌기(손가락을 따라온다) — 빠르기는 손을 뗄 때 열림/닫힘을 정하는 데 쓴다
+    bool bagDrag; float bagLastY, bagLastT, bagVel;
     bool hSwipe; Vector2 lastPos;   // 0.4.57 가로로 쓸기: 왼쪽→오른쪽이면 지난 쪽(MolakPageBack)
 
     const float DragThresholdPx = 14f;
@@ -91,12 +93,21 @@ public class MolakScroll : MonoBehaviour
         Layout();
     }
 
+    void BagTrack (float y)
+    {
+        float t = Time.unscaledTime, dt = t - bagLastT;
+        if (dt <= 0.0001f) return;
+        float v = (y - bagLastY) / dt;
+        bagVel = Mathf.Lerp(bagVel, v, 0.5f);
+        bagLastY = y; bagLastT = t;
+    }
+
     void HandleDrag ()
     {
         Vector2 pos; bool down = MolakGui.PointerScreen(out pos);
         if (down && !pressing)
         {
-            pressing = true; pressPos = pos; lastPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false; hSwipe = false;
+            pressing = true; pressPos = pos; lastPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false; hSwipe = false; bagDrag = false; bagVel = 0f;
             // 화면 맨 아래 띠(선택지 아래 150캔버스단위)에서 시작한 누름 → 위로 쓸면 행낭
             float zone = (MolakTheme.ChoiceCount > 0 ? MolakLayout.BagSwipeZoneWithChoices : MolakLayout.BagSwipeZone) * CanvasScale();
             pressInBottomZone = pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
@@ -104,19 +115,26 @@ public class MolakScroll : MonoBehaviour
         else if (down && pressing)
         {
             float dyPx = pos.y - pressPos.y;   // 위로 쓸면 +
+            if (bagDrag)
+            {
+                MolakBag.DragSet(dyPx); BagTrack(pos.y); DraggedThisPress = true;
+                return;
+            }
             if (MolakBag.IsOpen)
             {
-                // 서랍이 열려 있으면 본문 스크롤 대신: 아래로 쓸면 닫기
-                // 아래로 쓸어 닫기: 목록이 맨 위에 있거나, 서랍 머리(손잡이·제목) 부근에서 시작한 누름이면
+                // 서랍이 열려 있으면 본문 스크롤 대신: 아래로 끌면 서랍이 손가락을 따라 내려온다
+                // (목록이 맨 위에 있거나, 서랍 머리 — 손잡이·제목 — 부근에서 시작한 누름이면)
                 float headerY = Screen.height - MolakBag.PanelTopPx;   // 패널 윗변(스크린 좌표)
                 bool fromHeader = pressPos.y >= headerY - 130f * CanvasScale();
-                if (dyPx < -36f && (MolakBag.ListAtTop || fromHeader)) { MolakBag.Close(); DraggedThisPress = true; }
+                if (dyPx < -10f * Mathf.Max(1f, CanvasScale()) && (MolakBag.ListAtTop || fromHeader))
+                { bagDrag = true; MolakBag.DragBegin(); pressPos = pos; bagLastY = pos.y; bagLastT = Time.unscaledTime; DraggedThisPress = true; return; }
                 if (Mathf.Abs(dyPx) > DragThresholdPx) DraggedThisPress = true;
                 return;
             }
             if (pressInBottomZone)
             {
-                if (dyPx > 22f) { MolakBag.Open(); DraggedThisPress = true; pressInBottomZone = false; }
+                if (dyPx > 8f * Mathf.Max(1f, CanvasScale()))
+                { bagDrag = true; MolakBag.DragBegin(); pressPos = pos; bagLastY = pos.y; bagLastT = Time.unscaledTime; DraggedThisPress = true; pressInBottomZone = false; }
                 return;
             }
             lastPos = pos;
@@ -139,6 +157,7 @@ public class MolakScroll : MonoBehaviour
         }
         else if (!down && pressing)
         {
+            if (bagDrag) { MolakBag.DragEnd(Time.unscaledTime - bagLastT > 0.12f ? 0f : bagVel); bagDrag = false; }
             if (hSwipe)
             {
                 float dx = lastPos.x - pressPos.x;
