@@ -34,6 +34,14 @@ public class MolakName : MonoBehaviour
         MolakStats.SetStr("g_pname_eul", name + (batchim ? "을" : "를"));
     }
 
+    /// <summary>검증 도구용: 화면을 거치지 않고 이름을 적고 닫는다.</summary>
+    public static void AutoFill (string name)
+    {
+        Apply(name);
+        if (inst != null && inst.kb != null) { inst.kb.active = false; inst.kb = null; }
+        Open = false;
+    }
+
     /// <summary>저장에 이름만 있고 조사 짝이 없을 때(옛 저장) 다시 맞춘다.</summary>
     public static void EnsurePairs ()
     {

@@ -204,6 +204,8 @@ public class MolakEndTester : MonoBehaviour
         while (!done)
         {
             yield return new WaitForSecondsRealtime(0.08f);
+            // 0.4.80 서장 이름 화면(@pname)은 손으로 적어야 넘어간다 — 검증 도구는 이름을 대신 적는다
+            if (MolakName.Open) { MolakName.AutoFill("연호"); lastProgress = Time.realtimeSinceStartup; }
             var tr = sp.MainTrack;
             float day = MolakStats.Get("day");
             string path = tr.PlayedScript != null ? tr.PlayedScript.Path : "-";
@@ -307,6 +309,7 @@ public class MolakEndTester : MonoBehaviour
         sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.realtimeSinceStartup; lastScript = "";
         while (!done)
         {
+            if (MolakName.Open) { MolakName.AutoFill("연호"); }
             yield return new WaitForSecondsRealtime(0.1f);
             var tr = sp.MainTrack;
             float day = MolakStats.Get("day");
