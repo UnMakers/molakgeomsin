@@ -103,8 +103,26 @@ public class MolakVfx : MonoBehaviour
         instance.stampHold = Engine.Initialized && !MolakTitle.Showing;
         instance.stampAuto = skipping ? 0.5f : MolakPlayMode.Auto ? 1.6f : -1f;
     }
+    /// <summary>0.4.82 수치 쪽지·낱말 풀이 쪽지를 놓는 칸. 그림 화면이면 글자리 바로 위(이름 인장 위)에서 위로 쌓인다 — 글자리를 가리지 않게.
+    /// 아랫변(yMax)이 쪽지의 아랫변이다. 그 밖에는 TextArea 와 같다.</summary>
+    public static Rect SlipArea ()
+    {
+        var pr = MolakScroll.CinemaPanelGui;
+        if (MolakTheme.CinemaNow && pr.width > 1f)
+        {
+            float u = MolakGui.U, bottom = pr.y - 44f * u;
+            return new Rect(pr.x, Mathf.Max(0f, bottom - 600f * u), pr.width, Mathf.Min(bottom, 600f * u));
+        }
+        return TextArea();
+    }
+    /// <summary>쪽지를 먹빛(그림 화면)으로 그리나.</summary>
+    public static bool DarkSlip { get { return MolakTheme.CinemaNow && MolakScroll.CinemaPanelGui.width > 1f; } }
     public static Rect TextArea ()
     {
+        {   // 0.4.82 그림 화면: 글자리 판 안쪽(인장·결과판·▼ 같은 글자리 위 연출이 판을 덮는다)
+            var pr = MolakScroll.CinemaPanelGui;
+            if (MolakTheme.CinemaNow && pr.width > 1f) return pr;
+        }
         float w = Screen.width, h = Screen.height;
         float unit = Mathf.Min(w / 900f, h / 1600f);
         float top = Mathf.Max(0f, (h - 1600f * unit) * 0.5f);
@@ -407,7 +425,7 @@ public class MolakVfx : MonoBehaviour
             if (sPin == null || !Mathf.Approximately(pinU, u))
             {
                 pinU = u; if (gowun == null) gowun = MolakGui.Gowun;
-                sPin = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(24 * u), alignment = TextAnchor.MiddleLeft };
+                sPin = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt((MolakTheme.CinemaNow ? 32 : 24) * u), alignment = TextAnchor.MiddleLeft };
                 sPin.font = MolakTypography.Heading(gowun);
             }
             float cu = Mathf.Min(w / 900f, h / 1600f);   // 그림 띠(MolakArt 캔버스 900×1600) 왼쪽 아래 안쪽
@@ -417,13 +435,16 @@ public class MolakVfx : MonoBehaviour
                 float W0 = Mathf.Min(w, 1080 * u);
                 px = (w - W0) / 2f + 44 * u; py = (MolakLayout.CineTopU + MolakLayout.CineBtnU) * u + 26 * u + (MolakHud.WarnShown ? 40 * u : 0f);
             }
+            // 0.4.82 그림 화면은 조금 크게(언메이커: 왼쪽 위 소제목이 더 커도 되겠다)
+            int pfs = Mathf.RoundToInt((MolakTheme.CinemaNow ? 32 : 24) * u); if (sPin.fontSize != pfs) sPin.fontSize = pfs;
+            float ph = MolakTheme.CinemaNow ? 52 * u : 40 * u;
             var sz = sPin.CalcSize(new GUIContent(pinText));
             var g1 = GUI.color;
             GUI.color = new Color(0.06f, 0.05f, 0.04f, 0.55f);
-            GUI.DrawTexture(new Rect(px - 12 * u, py - 4 * u, sz.x + 24 * u, 40 * u), Px);
+            GUI.DrawTexture(new Rect(px - 12 * u, py - 4 * u, sz.x + 24 * u, ph), Px);
             GUI.color = g1;
             MolakGui.Ink(sPin, new Color(MolakTheme.Gold.r, MolakTheme.Gold.g, MolakTheme.Gold.b, 0.92f));
-            GUI.Label(new Rect(px, py - 4 * u, sz.x + 4 * u, 40 * u), pinText, sPin);
+            GUI.Label(new Rect(px, py - 4 * u, sz.x + 4 * u, ph), pinText, sPin);
         }
         // 승부수 인장
         if (stampT >= 0f)
@@ -457,7 +478,8 @@ public class MolakVfx : MonoBehaviour
                 var col = ok ? new Color(0.62f, 0.45f, 0.1f, 1f) : new Color(0.62f, 0.12f, 0.08f, 1f);
                 var ta = TextArea();
                 // 글자리를 빈 종이로: 아래 글이 비치지 않게
-                var bg = GUI.color; GUI.color = new Color(0.955f, 0.94f, 0.905f, 0.985f * a); GUI.DrawTexture(ta, Px);
+                bool dk = DarkSlip;   // 0.4.82 그림 화면: 옻칠 판 그대로 덮는다
+                var bg = GUI.color; GUI.color = dk ? new Color(0.067f, 0.059f, 0.055f, 0.985f * a) : new Color(0.955f, 0.94f, 0.905f, 0.985f * a); GUI.DrawTexture(ta, Px);
                 GUI.color = new Color(0.55f, 0.42f, 0.25f, 0.35f * a);
                 GUI.DrawTexture(new Rect(ta.x + ta.width * 0.2f, ta.y + ta.height * 0.5f + 118f * u, ta.width * 0.6f, Mathf.Max(1f, 1.5f * u)), Px);
                 GUI.color = bg;
@@ -472,11 +494,11 @@ public class MolakVfx : MonoBehaviour
                 MolakGui.Ink(sStamp, new Color(0.98f, 0.95f, 0.88f, a));
                 GUI.Label(box, stampHanja, sStamp);
                 GUI.matrix = m;
-                MolakGui.Ink(sStampLine, new Color(0.16f, 0.13f, 0.1f, a));
+                MolakGui.Ink(sStampLine, dk ? new Color(0.92f, 0.88f, 0.82f, a) : new Color(0.16f, 0.13f, 0.1f, a));
                 GUI.Label(new Rect(ta.x + 20f * u, piv.y + 120f * u, ta.width - 40f * u, 90f * u), stampLine, sStampLine);
                 if (stampHold && stampAuto < 0f && stampT > 0.6f)
                 {
-                    MolakGui.Ink(sStampHint, new Color(0.45f, 0.4f, 0.34f, Mathf.Clamp01((stampT - 0.6f) / 0.4f) * a));
+                    MolakGui.Ink(sStampHint, dk ? new Color(0.66f, 0.60f, 0.53f, Mathf.Clamp01((stampT - 0.6f) / 0.4f) * a) : new Color(0.45f, 0.4f, 0.34f, Mathf.Clamp01((stampT - 0.6f) / 0.4f) * a));
                     GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sStampHint);
                 }
             }

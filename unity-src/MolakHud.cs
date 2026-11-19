@@ -204,7 +204,8 @@ public class MolakHud : MonoBehaviour
         if (whyRows.Count > 0 && !MolakVfx.Holding && !MolakDuelCard.Visible && !MolakGiyeonCard.Showing)
         {
             if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(24, u, TextAnchor.UpperLeft, true); sWhy.richText = true; }
-            var ta = MolakVfx.TextArea();
+            var ta = MolakVfx.SlipArea();   // 0.4.82 그림 화면이면 글자리 위 — 글자리를 가리지 않는다
+            bool dark = MolakVfx.DarkSlip;
             float ww = ta.width, pad = 12f * u;
             var sb = new System.Text.StringBuilder();
             float wa = 0f;
@@ -213,12 +214,13 @@ public class MolakHud : MonoBehaviour
                 float age = Time.unscaledTime - r.t0;
                 wa = Mathf.Max(wa, age < 0.2f ? age / 0.2f : age > WhyLife - 0.6f ? Mathf.Clamp01((WhyLife - age) / 0.6f) : 1f);
                 bool good = r.key == "curse" ? r.d < 0 : r.d > 0;
-                string col = r.key == "mn" ? "#8A6A12" : r.key == "curse" ? "#6B3FA0" : good ? "#2E6E37" : "#A33226";
+                string col = dark ? (r.key == "mn" ? "#E8C468" : r.key == "curse" ? "#B48AE0" : good ? "#7FD08A" : "#FF7A66")
+                                  : (r.key == "mn" ? "#8A6A12" : r.key == "curse" ? "#6B3FA0" : good ? "#2E6E37" : "#A33226");
                 if (sb.Length > 0) sb.Append('\n');
                 // 0.4.74 이름은 제 빛(종이 쪽지라 낮 빛), 숫자는 좋음/나쁨 빛
                 string[] kc = r.key == "hp" ? StatCol.Hp : r.key == "ng" ? StatCol.Ng : r.key == "sl" ? StatCol.Sl : r.key == "sw" ? StatCol.Sw : r.key == "insight" ? StatCol.Ins : null;
-                string nameCol = kc != null ? kc[0] : col;
-                string nameTxt = r.key == "sw" ? SwordTag(MolakStatLog.Name(r.key), true, false) : "<color=" + nameCol + ">" + MolakStatLog.Name(r.key) + "</color>";
+                string nameCol = kc != null ? kc[dark ? 1 : 0] : col;
+                string nameTxt = r.key == "sw" ? SwordTag(MolakStatLog.Name(r.key), !dark, false) : "<color=" + nameCol + ">" + MolakStatLog.Name(r.key) + "</color>";
                 sb.Append("<b>" + nameTxt + " <color=" + col + ">" + (r.d > 0 ? "+" : "−") + Mathf.Abs(Mathf.Round(r.d)).ToString("0") + "</color></b>  " + (string.IsNullOrEmpty(r.why) ? "" : r.why));
             }
             string wt = sb.ToString();
@@ -226,11 +228,22 @@ public class MolakHud : MonoBehaviour
             var wr = new Rect(ta.x, ta.yMax - wh, ww, wh);
             SlipH = wh;
             // 0.4.80 창의 결: 흰 카드 · 먹 띠 · 아래 가는 줄(종이 쪽지라 먹색 화면에서도 낮 빛)
+            if (dark)
+            {   // 그림 화면: 옻칠 쪽지 · 금 띠 · 밝은 글
+                GUI.color = new Color(0.067f, 0.059f, 0.055f, 0.92f * wa); GUI.DrawTexture(wr, MolakGui.Px);
+                GUI.color = new Color(0.83f, 0.71f, 0.42f, 0.45f * wa); GUI.DrawTexture(new Rect(wr.x, wr.yMax - Mathf.Max(1f, u), wr.width, Mathf.Max(1f, u)), MolakGui.Px);
+                GUI.color = new Color(0.83f, 0.71f, 0.42f, 0.95f * wa); GUI.DrawTexture(new Rect(wr.x, wr.y, Mathf.Max(2f, 6f * u), wr.height), MolakGui.Px);
+                GUI.color = Color.white;
+                MolakGui.Ink(sWhy, new Color(0.90f, 0.86f, 0.80f, wa));
+            }
+            else
+            {
             GUI.color = new Color(1f, 0.988f, 0.961f, 0.97f * wa); GUI.DrawTexture(wr, MolakGui.Px);
             GUI.color = new Color(0.55f, 0.48f, 0.40f, 0.35f * wa); GUI.DrawTexture(new Rect(wr.x, wr.yMax - Mathf.Max(1f, u), wr.width, Mathf.Max(1f, u)), MolakGui.Px);
             GUI.color = new Color(0.122f, 0.102f, 0.078f, 0.9f * wa); GUI.DrawTexture(new Rect(wr.x, wr.y, Mathf.Max(2f, 8f * u), wr.height), MolakGui.Px);
             GUI.color = Color.white;
             MolakGui.Ink(sWhy, new Color(0.122f, 0.102f, 0.078f, wa));
+            }
             GUI.Label(new Rect(wr.x + pad + 14f * u, wr.y + pad * 0.75f, ww - pad * 2f - 14f * u, wh), wt, sWhy);
         }
         GUI.color = Color.white;
