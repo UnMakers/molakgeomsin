@@ -55,6 +55,9 @@ public class MolakScroll : MonoBehaviour
         if (ReferenceEquals(src, spkSrc)) return;
         spkSrc = src;
         CharSpeaking = false;
+        // 0.4.83 대본에 말하는 사람이 적혀 있으면 그것을 따른다(@spk) — 그림 속 인물 id 가 그 이름으로 시작하면 '말한다'
+        var fs = MolakFlow.CurrentSpeaker;
+        if (!string.IsNullOrEmpty(fs)) { var cid = MolakArt.CharId; CharSpeaking = fs != "me" && !string.IsNullOrEmpty(cid) && cid.StartsWith(fs); return; }
         if (string.IsNullOrEmpty(src)) return;
         int end = src.Length - 1;
         while (end >= 0 && char.IsWhiteSpace(src[end])) end--;

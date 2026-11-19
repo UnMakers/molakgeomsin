@@ -615,7 +615,7 @@ public class MolakHud : MonoBehaviour
     public static Rect TheaterMenuButton (float w, float u)
     {
         float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, s = MolakLayout.CanvasPx;
-        float cy = (MolakLayout.ThInsetTop + MolakLayout.ThTopBandH * 0.5f) * s;   // 수치 줄과 같은 높이(고정)
+        float cy = (MolakLayout.ThInsetTop + MolakLayout.ThPinLineY) * s;   // 마디 이름 줄 오른쪽(고정)
         return new Rect(X0 + W - 20*u - 96*u, cy - 42*u, 96*u, 84*u);
     }
     GUIStyle sThPin, sThChip, sThBag; float thU = -1f;
@@ -649,28 +649,21 @@ public class MolakHud : MonoBehaviour
         float x = X0 + 40*u;
         var menuR = TheaterMenuButton(w, u);
         // 0.4.83 위 띠는 수치 한 줄로 고정(마디 이름이 떠도 움직이지 않게). 마디 이름은 그림 창 왼쪽 위, 몸의 업보는 그림 창 오른쪽 위.
-        float artTop = MolakLayout.ThArtTop * s;
+        // 0.4.83 위 띠 두 줄(언메이커): 수치는 아래 금줄에 붙여 고정, 그 위 남는 줄에 마디 이름(없으면 비워 둔다) · ☰.
+        //   몸의 업보(부상·독·빚)는 마디 이름 줄 오른쪽(☰ 왼쪽)에 붉게.
+        float l1 = (MolakLayout.ThInsetTop + MolakLayout.ThPinLineY) * s;
         string pin = MolakVfx.PinText;
-        if (!string.IsNullOrEmpty(pin))
-        {
-            var psz = sThPin.CalcSize(new GUIContent(pin));
-            var pr = new Rect(x - 14*u, artTop + 16*u, psz.x + 28*u, 52*u);
-            Box(pr, new Color(0.067f, 0.059f, 0.055f, 0.62f));
-            Box(new Rect(pr.x, pr.y, Mathf.Max(1f, 3*u), pr.height), new Color(0.83f, 0.71f, 0.42f, 0.9f));
-            GUI.Label(new Rect(pr.x + 14*u, pr.y, psz.x + 4*u, pr.height), pin, sThPin);
-        }
+        if (!string.IsNullOrEmpty(pin)) GUI.Label(new Rect(x, l1 - 26*u, menuR.x - x - 20*u, 52*u), pin, sThPin);
         string warn = Warn(); WarnShown = false;
         if (warn.Length > 0)
         {
             var wsz = sCW.CalcSize(new GUIContent(warn));
-            var wr = new Rect(X0 + W - 30*u - wsz.x - 24*u, artTop + 16*u, wsz.x + 24*u, 52*u);
-            Box(wr, new Color(0.067f, 0.059f, 0.055f, 0.62f));
-            var ws = sCW.alignment; sCW.alignment = TextAnchor.MiddleCenter;
-            GUI.Label(wr, warn, sCW);
+            var ws = sCW.alignment; sCW.alignment = TextAnchor.MiddleRight;
+            GUI.Label(new Rect(menuR.x - 16*u - wsz.x - 4*u, l1 - 22*u, wsz.x + 4*u, 44*u), warn, sCW);
             sCW.alignment = ws;
         }
-        // 수치 한 줄
-        float l2 = (MolakLayout.ThInsetTop + MolakLayout.ThTopBandH * 0.5f) * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
+        // 수치 한 줄(아래 금줄 위에 고정)
+        float l2 = (MolakLayout.ThInsetTop + MolakLayout.ThStatLineY) * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
         bool lowHp = hp/hpm <= 0.34f;
         string[] keys = { "hp", "ng", "sl", "sw", "mn" };
         string[] hz = { "體", "氣", "殺", "劍", "銀" };
@@ -702,29 +695,55 @@ public class MolakHud : MonoBehaviour
         { string rl = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>"; var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(29*u); GUI.Label(new Rect(rx, ry + 2*u, 200*u, rowH), rl, sCH); sCH.fontSize = g0; }
         MolakInputGuard.Guard(new Rect(0, 0, w, bandB));
         if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(new Rect(x - 10*u, l2 - 40*u, menuR.x - x, 80*u), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
-        // 맨 아래 행낭 띠
+        // 맨 아래 띠: 왼쪽 「앞 쪽」, 가운데 行囊 + 최근에 얻은 것(누르면 행낭), 오른쪽 「자동」「빨리」(0.4.83 — 메뉴를 열지 않고 바로)
         if (MolakBag.PanelTopPx >= Screen.height - 1f)
         {
             float bb = MolakLayout.ThBottomBand * s, by0 = h - bb;
             var br = new Rect(0, by0, w, bb);
             Box(br, new Color(0.09f, 0.078f, 0.07f, 1f));
             Box(new Rect(0, by0, w, Mathf.Max(1f, 1.5f * s)), new Color(0.83f, 0.71f, 0.42f, 0.45f));
+            float cy = by0 + MolakLayout.ThBottomBandH * s * 0.5f;
+            MolakInputGuard.Guard(br);
+            bool free = !MolakBag.IsOpen && !MolakGuide.IsOpen && !MolakMenu.IsOpen;
+            var on = new Color(0.91f, 0.78f, 0.47f, 1f); var off = new Color(0.66f, 0.60f, 0.53f, 1f);
+            // 왼쪽: 앞 쪽
+            var backR = new Rect(X0 + 20*u, cy - 34*u, 150*u, 68*u);
+            MolakGui.Ink(sThChip, MolakPageBack.Viewing ? on : off);
+            GUI.Label(backR, "◁ 앞 쪽", sThChip);
+            if (free && GUI.Button(backR, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakPageBack.Back(); }
+            // 오른쪽: 자동 · 빨리
+            var fastR = new Rect(X0 + W - 20*u - 100*u, cy - 34*u, 100*u, 68*u);
+            var autoR = new Rect(fastR.x - 100*u, cy - 34*u, 100*u, 68*u);
+            MolakGui.Ink(sThChip, MolakPlayMode.Auto ? on : off); GUI.Label(autoR, "자동", sThChip);
+            if (MolakPlayMode.Auto) Box(new Rect(autoR.x + 26*u, autoR.yMax - 14*u, autoR.width - 52*u, Mathf.Max(1f, 2*u)), on);
+            MolakGui.Ink(sThChip, MolakPlayMode.Fast ? on : off); GUI.Label(fastR, "빨리", sThChip);
+            if (MolakPlayMode.Fast) Box(new Rect(fastR.x + 26*u, fastR.yMax - 14*u, fastR.width - 52*u, Mathf.Max(1f, 2*u)), on);
+            if (free && GUI.Button(autoR, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakPlayMode.SetAuto(!MolakPlayMode.Auto); }
+            if (free && GUI.Button(fastR, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakPlayMode.SetFast(!MolakPlayMode.Fast); }
+            MolakGui.Ink(sThChip, new Color(0.93f, 0.89f, 0.83f, 1f));
+            // 가운데: 行囊 + 최근에 얻은 것(자리에 맞는 만큼)
+            float midL = backR.xMax + 16*u, midR = autoR.x - 16*u;
             var rec = MolakBag.Recent(3);
             float cw0 = sThBag.CalcSize(new GUIContent("行囊")).x;
-            var ws2 = new float[rec.Count]; float tot = cw0;
-            for (int i = 0; i < rec.Count; i++) { ws2[i] = Mathf.Min(260*u, sThChip.CalcSize(new GUIContent(rec[i])).x + 28*u); tot += 20*u + ws2[i]; }
-            float cx = (w - tot) / 2f, cy = by0 + bb * 0.42f;
-            GUI.Label(new Rect(cx, cy - 26*u, cw0, 52*u), "行囊", sThBag); cx += cw0 + 20*u;
-            for (int i = 0; i < rec.Count; i++)
+            var ws2 = new System.Collections.Generic.List<float>(); float tot = cw0;
+            foreach (var nm in rec)
+            {
+                float wv = Mathf.Min(220*u, sThChip.CalcSize(new GUIContent(nm)).x + 28*u);
+                if (tot + 16*u + wv > midR - midL) break;
+                ws2.Add(wv); tot += 16*u + wv;
+            }
+            float cx = midL + (midR - midL - tot) / 2f;
+            GUI.Label(new Rect(cx, cy - 26*u, cw0, 52*u), "行囊", sThBag); cx += cw0 + 16*u;
+            for (int i = 0; i < ws2.Count; i++)
             {
                 var r = new Rect(cx, cy - 22*u, ws2[i], 44*u);
                 float l = Mathf.Max(1f, 1.5f*u); var ec = new Color(0.83f, 0.71f, 0.42f, 0.4f);
                 Box(new Rect(r.x, r.y, r.width, l), ec); Box(new Rect(r.x, r.yMax - l, r.width, l), ec); Box(new Rect(r.x, r.y, l, r.height), ec); Box(new Rect(r.xMax - l, r.y, l, r.height), ec);
-                GUI.Label(r, rec[i], sThChip);
-                cx += ws2[i] + 20*u;
+                var cl = sThChip.clipping; sThChip.clipping = TextClipping.Clip; GUI.Label(r, rec[i], sThChip); sThChip.clipping = cl;
+                cx += ws2[i] + 16*u;
             }
-            MolakInputGuard.Guard(br);
-            if (!MolakBag.IsOpen && !MolakGuide.IsOpen && GUI.Button(br, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakBag.Open(); }
+            var bagR = new Rect(midL, by0, midR - midL, MolakLayout.ThBottomBandH * s);
+            if (free && GUI.Button(bagR, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakBag.Open(); }
         }
         DrawChips(X0, W, 0f, u);
     }

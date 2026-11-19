@@ -94,6 +94,20 @@ public class ArtCommand : Command
 
 /// <summary>@chapter text:"꿰맨 자리" sub:"소아" desc:"한 줄 설명(선택)" — 이야기 마디가 시작될 때 띠 그림 위에 마디 이름을 붓 글씨로 잠깐 띄운다(입력은 막지 않는다).
 /// 같은 생에 같은 마디를 다시 보거나 읽은 글 넘기기 중이면 띄우지 않는다.</summary>
+/// <summary>0.4.83 @spk id:soa — 바로 다음 한 줄을 누가 말하는지 적는다(그림 속 인물을 또렷이·이름 인장·선택지 위 요약에 쓴다).
+/// id 는 인물 그림 이름(soa, hajinmu …)의 앞부분, 주인공 대사는 me. 적지 않은 줄은 예전처럼 글로 어림한다.</summary>
+[Alias("spk")]
+public class SpeakerCommand : Command
+{
+    [RequiredParameter] public StringParameter Id;
+#pragma warning disable CS1998
+    public override async Awaitable Execute (ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        MolakFlow.PendingSpeaker = Id.Value;
+    }
+}
+
 [Alias("chapter")]
 public class ChapterCommand : Command
 {

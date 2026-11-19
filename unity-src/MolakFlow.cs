@@ -176,6 +176,8 @@ public class MolakFlow : MonoBehaviour
 
         var pt = cmd as PrintText;
         if (pt == null) return;
+        // 0.4.83 말하는 사람(@spk id:soa) — 바로 다음 한 줄에만 붙는다. 없으면 글로 어림한다(MolakScroll.CharSpeaking).
+        CurrentSpeaker = PendingSpeaker; PendingSpeaker = null;
         // 0.4.9: {dejapre} 한 줄(지난 생 장면). 비어 있으면 아무것도 찍지 않고 흐름에도 끼지 않는다.
         if (pt.Text != null && pt.Text.ToString().Trim() == "{dejapre}")
         {
@@ -384,6 +386,8 @@ public class MolakFlow : MonoBehaviour
     }
 
     static bool prevDlg;
+    /// <summary>0.4.83 @spk 로 적은 말하는 사람. Pending 은 다음 글에 붙을 것, Current 는 지금 찍힌(찍히는) 글의 것(없으면 null).</summary>
+    public static string PendingSpeaker, CurrentSpeaker;
     /// <summary>선택지 글귀(번역 키를 풀어 낸 실제 글). 승부수 표시 〔검술+2〕 를 읽는 데 쓴다.</summary>
     static string ChoiceText (Command cmd)
     {
