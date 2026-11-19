@@ -45,6 +45,7 @@
 @goto #Rev6ATail
 # Rev6ATail
 @page
+@art char:jinbaek
 사당 문간에 앉아 둘이 동이 트는 것을 본다. 진백이 품에서 무언가를 꺼냈다가, 도로 넣는다.
 <align=right>"……그건 뭐요."</align>
 "네 목검이다. 결전이 끝나면 돌려주마. 그 전에 주면, 네가 그걸 쥐고 죽을 것 같아서."
@@ -81,6 +82,7 @@
 @goto Molak02#AfterChapter
 # Rev6LB
 @vfx kind:heavy
+@art char:jinbaek
 북쪽 고개. 바위틈에서 진백이 피 묻은 손으로 당신 멱살을 잡는다.
 "……왜 왔느냐. 일곱 걸음 밖에 서 있으라 했잖느냐."
 등 뒤로 횃불이 몰려든다. 열둘.
@@ -93,6 +95,7 @@
 @gosub MolakDuel#Run
 @goto #Rev6LW if:duelwin>0
 @page
+@art char:jinbaek
 고개 아래로 구른다. 정신을 차리니 바위 그늘이다. 진백이 당신 위에 엎드려 있다. 등에 화살이 셋.
 "……막내 잘못 아니다. 이번엔, 내 걸음이, 늦지 않았다."
 @vfx kind:beat
@@ -102,6 +105,7 @@
 @fx curse:5 hp:-2
 @goto Molak02#AfterChapter
 # Rev6LW
+@art char:jinbaek
 열둘 중 일곱이 고개에 눕는다. 다섯이 흩어진다. 진백이 바위에 기대 숨을 몰아쉰다.
 "사부께서 사형제끼리 등을 맞대면 열을 이긴다 하셨는데. 일곱이로구나. 우리가 덜 배웠다."
 @set f_jinlure=1
@@ -249,6 +253,7 @@
 @goto #Old3Tail
 # Old3Tail
 @page
+@art char:oldman
 노인이 일어선다. 셋째 잔은 그대로 둔다.
 "네 안의 사술이 다 익거든, 노부를 찾을 수 있으리라. 그때 이 잔을 비우거라. 사매 몫으로."
 눈을 한 번 깜빡인 사이 노인은 없다. 셋째 잔만 남아, 달이 그 안에 떠 있다.
@@ -262,6 +267,7 @@
 @set g_bt_rev6a=g_bt_rev6a+1
 @goto #Rev6ARN if:g_kn_rev6aa<1
 삼경. 사당 마당. 진백이 칼집을 들기 전에, 먼저 칼집 끝으로 흙바닥에 별 일곱 개를 긋는다. 요광부터, 거꾸로.
+@art char:jinbaek
 진백이 그리려던 칼집을 든 채 굳는다.
 "……막내야. 누가 가르쳤느냐."
 <align=right>"<color=#9A70C4>대사형이.</color>"</align>
@@ -278,6 +284,7 @@
 @goto #Rev6ATail
 # Rev6ARN
 삼경. 사당 마당. 진백이 칼집을 들기 전에, 먼저 칼집 끝으로 흙바닥에 별 일곱 개를 긋는다. 요광부터, 거꾸로.
+@art char:jinbaek
 진백이 그리려던 칼집을 든 채 굳는다.
 "……막내야. 그 순서는 누가 가르쳤느냐."
 <align=right>"<color=#9A70C4>대사형이. 혈천진의 눈은 북두를 바로 밟으니, 거꾸로 밟으라고.</color>"</align>
@@ -290,6 +297,7 @@
 @set g_bt_rev6l=g_bt_rev6l+1
 @vfx kind:heavy
 횃불 줄이 산등성이에 오르기 전에, 북쪽 고개 바위틈에 먼저 와 있다.
+@art char:jinbaek
 맨 앞 횃불이 고갯마루에 닿는다. 진백이다. 피 묻은 손이 바위틈의 당신을 보고 멈춘다.
 "……막내야. 여기가 어디라고. 남쪽 길만 비워 두라 했잖느냐."
 <align=right>"<color=#9A70C4>비워 뒀소. 북쪽은 둘이 막으면 되오.</color>"</align>
@@ -316,6 +324,7 @@
 @set g_bt_rev6n=g_bt_rev6n+1
 삼경. 용마루에 앉은 그림자가 입을 열기 전에, 먼저 지붕에 올라 그 옆에 앉는다. 등을 반쯤 보이고.
 <align=right>"<color=#9A70C4>교주께서 거두라 하셨다지요. 대사형 손으로.</color>"</align>
+@art char:jinbaek
 진백의 손이 무릎 위 검자루에서 미끄러진다.
 <align=right>"<color=#9A70C4>남의 손에 맡길 수가 없어서 오셨고.</color>"</align>
 "……막내야. 너 요새 점을 보느냐."
@@ -329,6 +338,7 @@
 @goto #Old3RN if:g_oldsister<1
 느티나무 아래 술상. 노인이 셋째 잔에 손을 뻗기 전에, 그 잔을 먼저 채운다.
 <align=right>"<color=#9A70C4>사매 몫이지요.</color>"</align>
+@art char:oldman
 노인의 손이 술상 위에서 멎는다. 복면 아래 눈이 한참 당신을 본다.
 "……덜 익은 열매가 나무의 나이를 세는구나."
 <align=right>"앉으라 하셨으니 앉겠소. 오늘은 거두러 오신 게 아니라니."</align>
@@ -338,6 +348,7 @@
 # Old3RN
 느티나무 아래 술상. 잔이 셋이다. 노인이 셋째 잔에 손을 뻗기 전에, 그 잔 앞의 빈자리를 손바닥으로 쓸어 둔다.
 <align=right>"<color=#9A70C4>이 자리는 비워 두시지요. 앉을 사람이 따로 있는 잔 같으니.</color>"</align>
+@art char:oldman
 노인의 손이 술병을 든 채 멎는다. 복면 아래 눈이 한참 당신을 본다.
 "……덜 익은 열매가 눈은 밝구나."
 <align=right>"앉으라 하셨으니 앉겠소. 오늘은 거두러 오신 게 아니라니."</align>

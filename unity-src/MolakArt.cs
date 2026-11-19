@@ -428,10 +428,13 @@ public class MolakArt : MonoBehaviour
             poseK = Mathf.Lerp(poseK <= 0f ? 1f : poseK, want, 1f - Mathf.Pow(0.002f, Time.deltaTime));
             k *= poseK;
             if (pose == 3) jit += Mathf.Sin(Time.time * 9f) * 10f * unit;
+            // 0.4.83 잘림 없게(언메이커: 움직임까지 고려해 잘리는 데가 없어야): 극장판은 정수리를 창 위 28단위 아래에 묶고(커지고 숨 쉬어도 머리가 창 밖으로 안 나간다),
+            //   어떤 움직임에도 그림 아랫변(허벅지에서 끊긴 자리)이 창 안으로 올라오지 않게 키를 받친다. 좌우는 화면 밖으로 밀려나지 않을 만큼만 비켜 선다.
+            if (thr) k = Mathf.Max(k, (bandH - 28f * unit + 30f * unit) / sh);
             charR.transform.localScale = new Vector3(k, k, 1f);
             float x = cx + jit;   // 홀로 서니 띠 가운데
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
-            if (thr) x += sw * k * 0.12f;   // 시안처럼 조금 오른쪽
+            if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
             charR.transform.position = new Vector3(x, y, z);
         }
     }
