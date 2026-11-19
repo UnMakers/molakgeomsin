@@ -144,7 +144,7 @@ public class MolakTheme : MonoBehaviour
         cam.backgroundColor = Bg;
         if (backdrop.gameObject.layer != 30) backdrop.gameObject.layer = 30;
         var veilT = backdrop.Find("MolakPaperVeil");
-        if (veilT != null) { var vr = veilT.GetComponent<SpriteRenderer>(); var vc = Night ? new Color(0.07f, 0.065f, 0.06f, 0.97f) : new Color(0.975f, 0.955f, 0.92f, 0.52f); if (vr != null && vr.color != vc) vr.color = vc; }
+        if (veilT != null) { var vr = veilT.GetComponent<SpriteRenderer>(); var vc = Night ? new Color(0.07f, 0.065f, 0.06f, ScreenMode >= 1 && !MolakTitle.Showing ? 1f : 0.97f) : new Color(0.975f, 0.955f, 0.92f, 0.52f); if (vr != null && vr.color != vc) vr.color = vc; }   // 0.4.82 그림·극장 화면: 바탕 종이의 테두리 선이 비치지 않게 다 덮는다
         // 노벨 카메라에선 종이 레이어 제외 (이중상 방지)
         foreach (var c in FindObjectsByType<Camera>(FindObjectsSortMode.None))
             if (c != cam && (c.cullingMask & (1 << 30)) != 0) c.cullingMask &= ~(1 << 30);
@@ -209,16 +209,16 @@ public class MolakTheme : MonoBehaviour
         {
             float u = x / (float)(W - 1), a;
             if (x < 2) a = 1f;
-            else if (u < 0.12f) a = Mathf.Lerp(0.08f, 0.32f, u / 0.12f);
-            else if (u < 0.88f) a = Mathf.Lerp(0.32f, 0.20f, (u - 0.12f) / 0.76f);
-            else a = Mathf.Lerp(0.20f, 0f, (u - 0.88f) / 0.12f);
+            else if (u < 0.12f) a = Mathf.Lerp(0.01f, 0.065f, u / 0.12f);   // 리니어 색 공간이라 시안(웹, 16%)보다 훨씬 짙게 섞인다 — 화면에서 시안과 같은 밝기가 되게 맞춘 값
+            else if (u < 0.88f) a = Mathf.Lerp(0.065f, 0.035f, (u - 0.12f) / 0.76f);
+            else a = Mathf.Lerp(0.035f, 0f, (u - 0.88f) / 0.12f);
             for (int y = 0; y < H; y++) px[y * W + x] = new Color(gold.r, gold.g, gold.b, a);
         }
         tx.SetPixels(px); tx.Apply();
         goldBandSprite = Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
         return goldBandSprite;
     }
-    static readonly Color GoldNormal = new Color(1f, 1f, 1f, 0.5f * 0.999f);
+    static readonly Color GoldNormal = new Color(1f, 1f, 1f, 0.78f);   // 띠 가운데 약 16%, 금줄 78% — 누르면 둘 다 짙어진다
     static readonly Color BandNormal = new Color(0.067f, 0.059f, 0.055f, 0.86f), BandPress = new Color(0.30f, 0.23f, 0.12f, 0.95f);
     static bool builtChoiceNight;
     /// <summary>0.4.8 선택지 카드: 먹 붓 자국. 왼쪽 붓머리는 짙고 둥글게, 오른쪽으로 갈수록 옅어지며 붓털 결대로 갈라져 끝난다.
@@ -582,7 +582,8 @@ public class MolakTheme : MonoBehaviour
             if (ub != null && ub.interactable == lockedCard) ub.interactable = !lockedCard;   // 잠긴 카드는 눌리지 않는다
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
-            float wantH = lockedCard ? Mathf.Round(tier.CardH * 0.66f) : tier.CardH;
+            float baseH = th ? 88f : tier.CardH;   // 0.4.82 극장판: 시안 DE4 의 얇은 띠(44px)
+            float wantH = lockedCard ? Mathf.Round(baseH * 0.7f) : baseH;
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
             var inkDark = cine ? new Color(0.968f, 0.941f, 0.886f, 1f) : th ? new Color(0.949f, 0.914f, 0.847f, 1f) : InkText;
@@ -591,8 +592,8 @@ public class MolakTheme : MonoBehaviour
             {
                 if (tx.gameObject.name == "Num") continue;
                 if (tx.color != inkDark) tx.color = inkDark;
-                { var sf = MolakTypography.SongTMP(GowunTMP()); if (sf != null && tx.font != sf) tx.font = sf; }   // 선택지는 송명(붓 명조)
-                float cfs = Mathf.Round(tier.Font * FontScale * (lockedCard ? 0.8f : 1f));
+                { var sf = th ? GowunTMP() : MolakTypography.SongTMP(GowunTMP()); if (sf != null && tx.font != sf) tx.font = sf; }   // 선택지는 송명(붓 명조) — 극장판은 시안대로 고운바탕
+                float cfs = Mathf.Round((th ? 31f : tier.Font) * FontScale * (lockedCard ? 0.8f : 1f));
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
                 if (tx.textWrappingMode != TMPro.TextWrappingModes.Normal) tx.textWrappingMode = TMPro.TextWrappingModes.Normal;
                 { var ta = cine ? TMPro.TextAlignmentOptions.Midline : TMPro.TextAlignmentOptions.MidlineLeft; if (tx.alignment != ta) tx.alignment = ta; }
@@ -622,7 +623,7 @@ public class MolakTheme : MonoBehaviour
             foreach (var vlg in blGo.GetComponentsInChildren<UnityEngine.UI.VerticalLayoutGroup>(true))
             {
                 if (vlg.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
-                { float gp = tier.Gap; if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
+                { float gp = TheaterNow ? 16f : tier.Gap; if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
                 if (vlg.childForceExpandWidth) vlg.childForceExpandWidth = false;   // 카드 폭 820 — 마스크(860) 안쪽으로
                 var ca = vlg.childAlignment == TextAnchor.UpperLeft ? TextAnchor.UpperCenter : (vlg.childAlignment == TextAnchor.MiddleLeft ? TextAnchor.MiddleCenter : (vlg.childAlignment == TextAnchor.LowerLeft ? TextAnchor.LowerCenter : vlg.childAlignment));
                 if (vlg.childAlignment != ca) vlg.childAlignment = ca;

@@ -362,6 +362,7 @@ public class MolakHud : MonoBehaviour
 
     void OnGUI ()
     {
+        GUI.depth = 0;
         if (!Engine.Initialized) return;
         if (MolakMenu.IsOpen) return;
         float u = U;
@@ -614,12 +615,14 @@ public class MolakHud : MonoBehaviour
     public static Rect TheaterMenuButton (float w, float u)
     {
         float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, s = MolakLayout.CanvasPx;
-        return new Rect(X0 + W - 20*u - 96*u, 46f * s - 42*u, 96*u, 84*u);
+        float cy = string.IsNullOrEmpty(MolakVfx.PinText) ? MolakLayout.ThTopBand * 0.5f * s : 46f * s;   // 마디 이름이 없으면 띠 가운데 한 줄로
+        return new Rect(X0 + W - 20*u - 96*u, cy - 42*u, 96*u, 84*u);
     }
     GUIStyle sThPin, sThChip, sThBag; float thU = -1f;
     void DrawTheater (float w, float X0, float W, float u, float hp, float hpm, float curse)
     {
         float s = MolakLayout.CanvasPx, h = Screen.height;
+        GUI.depth = 10;   // 위 띠·아래 띠는 ☰·행낭·창들 뒤에 깔린다
         if (sThPin == null || !Mathf.Approximately(thU, u))
         {
             thU = u;
@@ -658,7 +661,7 @@ public class MolakHud : MonoBehaviour
             sCW.alignment = ws;
         }
         // 둘째 줄: 수치
-        float l2 = 122f * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
+        float l2 = string.IsNullOrEmpty(pin) ? MolakLayout.ThTopBand * 0.5f * s : 122f * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
         bool lowHp = hp/hpm <= 0.34f;
         string[] keys = { "hp", "ng", "sl", "sw", "mn" };
         string[] hz = { "體", "氣", "殺", "劍", "銀" };
