@@ -171,9 +171,14 @@ public class MolakSettings : MonoBehaviour
         // ── 화면
         Section(ref y, cx, cw, sh, "화면");
         // 0.4.82 그림 화면: 온 화면 삽화 위에 옻칠 글자리. 끄면 예전 종이 화면(그때만 먹색 화면을 따로 고른다)
-        if (Toggle(new Rect(cx, y, cw, rh), "그림 화면 (온 화면 삽화)", MolakTheme.Cinema, u)) MolakTheme.Cinema = !MolakTheme.Cinema;
+        {   // 0.4.82 읽는 화면: 종이(예전) · 그림(온 화면 삽화) · 극장(위아래 옻칠 띠)
+            string[] modes = { "종이", "그림", "극장" };
+            Stepper(new Rect(cx, y, cw, rh), "읽는 화면", modes[MolakTheme.ScreenMode], u,
+                () => { MolakTheme.ScreenMode = (MolakTheme.ScreenMode + 2) % 3; },
+                () => { MolakTheme.ScreenMode = (MolakTheme.ScreenMode + 1) % 3; });
+        }
         y += rh + gap;
-        if (!MolakTheme.Cinema)
+        if (MolakTheme.ScreenMode == 0)
         {
             if (Toggle(new Rect(cx, y, cw, rh), "먹색 화면 (밤에 읽기)", MolakTheme.NightRaw, u)) MolakTheme.Night = !MolakTheme.NightRaw;
             y += rh + gap;

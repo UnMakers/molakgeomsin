@@ -107,6 +107,12 @@ public class MolakVfx : MonoBehaviour
     /// 아랫변(yMax)이 쪽지의 아랫변이다. 그 밖에는 TextArea 와 같다.</summary>
     public static Rect SlipArea ()
     {
+        if (MolakTheme.TheaterNow && MolakScroll.TheaterTextGui.width > 1f)
+        {   // 극장판: 그림 창 아래 금줄 바로 위에서 위로(글 칸을 가리지 않게)
+            float u0 = MolakGui.U, s0 = MolakLayout.CanvasPx, bottom = MolakLayout.ThArtBottom * s0 - 10f * u0;
+            var tr = MolakScroll.TheaterTextGui;
+            return new Rect(tr.x, Mathf.Max(0f, bottom - 500f * u0), tr.width, Mathf.Min(bottom, 500f * u0));
+        }
         var pr = MolakScroll.CinemaPanelGui;
         if (MolakTheme.CinemaNow && pr.width > 1f)
         {
@@ -116,12 +122,15 @@ public class MolakVfx : MonoBehaviour
         return TextArea();
     }
     /// <summary>쪽지를 먹빛(그림 화면)으로 그리나.</summary>
-    public static bool DarkSlip { get { return MolakTheme.CinemaNow && MolakScroll.CinemaPanelGui.width > 1f; } }
+    public static bool DarkSlip { get { return (MolakTheme.CinemaNow && MolakScroll.CinemaPanelGui.width > 1f) || (MolakTheme.TheaterNow && MolakScroll.TheaterTextGui.width > 1f); } }
+    /// <summary>0.4.82 걷힌 마디 이름(극장판 위 띠 첫 줄이 쓴다).</summary>
+    public static string PinText { get { return instance != null && instance.chapT < 0f ? instance.pinText : ""; } }
     public static Rect TextArea ()
     {
         {   // 0.4.82 그림 화면: 글자리 판 안쪽(인장·결과판·▼ 같은 글자리 위 연출이 판을 덮는다)
             var pr = MolakScroll.CinemaPanelGui;
             if (MolakTheme.CinemaNow && pr.width > 1f) return pr;
+            if (MolakTheme.TheaterNow && MolakScroll.TheaterTextGui.width > 1f) return MolakScroll.TheaterTextGui;   // 극장판: 글 칸
         }
         float w = Screen.width, h = Screen.height;
         float unit = Mathf.Min(w / 900f, h / 1600f);
@@ -276,6 +285,7 @@ public class MolakVfx : MonoBehaviour
         // 아래에서부터 쌓는다: 설명 → 마디 이름 → 이름표·실선
         float descH = chapDesc.Length > 0 ? sCineD.CalcHeight(new GUIContent(chapDesc), cw) : 0f;
         float bottom = h - 86 * u;
+        if (MolakTheme.TheaterNow && MolakScroll.TheaterTextGui.width > 1f) bottom = MolakScroll.TheaterTextGui.y + 330 * u;   // 극장판: 글 칸 위쪽에
         float descY = bottom - descH;
         float titleH = 76 * u, titleY = (descH > 0f ? descY - 10 * u : bottom) - titleH;
         float labelH = 46 * u, labelY = titleY - 12 * u - labelH;
@@ -385,7 +395,7 @@ public class MolakVfx : MonoBehaviour
             {
                 if (chapHold) MolakInputGuard.Guard(new Rect(0, 0, w, h));   // 떠 있는 동안 누름은 글로 가지 않는다
                 float u = MolakTheme.U;
-                if (MolakTheme.CinemaNow) { DrawChapterCine(w, h, u, FadeOut); goto chapDone; }
+                if (MolakTheme.CinemaNow || MolakTheme.TheaterNow) { DrawChapterCine(w, h, u, FadeOut); goto chapDone; }
                 if (sChap == null || !Mathf.Approximately(chapU, u))
                 {
                     chapU = u; if (gowun == null) gowun = MolakGui.Gowun;
@@ -419,7 +429,7 @@ public class MolakVfx : MonoBehaviour
         }
         chapDone:
         // 0.4.71 걷힌 마디 이름 — 그림 띠 왼쪽 위에 작게 남는다
-        if (pinText.Length > 0 && chapT < 0f && !MolakTitle.Showing)
+        if (pinText.Length > 0 && chapT < 0f && !MolakTitle.Showing && !MolakTheme.TheaterNow)   // 극장판은 위 띠 첫 줄에(HUD)
         {
             float u = MolakTheme.U;
             if (sPin == null || !Mathf.Approximately(pinU, u))

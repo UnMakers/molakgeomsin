@@ -167,7 +167,18 @@ public class MolakMenu : MonoBehaviour
         var burgerR = new Rect(X0c+Wc-184*u, 84*u, 104*u, 74*u);
         bool cine = MolakTheme.CinemaNow && !codex;
         if (cine) burgerR = MolakHud.CineMenuButton(w, u);   // 0.4.82 그림 화면: 둥근 금테 단추
+        bool thr = MolakTheme.TheaterNow && !codex;
+        if (thr) burgerR = MolakHud.TheaterMenuButton(w, u);   // 0.4.82 극장판: 위 띠 오른쪽
         MolakInputGuard.Guard(new Rect(burgerR.x-20*u, burgerR.y-20*u, burgerR.width+40*u, burgerR.height+40*u));
+        if (!open && thr)
+        {
+            var bc = new Color(0.93f, 0.89f, 0.83f, 1f);
+            float bw0 = 40*u, bt = Mathf.Max(2f, 3.5f*u), gap0 = 9*u;
+            float bx0 = burgerR.x + (burgerR.width - bw0)/2f, by0 = burgerR.y + (burgerR.height - (3*bt + 2*gap0))/2f;
+            for (int bi = 0; bi < 3; bi++) Box(new Rect(bx0, by0 + bi*(bt+gap0), bw0, bt), bc);
+            if (GUI.Button(burgerR, GUIContent.none, GUIStyle.none)) { open = true; SetProcessInput(false); }
+            return;
+        }
         if (!open && cine)
         {
             GUI.DrawTexture(burgerR, MolakGui.Ring);

@@ -373,6 +373,7 @@ public class MolakHud : MonoBehaviour
         float hp=MolakStats.Get("hp"), hpm=Mathf.Max(1,MolakStats.Get("hpmax"));
         float curse=MolakStats.Get("curse"), rank=MolakStats.Get("rank");
         if (MolakTheme.CinemaNow) { DrawCine(w, X0, W, u, hp, hpm, curse); DrawRankShift(w, u); return; }
+        if (MolakTheme.TheaterNow) { DrawTheater(w, X0, W, u, hp, hpm, curse); DrawRankShift(w, u); return; }
         WarnShown = false;
 
         // 최상단 저주 스트립 (얇게, 전폭)
@@ -482,7 +483,7 @@ public class MolakHud : MonoBehaviour
         return new Rect(X0 + W - 24*u - b, MolakLayout.CineTopU*u, b, b);
     }
 
-    void DrawCine (float w, float X0, float W, float u, float hp, float hpm, float curse)
+    void DrawCineStyles (float u)
     {
         if (sCH == null || !Mathf.Approximately(cineU, u))
         {
@@ -500,6 +501,10 @@ public class MolakHud : MonoBehaviour
             MolakGui.Ink(sCB, new Color(0.83f, 0.71f, 0.42f, 1f));
             MolakGui.Ink(sSealN, new Color(0.95f, 0.91f, 0.85f, 1f));
         }
+    }
+    void DrawCine (float w, float X0, float W, float u, float hp, float hpm, float curse)
+    {
+        DrawCineStyles(u);
         // 저주: 맨 위 가는 줄(차오를수록 보랏빛, 깊으면 핏빛으로 맥이 뛴다)
         if (curse > 0f)
         {
@@ -601,6 +606,115 @@ public class MolakHud : MonoBehaviour
         }
         // 능력치 변화 패: 수치 줄 아래
         DrawChips(X0, W, top + bH + (WarnShown ? 60*u : 24*u), u);
+    }
+
+    // ================= 0.4.82 극장판(D, 시안 DE4) =================
+    // 위 옻칠 띠: 첫 줄 마디 이름(금) · ☰, 둘째 줄 體[가는 선] 숫자 · 氣 · 殺 · 劍 · 銀 · 경지. 그 아래 금줄 두 겹 사이가 그림 창.
+    // 맨 아래 행낭 띠: 行囊 + 최근에 얻은 셋. 누르면 행낭이 띠 위에서 올라온다.
+    public static Rect TheaterMenuButton (float w, float u)
+    {
+        float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, s = MolakLayout.CanvasPx;
+        return new Rect(X0 + W - 20*u - 96*u, 46f * s - 42*u, 96*u, 84*u);
+    }
+    GUIStyle sThPin, sThChip, sThBag; float thU = -1f;
+    void DrawTheater (float w, float X0, float W, float u, float hp, float hpm, float curse)
+    {
+        float s = MolakLayout.CanvasPx, h = Screen.height;
+        if (sThPin == null || !Mathf.Approximately(thU, u))
+        {
+            thU = u;
+            var hf = MolakTypography.Heading(gowun);
+            sThPin = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(30*u), alignment = TextAnchor.MiddleLeft, richText = true, wordWrap = false, clipping = TextClipping.Clip }; sThPin.font = hf;
+            sThBag = new GUIStyle(sThPin) { fontSize = Mathf.RoundToInt(34*u), alignment = TextAnchor.MiddleCenter, clipping = TextClipping.Overflow };
+            sThChip = new GUIStyle(sThPin) { fontSize = Mathf.RoundToInt(24*u), alignment = TextAnchor.MiddleCenter }; sThChip.font = gowun;
+            MolakGui.Ink(sThPin, new Color(0.83f, 0.71f, 0.42f, 1f)); MolakGui.Ink(sThBag, new Color(0.83f, 0.71f, 0.42f, 1f)); MolakGui.Ink(sThChip, new Color(0.93f, 0.89f, 0.83f, 1f));
+        }
+        DrawCineStyles(u);
+        var gold = new Color(0.83f, 0.71f, 0.42f, 0.7f);
+        // 위 띠 · 금줄
+        float bandB = MolakLayout.ThTopBand * s;
+        Box(new Rect(0, 0, w, MolakLayout.ThArtTop * s), new Color(0.067f, 0.059f, 0.055f, 1f));
+        Box(new Rect(0, bandB, w, Mathf.Max(1f, 2f * s)), gold);
+        Box(new Rect(0, MolakLayout.ThArtBottom * s, w, Mathf.Max(1f, 2f * s)), gold);
+        Box(new Rect(0, (MolakLayout.ThArtBottom + 8f) * s, w, Mathf.Max(1f, 1.5f * s)), new Color(0.83f, 0.71f, 0.42f, 0.25f));
+        if (curse > 0f)
+        {
+            var cc = new Color(0.52f,0.36f,0.66f,0.9f);
+            if (curse >= 80f) { float pulse = 0.6f+0.4f*Mathf.Sin(Time.time*5f); cc = Color.Lerp(cc, new Color(0.72f,0.18f,0.14f,1f), pulse); }
+            Box(new Rect(0, 0, w*Mathf.Clamp01(curse/100f), 4*u), cc);
+        }
+        float x = X0 + 40*u;
+        var menuR = TheaterMenuButton(w, u);
+        // 첫 줄: 마디 이름(걷힌 것) — 없으면 비운다. 몸의 업보는 오른쪽에 붉게.
+        float l1 = 46f * s;
+        string pin = MolakVfx.PinText;
+        if (!string.IsNullOrEmpty(pin)) GUI.Label(new Rect(x, l1 - 26*u, menuR.x - x - 20*u, 52*u), pin, sThPin);
+        string warn = Warn(); WarnShown = false;
+        if (warn.Length > 0)
+        {
+            var wsz = sCW.CalcSize(new GUIContent(warn));
+            var ws = sCW.alignment; sCW.alignment = TextAnchor.MiddleRight;
+            GUI.Label(new Rect(menuR.x - 16*u - wsz.x - 4*u, l1 - 22*u, wsz.x + 4*u, 44*u), warn, sCW);
+            sCW.alignment = ws;
+        }
+        // 둘째 줄: 수치
+        float l2 = 122f * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
+        bool lowHp = hp/hpm <= 0.34f;
+        string[] keys = { "hp", "ng", "sl", "sw", "mn" };
+        string[] hz = { "體", "氣", "殺", "劍", "銀" };
+        string[][] cols = { StatCol.Hp, StatCol.Ng, StatCol.Sl, StatCol.Sw, StatCol.Realm };
+        float rx = x, gap = 28*u;
+        for (int i = 0; i < 5; i++)
+        {
+            float v = MolakStats.Get(keys[i]);
+            int tier = Tier(keys[i]);
+            string ls = keys[i] == "sw" ? SwordTag(hz[i], false, false, tier >= 2) : "<color=" + StatCol.Of(cols[i]) + ">" + hz[i] + "</color>";
+            string ns = keys[i] == "hp" ? (lowHp ? "<color=#E06A5A>" + Num("hp", hp) + "</color>" : StatNum("hp", hp, StatCol.Hp)) : keys[i] == "mn" ? Num("mn", v) : StatNum(keys[i], v, cols[i]);
+            float lw = sCH.CalcSize(new GUIContent(ls)).x;
+            GUI.Label(new Rect(rx, ry, lw + 4*u, rowH), ls, sCH); rx += lw + 10*u;
+            if (keys[i] == "hp")
+            {   // 體 옆 가는 체력 선
+                float bw = 120*u, bh = Mathf.Max(2f, 5*u), by = l2 - bh * 0.5f + 2*u;
+                float rr = Mathf.Clamp01(hp/hpm);
+                bool low = rr <= 0.34f;
+                if (low && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
+                if (Event.current.type == EventType.Repaint) wasLow = low;
+                float pul = low ? 0.7f + 0.3f*Mathf.Sin(Time.time*4f) : 1f;
+                Box(new Rect(rx, by, bw, bh), new Color(0.93f, 0.89f, 0.83f, 0.18f));
+                Box(new Rect(rx, by, bw * rr, bh), low ? new Color(0.85f, 0.25f, 0.20f, pul) : new Color(0.82f, 0.28f, 0.35f, 1f));
+                rx += bw + 10*u;
+            }
+            float nw = sCN.CalcSize(new GUIContent(ns)).x;
+            GUI.Label(new Rect(rx, ry + 1*u, nw + 4*u, rowH), ns, sCN); rx += nw + gap;
+        }
+        { string rl = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>"; var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(29*u); GUI.Label(new Rect(rx, ry + 2*u, 200*u, rowH), rl, sCH); sCH.fontSize = g0; }
+        MolakInputGuard.Guard(new Rect(0, 0, w, bandB));
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(new Rect(x - 10*u, l2 - 40*u, menuR.x - x, 80*u), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        // 맨 아래 행낭 띠
+        if (MolakBag.PanelTopPx >= Screen.height - 1f)
+        {
+            float bb = MolakLayout.ThBottomBand * s, by0 = h - bb;
+            var br = new Rect(0, by0, w, bb);
+            Box(br, new Color(0.09f, 0.078f, 0.07f, 1f));
+            Box(new Rect(0, by0, w, Mathf.Max(1f, 1.5f * s)), new Color(0.83f, 0.71f, 0.42f, 0.45f));
+            var rec = MolakBag.Recent(3);
+            float cw0 = sThBag.CalcSize(new GUIContent("行囊")).x;
+            var ws2 = new float[rec.Count]; float tot = cw0;
+            for (int i = 0; i < rec.Count; i++) { ws2[i] = Mathf.Min(260*u, sThChip.CalcSize(new GUIContent(rec[i])).x + 28*u); tot += 20*u + ws2[i]; }
+            float cx = (w - tot) / 2f, cy = by0 + bb * 0.42f;
+            GUI.Label(new Rect(cx, cy - 26*u, cw0, 52*u), "行囊", sThBag); cx += cw0 + 20*u;
+            for (int i = 0; i < rec.Count; i++)
+            {
+                var r = new Rect(cx, cy - 22*u, ws2[i], 44*u);
+                float l = Mathf.Max(1f, 1.5f*u); var ec = new Color(0.83f, 0.71f, 0.42f, 0.4f);
+                Box(new Rect(r.x, r.y, r.width, l), ec); Box(new Rect(r.x, r.yMax - l, r.width, l), ec); Box(new Rect(r.x, r.y, l, r.height), ec); Box(new Rect(r.xMax - l, r.y, l, r.height), ec);
+                GUI.Label(r, rec[i], sThChip);
+                cx += ws2[i] + 20*u;
+            }
+            MolakInputGuard.Guard(br);
+            if (!MolakBag.IsOpen && !MolakGuide.IsOpen && GUI.Button(br, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakBag.Open(); }
+        }
+        DrawChips(X0, W, 0f, u);
     }
 
     void DrawRankShift (float w, float u)

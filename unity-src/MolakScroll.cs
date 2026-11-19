@@ -130,7 +130,8 @@ public class MolakScroll : MonoBehaviour
         float canvasH = MolakLayout.Canvas.y;
         var root = inst.viewport.GetComponentInParent<Canvas>();
         if (root != null && root.rootCanvas != null) canvasH = (root.rootCanvas.transform as RectTransform).rect.height;
-        if (MolakTheme.CinemaNow) return MolakLayout.CineMaxH(canvasH) - MolakLayout.CinePadT - MolakLayout.CinePadB;   // 0.4.82 글자리 판을 다 키웠을 때의 글 칸
+        if (MolakTheme.CinemaNow) return MolakLayout.CineMaxH(canvasH) - MolakLayout.CinePadT - MolakLayout.CinePadB;
+        if (MolakTheme.TheaterNow) return canvasH - MolakLayout.ThTextTop - MolakLayout.ThBottomBand - 20f;   // 0.4.82 극장판 글 칸   // 0.4.82 글자리 판을 다 키웠을 때의 글 칸
         float top = MolakArt.HasArt ? (MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip) : MolakLayout.BodyTop;
         float bottom = Mathf.Min(MolakLayout.BodyBottom(0, 0f), canvasH - MolakLayout.BodyMinH);
         return canvasH - bottom - top;
@@ -193,7 +194,7 @@ public class MolakScroll : MonoBehaviour
             pressing = true; pressPos = pos; lastPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false; hSwipe = false; bagDrag = false; bagVel = 0f;
             // 화면 맨 아래 띠(선택지 아래 150캔버스단위)에서 시작한 누름 → 위로 쓸면 행낭
             float zone = (MolakTheme.ChoiceCount > 0 ? MolakLayout.BagSwipeZoneWithChoices : MolakLayout.BagSwipeZone) * CanvasScale();
-            pressInBottomZone = !MolakTheme.CinemaNow && pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
+            pressInBottomZone = !MolakTheme.CinemaNow && !MolakTheme.TheaterNow && pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
         }
         else if (down && pressing)
         {
@@ -268,11 +269,15 @@ public class MolakScroll : MonoBehaviour
         bool cine = MolakTheme.CinemaNow && cinePanel != null;
         if (cinePanel != null && cinePanel.gameObject.activeSelf != cine) cinePanel.gameObject.SetActive(cine);
         {   // 마디 이름이 떠 있는 동안 글자리를 감췄다가, 걷히면 떠오른다
-            float a = cine ? 1f - MolakVfx.ChapterCover : 1f;
+            bool thr = MolakTheme.TheaterNow;
+            float a = cine || thr ? 1f - MolakVfx.ChapterCover : 1f;
+            if (thr && MolakTheme.ChoiceCount > 0) a = 0f;   // 극장판: 선택지가 뜨면 본문 대신 한두 줄 요약(OnGUI)
             if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
             if (vpCg != null && Mathf.Abs(vpCg.alpha - a) > 0.002f) vpCg.alpha = a;
         }
         if (cine) { LayoutCine(canvasW, canvasH); return; }
+        if (MolakTheme.TheaterNow) { LayoutTheater(canvasW, canvasH); return; }
+        TheaterTextGui = new Rect(0, 0, 0, 0);
         CinemaPanelGui = new Rect(0, 0, 0, 0);
         float side = Mathf.Max(MolakLayout.BodySide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.BodySide);
         float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip) : -MolakLayout.BodyTop;
@@ -329,6 +334,113 @@ public class MolakScroll : MonoBehaviour
         var a = RectTransformUtility.WorldToScreenPoint(cam, cs[0]); var b = RectTransformUtility.WorldToScreenPoint(cam, cs[2]);
         CinemaPanelGui = new Rect(a.x, Screen.height - b.y, b.x - a.x, b.y - a.y);
         PlacePrinter();
+    }
+
+    // ================= 0.4.82 극장판(D) =================
+    /// <summary>극장판 선택지 묶음의 아랫변(캔버스 단위). 요약 두 줄 바로 아래에서 아래로 늘어서게 잡는다.</summary>
+    public static float TheaterChoiceY = MolakLayout.BagStripH;
+    /// <summary>극장판 글 칸의 화면 자리(GUI 좌표). 요약·인장·쪽지가 쓴다.</summary>
+    public static Rect TheaterTextGui;
+    void LayoutTheater (float canvasW, float canvasH)
+    {
+        float side = Mathf.Max(MolakLayout.ThTextSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.ThTextSide);
+        float top = MolakLayout.ThTextTop, bot = MolakLayout.ThBottomBand + 20f;
+        var wantMin = new Vector2(side, bot); var wantMax = new Vector2(-side, -top);
+        if ((viewport.offsetMin - wantMin).sqrMagnitude > 0.01f) viewport.offsetMin = wantMin;
+        if ((viewport.offsetMax - wantMax).sqrMagnitude > 0.01f) viewport.offsetMax = wantMax;
+        topCur = wantMax.y;
+        int choices = MolakTheme.ChoiceCount;
+        float listH = 0f;
+        if (choices > 0) { var bl = MolakUi.ChoiceList; var cp = bl != null ? bl.transform.Find("ContentPanel") as RectTransform : null; listH = cp != null ? cp.rect.height : MolakLayout.ChoiceListH(choices); }
+        TheaterChoiceY = Mathf.Max(bot, canvasH - top - MolakLayout.ThSummaryH - MolakLayout.ThChoiceGap - listH);
+        var cs = new Vector3[4]; viewport.GetWorldCorners(cs);
+        var rc = viewport.GetComponentInParent<Canvas>();
+        Camera cam = rc != null && rc.rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? rc.rootCanvas.worldCamera : null;
+        var a = RectTransformUtility.WorldToScreenPoint(cam, cs[0]); var b = RectTransformUtility.WorldToScreenPoint(cam, cs[2]);
+        TheaterTextGui = new Rect(a.x, Screen.height - b.y, b.x - a.x, b.y - a.y);
+        CinemaPanelGui = new Rect(0, 0, 0, 0);
+        UpdateSummary(choices);
+        PlacePrinter();
+    }
+
+    // 선택지 위 한두 줄: 선택지가 뜨는 순간의 쪽에서 — 마지막 남의 대사(말한 사람 이름) + 그 뒤 서술 한 줄. 남의 대사가 없으면 끝의 두 문단.
+    static string sumName = "", sumLine1 = "", sumLine2 = ""; static bool sumDlg; int sumFor = -1;
+    void UpdateSummary (int choices)
+    {
+        if (choices <= 0) { sumFor = -1; return; }
+        if (sumFor == choices) return;
+        sumFor = choices;
+        sumName = ""; sumLine1 = ""; sumLine2 = ""; sumDlg = false;
+        if (spkTx == null) return;
+        string page = spkTx.text ?? "";
+        var paras = new System.Collections.Generic.List<string>(); var right = new System.Collections.Generic.List<bool>();
+        foreach (var raw in page.Split('\n'))
+        {
+            if (raw.Trim().Length == 0) continue;
+            string p = System.Text.RegularExpressions.Regex.Replace(raw, "<[^>]+>", "").Replace("\u200B", "").Trim();
+            if (p.Length == 0) continue;
+            paras.Add(p); right.Add(raw.Contains("align=right"));
+        }
+        if (paras.Count == 0) return;
+        System.Func<int, bool> isQ = i => { char c = paras[i][0]; return c == '"' || c == '\u201C' || c == '「'; };
+        int d = -1;
+        for (int i = paras.Count - 1; i >= 0 && i >= paras.Count - 5; i--) if (isQ(i) && !right[i]) { d = i; break; }
+        if (d >= 0)
+        {
+            sumDlg = true; sumLine1 = paras[d];
+            sumName = MolakBridge.NameOf(MolakArt.CharId) ?? "";
+            for (int i = paras.Count - 1; i > d; i--) if (!isQ(i)) { sumLine2 = paras[i]; break; }
+        }
+        else
+        {
+            sumLine2 = paras[paras.Count - 1];
+            if (paras.Count >= 2) sumLine1 = paras[paras.Count - 2];
+        }
+    }
+
+    GUIStyle sSumN, sSum1, sSum2; float sumU = -1f;
+    /// <summary>글이 rows 줄을 넘으면 끝을 줄여 …를 붙인다.</summary>
+    static string Fit (GUIStyle st, string t, float w, int rows)
+    {
+        if (string.IsNullOrEmpty(t)) return t;
+        float lh = st.CalcHeight(new GUIContent("가"), w), max = lh * rows + 1f;
+        if (st.CalcHeight(new GUIContent(t), w) <= max) return t;
+        int lo = 1, hi = t.Length;
+        while (lo < hi) { int m = (lo + hi + 1) / 2; if (st.CalcHeight(new GUIContent(t.Substring(0, m) + "…"), w) <= max) lo = m; else hi = m - 1; }
+        return t.Substring(0, lo) + "…";
+    }
+    void DrawSummary ()
+    {
+        if (!MolakTheme.TheaterNow || MolakTheme.ChoiceCount <= 0 || TheaterTextGui.width < 2f || MolakMenu.IsOpen) return;
+        if (sumLine1.Length == 0 && sumLine2.Length == 0) return;
+        float u = MolakTheme.U;
+        if (sSum1 == null || !Mathf.Approximately(sumU, u))
+        {
+            sumU = u;
+            sSum1 = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(36 * u), wordWrap = true, richText = false, alignment = TextAnchor.UpperLeft, clipping = TextClipping.Overflow };
+            sSum2 = new GUIStyle(sSum1) { fontSize = Mathf.RoundToInt(30 * u) };
+            sSumN = new GUIStyle(sSum1) { wordWrap = false };
+            var gw = MolakGui.Gowun; if (gw != null) { sSum1.font = gw; sSum2.font = gw; }
+            sSumN.font = MolakTypography.Heading(gw);
+            MolakGui.Ink(sSum1, new Color(0.93f, 0.89f, 0.83f, 1f));
+            MolakGui.Ink(sSum2, new Color(0.75f, 0.70f, 0.62f, 1f));
+            MolakGui.Ink(sSumN, new Color(0.88f, 0.48f, 0.53f, 1f));
+        }
+        var r = TheaterTextGui; float y = r.y, x = r.x, w = r.width;
+        if (sumLine1.Length > 0)
+        {
+            float nx = 0f;
+            if (sumDlg && sumName.Length > 0) { nx = sSumN.CalcSize(new GUIContent(sumName)).x + 18 * u; GUI.Label(new Rect(x, y, nx, 60 * u), sumName, sSumN); }
+            string t1 = Fit(sSum1, sumLine1, w - nx, sumDlg ? 2 : 1);
+            float h1 = sSum1.CalcHeight(new GUIContent(t1), w - nx);
+            GUI.Label(new Rect(x + nx, y, w - nx, h1), t1, sSum1);
+            y += h1 + 6 * u;
+        }
+        if (sumLine2.Length > 0)
+        {
+            string t2 = Fit(sSum2, sumLine2, w, 2);
+            GUI.Label(new Rect(x, y, w, sSum2.CalcHeight(new GUIContent(t2), w)), t2, sSum2);
+        }
     }
 
     void PlacePrinter ()
@@ -407,6 +519,7 @@ public class MolakScroll : MonoBehaviour
     GUIStyle st; float builtU = -1f;
     void OnGUI ()
     {
+        DrawSummary();
         if (!ScrolledUp || viewport == null || MolakMenu.IsOpen) return;
         float u = MolakTheme.U;
         if (st == null || !Mathf.Approximately(builtU, u))

@@ -148,6 +148,18 @@ public class MolakBag : MonoBehaviour
     public static void Open () { if (inst != null && !MolakMenu.IsOpen) { inst.open = true; inst.listScroll = 0f; inst.listVel = 0f; inst.tab = -1; } }
     public static void Close () { if (inst != null) inst.open = false; }
     /// <summary>0.4.82 지닌 것의 수(물건 · 비방·소식 · 인연). 그림 화면의 囊 단추 위 숫자.</summary>
+    /// <summary>0.4.82 최근에 얻은 것(아직 지닌 것) 이름 n개 — 극장판 아래 행낭 띠.</summary>
+    public static List<string> Recent (int n)
+    {
+        var res = new List<string>();
+        if (inst == null) return res;
+        for (int i = inst.order.Count - 1; i >= 0 && res.Count < n; i--)
+        {
+            if (Get(inst.order[i]) <= 0f) continue;
+            for (int k = 0; k < 3 && res.Count < n; k++) { var tb = k == 0 ? Items : k == 1 ? Lore : Bonds; foreach (var e0 in tb) if (e0.Flag == inst.order[i]) { res.Add(e0.Name); break; } }
+        }
+        return res;
+    }
     public static int HaveCount { get { if (inst == null) return 0; inst.RefreshHave(); return inst.haveC[0].Count + inst.haveC[1].Count + inst.haveC[2].Count; } }
 
     // ---- 0.4.81 손가락을 따라오는 서랍 ----
@@ -294,7 +306,7 @@ public class MolakBag : MonoBehaviour
         {
             panelTopPx = h;
             if (day < 1f || MolakMenu.IsOpen) return;
-            if (MolakTheme.CinemaNow) return;   // 0.4.82 그림 화면엔 아래 띠가 없다 — 위 囊 단추로 연다
+            if (MolakTheme.CinemaNow || MolakTheme.TheaterNow) return;   // 0.4.82 그림 화면엔 아래 띠가 없다(囊 단추) · 극장판은 HUD 가 행낭 띠를 그린다
             // 하단 띠: 손잡이 + '행낭' + 최근 획득 + 개수 — 위로 쓸어 올리면 열림
             var hintCol = night ? new Color(0.86f,0.82f,0.75f,1f) : new Color(0.20f,0.16f,0.13f,1f);
             var subCol = night ? "#B8AE9E" : "#5C5046";
@@ -354,7 +366,7 @@ public class MolakBag : MonoBehaviour
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         float panelH = h * 0.84f, openTop = h - panelH;
         // 0.4.81 닫힌 띠의 윗변에서 출발해 손가락을 따라 올라온다(띠가 서랍으로 바로 이어지게)
-        float stripTop = MolakTheme.CinemaNow ? h : h - MolakLayout.BagStripH*u;   // 그림 화면은 화면 아래 끝에서 올라온다
+        float stripTop = MolakTheme.CinemaNow ? h : MolakTheme.TheaterNow ? h - MolakLayout.ThBottomBand * MolakLayout.CanvasPx : h - MolakLayout.BagStripH*u;   // 그림 화면은 화면 아래 끝에서 올라온다
         travelPx = Mathf.Max(1f, stripTop - openTop);
         float y = stripTop - travelPx * openT;
         panelTopPx = y;

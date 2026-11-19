@@ -42,6 +42,15 @@ public static class MolakLayout
     /// <summary>위 수치 줄: 둥근 단추(囊·☰)의 윗변과 지름(IMGUI u 단위, 1080 기준).</summary>
     public const float CineTopU = 64f, CineBtnU = 100f;
 
+    // ---- 0.4.82 D 화면(극장판, 시안 DE4): 위 옻칠 띠(마디 이름·수치) · 금줄 사이 그림 창 · 아래 글 · 맨 아래 행낭 띠 ----
+    /// <summary>캔버스 단위(위에서부터). 위 띠 끝 · 그림 창 위/아래 · 글 시작 · 아래 행낭 띠 높이 · 글 좌우 여백.</summary>
+    public const float ThTopBand = 168f, ThArtTop = 176f, ThArtBottom = 836f, ThTextTop = 876f, ThBottomBand = 116f, ThTextSide = 60f;
+    /// <summary>선택지가 떠 있을 때 글 대신 보이는 한두 줄 요약의 높이(캔버스 단위) · 선택지 묶음과의 틈.</summary>
+    public const float ThSummaryH = 150f, ThChoiceGap = 20f;
+    public const float ThBandRatio = 0.87f, ThBandMaxW = 800f;
+    /// <summary>캔버스 1단위의 화면 픽셀(CanvasScaler Expand 와 같은 셈).</summary>
+    public static float CanvasPx { get { return Mathf.Min(Screen.width / Canvas.x, Screen.height / Canvas.y); } }
+
     // ---- 선택지 목록 ----
     public const float ChoicePanelW = 850f;
     public const float CardMaxW = 840f;
