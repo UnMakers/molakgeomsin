@@ -359,6 +359,8 @@ public class MolakHud : MonoBehaviour
         float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f;
         float hp=MolakStats.Get("hp"), hpm=Mathf.Max(1,MolakStats.Get("hpmax"));
         float curse=MolakStats.Get("curse"), rank=MolakStats.Get("rank");
+        if (MolakTheme.CinemaNow) { DrawCine(w, X0, W, u, hp, hpm, curse); DrawRankShift(w, u); return; }
+        WarnShown = false;
 
         // 최상단 저주 스트립 (얇게, 전폭)
         float sh = 10*u;
@@ -447,6 +449,145 @@ public class MolakHud : MonoBehaviour
         DrawChips(X0, W, y + lh + (expanded ? 104*u : 16*u) + 18*u, u);
 
         DrawRankShift(w, u);
+    }
+
+    // ================= 0.4.82 그림 화면(F1) 위 수치 줄 =================
+    // 왼쪽: 금빛 한자 이름 + 숫자(體 11/14 · 氣 · 殺 · 劍 · 銀 · 경지) 한 줄, 그 아래 가는 체력 선.
+    // 오른쪽: 둥근 금테 단추 囊(행낭, 지닌 수) · ☰(메뉴 — MolakMenu 가 같은 자리에 그린다). 아래 글자리엔 서 있는 사람의 이름 인장.
+    /// <summary>수치 줄 아래 몸의 업보 한 줄(부상·독·빚)이 떠 있나 — 마디 이름 표식이 그만큼 내려간다.</summary>
+    public static bool WarnShown;
+    GUIStyle sCH, sCN, sCS, sCW, sCB, sSealN; float cineU = -1f;
+    static readonly string[] RealmHanja = { "三流", "二流", "一流", "絶頂", "超絶頂", "化境", "玄境", "生死境", "神話境" };
+    public static Rect CineBagButton (float w, float u)
+    {
+        float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, b = MolakLayout.CineBtnU*u;
+        return new Rect(X0 + W - 24*u - b*2f - 20*u, MolakLayout.CineTopU*u, b, b);
+    }
+    public static Rect CineMenuButton (float w, float u)
+    {
+        float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, b = MolakLayout.CineBtnU*u;
+        return new Rect(X0 + W - 24*u - b, MolakLayout.CineTopU*u, b, b);
+    }
+
+    void DrawCine (float w, float X0, float W, float u, float hp, float hpm, float curse)
+    {
+        if (sCH == null || !Mathf.Approximately(cineU, u))
+        {
+            cineU = u;
+            var hj = MolakGui.Hanja != null ? MolakGui.Hanja : gowun;
+            sCH = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(32*u), alignment = TextAnchor.MiddleLeft, richText = true, wordWrap = false, clipping = TextClipping.Overflow }; sCH.font = hj;
+            sCN = new GUIStyle(sCH) { fontSize = Mathf.RoundToInt(31*u) }; sCN.font = gowun;
+            sCS = new GUIStyle(sCN) { fontSize = Mathf.RoundToInt(23*u) };
+            sCW = new GUIStyle(sCN) { fontSize = Mathf.RoundToInt(24*u) };
+            sCB = new GUIStyle(sCH) { fontSize = Mathf.RoundToInt(38*u), alignment = TextAnchor.MiddleCenter };
+            sSealN = new GUIStyle(sCN) { fontSize = Mathf.RoundToInt(32*u), alignment = TextAnchor.MiddleCenter }; sSealN.font = MolakTypography.Heading(gowun);
+            MolakGui.Ink(sCN, new Color(0.93f, 0.89f, 0.83f, 1f));
+            MolakGui.Ink(sCS, new Color(0.66f, 0.60f, 0.53f, 1f));
+            MolakGui.Ink(sCW, new Color(0.88f, 0.55f, 0.47f, 1f));
+            MolakGui.Ink(sCB, new Color(0.83f, 0.71f, 0.42f, 1f));
+            MolakGui.Ink(sSealN, new Color(0.95f, 0.91f, 0.85f, 1f));
+        }
+        // 저주: 맨 위 가는 줄(차오를수록 보랏빛, 깊으면 핏빛으로 맥이 뛴다)
+        if (curse > 0f)
+        {
+            var cc = new Color(0.52f,0.36f,0.66f,0.9f);
+            if (curse >= 80f) { float pulse = 0.6f+0.4f*Mathf.Sin(Time.time*5f); cc = Color.Lerp(cc, new Color(0.72f,0.18f,0.14f,1f), pulse); }
+            Box(new Rect(0, 0, w, 5*u), new Color(0f, 0f, 0f, 0.35f));
+            Box(new Rect(0, 0, w*Mathf.Clamp01(curse/100f), 5*u), cc);
+        }
+        float top = MolakLayout.CineTopU*u, bH = MolakLayout.CineBtnU*u;
+        var bagR = CineBagButton(w, u);
+        float x = X0 + 44*u, rowY = top + 6*u, rowH = 50*u, maxX = bagR.x - 24*u;
+        bool lowHp = hp/hpm <= 0.34f;
+        // 숫자들
+        string[] keys = { "hp", "ng", "sl", "sw", "mn" };
+        string[] hz = { "體", "氣", "殺", "劍", "銀" };
+        string[][] cols = { StatCol.Hp, StatCol.Ng, StatCol.Sl, StatCol.Sw, StatCol.Realm };
+        float gap = 26*u;
+        // 다 놓았을 때 넘치면 간격부터 줄인다
+        float[] lw = new float[6], nw = new float[6]; string[] ls = new string[6], ns = new string[6];
+        float total = 0f;
+        for (int i = 0; i < 5; i++)
+        {
+            float v = MolakStats.Get(keys[i]);
+            int tier = Tier(keys[i]);
+            ls[i] = keys[i] == "sw" ? SwordTag(hz[i], false, false, tier >= 2) : "<color=" + StatCol.Of(cols[i]) + ">" + hz[i] + "</color>";
+            ns[i] = keys[i] == "hp" ? (lowHp ? "<color=#E06A5A>" + Num("hp", hp) + "</color>" : StatNum("hp", hp, StatCol.Hp)) + "<size=" + Mathf.RoundToInt(22*u) + "><color=#A89A86>/" + hpm.ToString("0") + "</color></size>"
+                  : keys[i] == "mn" ? Num("mn", v) : StatNum(keys[i], v, cols[i]);
+            lw[i] = sCH.CalcSize(new GUIContent(ls[i])).x; nw[i] = sCN.CalcSize(new GUIContent(ns[i])).x;
+            total += lw[i] + 8*u + nw[i];
+        }
+        ls[5] = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>";
+        lw[5] = sCH.CalcSize(new GUIContent(ls[5])).x * 0.9f;
+        total += lw[5];
+        float avail = maxX - x;
+        if (total + gap*5 > avail) gap = Mathf.Max(8*u, (avail - total) / 5f);
+        float rx = x;
+        for (int i = 0; i < 5; i++)
+        {
+            GUI.Label(new Rect(rx, rowY, lw[i] + 4*u, rowH), ls[i], sCH); rx += lw[i] + 8*u;
+            GUI.Label(new Rect(rx, rowY + 1*u, nw[i] + 4*u, rowH), ns[i], sCN); rx += nw[i] + gap;
+        }
+        { var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(29*u); GUI.Label(new Rect(rx, rowY + 2*u, lw[5] + 10*u, rowH), ls[5], sCH); sCH.fontSize = g0; }
+        // 누르면 「몸의 셈」
+        var statR = new Rect(x - 10*u, top, maxX - x + 10*u, bH);
+        MolakInputGuard.Guard(new Rect(X0, 0, W, top + bH + 20*u));
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(statR, GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        // 체력 선: 2단위 굵기, 연지에서 밝은 연분홍으로. 바닥이면 붉게 맥이 뛴다.
+        {
+            float lineW = 384*u, ly = rowY + rowH + 10*u, th = Mathf.Max(2f, 4*u);
+            float rr = Mathf.Clamp01(hp/hpm);
+            bool low = rr <= 0.34f;
+            if (low && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
+            if (Event.current.type == EventType.Repaint) wasLow = low;
+            float pul = low ? 0.7f + 0.3f*Mathf.Sin(Time.time*4f) : 1f;
+            Box(new Rect(x, ly, lineW, th), new Color(0.93f, 0.89f, 0.83f, 0.18f));
+            var c0 = low ? new Color(0.75f, 0.16f, 0.13f, pul) : new Color(0.69f, 0.19f, 0.25f, 1f);
+            var c1 = low ? new Color(0.92f, 0.36f, 0.30f, pul) : new Color(0.88f, 0.48f, 0.53f, 1f);
+            int n = 24; float fw = lineW * rr, sw = fw / n;
+            for (int i = 0; i < n && fw > 0.5f; i++) Box(new Rect(x + sw*i, ly, sw + 0.6f, th), Color.Lerp(c0, c1, (i + 0.5f) / n));
+            // 몸의 업보(부상·독·빚)는 선 아래 한 줄로 — 없으면 아무것도
+            string warn = Warn();
+            WarnShown = warn.Length > 0;
+            if (WarnShown) GUI.Label(new Rect(x, ly + 10*u, maxX - x, 36*u), warn, sCW);
+        }
+        // 囊 단추
+        {
+            GUI.DrawTexture(bagR, MolakGui.Ring);
+            GUI.Label(bagR, "囊", sCB);
+            int cnt = MolakBag.HaveCount;
+            if (cnt > 0)
+            {
+                float d = 38*u; var br = new Rect(bagR.xMax - d + 4*u, bagR.y - 4*u, d, d);
+                var g = GUI.color; GUI.color = new Color(0.61f, 0.18f, 0.14f, 1f); GUI.DrawTexture(br, MolakGui.Disc); GUI.color = g;
+                var ss = sCS.fontSize; var sc = sCS.normal.textColor; var sa = sCS.alignment;
+                sCS.fontSize = Mathf.RoundToInt(22*u); sCS.alignment = TextAnchor.MiddleCenter; MolakGui.Ink(sCS, new Color(0.93f, 0.89f, 0.83f, 1f));
+                GUI.Label(br, cnt > 99 ? "99" : cnt.ToString(), sCS);
+                sCS.fontSize = ss; sCS.alignment = sa; MolakGui.Ink(sCS, sc);
+            }
+            var hit = new Rect(bagR.x - 12*u, bagR.y - 12*u, bagR.width + 24*u, bagR.height + 24*u);
+            MolakInputGuard.Guard(hit);
+            if (!MolakBag.IsOpen && !MolakGuide.IsOpen && GUI.Button(hit, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); MolakBag.Open(); }
+        }
+        // 이름 인장: 그림 속 사람이 말하는 중일 때만(마지막 문단이 그 사람 쪽 대사) — 글자리 왼쪽 위 모서리에 걸친다
+        {
+            var pr = MolakScroll.CinemaPanelGui;
+            string nm = MolakBridge.NameOf(MolakArt.CharId);
+            if (pr.width > 1f && MolakScroll.CinemaPanelShown && MolakScroll.CharSpeaking && !string.IsNullOrEmpty(nm) && MolakBag.PanelTopPx >= Screen.height - 1f)
+            {
+                float a = 1f - MolakVfx.ChapterCover;
+                var sz = sSealN.CalcSize(new GUIContent(nm));
+                var sr = new Rect(pr.x + 40*u, pr.y - 30*u, sz.x + 52*u, 62*u);
+                var g = GUI.color;
+                GUI.color = new Color(0.83f, 0.71f, 0.42f, a); GUI.DrawTexture(sr, Px);
+                float l = Mathf.Max(1f, 2*u);
+                GUI.color = new Color(0.55f, 0.16f, 0.12f, a); GUI.DrawTexture(new Rect(sr.x + l, sr.y + l, sr.width - 2*l, sr.height - 2*l), Px);
+                GUI.color = g;
+                GUI.Label(new Rect(sr.x, sr.y + 1*u, sr.width, sr.height), nm, sSealN);
+            }
+        }
+        // 능력치 변화 패: 수치 줄 아래
+        DrawChips(X0, W, top + bH + (WarnShown ? 60*u : 24*u), u);
     }
 
     void DrawRankShift (float w, float u)

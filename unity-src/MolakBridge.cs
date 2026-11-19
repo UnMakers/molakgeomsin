@@ -61,6 +61,20 @@ public static class MolakBridge
         {"cheongmyo_robe","청묘"},{"jang","쥐눈이 장"},{"ggoji","꼬지"},{"jinbaek","진백"},{"oldman","노인"},{"chamsae","참새"},{"chamsae_serious","참새"},
     };
 
+    // 0.4.82 그림 화면의 이름 인장 — 대본에 화자 정보가 없어 '지금 그림에 서 있는 사람'의 이름을 쓴다. 모르는 얼굴은 인장 없이.
+    static readonly Dictionary<string, string> SealName = new Dictionary<string, string> {
+        {"hajinmu_grave","하진무"},{"granny_grave","백초 할멈"},{"jinbaek_sorrow","진백"},{"wangsam","왕삼"},{"baekri","백리휘"},
+        {"gyeol","단목결"},{"lawlord","집법전주"},{"ochi","오치"},{"hochi","호치"},
+    };
+    public static string NameOf (string charId)
+    {
+        if (string.IsNullOrEmpty(charId)) return null;
+        string nm;
+        if (CharName.TryGetValue(charId, out nm)) return nm;
+        if (SealName.TryGetValue(charId, out nm)) return nm;
+        return null;
+    }
+
     static float G (string k) { return MolakStats.Get(k); }
 
     static string Pick (string[] pool)

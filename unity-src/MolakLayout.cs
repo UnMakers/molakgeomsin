@@ -29,6 +29,19 @@ public static class MolakLayout
     /// <summary>본문 글자 기본 크기(설정의 글자 크기 배율이 곱해진다).</summary>
     public const float BodyFont = 36f;
 
+    // ---- 0.4.82 그림 화면(F1): 온 화면 삽화 + 아래 옻칠 글자리 + 위 금빛 한자 수치 ----
+    /// <summary>글자리(옻칠 판) 좌우 여백 · 화면 아래 여백(기기 막대 자리) · 판 안쪽 여백(위·아래·좌우). 캔버스 단위.</summary>
+    public const float CineSide = 28f, CineBottom = 64f, CinePadT = 56f, CinePadB = 40f, CinePadS = 46f;
+    /// <summary>글자리 높이: 글 길이를 따라 자라되 이 사이에서. 최대는 화면 높이의 36%를 기준으로 묶는다.</summary>
+    public const float CineMinH = 250f;
+    public static float CineMaxH (float canvasH) { return Mathf.Clamp(canvasH * 0.36f, 460f, 700f); }
+    /// <summary>선택지 묶음과 글자리 사이 틈, 선택지가 올라가도 넘지 않는 윗선(위 수치 줄 자리).</summary>
+    public const float CineChoiceGap = 26f, CineTopReserve = 260f;
+    /// <summary>선택지 먹 띠의 폭(캔버스 폭 비율, 최대)·좌우 안쪽 여백.</summary>
+    public const float CineBandRatio = 0.80f, CineBandMaxW = 760f; public const int CineBandPad = 64;
+    /// <summary>위 수치 줄: 둥근 단추(囊·☰)의 윗변과 지름(IMGUI u 단위, 1080 기준).</summary>
+    public const float CineTopU = 64f, CineBtnU = 100f;
+
     // ---- 선택지 목록 ----
     public const float ChoicePanelW = 850f;
     public const float CardMaxW = 840f;

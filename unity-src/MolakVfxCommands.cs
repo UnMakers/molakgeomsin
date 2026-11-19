@@ -92,13 +92,15 @@ public class ArtCommand : Command
     }
 }
 
-/// <summary>@chapter text:"꿰맨 자리" sub:"소아" — 이야기 마디가 시작될 때 띠 그림 위에 마디 이름을 붓 글씨로 잠깐 띄운다(입력은 막지 않는다).
+/// <summary>@chapter text:"꿰맨 자리" sub:"소아" desc:"한 줄 설명(선택)" — 이야기 마디가 시작될 때 띠 그림 위에 마디 이름을 붓 글씨로 잠깐 띄운다(입력은 막지 않는다).
 /// 같은 생에 같은 마디를 다시 보거나 읽은 글 넘기기 중이면 띄우지 않는다.</summary>
 [Alias("chapter")]
 public class ChapterCommand : Command
 {
     public StringParameter Text;
     public StringParameter Sub;
+    /// <summary>0.4.82 그림 화면의 마디 이름 아래 회색 작은 글씨 한 줄(없으면 비운다).</summary>
+    public StringParameter Desc;
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
@@ -106,6 +108,6 @@ public class ChapterCommand : Command
         MolakStoryBook.Mark(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "", this);   // 0.4.78 이야기 모드 책갈피
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp != null && sp.Skipping) return;
-        MolakVfx.Chapter(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "");
+        MolakVfx.Chapter(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "", Assigned(Desc) ? Desc.Value : "");
     }
 }

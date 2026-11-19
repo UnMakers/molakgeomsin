@@ -70,12 +70,22 @@ public class MolakVfx : MonoBehaviour
     public static void Clash (bool heavy) { Flash(new Color(1f, 0.97f, 0.9f, heavy ? 0.55f : 0.35f), heavy ? 0.35f : 0.22f); Shake(heavy ? 16f : 9f); MolakSfx.Clash(heavy); }
 
     // 마디 이름(@chapter): 띠 그림 위에 붓 글씨 제목, 2.6초
-    float chapT = -1f; string chapText = "", chapSub = "";
+    float chapT = -1f; string chapText = "", chapSub = "", chapDesc = "";
     // 0.4.71 마디 이름이 너무 빨리 지나간다(언메이커) — 누를 때까지 떠 있고, 누르면 걷혀서 그림 띠 왼쪽 위에 작게 남는다(날이 바뀌면 지운다)
     bool chapHold; float chapOutT = -1f; bool chapWasDown; string pinText = ""; float pinDay;
     GUIStyle sPin; float pinU;
     GUIStyle sChap, sChapSub; float chapU = -1f;
-    public static void Chapter (string text, string sub) { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapT = 0f; instance.chapHold = true; instance.chapOutT = -1f; instance.pinText = ""; instance.pinDay = MolakStats.Get("day"); MolakSfx.Chapter(); }
+    /// <summary>0.4.82 마디 이름이 글자리를 덮는 정도(1 = 글자리 숨김). 떠 있는 동안 1, 누르면 0.6초에 걸쳐 0 으로.</summary>
+    public static float ChapterCover
+    {
+        get
+        {
+            if (instance == null || instance.chapT < 0f) return 0f;
+            if (instance.chapHold) return 1f;
+            return 1f - Mathf.Clamp01(instance.chapOutT / 0.6f);
+        }
+    }
+    public static void Chapter (string text, string sub, string desc = "") { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapDesc = desc ?? ""; instance.chapT = 0f; instance.chapHold = true; instance.chapOutT = -1f; instance.pinText = ""; instance.pinDay = MolakStats.Get("day"); MolakSfx.Chapter(); }
 
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
@@ -224,6 +234,89 @@ public class MolakVfx : MonoBehaviour
         }
     }
 
+    GUIStyle sCineT, sCineS, sCineD; float cineU = -1f;
+    /// <summary>0.4.82 그림 화면의 마디 이름 — 시안 F5 아래 결 그대로.
+    /// 금빛 이름표(부제, 자간을 띄워)와 오른쪽으로 스러지는 금 실선 → 그 아래 마디 이름 → 회색 작은 글씨의 한 줄 설명(@chapter desc:).
+    /// 실선이 먼저 그어지고 이름이 왼쪽에서 슥 미끄러져 들며 설명이 뒤따라 떠오른다. 누르면 왼쪽으로 조금 물러나며 스러지고 글자리가 떠오른다.</summary>
+    void DrawChapterCine (float w, float h, float u, float fadeOut)
+    {
+        if (sCineT == null || !Mathf.Approximately(cineU, u))
+        {
+            cineU = u; if (gowun == null) gowun = MolakGui.Gowun;
+            var hf = MolakTypography.Heading(gowun);
+            sCineT = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(54 * u), alignment = TextAnchor.MiddleLeft, wordWrap = false, clipping = TextClipping.Overflow, richText = true };
+            sCineS = new GUIStyle(sCineT) { fontSize = Mathf.RoundToInt(34 * u) };
+            sCineD = new GUIStyle(sCineT) { fontSize = Mathf.RoundToInt(30 * u), alignment = TextAnchor.UpperLeft, wordWrap = true };
+            sCineT.font = hf; sCineS.font = hf; sCineD.font = gowun;
+        }
+        float t = chapT;
+        float outK = chapHold ? 0f : Mathf.Clamp01(chapOutT / fadeOut);
+        float a = Mathf.Clamp01(t / 0.3f) * (1f - outK);
+        float W0 = Mathf.Min(w, 1080 * u), X0 = (w - W0) / 2f;
+        float lx = X0 + 82 * u, rx = X0 + W0 - 82 * u, cw = rx - lx;
+        float back = -26f * u * outK;
+        // 아래에서부터 쌓는다: 설명 → 마디 이름 → 이름표·실선
+        float descH = chapDesc.Length > 0 ? sCineD.CalcHeight(new GUIContent(chapDesc), cw) : 0f;
+        float bottom = h - 86 * u;
+        float descY = bottom - descH;
+        float titleH = 76 * u, titleY = (descH > 0f ? descY - 10 * u : bottom) - titleH;
+        float labelH = 46 * u, labelY = titleY - 12 * u - labelH;
+        var g0 = GUI.color;
+        // 아래쪽을 먹으로 한 번 더 — 그림 위 글씨가 떠 보이게(글자리 판 대신)
+        float washTop = labelY - 180 * u;
+        for (int i = 0; i < 16; i++)
+        {
+            float f = i / 15f, y0 = washTop + 180 * u * f;
+            GUI.color = new Color(0.067f, 0.059f, 0.055f, 0.5f * a * f * f);
+            GUI.DrawTexture(new Rect(0, y0, w, 180 * u / 15f + 1f), Px);
+        }
+        GUI.color = new Color(0.067f, 0.059f, 0.055f, 0.5f * a);
+        GUI.DrawTexture(new Rect(0, labelY, w, h - labelY), Px);
+        GUI.color = g0;   // 라벨 글자에도 GUI.color 가 곱해진다 — 칠한 색을 걷고 쓴다
+        // 이름표(부제) — 자간을 띄운 금빛 송명
+        string sub = chapSub.Length > 0 ? string.Join(" ", System.Array.ConvertAll(chapSub.ToCharArray(), c => c.ToString())) : "";
+        float subW = 0f, la = a * Mathf.Clamp01(t / 0.4f);
+        if (sub.Length > 0)
+        {
+            subW = sCineS.CalcSize(new GUIContent(sub)).x;
+            MolakGui.Ink(sCineS, new Color(0.91f, 0.78f, 0.47f, la));
+            GUI.Label(new Rect(lx + back, labelY, subW + 10 * u, labelH), sub, sCineS);
+        }
+        // 금 실선: 이름표 오른쪽에서 끝까지 그어지며, 끝으로 갈수록 스러진다
+        float lineK = 1f - Mathf.Pow(1f - Mathf.Clamp01((t - 0.1f) / 0.7f), 3f);
+        float l0 = lx + (subW > 0f ? subW + 28 * u : 0f) + back, lEnd = rx, l1 = Mathf.Lerp(l0, lEnd, lineK);
+        if (l1 > l0 + 1f)
+        {
+            int n = 40; float seg = (l1 - l0) / n, th = Mathf.Max(1f, 2.4f * u), ly = labelY + labelH * 0.5f;
+            for (int i = 0; i < n; i++)
+            {
+                float f = (l0 + seg * (i + 0.5f) - l0) / Mathf.Max(1f, lEnd - l0);   // 다 그었을 때 기준 자리 — 그어지는 동안 색이 출렁이지 않게
+                GUI.color = new Color(0.91f, 0.78f, 0.47f, 0.7f * a * (1f - f));
+                GUI.DrawTexture(new Rect(l0 + seg * i, ly - th * 0.5f, seg + 1f, th), Px);
+            }
+            GUI.color = g0;
+        }
+        // 마디 이름: 왼쪽에서 미끄러져 든다
+        float tIn = Mathf.Clamp01((t - 0.12f) / 0.55f), te = 1f - Mathf.Pow(1f - tIn, 3f);
+        MolakGui.Ink(sCineT, new Color(0.957f, 0.929f, 0.878f, a * tIn));
+        GUI.Label(new Rect(lx - 60f * u * (1f - te) + back, titleY, cw, titleH), chapText, sCineT);
+        // 설명: 회색 작은 글씨, 이름 뒤에 살짝 떠오른다
+        if (descH > 0f)
+        {
+            float dIn = Mathf.Clamp01((t - 0.4f) / 0.5f), de = 1f - Mathf.Pow(1f - dIn, 2f);
+            MolakGui.Ink(sCineD, new Color(0.725f, 0.69f, 0.722f, a * dIn));
+            GUI.Label(new Rect(lx + back, descY + 10 * u * (1f - de), cw, descH + 4 * u), chapDesc, sCineD);
+        }
+        if (chapHold && t > 1.2f)
+        {
+            float blink = 0.35f + 0.3f * Mathf.Sin(Time.unscaledTime * 3f);
+            MolakGui.Ink(sCineS, new Color(0.91f, 0.78f, 0.47f, blink));
+            var sz = sCineS.fontSize; sCineS.fontSize = Mathf.RoundToInt(24 * u);
+            GUI.Label(new Rect(rx - 30 * u, bottom + 14 * u, 40 * u, 40 * u), "▼", sCineS);
+            sCineS.fontSize = sz;
+        }
+    }
+
     void OnGUI ()
     {
         GUI.depth = MolakGui.DepthVfx;   // 0.4.27: 행낭 띠·HUD 위까지 물들게(설정 -200, 인장 -2500, 먹 화면 -3000 보다는 아래)
@@ -274,6 +367,7 @@ public class MolakVfx : MonoBehaviour
             {
                 if (chapHold) MolakInputGuard.Guard(new Rect(0, 0, w, h));   // 떠 있는 동안 누름은 글로 가지 않는다
                 float u = MolakTheme.U;
+                if (MolakTheme.CinemaNow) { DrawChapterCine(w, h, u, FadeOut); goto chapDone; }
                 if (sChap == null || !Mathf.Approximately(chapU, u))
                 {
                     chapU = u; if (gowun == null) gowun = MolakGui.Gowun;
@@ -305,6 +399,7 @@ public class MolakVfx : MonoBehaviour
                 }
             }
         }
+        chapDone:
         // 0.4.71 걷힌 마디 이름 — 그림 띠 왼쪽 위에 작게 남는다
         if (pinText.Length > 0 && chapT < 0f && !MolakTitle.Showing)
         {
@@ -317,6 +412,11 @@ public class MolakVfx : MonoBehaviour
             }
             float cu = Mathf.Min(w / 900f, h / 1600f);   // 그림 띠(MolakArt 캔버스 900×1600) 왼쪽 아래 안쪽
             float py = (MolakArt.BandTop + MolakArt.BandH) * cu - 44 * u, px = w * 0.5f - Mathf.Min(w, 900f * cu) * 0.5f + 18 * u;
+            if (MolakTheme.CinemaNow)
+            {   // 0.4.82 그림 화면: 위 수치 줄 바로 아래 왼쪽
+                float W0 = Mathf.Min(w, 1080 * u);
+                px = (w - W0) / 2f + 44 * u; py = (MolakLayout.CineTopU + MolakLayout.CineBtnU) * u + 26 * u + (MolakHud.WarnShown ? 40 * u : 0f);
+            }
             var sz = sPin.CalcSize(new GUIContent(pinText));
             var g1 = GUI.color;
             GUI.color = new Color(0.06f, 0.05f, 0.04f, 0.55f);

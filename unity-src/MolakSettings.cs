@@ -170,8 +170,15 @@ public class MolakSettings : MonoBehaviour
 
         // ── 화면
         Section(ref y, cx, cw, sh, "화면");
-        if (Toggle(new Rect(cx, y, cw, rh), "먹색 화면 (밤에 읽기)", MolakTheme.Night, u)) MolakTheme.Night = !MolakTheme.Night;
-        y += rh + gap + 30 * u;
+        // 0.4.82 그림 화면: 온 화면 삽화 위에 옻칠 글자리. 끄면 예전 종이 화면(그때만 먹색 화면을 따로 고른다)
+        if (Toggle(new Rect(cx, y, cw, rh), "그림 화면 (온 화면 삽화)", MolakTheme.Cinema, u)) MolakTheme.Cinema = !MolakTheme.Cinema;
+        y += rh + gap;
+        if (!MolakTheme.Cinema)
+        {
+            if (Toggle(new Rect(cx, y, cw, rh), "먹색 화면 (밤에 읽기)", MolakTheme.NightRaw, u)) MolakTheme.Night = !MolakTheme.NightRaw;
+            y += rh + gap;
+        }
+        y += 30 * u;
 
         // 닫기 — 창마다 하나뿐인 먹색 단추. 자리가 남으면 아래쪽에 붙인다.
         var br = MolakPaper.BottomButton(w, h, u);

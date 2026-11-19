@@ -16,6 +16,8 @@ public class MolakArt : MonoBehaviour
     /// <summary>0.4.49 비무 판인가(장면이 duel*).</summary>
     public static bool InDuel { get { return inst != null && inst.sceneId != null && inst.sceneId.StartsWith("duel"); } }
     /// <summary>지금 서 있는 인물 그림(비무의 잔상용).</summary>
+    /// <summary>0.4.82 지금 서 있는 인물의 id(이름 인장용). 없으면 빈 문자열.</summary>
+    public static string CharId { get { return inst != null && inst.charCur != null ? inst.charId : ""; } }
     public static Texture2D CharTexture { get { return inst != null && inst.charCur != null ? inst.charCur.texture : null; } }
     static int pose; float poseK;
     /// <summary>0.4.49 비무 기세: 1 덤벼든다(한 걸음 다가옴) 2 물러서 받는다 3 흔든다 0 제자리.</summary>
@@ -24,14 +26,14 @@ public class MolakArt : MonoBehaviour
     public const float BandTop = 184f, BandH = 300f;   // 캔버스 단위(900×1600)
 
     static MolakArt inst;
-    static Material mat, matAlpha, matScene;
+    static Material mat, matAlpha, matScene, matCine;
     static readonly Dictionary<string, string> SceneAlias = new Dictionary<string, string>
     {
         {"day","morning"},{"morning","morning"},{"night","night"},{"shrine","shrine"},{"blood","blood"},
         {"valley","valley"},{"rain","rain"},{"market","market"},{"crossroad","crossroad"},{"roofmoon","roofmoon"},{"roof","roofmoon"},{"duel","duel"},
     };
 
-    SpriteRenderer sceneR, charR;
+    SpriteRenderer sceneR, charR, shadeR;
     SpriteMask mask;
     Sprite sceneCur, charCur;
     float sceneA, charA, sceneT = 1f, charT = 1f, colT = 1f, sceneVis = 1f;
@@ -235,7 +237,7 @@ public class MolakArt : MonoBehaviour
     public static float ChangedAt = -9f;
     /// <summary>0.4.65 그림이 아직 다 떠오르지 않았다(장면·인물 페이드, 인물 뒤 풍경 눌림까지).</summary>
     public static bool Busy { get { return inst != null && (inst.sceneT < 1f || inst.charT < 1f); } }
-    float pushT = 1f, hurtT = -1f;
+    float pushT = 1f, hurtT = -1f, quietK;
     /// <summary>인물이 맞았다: 반 박자 옆으로 흔들린다(장면만 있으면 장면이).</summary>
     public static void Hurt () { if (inst != null) inst.hurtT = 0f; }
 
@@ -251,6 +253,9 @@ public class MolakArt : MonoBehaviour
             var nsh = Shader.Find("Molak/SpriteInkNight");
             matAlpha = nightMat != null ? new Material(nightMat) : (nsh != null ? new Material(nsh) : new Material(Shader.Find("Sprites/Default")));
             matScene = new Material(Shader.Find("Sprites/Default"));
+            var cineMat = Resources.Load<Material>("MolakArt/SpriteCine");   // 0.4.82 그림 화면 인물(옅은 네모 자국 지움)
+            matCine = cineMat != null ? new Material(cineMat) : matScene;
+            if (matCine != matScene) matCine.SetFloat("_BlurPx", 5f);   // 말 없는 인물의 흐림 — 알아볼 수는 있을 만큼
         }
         var band = new GameObject("MolakArtBand"); band.transform.SetParent(transform, false); band.layer = 30;
         var mg = new GameObject("Mask"); mg.transform.SetParent(band.transform, false); mg.layer = 30;
@@ -265,6 +270,29 @@ public class MolakArt : MonoBehaviour
         var cg = new GameObject("Char"); cg.transform.SetParent(band.transform, false); cg.layer = 30;
         charR = cg.AddComponent<SpriteRenderer>(); charR.sharedMaterial = mat; charR.sortingOrder = 11;
         charR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+
+        // 0.4.82 그림 화면: 위아래로 먹이 스미는 막(위는 수치 줄, 아래는 선택지·글자리 자리)
+        var shg = new GameObject("Shade"); shg.transform.SetParent(band.transform, false); shg.layer = 30;
+        shadeR = shg.AddComponent<SpriteRenderer>(); shadeR.sharedMaterial = matScene; shadeR.sortingOrder = 12;
+        shadeR.sprite = ShadeSprite(); shadeR.enabled = false;
+    }
+
+    /// <summary>세로 먹 그러데이션(시안 F1): 0%·92 → 9%·55 → 20%·0 … 46%·0 → 62%·50 → 80%·96 → 끝까지 96.</summary>
+    static Sprite ShadeSprite ()
+    {
+        int H = 256; var tx = new Texture2D(2, H, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
+        float[] at = { 0f, 0.09f, 0.20f, 0.46f, 0.62f, 0.80f, 1f };
+        float[] av = { 0.92f, 0.55f, 0f, 0f, 0.50f, 0.96f, 0.96f };
+        var ink = new Color(17f/255f, 15f/255f, 14f/255f);
+        for (int y = 0; y < H; y++)
+        {
+            float f = 1f - y / (float)(H - 1);   // 텍스처 y 는 아래가 0 — 화면 위에서부터 잰 비율로
+            float a = av[av.Length - 1];
+            for (int i = 1; i < at.Length; i++) if (f <= at[i]) { a = Mathf.Lerp(av[i - 1], av[i], Mathf.SmoothStep(0f, 1f, (f - at[i - 1]) / (at[i] - at[i - 1]))); break; }
+            for (int x = 0; x < 2; x++) tx.SetPixel(x, y, new Color(ink.r, ink.g, ink.b, a));
+        }
+        tx.Apply();
+        return Sprite.Create(tx, new Rect(0, 0, 2, H), new Vector2(0.5f, 0.5f), 100f);
     }
 
     static Camera PaperCam ()
@@ -302,21 +330,25 @@ public class MolakArt : MonoBehaviour
         float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Lerp(FadeFrom, 1f, sceneT));
         // 그림은 한 번에 하나: 인물이 서 있으면 장면은 가린다(인물이 빠지면 다시 떠오른다)
         // 0.4.9: 인물이 서면 장면을 지우지 않고 옅게 깔아 둔다 — 인물 뒤에 그 자리의 풍경이 보인다
-        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null ? 0.7f : 1f, Time.deltaTime * 2.4f);   // 인물이 불투명해졌으니 뒤 풍경은 덜 지운다
+        bool cine = MolakTheme.CinemaNow;
+        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null && !cine ? 0.7f : 1f, Time.deltaTime * 2.4f);   // 그림 화면은 인물 뒤 풍경도 온전히   // 인물이 불투명해졌으니 뒤 풍경은 덜 지운다
         sA *= sceneVis;
         float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Lerp(FadeFrom, 1f, charT));
         if (sceneCur == null && sceneT >= 1f) sceneR.sprite = null;
         if (charCur == null && charT >= 1f) charR.sprite = null;
         // 0.4.28: 인물은 곱하기가 아니라 보통 알파로 — 곱하기면 얼굴·흰 옷 같은 밝은 데로 뒤 배경이 비쳤다(인물 그림도 안쪽을 채워 다시 오렸다)
-        var wantMat = MolakTheme.Night ? matAlpha : matScene;
+        var wantMat = cine ? matCine : MolakTheme.Night ? matAlpha : matScene;   // 그림 화면: 인물은 제 빛 그대로(종이 오린 듯)
         if (charR.sharedMaterial != wantMat) charR.sharedMaterial = wantMat;
         bool hide = MolakMenu.IsOpen;
         sceneR.enabled = !hide; charR.enabled = !hide;
-        colT = Mathf.MoveTowards(colT, Collapsed ? 0f : 1f, Time.deltaTime*4f);
+        colT = Mathf.MoveTowards(colT, Collapsed && !cine ? 0f : 1f, Time.deltaTime*4f);
         // 야간(먹색) 모드: 종이색 장면 패널이 하얗게 떠 보이지 않도록 어둡게 눌러 그린다
         float sg = MolakTheme.Night ? 0.62f : 1f;
-        sceneR.color = new Color(sg, sg, sg, sA*(MolakTheme.Night ? 0.80f : 0.88f)*colT);
-        charR.color = new Color(1f, 1f, 1f, cA*colT);
+        sceneR.color = cine ? new Color(0.72f, 0.72f, 0.72f, sA*colT) : new Color(sg, sg, sg, sA*(MolakTheme.Night ? 0.80f : 0.88f)*colT);
+        charR.color = cine ? new Color(0.9f, 0.9f, 0.9f, cA*colT) : new Color(1f, 1f, 1f, cA*colT);
+        // 0.4.82 말하지 않는 동안 인물은 흐리고 어둡게 물러나 있다가, 입을 열면 0.25초에 또렷해진다
+        quietK = Mathf.MoveTowards(quietK, cine && !MolakScroll.CharSpeaking ? 1f : 0f, Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.25f);
+        if (matCine != null && matCine != matScene) matCine.SetFloat("_Quiet", quietK);
 
         // 배치: 카메라 뷰 기준 캔버스(900×1600) 좌표 → 월드
         float camH = cam.orthographic ? cam.orthographicSize*2f : 20f;
@@ -327,6 +359,13 @@ public class MolakArt : MonoBehaviour
         float bandW = Mathf.Min(camW, 900f*unit);
         float bandH = BandH*unit;
         float bandCy = top - (BandTop + BandH*0.5f)*unit;
+        if (cine) { bandW = camW; bandH = camH; bandCy = cam.transform.position.y; }   // 0.4.82 온 화면
+        shadeR.enabled = cine && !hide && (sceneR.sprite != null || charR.sprite != null);
+        if (shadeR.enabled)
+        {
+            shadeR.transform.position = new Vector3(cx, cam.transform.position.y, z - 0.1f);
+            shadeR.transform.localScale = new Vector3(camW / 0.02f, camH / 2.56f, 1f);
+        }
 
         mask.transform.position = new Vector3(cx, bandCy, z);
         mask.transform.localScale = new Vector3(bandW/0.04f, bandH/0.04f, 1f);
@@ -351,7 +390,7 @@ public class MolakArt : MonoBehaviour
         if (charR.sprite != null)
         {
             var sp = charR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
-            float k = (bandH*1.75f)/sh;
+            float k = cine ? Mathf.Min(camH*0.62f/sh, camW*1.05f/sw) : (bandH*1.75f)/sh;   // 그림 화면: 화면 높이의 62%
             // 인물은 등장할 때 한 걸음 다가오고(0.7초), 그 뒤로는 숨을 쉰다
             pushT = Mathf.Min(1f, pushT + Time.deltaTime / 0.7f);
             float ease = 1f - Mathf.Pow(1f - pushT, 3f);
@@ -362,7 +401,7 @@ public class MolakArt : MonoBehaviour
             if (pose == 3) jit += Mathf.Sin(Time.time * 9f) * 10f * unit;
             charR.transform.localScale = new Vector3(k, k, 1f);
             float x = cx + jit;   // 홀로 서니 띠 가운데
-            float y = bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
+            float y = cine ? top - camH*0.105f - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             charR.transform.position = new Vector3(x, y, z);
         }
     }

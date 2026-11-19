@@ -8,7 +8,15 @@ using UnityEngine.UI;
 public class MolakTheme : MonoBehaviour
 {
     // ---- 표시 설정 (영구) ----
-    public static bool Night { get { return PlayerPrefs.GetInt("molak_night", 0) == 1; } set { PlayerPrefs.SetInt("molak_night", value ? 1 : 0); } }
+    /// <summary>먹색 화면. 0.4.82: 그림 화면(Cinema)이 켜져 있으면 늘 먹색이다(옻칠 판 위 밝은 글).
+    /// 값은 한 번 읽어 둔다 — 한 프레임에 수백 번 불리는데 기기에서 PlayerPrefs 읽기가 싸지 않다.</summary>
+    public static bool Night { get { return NightRaw || Cinema; } set { nightC = value ? 1 : 0; PlayerPrefs.SetInt("molak_night", nightC); } }
+    static int nightC = -1, cineC = -1;
+    public static bool NightRaw { get { if (nightC < 0) nightC = PlayerPrefs.GetInt("molak_night", 0); return nightC == 1; } }
+    /// <summary>0.4.82 그림 화면: 삽화가 온 화면을 덮고, 글은 아래 옻칠 판에, 선택지는 판 위 먹 띠로. 끄면 예전 종이 화면.</summary>
+    public static bool Cinema { get { if (cineC < 0) cineC = PlayerPrefs.GetInt("molak_cinema", 1); return cineC == 1; } set { cineC = value ? 1 : 0; PlayerPrefs.SetInt("molak_cinema", cineC); PlayerPrefs.Save(); } }
+    /// <summary>지금 그림 화면으로 그리나. 비무 판은 예전 띠 배치(기세·간파 판 자리)를 그대로 쓴다.</summary>
+    public static bool CinemaNow { get { return Cinema && !MolakArt.InDuel; } }
     // 글자 크기: -2(80%) ~ +4(140%), 10% 단위. 예전 3단계 설정(molak_font 0/1/2)은 -1/0/+1 로 이관.
     public const int FontMin = -2, FontMax = 4;
     public static int FontStep
@@ -161,7 +169,25 @@ public class MolakTheme : MonoBehaviour
         return gowunTMP;
     }
 
-    static Sprite cardSpriteDay, cardSpriteNight, sealSprite;
+    static Sprite cardSpriteDay, cardSpriteNight, sealSprite, bandSprite;
+    /// <summary>0.4.82 그림 화면의 선택지: 가로로 번진 먹 띠. 가운데 고르게 짙고 양끝 14%에서 스러진다. 색은 단추 틴트가 입힌다(흰 바탕).</summary>
+    static Sprite BandSprite ()
+    {
+        if (bandSprite != null) return bandSprite;
+        int W = 256, H = 8;
+        var tx = new Texture2D(W, H, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
+        var px = new Color[W * H];
+        for (int x = 0; x < W; x++)
+        {
+            float u = x / (float)(W - 1), e = Mathf.Min(u, 1f - u) / 0.14f;
+            float a = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(e));
+            for (int y = 0; y < H; y++) px[y * W + x] = new Color(1f, 1f, 1f, a);
+        }
+        tx.SetPixels(px); tx.Apply();
+        bandSprite = Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+        return bandSprite;
+    }
+    static readonly Color BandNormal = new Color(0.067f, 0.059f, 0.055f, 0.86f), BandPress = new Color(0.30f, 0.23f, 0.12f, 0.95f);
     static bool builtChoiceNight;
     /// <summary>0.4.8 선택지 카드: 먹 붓 자국. 왼쪽 붓머리는 짙고 둥글게, 오른쪽으로 갈수록 옅어지며 붓털 결대로 갈라져 끝난다.
     /// 텍스처 알파는 '눌렀을 때' 농도로 만들고, 평소에는 버튼 색(알파 절반)으로 옅게 보인다.</summary>
@@ -245,6 +271,7 @@ public class MolakTheme : MonoBehaviour
     {
         float cw = MolakLayout.Canvas.x;
         var cv = c.GetComponentInParent<Canvas>(); if (cv != null && cv.rootCanvas != null) cw = ((RectTransform)cv.rootCanvas.transform).rect.width;
+        if (CinemaNow) return Mathf.Min(MolakLayout.CineBandMaxW, cw * MolakLayout.CineBandRatio);
         return Mathf.Min(MolakLayout.CardMaxW, cw * MolakLayout.CardWidthRatio);
     }
 
@@ -289,6 +316,12 @@ public class MolakTheme : MonoBehaviour
                 cp.anchoredPosition = new Vector2(0f, MolakLayout.BagStripH);
                 cp.sizeDelta = new Vector2(MolakLayout.ChoicePanelW, cp.sizeDelta.y);
             }
+            // 0.4.82 그림 화면: 선택지는 글자리 바로 위에 쌓인다(글자리 높이는 MolakScroll 이 정한다)
+            if (cp != null)
+            {
+                float wantY = CinemaNow ? MolakScroll.CinemaChoiceY : MolakLayout.BagStripH;
+                if (Mathf.Abs(cp.anchoredPosition.y - wantY) > 0.5f) cp.anchoredPosition = new Vector2(0f, wantY);
+            }
         }
         // 모바일 세로 기준 UI 스케일 (폭 기준 매칭 — 폰에서 글자·버튼이 작아지지 않게)
         foreach (var cs in FindObjectsByType<UnityEngine.UI.CanvasScaler>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -316,7 +349,7 @@ public class MolakTheme : MonoBehaviour
         }
         // 삽화 띠 접기: 선택지 4개 이상이거나, 띠를 펼치면 본문이 선택지 위 공간에 다 안 들어갈 때만
         // 0.4.42(언메이커 결정): 선택지가 둘 이상이면 개수와 상관없이 그림 띠를 접고 본문을 선택지 바로 위까지 올린다. 하나뿐이면 그대로 둔다.
-        MolakArt.Collapsed = choiceCount >= 2 && !MolakArt.InDuel;   // 0.4.49 비무 중엔 그림(기세·수)을 보여야 하니 접지 않는다
+        MolakArt.Collapsed = choiceCount >= 2 && !MolakArt.InDuel && !CinemaNow;   // 0.4.82 그림 화면은 그림을 접지 않는다   // 0.4.49 비무 중엔 그림(기세·수)을 보여야 하니 접지 않는다
         EnsureCardSprite();
         // 선택지 멈춤 감시: 고른 뒤 2.5초가 지나도 같은 선택지(같은 Id 묶음)가 그대로면 기록한다(시험자 보고 '골랐는데 안 사라짐' 추적)
         if (clickT >= 0f && Time.unscaledTime - clickT > 2.5f)
@@ -387,10 +420,11 @@ public class MolakTheme : MonoBehaviour
             int cidx = 0;
             for (int ci = 0; ci < btn.transform.GetSiblingIndex(); ci++)
                 if (btn.transform.parent.GetChild(ci).GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null && btn.transform.parent.GetChild(ci).gameObject.activeSelf) cidx++;
+            bool cine = CinemaNow;
             var rootImg = btn.GetComponent<Image>();
             if (rootImg != null)
             {
-                var spr = Night ? cardSpriteNight : cardSpriteDay;
+                var spr = cine ? BandSprite() : Night ? cardSpriteNight : cardSpriteDay;
                 if (rootImg.sprite != spr) { rootImg.sprite = spr; rootImg.type = Image.Type.Simple; rootImg.preserveAspect = false; }
                 if (rootImg.color != Color.white) rootImg.color = Color.white;
             }
@@ -425,7 +459,7 @@ public class MolakTheme : MonoBehaviour
             }
             var sealImg = seal.GetComponent<Image>();
             bool lockedEarly = metaCache.ContainsKey(btn.GetInstanceID()) && metaCache[btn.GetInstanceID()].Locked;
-            { float sz = lockedEarly ? tier.Seal * 0.72f : tier.Seal; var srt0 = (RectTransform)seal; if (Mathf.Abs(srt0.sizeDelta.x - sz) > 0.5f) { srt0.sizeDelta = new Vector2(sz, sz); srt0.anchoredPosition = new Vector2(tier.SealX, 0f); } }
+            if (!cine) { float sz = lockedEarly ? tier.Seal * 0.72f : tier.Seal; var srt0 = (RectTransform)seal; if (Mathf.Abs(srt0.sizeDelta.x - sz) > 0.5f || Mathf.Abs(srt0.anchoredPosition.x - tier.SealX) > 0.5f) { srt0.sizeDelta = new Vector2(sz, sz); srt0.anchoredPosition = new Vector2(tier.SealX, 0f); } }
             // 조건부 선택지: 원래 글귀(주석 붙기 전)를 기억해 두고 종류·주석을 만든다
             var lblTx = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
             if (lblTx != null && lblTx.gameObject.name == "Num") lblTx = null;
@@ -447,18 +481,45 @@ public class MolakTheme : MonoBehaviour
             var sealCol = lockedCard ? (Night ? new Color(0.30f, 0.29f, 0.28f, 1f) : new Color(0.62f, 0.59f, 0.55f, 1f)) : MolakChoiceMeta.SealColor(meta.Kind, Night);
             if (sealImg.color != sealCol) sealImg.color = sealCol;
             if (sealImg.sprite != sealSprite) sealImg.sprite = sealSprite;
+            // 0.4.82 그림 화면: 보통 선택지는 인장 없이 글만. 까닭이 있는 선택지(지난 생·물건·능력치…)만 작은 인장을 띠 왼쪽에 남긴다
+            {
+                bool showSeal = !cine || meta.Kind != MolakChoiceMeta.Normal;
+                if (seal.gameObject.activeSelf != showSeal) seal.gameObject.SetActive(showSeal);
+                if (cine && showSeal)
+                {
+                    var srt1 = (RectTransform)seal; float sz1 = Mathf.Round(tier.Seal * 0.7f);
+                    if (Mathf.Abs(srt1.sizeDelta.x - sz1) > 0.5f || Mathf.Abs(srt1.anchoredPosition.x - 112f) > 0.5f) { srt1.sizeDelta = new Vector2(sz1, sz1); srt1.anchoredPosition = new Vector2(112f, 0f); }
+                }
+            }
             var num = seal.Find("Num").GetComponent<TMPro.TextMeshProUGUI>();
             string want = MolakLayout.Numeral(cidx);
             if (num.text != want) num.text = want;
-            { float nfs = (want.Length > 1 ? tier.Numeral2 : tier.Numeral) * (lockedCard ? 0.75f : 1f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
+            { float nfs = (want.Length > 1 ? tier.Numeral2 : tier.Numeral) * (lockedCard ? 0.75f : 1f) * (cine ? 0.7f : 1f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
             if (num.color != numCol) num.color = numCol;
             var vlg0 = btn.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
-            if (vlg0 != null && (vlg0.padding.left != MolakLayout.CardPadLeft || vlg0.padding.right != MolakLayout.CardPadRight || vlg0.childAlignment != TextAnchor.MiddleLeft))
-            { vlg0.padding.left = MolakLayout.CardPadLeft; vlg0.padding.right = MolakLayout.CardPadRight; vlg0.childAlignment = TextAnchor.MiddleLeft; }
+            {
+                int padL = cine ? MolakLayout.CineBandPad + (meta.Kind != MolakChoiceMeta.Normal ? 40 : 0) : MolakLayout.CardPadLeft, padR = cine ? MolakLayout.CineBandPad + (meta.Kind != MolakChoiceMeta.Normal ? 40 : 0) : MolakLayout.CardPadRight;
+                var al = cine ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+                if (vlg0 != null && (vlg0.padding.left != padL || vlg0.padding.right != padR || vlg0.childAlignment != al))
+                { vlg0.padding.left = padL; vlg0.padding.right = padR; vlg0.childAlignment = al; }
+            }
             var ub = btn.GetComponent<UnityEngine.UI.Button>();
             // 붓 자국: 평소엔 옅게(알파 절반), 누르면 먹이 배어든 듯 짙게(텍스처 본래 농도)
-            if (ub != null && (ub.targetGraphic != rootImg || ub.colors.normalColor != new Color(1f, 1f, 1f, 0.5f) || ub.colors.pressedColor != Color.white))
+            var wantNormal = cine ? BandNormal : new Color(1f, 1f, 1f, 0.5f);
+            if (ub != null && (ub.targetGraphic != rootImg || ub.colors.normalColor != wantNormal))
+            {
+                ub.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
+                ub.targetGraphic = rootImg;
+                var cb = ub.colors;
+                if (cine)
+                {   // 먹 띠: 평소엔 짙은 옻빛, 누르면 금이 배어든 갈색으로
+                    cb.normalColor = BandNormal; cb.highlightedColor = BandNormal; cb.selectedColor = BandNormal;
+                    cb.pressedColor = BandPress; cb.disabledColor = new Color(BandNormal.r, BandNormal.g, BandNormal.b, 0.55f);
+                    cb.colorMultiplier = 1f; cb.fadeDuration = 0.06f; ub.colors = cb;
+                }
+            }
+            if (!cine && ub != null && (ub.targetGraphic != rootImg || ub.colors.normalColor != new Color(1f, 1f, 1f, 0.5f) || ub.colors.pressedColor != Color.white))
             {
                 ub.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
                 ub.targetGraphic = rootImg;
@@ -478,7 +539,7 @@ public class MolakTheme : MonoBehaviour
             float wantH = lockedCard ? Mathf.Round(tier.CardH * 0.66f) : tier.CardH;
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
-            var inkDark = InkText;
+            var inkDark = cine ? new Color(0.968f, 0.941f, 0.886f, 1f) : InkText;
             if (ub != null && !sfxHooked.Contains(ub.GetInstanceID())) { sfxHooked.Add(ub.GetInstanceID()); ub.onClick.AddListener(() => { MolakSfx.Vibrate(); clickT = Time.unscaledTime; clickSig = ChoiceSig(); }); }
             foreach (var tx in btn.GetComponentsInChildren<TMPro.TMP_Text>(true))
             {
@@ -488,7 +549,7 @@ public class MolakTheme : MonoBehaviour
                 float cfs = Mathf.Round(tier.Font * FontScale * (lockedCard ? 0.8f : 1f));
                 if (Mathf.Abs(tx.fontSize - cfs) > 0.5f) tx.fontSize = cfs;
                 if (tx.textWrappingMode != TMPro.TextWrappingModes.Normal) tx.textWrappingMode = TMPro.TextWrappingModes.Normal;
-                if (tx.gameObject.name != "Num" && tx.alignment != TMPro.TextAlignmentOptions.MidlineLeft) tx.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+                { var ta = cine ? TMPro.TextAlignmentOptions.Midline : TMPro.TextAlignmentOptions.MidlineLeft; if (tx.alignment != ta) tx.alignment = ta; }
                 if (tx.overflowMode != TMPro.TextOverflowModes.Overflow) tx.overflowMode = TMPro.TextOverflowModes.Overflow;
                 float need = tx.preferredHeight + (lockedCard ? tier.TextPad * 0.4f : tier.TextPad);
                 if (need > le.minHeight + 1f) le.minHeight = need;
@@ -534,7 +595,7 @@ public class MolakTheme : MonoBehaviour
         foreach (var panel in FindObjectsByType<Naninovel.UI.UITextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             foreach (var img in panel.GetComponentsInChildren<Image>(true))
-                if (img.color.a > 0.001f) img.color = new Color(0f,0f,0f,0f); // 상자 없음 — 종이에 바로 쓴다
+                if (img.color.a > 0.001f && !img.gameObject.name.StartsWith("MolakCine")) img.color = new Color(0f,0f,0f,0f); // 상자 없음 — 종이에 바로 쓴다(0.4.82 그림 화면의 옻칠 판은 빼고)
             var inkTxt = MolakTypography.Narration;   // 서술은 한 톤 옅게, 대사는 전처리기가 짙게 감싼다
             float bfs = Mathf.Round(MolakLayout.BodyFont * FontScale);
             foreach (var tx in panel.GetComponentsInChildren<TMPro.TMP_Text>(true))

@@ -31,6 +31,87 @@ public class MolakScroll : MonoBehaviour
 
     const float DragThresholdPx = 14f;
 
+    // ---- 0.4.82 그림 화면(F1)의 글자리: 옻칠 판 + 금 모서리. 판 높이는 글 길이를 따라 자란다 ----
+    RectTransform cinePanel; CanvasGroup cineCg, vpCg; float cineH = -1f;
+    /// <summary>선택지 묶음의 아랫변(캔버스 단위, 글자리 바로 위). MolakTheme 이 ContentPanel 을 여기에 놓는다.</summary>
+    public static float CinemaChoiceY = MolakLayout.BagStripH;
+    /// <summary>글자리 판의 화면 자리(GUI 좌표, 위가 0). 이름 인장·마디 이름이 쓴다. 판이 없으면 폭 0.</summary>
+    public static Rect CinemaPanelGui;
+    /// <summary>글자리가 지금 보이나(마디 이름이 덮고 있는 동안은 아니다).</summary>
+    public static bool CinemaPanelShown { get { return inst != null && inst.cinePanel != null && inst.cinePanel.gameObject.activeSelf && (inst.cineCg == null || inst.cineCg.alpha > 0.5f); } }
+    /// <summary>0.4.82 그림 속 사람이 지금 말하는 중인가 — 대본에 화자가 없어 글로 어림한다.
+    /// 지금 쪽의 마지막 문단이 따옴표 대사이고 오른쪽 정렬(주인공의 말)이 아니면 '말한다'. 서술·속말('…')·주인공 대사면 아니다.</summary>
+    public static bool CharSpeaking { get; private set; }
+    TMPro.TMP_Text spkTx; string spkSrc;
+    void UpdateSpeaking ()
+    {
+        if (spkTx == null || !spkTx.isActiveAndEnabled)
+        {
+            spkTx = null;
+            if (printer != null) foreach (var t0 in printer.GetComponentsInChildren<TMPro.TMP_Text>(false)) if (t0.gameObject.name == "DialogueText") { spkTx = t0; break; }
+            if (spkTx == null) { CharSpeaking = false; return; }
+        }
+        string src = spkTx.text;
+        if (ReferenceEquals(src, spkSrc)) return;
+        spkSrc = src;
+        CharSpeaking = false;
+        if (string.IsNullOrEmpty(src)) return;
+        int end = src.Length - 1;
+        while (end >= 0 && char.IsWhiteSpace(src[end])) end--;
+        if (end < 0) return;
+        int st = src.LastIndexOf('\n', end); st = st < 0 ? 0 : st + 1;
+        string para = src.Substring(st, end - st + 1);
+        if (para.Contains("align=right")) return;
+        var sb = new System.Text.StringBuilder(para.Length); bool tag = false;
+        foreach (char c in para) { if (c == '<') tag = true; else if (c == '>') tag = false; else if (!tag) sb.Append(c); }
+        string plain = sb.ToString().Trim();
+        if (plain.Length == 0) return;
+        char f = plain[0];
+        CharSpeaking = f == '"' || f == '\u201C' || f == '「';
+    }
+    static Sprite cineSprite;
+    /// <summary>옻칠 판: 짙은 먹빛 바탕(90%), 가는 금테(1), 네 모서리 금 꺾쇠(2×14). 9-슬라이스.</summary>
+    static Sprite CineSprite ()
+    {
+        if (cineSprite != null) return cineSprite;
+        const int S = 72, B = 32, Arm = 28, Th = 4, Ln = 2;
+        var tx = new Texture2D(S, S, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
+        var fill = new Color(17f/255f, 15f/255f, 14f/255f, 0.90f);
+        var line = new Color(212f/255f, 180f/255f, 106f/255f, 0.42f);
+        var br = new Color(212f/255f, 180f/255f, 106f/255f, 1f);
+        var px = new Color[S * S];
+        for (int y = 0; y < S; y++) for (int x = 0; x < S; x++)
+        {
+            int dx = Mathf.Min(x, S - 1 - x), dy = Mathf.Min(y, S - 1 - y);
+            Color c;
+            if ((dx < Th && dy < Arm) || (dy < Th && dx < Arm)) c = br;
+            else if (dx < Ln || dy < Ln) c = line;
+            else c = fill;
+            px[y * S + x] = c;
+        }
+        tx.SetPixels(px); tx.Apply();
+        cineSprite = Sprite.Create(tx, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, new Vector4(B, B, B, B));
+        return cineSprite;
+    }
+    void EnsureCine ()
+    {
+        if (cinePanel != null || viewport == null) return;
+        var par = viewport.parent;
+        var old = par.Find("MolakCinePanel") as RectTransform;
+        if (old == null)
+        {
+            var go = new GameObject("MolakCinePanel", typeof(RectTransform), typeof(Image), typeof(CanvasGroup));
+            old = go.GetComponent<RectTransform>();
+            old.SetParent(par, false);
+            old.anchorMin = Vector2.zero; old.anchorMax = Vector2.one; old.pivot = new Vector2(0.5f, 0f);
+            var img = go.GetComponent<Image>(); img.sprite = CineSprite(); img.type = Image.Type.Sliced; img.raycastTarget = false; img.color = Color.white;
+            go.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        }
+        old.SetSiblingIndex(0);   // 본문(뷰포트) 뒤에 깔린다
+        cinePanel = old; cineCg = old.GetComponent<CanvasGroup>();
+        vpCg = viewport.GetComponent<CanvasGroup>(); if (vpCg == null) vpCg = viewport.gameObject.AddComponent<CanvasGroup>();
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot ()
     {
@@ -49,6 +130,7 @@ public class MolakScroll : MonoBehaviour
         float canvasH = MolakLayout.Canvas.y;
         var root = inst.viewport.GetComponentInParent<Canvas>();
         if (root != null && root.rootCanvas != null) canvasH = (root.rootCanvas.transform as RectTransform).rect.height;
+        if (MolakTheme.CinemaNow) return MolakLayout.CineMaxH(canvasH) - MolakLayout.CinePadT - MolakLayout.CinePadB;   // 0.4.82 글자리 판을 다 키웠을 때의 글 칸
         float top = MolakArt.HasArt ? (MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip) : MolakLayout.BodyTop;
         float bottom = Mathf.Min(MolakLayout.BodyBottom(0, 0f), canvasH - MolakLayout.BodyMinH);
         return canvasH - bottom - top;
@@ -84,6 +166,7 @@ public class MolakScroll : MonoBehaviour
     {
         if (!Engine.Initialized || !Ensure()) return;
         HandleDrag();
+        UpdateSpeaking();
         if (!Dragging && over != 0f)
         {
             float dt = Mathf.Min(Time.unscaledDeltaTime, 0.1f);
@@ -110,7 +193,7 @@ public class MolakScroll : MonoBehaviour
             pressing = true; pressPos = pos; lastPos = pos; pressScroll = userScroll; DraggedThisPress = false; Dragging = false; hSwipe = false; bagDrag = false; bagVel = 0f;
             // 화면 맨 아래 띠(선택지 아래 150캔버스단위)에서 시작한 누름 → 위로 쓸면 행낭
             float zone = (MolakTheme.ChoiceCount > 0 ? MolakLayout.BagSwipeZoneWithChoices : MolakLayout.BagSwipeZone) * CanvasScale();
-            pressInBottomZone = pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
+            pressInBottomZone = !MolakTheme.CinemaNow && pos.y < zone && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakBag.IsOpen && !MolakBlackout.Busy;
         }
         else if (down && pressing)
         {
@@ -181,6 +264,16 @@ public class MolakScroll : MonoBehaviour
             var root = viewport.GetComponentInParent<Canvas>();
             if (root != null && root.rootCanvas != null) { var r = (root.rootCanvas.transform as RectTransform).rect; canvasW = r.width; canvasH = r.height; }
         }
+        EnsureCine();
+        bool cine = MolakTheme.CinemaNow && cinePanel != null;
+        if (cinePanel != null && cinePanel.gameObject.activeSelf != cine) cinePanel.gameObject.SetActive(cine);
+        {   // 마디 이름이 떠 있는 동안 글자리를 감췄다가, 걷히면 떠오른다
+            float a = cine ? 1f - MolakVfx.ChapterCover : 1f;
+            if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
+            if (vpCg != null && Mathf.Abs(vpCg.alpha - a) > 0.002f) vpCg.alpha = a;
+        }
+        if (cine) { LayoutCine(canvasW, canvasH); return; }
+        CinemaPanelGui = new Rect(0, 0, 0, 0);
         float side = Mathf.Max(MolakLayout.BodySide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.BodySide);
         float topOff = MolakArt.BandActive ? -(MolakArt.BandTop + MolakArt.BandH + MolakLayout.BelowBand + MolakLayout.DuelStrip) : -MolakLayout.BodyTop;
         topCur = Mathf.Lerp(topCur, topOff, Time.deltaTime * 6f);
@@ -199,7 +292,47 @@ public class MolakScroll : MonoBehaviour
         var wantMin = new Vector2(side, bottom); var wantMax = new Vector2(-side, topCur);
         if ((viewport.offsetMin - wantMin).sqrMagnitude > 0.01f) viewport.offsetMin = wantMin;
         if ((viewport.offsetMax - wantMax).sqrMagnitude > 0.01f) viewport.offsetMax = wantMax;
+        PlacePrinter();
+    }
 
+    void LayoutCine (float canvasW, float canvasH)
+    {
+        float sideP = Mathf.Max(MolakLayout.CineSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.CineSide);
+        float bot = MolakLayout.CineBottom, padT = MolakLayout.CinePadT, padB = MolakLayout.CinePadB, padS = MolakLayout.CinePadS;
+        float maxH = MolakLayout.CineMaxH(canvasH);
+        float want = Mathf.Clamp(printer.rect.height + padT + padB, MolakLayout.CineMinH, maxH);
+        int choices = MolakTheme.ChoiceCount;
+        if (choices > 0)
+        {
+            var bl = MolakUi.ChoiceList;
+            var cp = bl != null ? bl.transform.Find("ContentPanel") as RectTransform : null;
+            float listH = cp != null ? cp.rect.height : MolakLayout.ChoiceListH(choices);
+            float room = canvasH - MolakLayout.CineTopReserve - bot - listH - MolakLayout.CineChoiceGap;
+            want = Mathf.Min(want, Mathf.Max(220f, room));   // 선택지가 많으면 판을 줄이고 글은 스크롤로
+        }
+        if (cineH < 0f) cineH = want;
+        cineH = Mathf.Lerp(cineH, want, 1f - Mathf.Pow(0.0005f, Mathf.Min(Time.unscaledDeltaTime, 0.1f)));   // 약 0.25초에 맞춰 자라고 준다
+        if (Mathf.Abs(cineH - want) < 0.5f) cineH = want;
+        float topGap = canvasH - bot - cineH;
+        var pMin = new Vector2(sideP, bot); var pMax = new Vector2(-sideP, -topGap);
+        if ((cinePanel.offsetMin - pMin).sqrMagnitude > 0.01f) cinePanel.offsetMin = pMin;
+        if ((cinePanel.offsetMax - pMax).sqrMagnitude > 0.01f) cinePanel.offsetMax = pMax;
+        var wantMin = new Vector2(sideP + padS, bot + padB); var wantMax = new Vector2(-(sideP + padS), -(topGap + padT));
+        if ((viewport.offsetMin - wantMin).sqrMagnitude > 0.01f) viewport.offsetMin = wantMin;
+        if ((viewport.offsetMax - wantMax).sqrMagnitude > 0.01f) viewport.offsetMax = wantMax;
+        topCur = wantMax.y;   // 예전 배치로 돌아갈 때 이 자리에서 미끄러져 간다
+        CinemaChoiceY = bot + cineH + MolakLayout.CineChoiceGap;
+        // 판의 화면 자리(IMGUI 좌표) — 이름 인장·마디 이름용
+        var cs = new Vector3[4]; cinePanel.GetWorldCorners(cs);
+        var rc = cinePanel.GetComponentInParent<Canvas>();
+        Camera cam = rc != null && rc.rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? rc.rootCanvas.worldCamera : null;
+        var a = RectTransformUtility.WorldToScreenPoint(cam, cs[0]); var b = RectTransformUtility.WorldToScreenPoint(cam, cs[2]);
+        CinemaPanelGui = new Rect(a.x, Screen.height - b.y, b.x - a.x, b.y - a.y);
+        PlacePrinter();
+    }
+
+    void PlacePrinter ()
+    {
         float vpH = Mathf.Max(1f, viewport.rect.height);
         float prH = printer.rect.height;
         contentOffset = Mathf.Max(0f, prH - vpH);

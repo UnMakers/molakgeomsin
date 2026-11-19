@@ -32,6 +32,28 @@ public static class MolakGui
     /// <summary>1×1 흰 텍스처 — 색 상자·선을 그릴 때.</summary>
     public static Texture2D Px { get { if (px == null) { px = new Texture2D(1, 1); px.SetPixel(0, 0, Color.white); px.Apply(); px.hideFlags = HideFlags.DontSave; } return px; } }
 
+    static Texture2D ring, disc;
+    /// <summary>0.4.82 둥근 단추: 먹빛 속(60%) + 가는 금테. 128px, 가장자리 계단 없이.</summary>
+    public static Texture2D Ring { get { if (ring == null) ring = MakeRound(128, 3.2f, new Color(17f/255f, 15f/255f, 14f/255f, 0.6f), new Color(212f/255f, 180f/255f, 106f/255f, 0.7f)); return ring; } }
+    /// <summary>꽉 찬 흰 원(색은 GUI.color 로).</summary>
+    public static Texture2D Disc { get { if (disc == null) disc = MakeRound(64, 0f, Color.white, Color.white); return disc; } }
+    static Texture2D MakeRound (int S, float th, Color fill, Color line)
+    {
+        var tx = new Texture2D(S, S, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp; tx.hideFlags = HideFlags.DontSave;
+        float c = (S - 1) * 0.5f, r = S * 0.5f - 1f;
+        var px = new Color[S * S];
+        for (int y = 0; y < S; y++) for (int x = 0; x < S; x++)
+        {
+            float d = Mathf.Sqrt((x - c) * (x - c) + (y - c) * (y - c));
+            float outer = Mathf.Clamp01(r - d + 0.5f), inner = th > 0f ? Mathf.Clamp01((r - th) - d + 0.5f) : outer;
+            float ringCov = outer - inner;
+            float aL = line.a * ringCov, aF = fill.a * inner, a = aL + aF;
+            px[y * S + x] = a <= 0.0001f ? new Color(0, 0, 0, 0) : new Color((line.r * aL + fill.r * aF) / a, (line.g * aL + fill.g * aF) / a, (line.b * aL + fill.b * aF) / a, a);
+        }
+        tx.SetPixels(px); tx.Apply();
+        return tx;
+    }
+
     static Font gowun, hanja;
     /// <summary>본문·UI 글꼴(고운바탕).</summary>
     public static Font Gowun { get { if (gowun == null) gowun = Resources.Load<Font>("GowunBatang"); return gowun; } }

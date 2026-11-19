@@ -147,6 +147,8 @@ public class MolakBag : MonoBehaviour
     float panelTopPx;
     public static void Open () { if (inst != null && !MolakMenu.IsOpen) { inst.open = true; inst.listScroll = 0f; inst.listVel = 0f; inst.tab = -1; } }
     public static void Close () { if (inst != null) inst.open = false; }
+    /// <summary>0.4.82 지닌 것의 수(물건 · 비방·소식 · 인연). 그림 화면의 囊 단추 위 숫자.</summary>
+    public static int HaveCount { get { if (inst == null) return 0; inst.RefreshHave(); return inst.haveC[0].Count + inst.haveC[1].Count + inst.haveC[2].Count; } }
 
     // ---- 0.4.81 손가락을 따라오는 서랍 ----
     // 예전: 22px 넘게 쓸면 그때 열림/닫힘이 정해지고 0.17초짜리 고정 애니메이션이 돌았다(누른 채 문턱을 넘으면 '툭' 열리는 느낌).
@@ -292,6 +294,7 @@ public class MolakBag : MonoBehaviour
         {
             panelTopPx = h;
             if (day < 1f || MolakMenu.IsOpen) return;
+            if (MolakTheme.CinemaNow) return;   // 0.4.82 그림 화면엔 아래 띠가 없다 — 위 囊 단추로 연다
             // 하단 띠: 손잡이 + '행낭' + 최근 획득 + 개수 — 위로 쓸어 올리면 열림
             var hintCol = night ? new Color(0.86f,0.82f,0.75f,1f) : new Color(0.20f,0.16f,0.13f,1f);
             var subCol = night ? "#B8AE9E" : "#5C5046";
@@ -351,7 +354,7 @@ public class MolakBag : MonoBehaviour
         MolakInputGuard.Guard(new Rect(0, 0, w, h));
         float panelH = h * 0.84f, openTop = h - panelH;
         // 0.4.81 닫힌 띠의 윗변에서 출발해 손가락을 따라 올라온다(띠가 서랍으로 바로 이어지게)
-        float stripTop = h - MolakLayout.BagStripH*u;
+        float stripTop = MolakTheme.CinemaNow ? h : h - MolakLayout.BagStripH*u;   // 그림 화면은 화면 아래 끝에서 올라온다
         travelPx = Mathf.Max(1f, stripTop - openTop);
         float y = stripTop - travelPx * openT;
         panelTopPx = y;
