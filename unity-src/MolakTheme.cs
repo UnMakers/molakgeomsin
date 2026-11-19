@@ -203,7 +203,7 @@ public class MolakTheme : MonoBehaviour
         if (goldBandSprite != null) return goldBandSprite;
         int W = 256, H = 8;
         var tx = new Texture2D(W, H, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
-        var gold = new Color(212f/255f, 180f/255f, 106f/255f);
+        var gold = Color.white;   // 0.4.83 빛은 Image.color 가 입힌다(선택지 종류마다)
         var px = new Color[W * H];
         for (int x = 0; x < W; x++)
         {
@@ -217,6 +217,23 @@ public class MolakTheme : MonoBehaviour
         tx.SetPixels(px); tx.Apply();
         goldBandSprite = Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
         return goldBandSprite;
+    }
+    /// <summary>0.4.83 극장판 선택지 빛: 보통 금 · 지난 생 보라 · 물건·인연 쪽빛 · 능력치 은회 · 은자 밝은 금 · 사술 자줏빛 · 그 밖 붉음. 승부수(승산이 걸린 것)는 붉은 기를 섞는다.</summary>
+    static Color ThKindColor (int kind, bool risk)
+    {
+        Color c;
+        switch (kind)
+        {
+            case MolakChoiceMeta.Know: c = new Color(0.70f, 0.55f, 0.92f, 1f); break;
+            case MolakChoiceMeta.Item: c = new Color(0.50f, 0.68f, 0.90f, 1f); break;
+            case MolakChoiceMeta.Stat: c = new Color(0.78f, 0.80f, 0.84f, 1f); break;
+            case MolakChoiceMeta.Coin: c = new Color(0.96f, 0.80f, 0.40f, 1f); break;
+            case MolakChoiceMeta.Curse: c = new Color(0.80f, 0.36f, 0.66f, 1f); break;
+            case MolakChoiceMeta.Normal: c = new Color(212f/255f, 180f/255f, 106f/255f, 1f); break;
+            default: c = new Color(0.88f, 0.40f, 0.32f, 1f); break;
+        }
+        if (risk) c = Color.Lerp(c, new Color(0.90f, 0.32f, 0.26f, 1f), kind == MolakChoiceMeta.Normal ? 0.65f : 0.35f);
+        return c;
     }
     static readonly Color GoldNormal = new Color(1f, 1f, 1f, 0.78f);   // 띠 가운데 약 16%, 금줄 78% — 누르면 둘 다 짙어진다
     static readonly Color BandNormal = new Color(0.067f, 0.059f, 0.055f, 0.86f), BandPress = new Color(0.30f, 0.23f, 0.12f, 0.95f);
@@ -459,7 +476,7 @@ public class MolakTheme : MonoBehaviour
             {
                 var spr = cine ? BandSprite() : th ? GoldBandSprite() : Night ? cardSpriteNight : cardSpriteDay;
                 if (rootImg.sprite != spr) { rootImg.sprite = spr; rootImg.type = Image.Type.Simple; rootImg.preserveAspect = false; }
-                if (rootImg.color != Color.white) rootImg.color = Color.white;
+                if (!th && rootImg.color != Color.white) rootImg.color = Color.white;   // 극장판은 아래에서 선택지 종류의 빛을 입힌다
             }
             foreach (var img in btn.GetComponentsInChildren<Image>(true))
                 if (img != rootImg && img.gameObject.name != "MolakSeal" && img.color.a > 0.001f) img.color = new Color(0,0,0,0);
@@ -501,6 +518,12 @@ public class MolakTheme : MonoBehaviour
             MolakChoiceMeta.Meta meta;
             if (!metaCache.TryGetValue(btn.GetInstanceID(), out meta)) meta = MolakChoiceMeta.Get(cidx, rawLabel);
             bool lockedCard = meta.Locked || (btn.Choice.Locked);
+            if (th && rootImg != null)
+            {   // 0.4.83 극장판 선택지의 빛(언메이커: 기존처럼 상황에 따라 색·모양을): 금줄과 띠가 그 선택지가 열린 까닭의 빛을 띤다.
+                bool risk = !string.IsNullOrEmpty(meta.Hint) && meta.Hint.Contains("승산");
+                var kc = lockedCard ? new Color(0.62f, 0.58f, 0.53f, 0.45f) : ThKindColor(meta.Kind, risk);
+                if (rootImg.color != kc) rootImg.color = kc;
+            }
             if (lblTx != null)
             {
                 string hintCol = Night ? "#9C9286" : "#8C8378";
@@ -535,7 +558,7 @@ public class MolakTheme : MonoBehaviour
             if (num.text != want) num.text = want;
             { float nfs = (want.Length > 1 ? tier.Numeral2 : tier.Numeral) * (lockedCard ? 0.75f : 1f) * (cine ? 0.7f : 1f); if (Mathf.Abs(num.fontSize - nfs) > 0.5f) num.fontSize = nfs; }
             var numCol = new Color(0.98f, 0.95f, 0.89f, 1f);
-            if (th) numCol = lockedCard ? new Color(0.66f, 0.60f, 0.53f, 1f) : meta.Kind != MolakChoiceMeta.Normal ? Color.Lerp(MolakChoiceMeta.SealColor(meta.Kind, true), Color.white, 0.25f) : new Color(0.83f, 0.71f, 0.42f, 1f);
+            if (th) numCol = lockedCard ? new Color(0.66f, 0.60f, 0.53f, 1f) : ThKindColor(meta.Kind, !string.IsNullOrEmpty(meta.Hint) && meta.Hint.Contains("승산"));
             if (num.color != numCol) num.color = numCol;
             var vlg0 = btn.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
             {
@@ -555,7 +578,7 @@ public class MolakTheme : MonoBehaviour
                 if (th)
                 {   // 극장판 금 띠: 평소엔 옅게, 누르면 금이 짙어진다
                     cb.normalColor = GoldNormal; cb.highlightedColor = GoldNormal; cb.selectedColor = GoldNormal;
-                    cb.pressedColor = Color.white; cb.disabledColor = new Color(1f, 1f, 1f, 0.25f);
+                    cb.pressedColor = Color.white; cb.disabledColor = new Color(1f, 1f, 1f, 0.78f);   // 잠긴 카드의 흐림은 띠 빛(회색, 옅게)이 맡는다
                     cb.colorMultiplier = 1f; cb.fadeDuration = 0.06f; ub.colors = cb;
                 }
                 if (cine)
