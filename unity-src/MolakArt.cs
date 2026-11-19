@@ -255,7 +255,7 @@ public class MolakArt : MonoBehaviour
             matScene = new Material(Shader.Find("Sprites/Default"));
             var cineMat = Resources.Load<Material>("MolakArt/SpriteCine");   // 0.4.82 그림 화면 인물(옅은 네모 자국 지움)
             matCine = cineMat != null ? new Material(cineMat) : matScene;
-            if (matCine != matScene) matCine.SetFloat("_BlurPx", 5f);   // 말 없는 인물의 흐림 — 알아볼 수는 있을 만큼
+            if (matCine != matScene) matCine.SetFloat("_BlurPx", 0f);   // 흐림은 뺐다(언메이커: 어색하다) — 어둡게만
         }
         var band = new GameObject("MolakArtBand"); band.transform.SetParent(transform, false); band.layer = 30;
         var mg = new GameObject("Mask"); mg.transform.SetParent(band.transform, false); mg.layer = 30;
@@ -347,7 +347,7 @@ public class MolakArt : MonoBehaviour
         sceneR.color = cine ? new Color(0.72f, 0.72f, 0.72f, sA*colT) : new Color(sg, sg, sg, sA*(MolakTheme.Night ? 0.80f : 0.88f)*colT);
         charR.color = cine ? new Color(0.9f, 0.9f, 0.9f, cA*colT) : new Color(1f, 1f, 1f, cA*colT);
         // 0.4.82 말하지 않는 동안 인물은 흐리고 어둡게 물러나 있다가, 입을 열면 0.25초에 또렷해진다
-        quietK = Mathf.MoveTowards(quietK, cine && !MolakScroll.CharSpeaking ? 1f : 0f, Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.25f);
+        quietK = Mathf.MoveTowards(quietK, cine && !MolakScroll.CharSpeaking ? 0.75f : 0f, Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.25f);   // 0.75: 밝기 약 72%, 빛 4분의 1 뺌
         if (matCine != null && matCine != matScene) matCine.SetFloat("_Quiet", quietK);
 
         // 배치: 카메라 뷰 기준 캔버스(900×1600) 좌표 → 월드

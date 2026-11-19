@@ -195,7 +195,12 @@ public class MolakFlow : MonoBehaviour
         bool isBridge = bridgePending; bridgePending = false;
         if (holdPage && !isBridge) { breakNext = false; }      // 이음 문장 바로 뒤: 사건의 장면 전환·gosub 이 쪽을 넘기지 않는다
         bool held = holdPage && !isBridge; holdPage = false;
-        bool reset = breakNext || ovf || afterChoice;   // 선택지를 고른 뒤의 첫 본문은 새 화면
+        // 0.4.82 그림 화면: 대사는 한 줄씩 제 쪽에(언메이커: 한 글자리에 소아 말과 다른 말이 섞이니 이름 인장이 오락가락한다).
+        //   대사가 오거나, 쪽의 마지막 글이 대사였으면 새 쪽. 서술끼리는 그대로 이어 쓴다. 이음 문장 바로 뒤는 넘기지 않는다.
+        bool cineSplit = false;
+        if (MolakTheme.CinemaNow && !breakNext && !afterChoice && !ovf && !held && !isBridge && (IsDialogue(pt) || prevDlg))
+        { var dtc = DialogueText(); cineSplit = dtc != null && (dtc.text ?? "").Replace("\u200B", "").Trim().Length > 0; }
+        bool reset = breakNext || ovf || afterChoice || cineSplit;   // 선택지를 고른 뒤의 첫 본문은 새 화면
         LastDecision = spot.ScriptPath + ":" + spot.LineNumber + " reset=" + reset + " break=" + breakNext + " ovf=" + ovf + " hasValue=" + pt.ResetPrinter.HasValue;
 
 
@@ -232,6 +237,10 @@ public class MolakFlow : MonoBehaviour
         afterChoice = false;
         // 같은 단락(연속된 서사 문장)은 한 번의 탭으로 쭉 출력: 다음 명령이 또 본문이면 입력 대기 없이 이어간다.
         bool wait = !NextIsText(track);
+        // 0.4.82 그림 화면: 다음 글이 대사 쪽으로 갈라지면(이 글이 대사이거나 다음 글이 대사) 여기서 한 번 기다린다 — 읽던 글이 바로 지워지지 않게
+        bool cineSplitNext = false;
+        if (MolakTheme.CinemaNow && !isBridge && NextIsText(track)) { var nxc = NextText(track); if (nxc != null && (curDlg || IsDialogue(nxc))) cineSplitNext = true; }
+        if (cineSplitNext) wait = true;
         // 0.4.47: 탭 한 번에 이어 나올 다음 문단이 쪽을 넘기게 되면, 쪽을 넘기기 전에 한 번 기다린다(읽던 글이 바로 지워지지 않게)
         if (!wait && !isBridge)
         {
@@ -256,7 +265,7 @@ public class MolakFlow : MonoBehaviour
                 string cur2 = TextOf(pt), page2 = reset || dt2 == null ? cur2 : (dt2.text ?? "").TrimEnd('\n', ' ') + "\n\n" + cur2;
                 overflowNext = PageWouldOverflow(TextOf(nx2), page2);
             }
-            if (!overflowNext && !NextBreaksPage(track)) wait = false;
+            if (!overflowNext && !cineSplitNext && !NextBreaksPage(track)) wait = false;
         }
         pt.RevealSpeed = MolakPlayMode.Fast ? (DecimalParameter)100f : new DecimalParameter();
         pt.WaitForInput = wait;

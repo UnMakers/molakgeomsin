@@ -300,7 +300,7 @@ public class MolakScroll : MonoBehaviour
         float sideP = Mathf.Max(MolakLayout.CineSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.CineSide);
         float bot = MolakLayout.CineBottom, padT = MolakLayout.CinePadT, padB = MolakLayout.CinePadB, padS = MolakLayout.CinePadS;
         float maxH = MolakLayout.CineMaxH(canvasH);
-        float want = Mathf.Clamp(printer.rect.height + padT + padB, MolakLayout.CineMinH, maxH);
+        float want = maxH;   // 0.4.82 글자리 크기는 고정(언메이커: 글 길이 따라 커졌다 줄었다 하니 정신없다)
         int choices = MolakTheme.ChoiceCount;
         if (choices > 0)
         {
