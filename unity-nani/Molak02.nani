@@ -31,7 +31,7 @@
 @goto #KGrudge if:grudge>0&&day>=grudgeday
 @goto #ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
 @goto #ChSoa if:day>=3&&f_soamet<1&&b_soa<1
-@goto #B5 if:day>=5&&b_hajin<1
+@goto #B5 if:day>=5&&b_hajin<1&&f_hajindead<1
 @goto #BCh1 if:day>=6&&b_ch1<1
 @goto #BCmBell if:day>=9&&f_jbsister<1&&f_cmglimpse<1&&b_cmbell<1
 @goto #ChAmhyang if:day>=12&&b_amhyang<1
@@ -77,7 +77,7 @@
 @goto #BYeom if:g_know_hyeokpass>0&&f_hyeokmet>0&&day>=12&&seen_E_Spar2<1&&f_hyeokdead<1&&b_yeomflag<1
 @goto #BLord if:day>=20&&b_lord<1
 @goto #BMarket if:day>=8&&f_hyeokmet>0&&seen_E_Spar2<1&&f_hyeokdead<1&&f_soamet>0&&f_soadead<1&&b_market<1
-@goto #BInn if:day>=14&&f_gyeolmet>0&&f_soamet>0&&f_soadead<1&&f_hajindead<1&&f_raidprep<1&&b_innday<1
+@goto #BInn if:day>=14&&f_gyeolmet>0&&f_gyeoldead<1&&f_soamet>0&&f_soadead<1&&f_hajindead<1&&f_raidprep<1&&b_innday<1
 @goto #BS6 if:day>=16&&f_soamet>0&&f_soadead<1&&aff>=1&&b_s6<1
 @goto #BS7 if:day>=30&&f_soamet>0&&f_soadead<1&&aff>=3&&b_s7<1
 @set dice=random(1,100)
