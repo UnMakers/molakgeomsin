@@ -152,6 +152,10 @@ public class ChapterCommand : Command
             if (!Engine.Initialized || (sp != null && sp.MainTrack != null && !sp.MainTrack.Playing)) break;   // 불러오기·처음으로 등으로 멈췄으면
             await Awaitable.NextFrameAsync();
         }
+        // 0.4.85 기준(본문이 가려진 동안 글이 드러나지 않는다): 마디 이름이 걷히는 0.6초 동안에도 글자리는 아직 덮여 있다 — 거의 다 걷힌 뒤에 글을 찍는다
+        float until = Time.realtimeSinceStartup + 0.8f;
+        while (MolakVfx.ChapterCover > 0.15f && Time.realtimeSinceStartup < until && !(sp != null && sp.Skipping) && !MolakPlayMode.SkipAll)
+            await Awaitable.NextFrameAsync();
     }
 }
 
