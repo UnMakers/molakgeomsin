@@ -14,6 +14,11 @@
 - 후처리: `tools/post_art_v16.py 원본 결과`(흰 얼굴 비침·구멍 고침, 붉은색 밖의 색 빼기). 위 여백이 40px보다 적으면 60px로 채운다. 할멈처럼 붉은 눈만 남길 때는 `tools/art/face_desat.py`.
 - 표정만 바꿀 때: 얼굴 둘레(400~420px)만 잘라 ControlNet 0.4로 붙잡고 62%만 다시 그린 뒤 둥근 가림판으로 붙인다(`VNArt/mcp-workflows/_edit_expression.json`, `tools/art/face_paste.py`). 몸·옷·머리는 원본 그대로라 같은 사람이 나온다.
 - **자세가 바뀌는 상황 그림**(무릎·멱살·주저앉음·팔을 든 노여움 등): 원래 입상 프롬프트에 자세를 더해 새로 뽑는다. 이름은 `char_<사람>_<상황>`. 표정 그림처럼 이름 인장·자리 그림은 사람 이름(앞부분)에서 찾는다.
+- **잘림 막기(언메이커: 좌우 팔·위 머리가 잘리지 않게, 2026-11-21)** — 뽑을 때마다 지킨다.
+  - 프롬프트에 붙인다: `full upper body in frame, head fully visible with space above, both arms and sleeves fully inside the frame, centered, margin around the figure, narrow pose`. 팔을 크게 벌리는 자세(노여움·멱살·창 들기)는 `arms close to body` 또는 `arms raised but inside frame`으로 좁힌다.
+  - 배제어에 붙인다: `cropped, cut off, out of frame, head out of frame, cropped arms, cropped hands, cropped weapon, close-up, wide pose`.
+  - 뽑은 뒤 `python3 tools/art/edge_check.py 그림.png`: 인물이 위 24px 안(머리), 좌우 16px 안(팔·소매·무기)에 닿으면 「잘림」. 아래는 허벅지에서 끊는 구도라 봐주지 않는다. 잘림이면 쓰지 않고 다시 뽑는다(다섯 번까지). 다섯 번 다 잘리면 그 그림은 넘기고 목록에 적는다.
+  - 2026-11-21 v19 상황 그림 11장을 검사하니 일곱 장이 잘렸다(곽산 숙임·하진무 무릎·호치 무릎·쥐눈이 장 겁·진백 손 뻗음·교주 노여움·소아 피투성이).
 - 장마다 최대 다섯 번, 안 되면 다음으로. 장 사이 1분 30초 쉼. 1.5배 고해상 다시 그리기(edit) 방식은 쓰지 않는다.
 - 프롬프트 함정: aura 같은 말은 물결처럼 깨지고, wings는 날개가 돋는다. 산적·광부 등은 왜색(카타나·오비) 배제어를 붙인다.
 - 원본 보관: `unity-art-v16/`(v16 후처리분), `unity-art-v17/`(표정), `unity-art-v18/`(조연 13장).

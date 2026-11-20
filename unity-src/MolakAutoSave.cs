@@ -30,7 +30,18 @@ public class MolakAutoSave : MonoBehaviour
 
     static bool InGame ()
     {
-        try { return Engine.Initialized && MolakStats.Get("day") >= 1f && !MolakMenu.IsOpen && !MolakPractice.Active; } catch { return false; }
+        try
+        {
+            if (!Engine.Initialized || MolakStats.Get("day") < 1f || MolakMenu.IsOpen || MolakPractice.Active) return false;
+            // 0.4.85 대본이 하나도 돌고 있지 않은 상태(초기화 직후 등)를 적으면 이어하기가 빈 화면·제목으로 떨어진다
+            var sp = Engine.GetService<IScriptPlayer>(); var tr = sp != null ? sp.MainTrack : null;
+            if (tr == null || tr.PlayedScript == null || tr.PlayedScript.Path == "Title") return false;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (MolakRevealTest.Status == "running") return false;   // 점검 도구가 도는 동안엔 플레이어 기록을 덮지 않는다
+#endif
+            return true;
+        }
+        catch { return false; }
     }
 
     void Update ()

@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// 0.4.85 인장(언메이커: 아이콘이 짜치다 → 시안 3 「먹 원 · 붉은 획」, 인장 전부 이 결로, 상황에 따라 빛이 달라도 된다).
-/// 붓으로 먹 원(원상)을 먼저 긋고(0.5초), 그 안에 한 글자가 찍힌다(0.45초, 크게 → 제자리). 글자는 인주가 덜 묻은 듯 군데군데 빈다.
+/// 붓으로 원(원상 — 먹빛 바탕에선 흰 붓, 종이 바탕에선 검은 먹)을 먼저 긋고(0.5초), 그 안에 한 글자가 찍힌다(0.45초, 크게 → 제자리). 글자는 인주가 덜 묻은 듯 군데군데 빈다.
 /// 빛: 좋은 판정(通·破·勢·先·勝) 주홍, 나쁜 판정(失·傷·敗) 검붉게 식고 원이 끊기며 글자 아래로 핏물이 흐른다(시안 4에서), 앎(憶·醒) 보랏빛, 초식(觀·步·落·絶) 금빛, 경지(境) 금빛, 갈림(岐) 주홍.
 /// IMGUI 에서 쓴다: Draw(box, 글자, 지난 시간, 투명도, 글꼴, 바탕빛).
 /// </summary>
@@ -85,20 +85,20 @@ public static class MolakSeal
         float R = S * 0.36f, start = -2.2f + Hash(seed, 1) * 0.3f, len = (broken ? 1.55f : 1.88f) * Mathf.PI * p;
         const int Dabs = 150;
         int nD = Mathf.CeilToInt(Dabs * p);
-        var ink = paper ? new Color(0.09f, 0.07f, 0.06f, 1f) : new Color(0.055f, 0.043f, 0.039f, 1f);
+        // 먹빛 바탕에선 검은 먹 원이 바탕에 묻혀 안 보였다(언메이커) → 제목 화면의 원상처럼 흰 붓으로. 종이 바탕은 검은 먹.
+        var ink = paper ? new Color(0.09f, 0.07f, 0.06f, 1f) : new Color(0.82f, 0.78f, 0.70f, 1f);
         for (int k = 0; k < nD; k++)
         {
             float tk = k / (float)(Dabs - 1), ang = start + (broken ? 1.55f : 1.88f) * Mathf.PI * tk;
             float wid = S * (0.055f * Mathf.Sin(Mathf.PI * Mathf.Min(1f, tk * 1.15f)) + 0.012f);
             float x = c.x + Mathf.Cos(ang) * R * (1f + 0.03f * Mathf.Sin(tk * 9f)), y = c.y + Mathf.Sin(ang) * R * (1f + 0.03f * Mathf.Cos(tk * 7f));
-            if (!paper) { GUI.color = new Color(0.30f, 0.25f, 0.21f, 0.10f * alpha); GUI.DrawTexture(new Rect(x - wid * 1.35f, y - wid * 1.35f, wid * 2.7f, wid * 2.7f), Dot); }   // 먹빛 바탕에서도 원이 보이게 젖은 결 한 겹
-            GUI.color = new Color(ink.r, ink.g, ink.b, (0.92f - 0.25f * tk) * alpha);
+            GUI.color = new Color(ink.r, ink.g, ink.b, (paper ? 0.92f - 0.25f * tk : 0.78f - 0.38f * tk) * alpha);   // 흰 붓은 끝으로 갈수록 마른다
             GUI.DrawTexture(new Rect(x - wid, y - wid, wid * 2f, wid * 2f), Dot);
             if (tk > 0.75f && (k & 1) == 0)
                 for (int q = 0; q < 2; q++)
                 {
                     float r0 = wid * 0.28f * Hash(seed, k * 7 + q), ox = (Hash(seed, k * 3 + q) - 0.5f) * wid * 3f, oy = (Hash(seed, k * 5 + q) - 0.5f) * wid * 3f;
-                    GUI.color = new Color(ink.r, ink.g, ink.b, 0.5f * alpha); GUI.DrawTexture(new Rect(x + ox - r0, y + oy - r0, r0 * 2f, r0 * 2f), Dot);
+                    GUI.color = new Color(ink.r, ink.g, ink.b, (paper ? 0.5f : 0.35f) * alpha); GUI.DrawTexture(new Rect(x + ox - r0, y + oy - r0, r0 * 2f, r0 * 2f), Dot);
                 }
         }
         // ② 글자: 원이 거의 다 그어질 때 위에서 눌러 찍힌다
