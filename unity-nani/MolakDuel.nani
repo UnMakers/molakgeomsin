@@ -21,7 +21,8 @@
 @goto #Sit11 if:dsit==11
 @goto #Sit12 if:dsit==12
 # Head
-<color=#C03434>{foename}</color> — 강호 서열 {foerank} · {foetier}.<br>상대의 기세를 읽는다. 승산, 어림잡아 <color=#C9A227>열에 {odds10k}</color>.
+<color=#C03434>{foename}</color> — 강호 서열 {foerank} · {foetier}.<br>상대의 기세를 읽는다.
+승산, 어림잡아 <color=#C9A227>열에 {odds10k}</color>.
 @print "{compline}" if:compline!="none"
 @print "<color=#9A70C4>옷깃의 참새 깃이 흔들린다. 그녀가 미리 알아다 준 이 칼잡이의 버릇이 떠오른다.</color>" if:f_chamfeather>0&&dlethal>0
 @goto #HeadInj if:injury>0||taint>0
@@ -269,7 +270,8 @@
 @goto #LoseDeath if:hp<=0||dsit==7
 @goto #LtFirst if:g_runs>0||lostonce>0
 @set lostonce=1
-<color=#9A70C4>목은 붙어 있다.</color> 비무판의 칼은 대개 목까지 오지 않는다. 대신 몸이 사흘을 앓는다. 목을 거두는 판은 따로 있다. 생사결, 원수, 그리고 이야기의 끝에 선 자들.
+<color=#9A70C4>목은 붙어 있다.</color> 비무판의 칼은 대개 목까지 오지 않는다. 대신 몸이 사흘을 앓는다.
+목을 거두는 판은 따로 있다. 생사결, 원수, 그리고 이야기의 끝에 선 자들.
 # LtFirst
 @goto #LtA if:dloot<1
 발이 미끄러져 물살로 떨어진다. 기어 나와 보니 은자 {dloot}냥이 떠내려갔다.
@@ -381,7 +383,8 @@
 @goto #WinAfter
 # TU3
 상대의 칼이 오기 전에 바람이 먼저 온다. 그 바람의 방향이 보인다.
-삼류는 칼을 휘두르고, 이류는 칼을 쓰고, 일류는 칼이 갈 길을 먼저 안다. 사부가 하던 말을 몸이 먼저 알아듣는다.
+삼류는 칼을 휘두르고, 이류는 칼을 쓰고, 일류는 칼이 갈 길을 먼저 안다.
+사부가 하던 말을 몸이 먼저 알아듣는다.
 @goto #WinAfter
 # TU4
 단전에서 손끝까지, 막혀 있던 마디가 하나씩 풀린다. 맥이 한 줄로 꿰인다.
