@@ -374,7 +374,6 @@
 "운객. 그 반 박자 늦게 오는 검. 다음 생에도 그렇게 쓰냐?"
 <align=right>"……다음 생이 있다면."</align>
 "있겠지. 너는 늘 처음 보는 놈처럼 안 굴더라."
-'<color=#9A70C4>처음 보는 놈이 아니니까.</color>'
 그가 돌아선다. 창잡이는 발이 넓다. 그 발이 오늘은 집으로 간다.
 @goto Molak02#AfterChapter
 
@@ -422,8 +421,6 @@
 @art char:hajinmu
 하진무가 장부를 돌려 보인다. 방값 칸이 줄줄이 비었다. 스물, 서른.
 "다 못 받은 방값이오. 돌아오지 않은 손님들 것."
-@print "'<color=#9A70C4>이 빈칸 하나하나에 사람이 있다. 그걸 아는 데 한 생이 걸렸다.</color>'" if:g_bt_hajin3b<3
-@print "'<color=#9A70C4>이 빈칸 하나하나에 사람이 있다. 그걸 아는 데 몇 생이 걸렸다.</color>'" if:g_bt_hajin3b>=3
 @goto #Hajin3Ch
 
 # Gwak3Re
