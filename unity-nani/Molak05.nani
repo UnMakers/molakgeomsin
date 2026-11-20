@@ -787,7 +787,7 @@
 @set f_bt_jang2=1
 @set g_bt_jang2=g_bt_jang2+1
 @goto #Jang2Sold if:f_jangsold>0
-@art char:jang
+@art char:jang_fear
 밤. 전당포 뒷골목 어귀에 먼저 서 있다. 붉은 끈 셋이 쥐눈이 장을 몰아오다 당신과 마주친다.
 <align=right>"<color=#9A70C4>소식첩 내놓으라 하시려고. 그 소식첩, 반은 찢겨 있소. 반값이나 받으시오.</color>"</align>
 붉은 끈이 장을 본다. 장이 당신을 본다. 쥐눈이 동그랗다.

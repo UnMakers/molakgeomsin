@@ -675,7 +675,7 @@
 이번엔 상복들이 물러나지 않는다.
 @vfx kind:hit
 맨 앞의 칼이, 당신 앞을 막아선 영감의 가슴에 들어간다. 소리가 작다.
-@art char:hajinmu
+@art char:hajinmu_kneel
 하진무가 주저앉으며 당신 소매를 잡는다.
 @vfx kind:beat
 "……셈이…… 이제 맞소. 장문인께…… 진 빚, 객한테…… 다 갚았으니."
