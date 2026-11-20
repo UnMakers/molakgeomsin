@@ -234,7 +234,15 @@ public class MolakArt : MonoBehaviour
     }
 
     void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; ChangedAt = Time.unscaledTime; if (s != null && charCur != null) SetChar(null, ""); }
-    void SetChar (Sprite s, string id) { if (id != charId) pushT = 0f; charCur = s; charId = id; charT = 0f; ChangedAt = Time.unscaledTime; }
+    /// <summary>0.4.84 새 사람이 들어오면 옆에서 미끄러져 들어온다(언메이커: 처음 등장할 때 옆에서 나오는 게 좋다). 같은 사람의 표정만 바뀌면(soa → soa_smile) 제자리에서 바뀐다.</summary>
+    static string Person (string id) { if (string.IsNullOrEmpty(id)) return ""; int u = id.IndexOf('_'); return u > 0 ? id.Substring(0, u) : id; }
+    void SetChar (Sprite s, string id)
+    {
+        bool newPerson = s != null && Person(id) != Person(charCur != null ? charId : null);
+        if (newPerson) { pushT = 0f; slideT = 0f; }
+        charCur = s; charId = id; charT = 0f; ChangedAt = Time.unscaledTime;
+    }
+    float slideT = 1f;
     /// <summary>0.4.65 그림이 마지막으로 바뀐 때(빨리에서 글을 그림 뒤로 반 박자 늦추는 데 쓴다).</summary>
     public static float ChangedAt = -9f;
     /// <summary>0.4.65 그림이 아직 다 떠오르지 않았다(장면·인물 페이드, 인물 뒤 풍경 눌림까지).</summary>
@@ -435,6 +443,9 @@ public class MolakArt : MonoBehaviour
             if (thr) k = Mathf.Max(k, (bandH - 28f * unit + 30f * unit) / sh);
             charR.transform.localScale = new Vector3(k, k, 1f);
             float x = cx + jit;   // 홀로 서니 띠 가운데
+            // 새 사람: 오른쪽 화면 밖에서 0.45초에 미끄러져 들어온다(끝에서 부드럽게 선다)
+            slideT = Mathf.Min(1f, slideT + Time.unscaledDeltaTime / 0.45f);
+            if (slideT < 1f) x += (1f - (1f - Mathf.Pow(1f - slideT, 3f))) * camW * 0.55f;
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
             charR.transform.position = new Vector3(x, y, z);
