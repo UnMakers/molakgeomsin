@@ -472,7 +472,7 @@ public class MolakHud : MonoBehaviour
     /// <summary>수치 줄 아래 몸의 업보 한 줄(부상·독·빚)이 떠 있나 — 마디 이름 표식이 그만큼 내려간다.</summary>
     public static bool WarnShown;
     GUIStyle sCH, sCN, sCS, sCW, sCB, sSealN; float cineU = -1f;
-    static readonly string[] RealmHanja = { "三流", "二流", "一流", "絶頂", "超絶頂", "化境", "玄境", "生死境", "神話境" };
+    static readonly string[] RealmHanja = { "삼류", "이류", "일류", "절정", "초절정", "화경", "현경", "생사경", "신화경" };   // 0.4.85 언메이커: 체력 줄은 기본 한글로
     public static Rect CineBagButton (float w, float u)
     {
         float W = Mathf.Min(w, 1080*u), X0 = (w-W)/2f, b = MolakLayout.CineBtnU*u;
@@ -490,7 +490,7 @@ public class MolakHud : MonoBehaviour
         {
             cineU = u;
             var hj = MolakGui.Hanja != null ? MolakGui.Hanja : gowun;
-            sCH = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(32*u), alignment = TextAnchor.MiddleLeft, richText = true, wordWrap = false, clipping = TextClipping.Overflow }; sCH.font = hj;
+            sCH = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(25*u), alignment = TextAnchor.MiddleLeft, richText = true, wordWrap = false, clipping = TextClipping.Overflow }; sCH.font = gowun;   // 0.4.85 한글 이름(한자 글꼴엔 한글이 없다)
             sCN = new GUIStyle(sCH) { fontSize = Mathf.RoundToInt(31*u) }; sCN.font = gowun;
             sCS = new GUIStyle(sCN) { fontSize = Mathf.RoundToInt(23*u) };
             sCW = new GUIStyle(sCN) { fontSize = Mathf.RoundToInt(24*u) };
@@ -520,7 +520,7 @@ public class MolakHud : MonoBehaviour
         bool lowHp = hp/hpm <= 0.34f;
         // 숫자들
         string[] keys = { "hp", "ng", "sl", "sw", "mn" };
-        string[] hz = { "體", "氣", "殺", "劍", "銀" };
+        string[] hz = { "체력", "내공", "살기", "검술", "은자" };
         string[][] cols = { StatCol.Hp, StatCol.Ng, StatCol.Sl, StatCol.Sw, StatCol.Realm };
         float gap = 26*u;
         // 다 놓았을 때 넘치면 간격부터 줄인다
@@ -547,7 +547,7 @@ public class MolakHud : MonoBehaviour
             GUI.Label(new Rect(rx, rowY, lw[i] + 4*u, rowH), ls[i], sCH); rx += lw[i] + 8*u;
             GUI.Label(new Rect(rx, rowY + 1*u, nw[i] + 4*u, rowH), ns[i], sCN); rx += nw[i] + gap;
         }
-        { var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(29*u); GUI.Label(new Rect(rx, rowY + 2*u, lw[5] + 10*u, rowH), ls[5], sCH); sCH.fontSize = g0; }
+        { var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(25*u); GUI.Label(new Rect(rx, rowY + 2*u, lw[5] + 10*u, rowH), ls[5], sCH); sCH.fontSize = g0; }
         // 누르면 「몸의 셈」
         var statR = new Rect(x - 10*u, top, maxX - x + 10*u, bH);
         MolakInputGuard.Guard(new Rect(X0, 0, W, top + bH + 20*u));
@@ -573,7 +573,7 @@ public class MolakHud : MonoBehaviour
         // 囊 단추
         {
             GUI.DrawTexture(bagR, MolakGui.Ring);
-            GUI.Label(bagR, "囊", sCB);
+            { var f0 = sCB.fontSize; sCB.fontSize = Mathf.RoundToInt(f0 * 0.62f); GUI.Label(bagR, "행낭", sCB); sCB.fontSize = f0; }
             int cnt = MolakBag.HaveCount;
             if (cnt > 0)
             {
@@ -628,7 +628,7 @@ public class MolakHud : MonoBehaviour
             thU = u;
             var hf = MolakTypography.Heading(gowun);
             sThPin = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(30*u), alignment = TextAnchor.MiddleLeft, richText = true, wordWrap = false, clipping = TextClipping.Clip }; sThPin.font = hf;
-            sThBag = new GUIStyle(sThPin) { fontSize = Mathf.RoundToInt(34*u), alignment = TextAnchor.MiddleCenter, clipping = TextClipping.Overflow };
+            sThBag = new GUIStyle(sThPin) { fontSize = Mathf.RoundToInt(28*u), alignment = TextAnchor.MiddleCenter, clipping = TextClipping.Overflow }; sThBag.font = gowun;
             sThChip = new GUIStyle(sThPin) { fontSize = Mathf.RoundToInt(24*u), alignment = TextAnchor.MiddleCenter }; sThChip.font = gowun;
             MolakGui.Ink(sThPin, new Color(0.83f, 0.71f, 0.42f, 1f)); MolakGui.Ink(sThBag, new Color(0.83f, 0.71f, 0.42f, 1f)); MolakGui.Ink(sThChip, new Color(0.93f, 0.89f, 0.83f, 1f));
         }
@@ -666,9 +666,9 @@ public class MolakHud : MonoBehaviour
         float l2 = (MolakLayout.ThInsetTop + MolakLayout.ThStatLineY) * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
         bool lowHp = hp/hpm <= 0.34f;
         string[] keys = { "hp", "ng", "sl", "sw", "mn" };
-        string[] hz = { "體", "氣", "殺", "劍", "銀" };
+        string[] hz = { "체력", "내공", "살기", "검술", "은자" };
         string[][] cols = { StatCol.Hp, StatCol.Ng, StatCol.Sl, StatCol.Sw, StatCol.Realm };
-        float rx = x, gap = 28*u;
+        float rx = x, gap = 20*u;
         for (int i = 0; i < 5; i++)
         {
             float v = MolakStats.Get(keys[i]);
@@ -679,7 +679,7 @@ public class MolakHud : MonoBehaviour
             GUI.Label(new Rect(rx, ry, lw + 4*u, rowH), ls, sCH); rx += lw + 10*u;
             if (keys[i] == "hp")
             {   // 體 옆 가는 체력 선
-                float bw = 120*u, bh = Mathf.Max(2f, 5*u), by = l2 - bh * 0.5f + 2*u;
+                float bw = 90*u, bh = Mathf.Max(2f, 5*u), by = l2 - bh * 0.5f + 2*u;
                 float rr = Mathf.Clamp01(hp/hpm);
                 bool low = rr <= 0.34f;
                 if (low && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
@@ -692,7 +692,7 @@ public class MolakHud : MonoBehaviour
             float nw = sCN.CalcSize(new GUIContent(ns)).x;
             GUI.Label(new Rect(rx, ry + 1*u, nw + 4*u, rowH), ns, sCN); rx += nw + gap;
         }
-        { string rl = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>"; var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(29*u); GUI.Label(new Rect(rx, ry + 2*u, 200*u, rowH), rl, sCH); sCH.fontSize = g0; }
+        { string rl = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>"; var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(25*u); GUI.Label(new Rect(rx, ry + 2*u, 200*u, rowH), rl, sCH); sCH.fontSize = g0; }
         MolakInputGuard.Guard(new Rect(0, 0, w, bandB));
         if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(new Rect(x - 10*u, l2 - 40*u, menuR.x - x, 80*u), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 맨 아래 띠: 왼쪽 「앞 쪽」, 가운데 行囊 + 최근에 얻은 것(누르면 행낭), 오른쪽 「자동」「빨리」(0.4.83 — 메뉴를 열지 않고 바로)
@@ -724,7 +724,7 @@ public class MolakHud : MonoBehaviour
             // 가운데: 行囊 + 최근에 얻은 것(자리에 맞는 만큼)
             float midL = backR.xMax + 16*u, midR = autoR.x - 16*u;
             var rec = MolakBag.Recent(3);
-            float cw0 = sThBag.CalcSize(new GUIContent("行囊")).x;
+            float cw0 = sThBag.CalcSize(new GUIContent("행낭")).x;
             var ws2 = new System.Collections.Generic.List<float>(); float tot = cw0;
             foreach (var nm in rec)
             {
@@ -733,7 +733,7 @@ public class MolakHud : MonoBehaviour
                 ws2.Add(wv); tot += 16*u + wv;
             }
             float cx = midL + (midR - midL - tot) / 2f;
-            GUI.Label(new Rect(cx, cy - 26*u, cw0, 52*u), "行囊", sThBag); cx += cw0 + 16*u;
+            GUI.Label(new Rect(cx, cy - 26*u, cw0, 52*u), "행낭", sThBag); cx += cw0 + 16*u;
             for (int i = 0; i < ws2.Count; i++)
             {
                 var r = new Rect(cx, cy - 22*u, ws2[i], 44*u);

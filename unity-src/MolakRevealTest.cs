@@ -84,7 +84,7 @@ public class MolakRevealTest : MonoBehaviour
         var cont = im.GetInput("Continue");
         // 0.4.85 화면 점검 상태
         string pScene = MolakArt.DbgScene, pChar = MolakArt.DbgChar, oldCharAtScene = ""; int pLen = 0, afterFrames = 0;
-        float pageClearAt = -9f, textStartAt = -9f, sceneChangedAt = -9f, pressAt = -9f, lastGrowAt = -9f; float charHiAt = -9f, charLoAt = -9f; string charHiName = "";
+        string gapTrace = ""; float pageClearAt = -9f, textStartAt = -9f, sceneChangedAt = -9f, pressAt = -9f, lastGrowAt = -9f; float charHiAt = -9f, charLoAt = -9f; string charHiName = "";
         System.Action<string> flag = m => { var tr0 = sp.MainTrack; string spot0 = tr0 != null ? tr0.PlaybackSpot.ToString() : ""; Flags.AppendLine(script + " " + spot0 + " | " + m); };
         while (Time.realtimeSinceStartup - t0 < seconds)
         {
@@ -101,7 +101,8 @@ public class MolakRevealTest : MonoBehaviour
                 bool dlgVisible = dt != null && dt.isActiveAndEnabled && dt.color.a > 0.05f;
                 if (plen == 0 && pLen > 0) pageClearAt = now;
                 if (plen > 0 && pLen == 0) textStartAt = now;
-                if (plen > pLen) { if (pressAt > 0f && now - pressAt > 1.0f && !MolakVfx.ChapterHolding && MolakArt.DbgDipA < 0.05f && !MolakVfx.Holding) flag("글이 늦게 뜬다 " + (now - pressAt).ToString("0.00") + "초"); pressAt = -9f; lastGrowAt = now; }
+                if (pressAt > 0f && tr != null) { string c = (tr.PlayedCommand != null ? tr.PlayedCommand.GetType().Name + "@" + tr.PlayedCommand.PlaybackSpot.ToString().Replace(" ", "") : "-") + (tr.Playing ? "" : "(정지)") + (tr.AwaitingInput ? "(대기)" : ""); if (!gapTrace.EndsWith(c + " ")) gapTrace += c + " "; }
+                if (plen > pLen) { if (pressAt > 0f && now - pressAt > 1.0f && !MolakVfx.ChapterHolding && MolakArt.DbgDipA < 0.05f && !MolakVfx.Holding) flag("글이 늦게 뜬다 " + (now - pressAt).ToString("0.00") + "초 [" + gapTrace.Trim() + "]"); pressAt = -9f; gapTrace = ""; lastGrowAt = now; }
                 // 새 쪽의 글이 이미 떠 있는데 장면 그림이 뒤늦게 바뀐다
                 if (sc != pScene && sc != "")
                 {
@@ -156,7 +157,7 @@ public class MolakRevealTest : MonoBehaviour
             if (tr != null && tr.AwaitingInput && prog >= 0.999f && !tracking)
             {
                 yield return new WaitForSecondsRealtime(0.25f);
-                if (cont != null) { cont.Activate(1f); yield return null; cont.Activate(0f); pressAt = Time.realtimeSinceStartup; }
+                if (cont != null) { cont.Activate(1f); yield return null; cont.Activate(0f); pressAt = Time.realtimeSinceStartup; gapTrace = ""; }
                 yield return new WaitForSecondsRealtime(0.1f);
             }
             if (tr != null && !tr.Playing && btns.Length == 0 && !tr.AwaitingInput && Time.realtimeSinceStartup - t0 > 3f) { Log.AppendLine("■ 멈춤"); break; }
