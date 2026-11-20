@@ -75,16 +75,12 @@ public class MolakMark : MonoBehaviour
         GUI.color = new Color(0.75f, 0.2f, 0.18f, a * 0.85f);
         GUI.DrawTexture(new Rect(bx + 40 * u, by + bh - 3 * u, bw - 80 * u, 2 * u), MolakGui.Px);
         // 붉은 인장 岐
-        var seal = new Rect(bx + 46 * u, by + (bh - 92 * u) / 2f, 92 * u, 92 * u);
-        GUI.color = new Color(0.72f, 0.14f, 0.12f, a * 0.95f); GUI.DrawTexture(seal, MolakGui.Px);
-        GUI.color = new Color(0.05f, 0.03f, 0.03f, a * 0.9f);
-        GUI.DrawTexture(new Rect(seal.x + 6 * u, seal.y + 6 * u, seal.width - 12 * u, seal.height - 12 * u), MolakGui.Px);
+        var seal = new Rect(bx + 30 * u, by + (bh - 124 * u) / 2f, 124 * u, 124 * u);
         GUI.color = g0;
-        MolakGui.Ink(sSeal, new Color(0.86f, 0.24f, 0.2f, a));
-        GUI.Label(seal, "岐", sSeal);
+        MolakSeal.Draw(seal, "岐", e, a, MolakGui.Hanja, new Color(0.04f, 0.03f, 0.03f, 1f));   // 0.4.85 인장: 먹 원 · 붉은 획
         MolakGui.Ink(sMain, new Color(0.95f, 0.9f, 0.8f, a));
         MolakGui.Ink(sSub, new Color(0.9f, 0.76f, 0.66f, a));
-        float tx = seal.xMax + 30 * u, tw = bx + bw - 40 * u - tx;
+        float tx = seal.xMax + 18 * u, tw = bx + bw - 40 * u - tx;
         if (string.IsNullOrEmpty(sub)) GUI.Label(new Rect(tx, by, tw, bh), line, sMain);   // 한 줄이면 띠 가운데에
         else
         {

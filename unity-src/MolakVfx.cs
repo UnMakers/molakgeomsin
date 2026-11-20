@@ -96,6 +96,8 @@ public class MolakVfx : MonoBehaviour
     //  · 넘기기 중엔 0.5초, 자동이면 1.6초 뒤 저절로 걷힌다.
     bool stampHold; float stampAuto;
     public static bool Holding => instance != null && instance.stampT >= 0f && instance.stampHold;
+    /// <summary>인장을 누른 셈 치고 걷는다(점검 도구·처음으로).</summary>
+    public static void ReleaseStamp () { if (instance == null || instance.stampT < 0f) return; instance.stampHold = false; instance.stampOutAt = instance.stampT; }
     public static void Stamp (string hanja, string line, bool big)
     {
         if (instance == null) return;
@@ -492,23 +494,16 @@ public class MolakVfx : MonoBehaviour
                 var ta = TextArea();
                 // 글자리를 빈 종이로: 아래 글이 비치지 않게
                 bool dk = DarkSlip;   // 0.4.82 그림 화면: 옻칠 판 그대로 덮는다
-                var bg = GUI.color; GUI.color = dk ? new Color(0.067f, 0.059f, 0.055f, 0.985f * a) : new Color(0.955f, 0.94f, 0.905f, 0.985f * a); GUI.DrawTexture(ta, Px);
-                GUI.color = new Color(0.55f, 0.42f, 0.25f, 0.35f * a);
-                GUI.DrawTexture(new Rect(ta.x + ta.width * 0.2f, ta.y + ta.height * 0.5f + 118f * u, ta.width * 0.6f, Mathf.Max(1f, 1.5f * u)), Px);
+                var bg = GUI.color; GUI.color = dk ? new Color(0.098f, 0.082f, 0.07f, 0.99f * a) : new Color(0.955f, 0.94f, 0.905f, 0.99f * a); GUI.DrawTexture(ta, Px);
                 GUI.color = bg;
                 var piv = new Vector2(ta.center.x, ta.y + ta.height * 0.5f - 30f * u);
-                float sc = 1f + Mathf.Clamp01(1f - stampT / 0.18f) * (stampBig ? 0.5f : 0.25f);   // 찍히는 순간 크게 → 제자리
-                // 인장 바탕: 붉은 먹 네모(금빛 인장은 옅은 금빛 테두리)
-                var box = new Rect(piv.x - 105f * u, piv.y - 105f * u, 210f * u, 210f * u);
-                var m = GUI.matrix; GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), piv);
-                GUI.color = new Color(col.r, col.g, col.b, 0.92f * a); GUI.DrawTexture(box, Px);
-                GUI.color = new Color(1f, 1f, 1f, 0.12f * a); GUI.DrawTexture(new Rect(box.x + 8f * u, box.y + 8f * u, box.width - 16f * u, box.height - 16f * u), Px);
-                GUI.color = bg;
-                MolakGui.Ink(sStamp, new Color(0.98f, 0.95f, 0.88f, a));
-                GUI.Label(box, stampHanja, sStamp);
-                GUI.matrix = m;
+                // 0.4.85 인장(시안 3 「먹 원 · 붉은 획」): 먹 원을 긋고 그 안에 판정의 빛으로 한 글자. 큰 판정은 조금 더 크게.
+                float bs = (stampBig ? 340f : 300f) * u;
+                var box = new Rect(piv.x - bs / 2f, piv.y - bs / 2f, bs, bs);
+                var backC = dk ? new Color(0.098f, 0.082f, 0.07f, 1f) : new Color(0.955f, 0.94f, 0.905f, 1f);
+                MolakSeal.Draw(box, stampHanja, stampT, a, MolakGui.Hanja, backC, !dk);
                 MolakGui.Ink(sStampLine, dk ? new Color(0.92f, 0.88f, 0.82f, a) : new Color(0.16f, 0.13f, 0.1f, a));
-                GUI.Label(new Rect(ta.x + 20f * u, piv.y + 120f * u, ta.width - 40f * u, 90f * u), stampLine, sStampLine);
+                GUI.Label(new Rect(ta.x + 20f * u, piv.y + (stampBig ? 180f : 160f) * u, ta.width - 40f * u, 90f * u), stampLine, sStampLine);
                 if (stampHold && stampAuto < 0f && stampT > 0.6f)
                 {
                     MolakGui.Ink(sStampHint, dk ? new Color(0.66f, 0.60f, 0.53f, Mathf.Clamp01((stampT - 0.6f) / 0.4f) * a) : new Color(0.45f, 0.4f, 0.34f, Mathf.Clamp01((stampT - 0.6f) / 0.4f) * a));

@@ -81,7 +81,7 @@ public class MolakRevealTest : MonoBehaviour
         while (!started) yield return null;
         float t0 = Time.realtimeSinceStartup, chapSeen = -1f;
         string lastText = null; int frames = 0, startLen = 0; bool tracking = false; float revStart = 0f;
-        var cont = im.GetInput("Continue"); int stopTries = 0; float lastProg = 0f; bool hidFlagged = false, inkFlagged = false; int inkAtMsg = MolakArt.InkStarts;
+        var cont = im.GetInput("Continue"); int stopTries = 0; float lastProg = 0f, stampSeen = -1f; bool hidFlagged = false, inkFlagged = false; int inkAtMsg = MolakArt.InkStarts;
         // 0.4.85 화면 점검 상태
         string pScene = MolakArt.DbgScene, pChar = MolakArt.DbgChar, oldCharAtScene = ""; int pLen = 0, afterFrames = 0;
         string gapTrace = ""; float pageClearAt = -9f, textStartAt = -9f, sceneChangedAt = -9f, pressAt = -9f, lastGrowAt = -9f; float charHiAt = -9f, charLoAt = -9f; string charHiName = "";
@@ -136,6 +136,8 @@ public class MolakRevealTest : MonoBehaviour
             // ② 글 하나 사이에 번짐이 두 번 이상
             if (MolakArt.InkStarts - inkAtMsg > 1 && !inkFlagged) { inkFlagged = true; flag("번짐이 " + (MolakArt.InkStarts - inkAtMsg) + "번(글 사이)"); }
             if (tracking) { frames++; if (prog >= 0.999f) { Finish(frames, startLen, revStart); tracking = false; } }
+            // 인장: 1.2초 보고 걷는다(누른 셈)
+            if (MolakVfx.Holding) { if (stampSeen < 0f) stampSeen = Time.realtimeSinceStartup; else if (Time.realtimeSinceStartup - stampSeen > 1.2f) { MolakVfx.ReleaseStamp(); stampSeen = -1f; } }
             // 마디 이름: 0.8초 뒤 걷는다
             if (MolakVfx.ChapterHolding)
             {

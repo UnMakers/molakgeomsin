@@ -81,15 +81,10 @@ public class MolakDuelCard : MonoBehaviour
         MolakPaper.CardFace(new Rect(ta.x + 30f * u, cy - 34f * u, ta.width - 60f * u, 400f * u), accent, u);
         MolakGui.Ink(sName, MolakPaper.Sub);
         GUI.Label(new Rect(ta.x, cy, ta.width, 52 * u), "— " + cName + " —", sName);
-        float sc = 1f + Mathf.Clamp01(1f - cT / 0.25f) * 0.2f;
+        // 0.4.85 인장(먹 원 · 붉은 획): 勝은 주홍, 敗는 검붉고 원이 끊긴다
         var pivot = new Vector2(ta.center.x, cy + 150 * u);
-        var box = new Rect(pivot.x - 95 * u, pivot.y - 95 * u, 190 * u, 190 * u);
-        var old = GUI.matrix;
-        GUIUtility.ScaleAroundPivot(new Vector2(sc, sc), pivot);
-        Box(box, new Color(accent.r, accent.g, accent.b, 0.92f));
-        MolakGui.Ink(sHanja, MolakPaper.Card);
-        GUI.Label(box, cWin ? "勝" : "敗", sHanja);
-        GUI.matrix = old;
+        var box = new Rect(pivot.x - 120 * u, pivot.y - 120 * u, 240 * u, 240 * u);
+        MolakSeal.Draw(box, cWin ? "勝" : "敗", cT, a, MolakGui.Hanja, MolakPaper.Card, !MolakTheme.Night);
         MolakGui.Ink(sLine, MolakPaper.Ink);
         GUI.Label(new Rect(ta.x, cy + 262 * u, ta.width, 46 * u), cLine, sLine);
         MolakGui.Ink(sSub, cWin ? MolakPaper.Accent : MolakPaper.Sub);
