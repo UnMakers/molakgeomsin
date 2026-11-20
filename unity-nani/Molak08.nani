@@ -520,7 +520,7 @@
 # Cm3Re
 @set f_bt_cm3=1
 @set g_bt_cm3=g_bt_cm3+1
-@art char:cheongmyo
+@art char:cheongmyo_smile
 산사 뒤뜰. 청묘가 낡은 청운 무복을 입고 서 있다. 그녀가 입을 열기 전에 먼저 말한다.
 <align=right>"<color=#9A70C4>머리는, 자라려면 오래 걸리겠지요.</color>"</align>
 청묘가 짧은 머리에 손을 얹는다. 그러다 웃음을 터뜨린다.

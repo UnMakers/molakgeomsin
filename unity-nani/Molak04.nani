@@ -1106,7 +1106,7 @@
 @return
 # EpiJinAlly
 @page
-@art char:jinbaek
+@art char:jinbaek_smile
 @goto #EpiJinHeld if:f_jinheld>0
 옆문 앞에 칼잡이 열이 누워 있다. 그 한가운데 진백이 문설주에 기대 앉아 있다. 숨은 붙어 있다.
 "……늦었구나, 막내야. 사부는 늘 네가 늦는다고 하셨지."

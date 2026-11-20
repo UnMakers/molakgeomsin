@@ -140,7 +140,8 @@ public class MolakArt : MonoBehaviour
         if (Generic.Contains(inst.sceneId) && !inst.sceneId.StartsWith("duel"))
         {
             string home;
-            if ((IsNight ? HomeNight : HomeDay).TryGetValue(id, out home) && home != inst.sceneId)
+            var homes = IsNight ? HomeNight : HomeDay;
+            if ((homes.TryGetValue(id, out home) || homes.TryGetValue(Person(id), out home)) && home != inst.sceneId)
             {
                 var hs = Load("MolakArt/scene_" + home);
                 if (hs != null) { inst.sceneCur = hs; inst.sceneId = home; inst.sceneT = 0f; ChangedAt = Time.unscaledTime; }

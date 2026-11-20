@@ -1050,7 +1050,7 @@
 @choice "목검을 바로 쥐고 고개를 숙인다" goto:#Pro0B
 @stop
 # Pro0A
-@art char:jinbaek
+@art char:jinbaek_smile
 대사형이 웃는다. 웃음이 짧고 낮다.
 "막내가 사형한테 날짜를 세는구나. 그래, 올겨울 안에 고쳐 주마. 약조다."
 그 약조는 지켜지지 않는다. 그해 겨울이 오지 않았으니까.

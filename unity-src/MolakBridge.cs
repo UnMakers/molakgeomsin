@@ -73,6 +73,8 @@ public static class MolakBridge
         string nm;
         if (CharName.TryGetValue(charId, out nm)) return nm;
         if (SealName.TryGetValue(charId, out nm)) return nm;
+        int u = charId.IndexOf('_');   // 0.4.84 표정 그림(char_jinbaek_smile 등)은 사람 이름으로
+        if (u > 0) return NameOf(charId.Substring(0, u));
         return null;
     }
 

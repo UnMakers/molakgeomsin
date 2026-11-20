@@ -2712,6 +2712,7 @@
 @choice "\"묶어서 살린 거요. 사형은 그날 산에 올라갔으면 죽었소.\"" goto:#E_Gyeol3B
 @stop
 # E_Gyeol3T
+@art char:gyeol_pain
 그의 얼굴이 굳는다. 숨을 쉬지 않는다.
 "……일곱."
 <align=right>"사저가 산사에 있소. 곳간 빗장 안에서 나흘을 버텼소. 대사형이 숨겼소. 사형은 숯가마에 묶였고."</align>
@@ -2724,6 +2725,7 @@
 @fx curse:-3 sl:1
 @return
 # E_Gyeol3H
+@art char:gyeol_pain
 "……운다고."
 <align=right>"사부님, 막내가 살아 있답니다. 그렇게 말했소. 이마를 바닥에 대고."</align>
 단목결이 고개를 숙인다. 한참 그대로 있다.
@@ -6298,7 +6300,7 @@
 @set f_jangfinger=1
 @return
 # E_HaoA
-@art char:jang
+@art char:jang_uneasy
 다락. 노파 앞에 쥐눈이 장이 무릎을 꿇었다. 둘레의 사내 넷 모두 왼 귓불에 바늘구멍이 비어 있다.
 노파가 놀라지 않고 당신을 본다.
 "청운 막내로구나. 앉거라. 남의 집 법 구경도 공부다."
@@ -6417,7 +6419,7 @@
 <align=right>"교는 명부의 이름을 지우지 않소. 줄만 하나 더 긋지."</align>
 장이 쏟아진 은자를 줍지 않는다.
 "하나만 묻겠소. 객잔에 방이 여럿인데 왜 하필 이 방이오."
-@art char:jang
+@art char:jang_uneasy
 쥐눈이 계단에 흩어진 은자 위를 오래 굴러다닌다.
 "객은 오지 않은 소식을 아는 사람이오. 소식장수 눈은 그걸 못 속이오. 그런 사람은 죽어도 아침이면 다시 오는 법이고."
 "……"
@@ -9100,7 +9102,7 @@
 
 # E_CmDates
 @art scene:templeyard
-@art char:cheongmyo
+@art char:cheongmyo_smile
 {dejapre}
 산문 돌계단. 청묘가 말린 대추를 한 줌 쥐여 준다. 둘이 나란히 앉아 하나씩 씹는다.
 "둘째 사형은 대추씨를 멀리 뱉는 내기를 했어요. 넷째 사형은 늘 졌고요. 대사형은…… 씨까지 삼켰어요. 아깝다고."
@@ -9126,7 +9128,7 @@
 
 # E_CmGraves
 @art scene:ruins
-@art char:cheongmyo
+@art char:cheongmyo_tears
 {dejapre}
 청운산 아래 비탈. 봉분 열둘. 비석은 없다. 청묘가 이름 대신 돌 하나씩을 얹어 두었다.
 그녀가 빗자루를 하나 더 들고 왔다. 자루가 길다. 다 자란 막내 손에 맞춰 새로 맨 빗자루다.
@@ -10265,7 +10267,7 @@
 @set f_ev_yong3=1
 @set g_ev_yong3=g_ev_yong3+1
 나루터. 독아단 둘이 짐꾼들을 줄 세우기 전에 그 줄 끝에 먼저 가 선다. 용개 바로 뒤에.
-@art char:yonggae
+@art char:yonggae_grave
 용개가 돌아보다 굳는다. 당신을 끌어들이지 않으려 돌리던 고개가 갈 데를 잃는다.
 "……나리, 왜 줄에 서십니까요."
 <align=right>"<color=#9A70C4>이 짐 지고 북쪽 간 짐꾼은 돌아온 적이 없지.</color>"</align>

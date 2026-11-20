@@ -164,7 +164,7 @@
 @goto #Yong3Tail
 # Yong3Tail
 @page
-@art char:yonggae
+@art char:yonggae_grave
 밤. 객잔 담 밑에서 용개가 지게 멜빵을 고치고 있다. 바늘을 쥔 손이 서툴다.
 "나리. 녹림엔 법이 있었습죠. 가난한 마을은 안 턴다."
 <align=right>"알고 있소."</align>
@@ -227,7 +227,7 @@
 @set f_jangfriend=1
 @fx curse:-1
 @page
-@art char:jang
+@art char:jang_uneasy
 그가 골목 끝에서 한 번 돌아본다. 쥐눈이 아니다. 그냥 늙은 사내의 눈이다.
 "객. 다음에 만나면, 그때도 내 얼굴을 기억하시겠소?"
 대답하기 전에 그가 어둠으로 들어간다. 이 생에서는 다시 보지 못할 것이다. 다음 생엔, 또 처음 만날 것이다.

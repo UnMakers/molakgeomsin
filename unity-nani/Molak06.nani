@@ -972,7 +972,7 @@
 @goto Molak02#AfterChapter
 # Rev4S
 @art scene:templeyard
-@art char:cheongmyo
+@art char:cheongmyo_tears
 청묘가 장작을 패다 멈춘다. 도끼가 장작에 박힌 채 손을 떠난다.
 "……알고 있었어요. 보름마다 쌀이 놓였으니까. 그 매듭, 대사형 매듭이니까."
 <align=right>"왜 말하지 않았소."</align>
@@ -1011,7 +1011,7 @@
 @choice "사당 문간을 돌아본다 — 다섯째 사형이 서 있다" if:f_gyeolally>0&&f_gyeoldead<1 goto:#Rev5G
 @stop
 # Rev5G
-@art char:gyeol
+@art char:gyeol_pain
 문간에 검은 관복이 서 있다. 서열패를 떼어 손에 쥐었다. 관복 앞섶이 벌어져 회색 무복이 보인다.
 진백이 그를 본다. 검끝이 아주 조금 내려간다.
 "……결이냐."
@@ -1055,9 +1055,11 @@
 @art char:jinbaek
 진백의 검이 그의 손에서 사당 바닥으로 미끄러진다.
 "……사매."
+@art char:cheongmyo_tears
 "대사형. 보름마다 사당 앞에 이름 없는 쌀이 놓여 있었어요. 일 년 동안 스물네 번."
 혈랑대주가 서열록에 이름도 없는 비구니 앞에서 고개를 들지 못한다.
 "막내가 저를 찾아왔어요. 대사형이 무엇을 바꾸고 저를 살렸는지, 저는 이제 알아요."
+@art char:jinbaek
 진백이 그제야 당신을 똑바로 본다. 흐리던 눈에 초점이 돌아와 있다.
 "……막내야. 너는 어찌 이 아이를 알았느냐. 그 문 앞의 일은 나 혼자 지고 갈 셈이었다."
 @choice "\"혼자 지게 두지 않으려고 왔소. 교주는 둘이 베겠소.\"" goto:#Rev5SA
@@ -1077,7 +1079,7 @@
 @goto Molak02#AfterChapter
 # Rev5SB
 <align=right>"떠나라고."</align>
-@art char:jinbaek
+@art char:jinbaek_smile
 진백이 웃는다. 목검을 쥐여 주던 날의 얼굴이 아주 잠깐 겹친다.
 "막내가 사형을 내쫓는구나. 사부가 보셨으면 너를 혼냈을 게다. 아니, 나를 혼내셨겠지."
 그가 청묘의 손을 잡고 나가다 멈춘다.
@@ -1127,7 +1129,7 @@
 @goto Molak02#AfterChapter
 # Rev5W
 검이 반 수 빨랐다. 천 번을 죽어 본 자의 반 수다.
-@art char:jinbaek
+@art char:jinbaek_smile
 진백이 무릎을 꿇는다. 피가 위패 자리의 먼지를 적신다.
 "……많이, 늘었구나."
 @choice "벤다 — 청운의 이름으로" goto:#Rev5K

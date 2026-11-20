@@ -45,7 +45,7 @@
 @goto #Rev6ATail
 # Rev6ATail
 @page
-@art char:jinbaek
+@art char:jinbaek_smile
 사당 문간에 앉아 둘이 동이 트는 것을 본다. 진백이 품에서 무언가를 꺼냈다가, 도로 넣는다.
 <align=right>"……그건 뭐요."</align>
 "네 목검이다. 결전이 끝나면 돌려주마. 그 전에 주면, 네가 그걸 쥐고 죽을 것 같아서."
@@ -105,7 +105,7 @@
 @fx curse:5 hp:-2
 @goto Molak02#AfterChapter
 # Rev6LW
-@art char:jinbaek
+@art char:jinbaek_smile
 열둘 중 일곱이 고개에 눕는다. 다섯이 흩어진다. 진백이 바위에 기대 숨을 몰아쉰다.
 "사부께서 사형제끼리 등을 맞대면 열을 이긴다 하셨는데. 일곱이로구나. 우리가 덜 배웠다."
 @set f_jinlure=1
