@@ -61,14 +61,34 @@ public class MolakArt : MonoBehaviour
         { "regress", 0.62f }, { "soa", 0.70f }, { "revenge", 0.50f }, { "cheongmyo", 0.50f }, { "oldman", 0.40f }, { "net", 0.50f },
         { "sparrow", 0.55f }, { "finale", 0.48f }, { "amhyang", 0.42f }, { "shrine", 0.62f }, { "inn", 0.50f }, { "jang", 0.55f }
     };
-    SpriteRenderer keyR; Sprite keyCur; float keyT = 1f, keyIn, keyFx = 0.5f;
+    // 위아래로 잘릴 때 어디를 가운데 둘지(그림 높이 비율, 위가 0)
+    static readonly Dictionary<string, float> KeyFocusY = new Dictionary<string, float>
+    {
+        { "regress", 0.45f }, { "soa", 0.55f }, { "revenge", 0.55f }, { "cheongmyo", 0.62f }, { "oldman", 0.62f }, { "net", 0.55f },
+        { "sparrow", 0.62f }, { "finale", 0.62f }, { "amhyang", 0.58f }, { "shrine", 0.55f }, { "inn", 0.58f }, { "jang", 0.62f }
+    };
+    // 화면이 그림보다 훨씬 넓을 때(가로 PC) 양옆을 메울 종이빛(그림 왼쪽·오른쪽 끝의 빛)
+    static readonly Dictionary<string, Color32[]> KeyEdge = new Dictionary<string, Color32[]>
+    {
+        { "regress", new Color32[]{ new Color32(251,247,228,255), new Color32(149,136,116,255) } }, { "soa", new Color32[]{ new Color32(249,243,226,255), new Color32(248,242,226,255) } },
+        { "revenge", new Color32[]{ new Color32(236,229,209,255), new Color32(234,228,208,255) } }, { "cheongmyo", new Color32[]{ new Color32(248,243,221,255), new Color32(249,241,215,255) } },
+        { "oldman", new Color32[]{ new Color32(254,252,232,255), new Color32(254,252,233,255) } }, { "net", new Color32[]{ new Color32(250,245,225,255), new Color32(251,247,228,255) } },
+        { "sparrow", new Color32[]{ new Color32(238,224,201,255), new Color32(246,242,225,255) } }, { "finale", new Color32[]{ new Color32(252,250,230,255), new Color32(252,250,229,255) } },
+        { "amhyang", new Color32[]{ new Color32(251,248,234,255), new Color32(250,248,232,255) } }, { "shrine", new Color32[]{ new Color32(253,251,228,255), new Color32(253,251,229,255) } },
+        { "inn", new Color32[]{ new Color32(253,251,219,255), new Color32(252,243,212,255) } }, { "jang", new Color32[]{ new Color32(253,249,214,255), new Color32(253,250,216,255) } }
+    };
+    SpriteRenderer keyR, keyBgR; Sprite keyCur; float keyT = 1f, keyIn, keyFx = 0.5f, keyFy = 0.5f; Texture2D keyBgTex;
     public static void Key (string sub)
     {
         if (inst == null) return;
         string id; Sprite sp = null;
         if (!string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id)) sp = Load("MolakArt/key_" + id);
         inst.keyCur = sp; inst.keyT = 0f; inst.keyIn = 0f;
-        float fx; inst.keyFx = sp != null && KeyFocus.TryGetValue(KeyFor(sub), out fx) ? fx : 0.5f;
+        string kid = KeyFor(sub); float fx, fy;
+        inst.keyFx = sp != null && KeyFocus.TryGetValue(kid, out fx) ? fx : 0.5f;
+        inst.keyFy = sp != null && KeyFocusY.TryGetValue(kid, out fy) ? fy : 0.5f;
+        Color32[] edge;
+        if (sp != null && inst.keyBgTex != null && KeyEdge.TryGetValue(kid, out edge)) { inst.keyBgTex.SetPixels32(new Color32[]{ edge[0], edge[1] }); inst.keyBgTex.Apply(); }
     }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
@@ -314,6 +334,13 @@ public class MolakArt : MonoBehaviour
         var kg = new GameObject("Key"); kg.transform.SetParent(band.transform, false); kg.layer = 30;
         keyR = kg.AddComponent<SpriteRenderer>(); keyR.sharedMaterial = matScene; keyR.sortingOrder = 13;
         keyR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+        var kbg = new GameObject("KeyBg"); kbg.transform.SetParent(band.transform, false); kbg.layer = 30;
+        keyBgR = kbg.AddComponent<SpriteRenderer>(); keyBgR.sharedMaterial = matScene; keyBgR.sortingOrder = 13;
+        keyBgR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+        keyBgTex = new Texture2D(2, 1, TextureFormat.RGBA32, false); keyBgTex.filterMode = FilterMode.Bilinear; keyBgTex.wrapMode = TextureWrapMode.Clamp;
+        keyBgTex.SetPixels32(new Color32[]{ new Color32(250,246,228,255), new Color32(250,246,228,255) }); keyBgTex.Apply();
+        keyBgR.sprite = Sprite.Create(keyBgTex, new Rect(0, 0, 2, 1), new Vector2(0.5f, 0.5f), 100f); keyBgR.enabled = false;
+        keyR.sortingOrder = 14;
     }
 
     /// <summary>0.4.82 극장판 그림 창의 좌우 먹(시안 DE4): 왼쪽 55% → 30%에서 0 … 70%에서 0 → 오른쪽 40%.</summary>
@@ -482,7 +509,7 @@ public class MolakArt : MonoBehaviour
         float cover = MolakVfx.ChapterCover;
         if (keyCur != null && cover <= 0f && keyIn > 0.5f) keyCur = null;
         if (keyCur != null && keyR.sprite != keyCur) keyR.sprite = keyCur;
-        if (keyCur == null) { keyR.sprite = null; keyR.enabled = false; }
+        if (keyCur == null) { keyR.sprite = null; keyR.enabled = false; if (keyBgR != null) keyBgR.enabled = false; }
         else
         {
             keyIn = Mathf.Min(1f, keyIn + Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.5f);
@@ -492,11 +519,22 @@ public class MolakArt : MonoBehaviour
             float kg2 = MolakTheme.Night ? 0.78f : 1f;
             keyR.color = new Color(kg2, kg2, kg2, ka * colT);
             var sp = keyR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
-            float k = Mathf.Max(bandW/sw, bandH/sh) * (1.02f + 0.04f * Mathf.Clamp01(keyT / 8f));
+            // 그림 창이 그림보다 1.1배 넘게 넓으면(폴드 안쪽·가로 PC) 위아래를 자르지 않고 높이에 맞추고, 양옆은 그림 끝의 종이빛으로 메운다
+            bool wide = bandW / bandH > (sw / sh) * 1.1f;
+            float creep = 1f + 0.03f * Mathf.Clamp01(keyT / 8f);
+            float k = (wide ? bandH / sh : Mathf.Max(bandW/sw, bandH/sh)) * creep;
             keyR.transform.localScale = new Vector3(k, k, 1f);
-            float spare = Mathf.Max(0f, sw * k - bandW) * 0.5f;
+            float spare = Mathf.Max(0f, sw * k - bandW) * 0.5f, spareY = Mathf.Max(0f, sh * k - bandH) * 0.5f;
             float kx = Mathf.Clamp((0.5f - keyFx) * sw * k, -spare, spare);
-            keyR.transform.position = new Vector3(cx + kx, bandCy, z - 0.2f);
+            float ky = Mathf.Clamp((keyFy - 0.5f) * sh * k, -spareY, spareY);   // 그림 아래쪽을 보려면 위로 올린다
+            keyR.transform.position = new Vector3(cx + kx, bandCy + ky, z - 0.2f);
+            keyBgR.enabled = keyR.enabled && wide;
+            if (keyBgR.enabled)
+            {
+                keyBgR.color = new Color(kg2, kg2, kg2, ka * colT);
+                keyBgR.transform.localScale = new Vector3(bandW / 0.02f, bandH / 0.01f, 1f);
+                keyBgR.transform.position = new Vector3(cx, bandCy, z - 0.15f);
+            }
         }
     }
 }
