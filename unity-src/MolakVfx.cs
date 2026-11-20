@@ -468,7 +468,7 @@ public class MolakVfx : MonoBehaviour
             {
                 MolakInputGuard.Guard(new Rect(0, 0, w, h));
                 bool tap = Event.current.type == EventType.MouseDown && stampT > 0.25f;
-                bool auto = stampAuto > 0f && stampT > stampAuto;
+                bool auto = (stampAuto > 0f && stampT > stampAuto) || (MolakPlayMode.SkipAll && stampT > 0.3f);   // 0.4.85 검증 넘기기 중에 찍힌 인장이 끝까지 붙잡던 것
                 if (tap || auto) { if (tap) Event.current.Use(); stampHold = false; stampOutAt = stampT; MolakInputGuard.MuteFor(0.2f); }
             }
             else if (stampOutAt < 0f && stampT > 1.1f) stampOutAt = stampT;   // 붙잡지 않는 인장(제목 화면 등)은 1.1초 뒤 걷힌다
