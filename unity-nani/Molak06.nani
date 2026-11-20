@@ -1529,7 +1529,7 @@
 # IpmaB
 @set f_ipmafight=1
 검을 뽑는다. 대전의 공기가 한 겹 무거워진다.
-@art char:lord
+@art char:lord_wrath
 교주가 지겨운 눈 그대로 일어선다.
 "손님으로 왔다가 시체로 나가는 놈이 네가 처음은 아니니라."
 @set dkind="lord"

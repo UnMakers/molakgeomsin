@@ -115,6 +115,7 @@ public class MolakArt : MonoBehaviour
         {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},{"cheongmyo","temple"},
         {"cheongmyo_robe","temple"},{"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},{"jang","alley"},
         {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},{"hyeok","yard"},{"gyeol","alley"},
+        {"hyeok_grim","yard"},{"gyeol_angry","alley"},{"gwaksan_grief","market"},{"lord_wrath","lordhall"},
     };
     static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
     {
@@ -123,6 +124,7 @@ public class MolakArt : MonoBehaviour
         {"jinbaek","alley"},{"lawlord","gate"},{"oldman","night"},{"jang","alley"},
         {"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},
         {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},{"hyeok","alley"},{"gyeol","roofmoon"},
+        {"hyeok_grim","alley"},{"gyeol_angry","roofmoon"},{"gwaksan_grief","alley"},{"lord_wrath","lordhall"},
     };
     public static bool IsNight;
     static readonly Dictionary<string, string> SceneWeather = new Dictionary<string, string>

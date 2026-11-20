@@ -2593,7 +2593,7 @@
 
 ; ---------- 단목결: 서열각의 칼, 청운 다섯째 사형 (0.4.70) ----------
 # E_Gyeol1
-@art char:gyeol
+@art char:gyeol_angry
 @deja text:"밤 골목, 장작이라 부르는 목소리. 지난 생에도 이 골목에서 그는 같은 말을 했다. 떠나라고."
 {dejapre}
 밤. 객잔 뒤 골목. 등 뒤에서 발소리가 멎는다. 일부러 들리게 낸 발소리다.
@@ -2750,7 +2750,7 @@
 @return
 
 # E_Gyeol4
-@art char:gyeol
+@art char:gyeol_angry
 @deja text:"달 없는 밤, 객잔 지붕의 발소리 하나. 지난 생에 그는 이 밤 숫자를 지우러 왔다."
 {dejapre}
 달 없는 밤. 지붕에서 발소리 하나. 하나뿐이라 더 무겁다.
@@ -2814,7 +2814,7 @@
 
 ; ---------- 염혁: 문 닫은 표국의 아들 (0.4.70) ----------
 # E_Hyeok1
-@art char:hyeok
+@art char:hyeok_grim
 @deja text:"못 박힌 표국 문, 그 앞에 등을 돌리고 앉은 아들. 지난 생에도 이 부자는 끝내 한 마당에 서지 않았다."
 {dejapre}
 @goto #E_Hyeok1Re if:g_ev_hyeok1>0&&f_ev_hyeok1<1
@@ -2922,7 +2922,7 @@
 @return
 
 # E_Hyeok3
-@art char:hyeok
+@art char:hyeok_grim
 @deja text:"혈랑대가 오기 며칠 전 밤, 문을 두드리는 표사. 지난 생엔 이 밤 그가 무엇을 싣고 있었는지 몰랐다."
 {dejapre}
 @goto #E_Hyeok3Re if:g_ev_hyeok3>0&&f_ev_hyeok3<1
@@ -6685,7 +6685,7 @@
 # E_GwWA
 @page
 @art scene:yard
-@art char:gwaksan
+@art char:gwaksan_grief
 성 밖 개울가 초가. 마당에 짚단 과녁 하나. 창끝 자국이 한 군데에만 모여 있다.
 마루에 곽산이 앉아 있다. 상복이 아니다. 판에 서던 옷 그대로다. 부엌에서 아무 소리도 나지 않는다.
 창을 마루 끝에 기대 놓는다. 곽산이 창을 보지 않는다.

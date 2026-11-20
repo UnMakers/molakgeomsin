@@ -670,7 +670,7 @@
 @set f_rivalfriend=1
 @goto Molak02#AfterChapter
 # Rival2PB
-@art char:gwaksan
+@art char:gwaksan_grief
 곽산의 턱이 굳는다. 한참 뒤, 창날을 천으로 감싼다.
 "……아내가 피 섞인 기침을 한다. 교납 때문에 백초당 외상도 막혔다."
 <align=right>"그래서 독을 샀나."</align>
@@ -709,7 +709,7 @@
 @set f_valleyroute=1
 @goto Molak02#AfterChapter
 # Rival2PT
-@art char:gwaksan
+@art char:gwaksan_grief
 곽산의 얼굴에서 핏기가 빠진다. 창대를 쥔 손가락 마디가 하얗게 선다.
 "……누가 그러던가."
 <align=right>"<color=#9A70C4>국 끓이는 사람이.</color>"</align>

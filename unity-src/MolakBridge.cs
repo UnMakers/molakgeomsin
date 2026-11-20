@@ -65,6 +65,7 @@ public static class MolakBridge
     static readonly Dictionary<string, string> SealName = new Dictionary<string, string> {
         {"hajinmu_grave","하진무"},{"granny_grave","백초 할멈"},{"jinbaek_sorrow","진백"},{"wangsam","왕삼"},{"baekri","백리휘"},
         {"gyeol","단목결"},{"lawlord","집법전주"},{"ochi","오치"},{"hochi","호치"},
+        {"gyeol_angry","단목결"},{"hyeok","염혁"},{"hyeok_grim","염혁"},{"gwaksan_grief","곽산"},{"lord","교주"},{"lord_wrath","교주"},   // 0.4.84 새 입상·표정
     };
     public static string NameOf (string charId)
     {
