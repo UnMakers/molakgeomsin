@@ -175,8 +175,38 @@
 @page
 @art char:none
 새벽. 객잔 문을 나선다. 운락의 지붕들이 등 뒤에서 희어진다.
+갈림길에 선다. 북쪽 길은 검은 산으로, 남쪽 길은 강으로, 등 뒤의 길은 운락으로 난다.
+'북쪽만 길인 줄 알았다. 길은 셋이다.'
+; 0.4.85 언메이커: 교주에게 가는 길만 강제하지 말 것 — 도망쳐 사는 생, 운락을 지키는 생
+@choice "북쪽으로 간다 — 검은 산, 교주에게" goto:#EveNorth
+@choice "남쪽으로 간다 — 소아와 함께, 칼을 내려놓고" if:f_soamet>0&&f_soadead<1&&aff>=3 goto:#EveSouthSoa
+@choice "남쪽으로 간다 — 암향과 그 동생을 데리고" if:f_amhdead<1&&f_amheve>0||f_amhdead<1&&f_amhally>0 goto:#EveSouthAmh
+@choice "남쪽으로 간다 — 사저와 함께, 위패를 모시고" if:f_cmeve>0||f_cmally>0 goto:#EveSouthCm
+@choice "남쪽으로 간다 — 참새와 함께, 이름 없이" if:f_chamally>0&&f_chamgone<1 goto:#EveSouthCham
+@choice "남쪽으로 간다 — 혼자, 칼을 묻고" goto:#EveSouthAlone
+@choice "암향과 함께, 문양을 재우러 간다 — 끄지 말고 재운다" if:g_long_amh>0&&f_herbtrue>0&&f_amhdead<1&&f_amheve>0||g_long_amh>0&&f_herbtrue>0&&f_amhdead<1&&f_amhally>0 goto:Molak22#TrueAmh
+@choice "사저와 함께, 불탄 산문으로 간다 — 위패를 산문 안에" if:g_long_cm>0&&g_oldlid>0&&f_cmeve>0||g_long_cm>0&&g_oldlid>0&&f_cmally>0 goto:Molak22#TrueCm
+@choice "참새와 함께, 하오문 원장부를 펼친다 — 내 이름을 누가 샀나" if:g_long_cham>0&&f_chamally>0&&f_chamledger>0&&f_chamgone<1 goto:Molak22#TrueCham
+@choice "운락으로 돌아간다 — 그물이 닫히는 밤을 여기서 막는다" goto:Molak21#Stay
+@stop
+# EveNorth
 돌아보지 않는다. 등 뒤의 불빛이 작아지는 것을 보고 싶지 않다.
 @goto Molak14#North
+# EveSouthSoa
+@set f_lw=1
+@goto Molak20#LongFlee
+# EveSouthAmh
+@set f_lw=2
+@goto Molak20#LongFlee
+# EveSouthCm
+@set f_lw=3
+@goto Molak20#LongFlee
+# EveSouthCham
+@set f_lw=4
+@goto Molak20#LongFlee
+# EveSouthAlone
+@set f_lw=5
+@goto Molak20#LongFlee
 
 ; ===== 회귀한 생: 지난 생에 본 장면(g_bt_*) — 먼저 말하고 먼저 움직인다 =====
 

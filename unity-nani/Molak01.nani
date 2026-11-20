@@ -247,10 +247,14 @@
 @set f_cmsword=0
 @set f_cmtablet=0
 @set f_cmwait=0
+@set f_cultbetray=0
 @set f_cultbrother=0
 @set f_cultchild=0
 @set f_cultfeast=0
+@set f_cultlie=0
+@set f_cultplot=0
 @set f_cultrite=0
+@set f_culttook=0
 @set f_deadrumor=0
 @set f_dojuroute=0
 @set f_dokad=0
@@ -504,7 +508,11 @@
 @set f_kyonadown=0
 @set f_lawdoubt=0
 @set f_leftwithsoa=0
+@set f_lend=0
 @set f_letter=0
+@set f_lflag=0
+@set f_lj=0
+@set f_lkid=0
 @set f_lordedge=0
 @set f_lordintro=0
 @set f_lordknee=0
@@ -512,6 +520,7 @@
 @set f_lordseal=0
 @set f_lordshaken=0
 @set f_lordstood=0
+@set f_lw=0
 @set f_maengcontact=0
 @set f_maengcost=0
 @set f_maengdeal=0
@@ -624,6 +633,7 @@
 @set f_springrumor=0
 @set f_spyally=0
 @set f_spyinfo=0
+@set f_staywhere=0
 @set f_stoneseen=0
 @set f_storylore=0
 @set f_streetsaved=0

@@ -1,0 +1,322 @@
+; ===== 몰락검신 — 운락을 지키는 생 · 교의 칼이 된 생(0.4.85) =====
+; 언메이커: 교주에게 가는 길만 강제하지 말 것. 어떻게 살든 새 삶처럼, 그러면서도 결국 저주에 먹히게.
+; Stay — 떠나기 전 밤 갈림길에서 운락으로 돌아간다(Molak12 #EveEnd). 그물이 닫히는 밤을 고을 사람들과 막는다.
+; Cult — 교주 앞에서 무릎을 꿇은 생(Molak06 #IpmaA). 교의 칼로 산다.
+
+; ================= 운락을 지키는 생 =================
+# Stay
+@page
+@chapter text:"남은 사람" sub:"운락" desc:"검은 산 대신, 이 고을의 밤을 막는다"
+@art scene:innhall
+@set rallyn=0
+@set rallyn=rallyn+1 if:f_hajindead<1
+@set rallyn=rallyn+1 if:f_yongcrew>0
+@set rallyn=rallyn+1 if:rep_gae>=2
+@set rallyn=rallyn+1 if:f_gwakally>0
+@set rallyn=rallyn+1 if:f_hyeokally>0&&f_hyeokdead<1
+@set rallyn=rallyn+1 if:f_gyeolally>0&&f_gyeoldead<1
+@set rallyn=rallyn+1 if:f_herbfriend>0&&f_herbdead<1
+@set rallyn=rallyn+1 if:f_hyeop>=4
+@set rallyn=rallyn+1 if:f_soamet>0&&f_soadead<1&&aff>=3
+@art char:hajinmu
+@print "객잔 문을 도로 연다. 하진무가 계산대에서 고개를 든다. 주판알이 멎는다. \"……방값은 아직 셈 안 했소.\"" if:f_hajindead<1
+@print "주인 없는 객잔 문을 도로 연다. 점소이가 국자를 떨어뜨린다." if:f_hajindead>0
+<align=right>"북쪽은 안 가오. 그물이 닫히는 밤이 오면, 여기서 막겠소."</align>
+@art char:none
+'교주를 베러 가면 이 고을은 그물에 걸린다. 지난 생들마다 그랬다. 이번엔 고을 쪽을 고른다.'
+그물이 닫히기까지 며칠. 사람을 모은다. 이번 생에 쌓은 얼굴들이다.
+@print "지게꾼 일곱이 지게를 내려놓고 작대기를 든다. 용개가 맨 앞이다. \"나리, 이번엔 길을 안 팝니다요.\"" if:f_yongcrew>0
+@print "거지 아이들이 골목마다 깡통을 매단다. 꼬지가 매듭을 셈한다. \"붉은 끈이 들어오면 깡통이 울려요.\"" if:rep_gae>=2
+@print "곽산이 창을 어깨에 메고 온다. \"자네가 북쪽으로 안 간다기에. 국 식기 전에 끝내세.\"" if:f_gwakally>0
+@print "염혁이 표국 깃발을 접어 들고 온다. \"장풍— 길을 비키시오, 가 아니라 이번엔 길을 막는 거요.\"" if:f_hyeokally>0&&f_hyeokdead<1
+@print "단목결이 관복을 벗고 온다. \"장작. 이번엔 네 발밑부터 쓸어 주마.\"" if:f_gyeolally>0&&f_gyeoldead<1
+@print "백초 할멈이 약궤를 통째로 들고 온다. 지혈환이 한 바구니다." if:f_herbfriend>0&&f_herbdead<1
+@print "장꾼들이 좌판을 엎어 골목을 막는다. 협객이라 불러 준 사람들이다." if:f_hyeop>=4
+@print "지붕 위에 외눈이 앉아 있다. \"북쪽엔 혼자 가려고 했지. 여긴 같이 막는다.\"" if:f_soamet>0&&f_soadead<1&&aff>=3
+@print "모인 사람이 없다. 이 고을에서 이름을 불러 줄 사람을 만들지 못했다." if:rallyn<1
+어디서 막을지 정해야 한다.
+@choice "성문에서 막는다 — 들어오기 전에" goto:#StayGate
+@choice "객잔에서 막는다 — 골목으로 끌어들여" goto:#StayInn
+@choice "사람들을 다 내보내고 혼자 막는다 — 다치는 건 나 하나로" goto:#StayAlone
+@stop
+# StayGate
+@set f_staywhere=1
+성문 빗장에 지게 작대기를 덧댄다. 성벽 위에 아이들이 돌을 쌓는다.
+'열린 데서 맞붙으면 숫자가 이긴다. 저쪽 숫자가 더 많다.'
+@goto #StayNight
+# StayInn
+@set f_staywhere=2
+골목을 좌판과 수레로 막고 객잔 마당 하나만 열어 둔다. 계단 셋째 칸에 등잔 기름을 붓는다.
+'<color=#9A70C4>셋째 칸. 이번엔 저들이 미끄러질 차례다.</color>'
+@set rallyn=rallyn+1
+@goto #StayNight
+# StayAlone
+@set f_staywhere=3
+모인 사람들을 돌려보낸다. 다들 문을 걸고 숨으라 한다.
+곽산도, 용개도, 아이들도 투덜대며 간다. 지붕 위의 외눈만 내려오지 않는다.
+@set rallyn=0
+@set rallyn=1 if:f_soamet>0&&f_soadead<1&&aff>=3
+@goto #StayNight
+
+# StayNight
+@page
+@scene id:night
+@art scene:raid
+@art char:lawlord
+그물이 닫히는 밤. 성문 쪽 하늘이 붉다. 집법전주가 혈랑대 전원을 데리고 온다.
+"세 번째는 없다 했다. 열매를 내놓으면 고을은 그대로 둔다."
+@print "깡통이 골목마다 운다. 붉은 끈이 어디로 드는지 아이들이 먼저 안다." if:rep_gae>=2&&f_staywhere!=3
+@print "지게꾼들이 벼랑 대신 지붕에서 돌을 엎는다. 혈랑대 셋이 계단에서 미끄러진다." if:f_yongcrew>0&&f_staywhere!=3
+@print "곽산의 창이 골목 어귀에서 둘을 꿰어 막는다. \"반 박자 늦었네, 이 사람들.\"" if:f_gwakally>0&&f_staywhere!=3
+@print "외눈의 쌍검이 지붕을 탄다. 한 번에 둘이 온다." if:f_soamet>0&&f_soadead<1&&aff>=3
+@choice "집법전주에게 곧장 간다 — 머리를 치면 그물이 풀린다" goto:#StayBoss
+@choice "골목마다 돌며 사람들을 지킨다 — 하나도 잃지 않는다" goto:#StayGuard
+@choice "\"열매는 여기 있다.\" 혼자 마당으로 나간다 — 고을 대신 나를" goto:#StayGive
+@stop
+# StayBoss
+@set dkind="hunt3"
+@gosub MolakDuel#Run
+@goto #StayWin if:duelwin>0
+@goto #StayLose
+# StayGuard
+골목을 돈다. 붉은 끈 하나를 벨 때마다 문틈에서 숨소리가 하나 돌아온다.
+@risk on:sw need:+2
+@goto #StayWin if:pass>0&&rallyn>=3
+@goto #StayCost if:pass>0
+@goto #StayLose
+# StayCost
+날이 밝는다. 집법전주가 물러난다. 그물은 찢겼다.
+@print "그러나 하진무가 계산대 뒤에 엎어져 있다. 주판이 피에 젖었다. 마지막까지 셈을 맞추던 손이다." if:f_hajindead<1
+@print "그러나 점소이가 계단 셋째 칸에 엎어져 있다." if:f_hajindead>0
+@set f_hajindead=1
+'막았다. 다 막지는 못했다.'
+@goto #StayYears
+# StayGive
+@art char:lawlord
+혼자 마당으로 나간다. 칼을 바닥에 내려놓는다.
+전주가 오래 본다. 사슬이 날아오지 않는다.
+"……열매가 제 발로 나왔구나. 그 늙은이가 싫어하겠군."
+@print "지붕에서 외눈이 뛰어내린다. 쌍검이 전주의 사슬을 가른다. \"내려놓으라고 한 적 없다.\"" if:f_soamet>0&&f_soadead<1&&aff>=3
+@goto #StayWin if:f_soamet>0&&f_soadead<1&&aff>=3&&rallyn>=2
+사슬이 손목을 감는다. 고을은 그대로 둔다는 말은 지켜진다. 성문이 다시 열린다. 당신만 북쪽으로 끌려간다.
+@goto Molak06#CaptureTail
+# StayLose
+@art char:lawlord
+사슬이 발목을, 손목을 감는다. 성문 쪽에서 불길이 오른다.
+"고을은 그대로 둔다 했지. 열매가 순순히 나왔다면."
+@goto Molak06#CaptureTail
+# StayWin
+@page
+@art char:none
+@vfx kind:dawn
+날이 밝는다. 집법전주의 소매가 베였다. 혈랑대가 성문 밖으로 물러난다. 그물이 찢겼다.
+운락 사람들이 골목에서 하나씩 나온다. 아무도 만세를 부르지 않는다. 대신 쓰러진 좌판을 하나씩 세운다.
+@print "하진무가 계산대에 앉아 주판을 놓는다. 오래 놓는다. \"객. 방값이 하루 늘었소.\"" if:f_hajindead<1
+'이번엔 무언가를 지켰다. 베는 쪽이 아니라 남기는 쪽으로.'
+@goto #StayYears
+
+# StayYears
+@page
+@art scene:market
+몇 해가 간다. 교는 운락을 다시 치지 않는다. 그물을 찢긴 고을은 교의 장부에서 골치 아픈 칸이 되었다.
+관아 지붕의 핏빛 깃발이 내려간다. 거꾸로 매달려 있던 셋의 자리에 빨래가 널린다.
+@print "징세조가 오지 않는다. 장터 노점상이 좌판을 엎지 않아도 된다." if:f_hyeop>=4
+@print "용개의 지게꾼들이 나루를 맡는다. 지게마다 '운락' 두 글자를 새긴다." if:f_yongcrew>0
+@print "아이들이 '운락의 막내'라 부른다. 청운의 막내였던 걸 아는 사람은 이제 몇 없다." if:rep_gae>=2
+@print "외눈은 지붕에서 내려와 객잔 이층에 방을 얻는다. 방값은 장부에 적는다. 갚은 줄은 지운다." if:f_soamet>0&&f_soadead<1&&aff>=3
+고을을 지키는 사내로 산다. 칼은 문간에 걸어 둔다. 꺼내는 날이 해마다 줄어든다.
+가슴의 문양만 줄지 않는다. 해마다 한 치. 이 고을을 지킨 해만큼 자랐다.
+@page
+@art char:oldman
+@vfx kind:curse
+열 몇 해째 겨울. 객잔 이층 창가. 문양이 심장에 닿았다.
+창밖 지붕 위에 복면의 백발이 앉아 있다. 그 밤과 한 치도 다르지 않은 얼굴이다.
+"고을 하나를 키웠구나. 열매 하나 키우는 동안."
+"좋은 거름이었느니라. 지켜 낸 것이 많을수록 열매가 단단해진다."
+'지켜 낸 것도 거름이었나.'
+@choice "\"이 고을은 건드리지 마시오.\"" goto:#StayEnd1
+@choice "문간의 칼을 꺼내 마지막으로 든다" goto:#StayEnd2
+@stop
+# StayEnd1
+"노부는 고을에는 관심이 없느니라. 열매만 거둔다."
+노인의 손이 창을 넘어 가슴에 닿는다.
+@goto #StayTail
+# StayEnd2
+칼이 무겁다. 열 몇 해 꺼내지 않은 칼이다. 그래도 한 번은 든다.
+노인이 손가락 하나로 칼끝을 누른다. 그 밤과 똑같다.
+"그 밤보다는 높이 들었구나."
+@goto #StayTail
+# StayTail
+@art char:none
+@black text:"숨이 끊긴다.|……|지켜 낸 해가 되감긴다." hold:1.8 red:true
+\[ 終 \] — 지킨 고을.
+@set g_long_unrak=g_long_unrak+1
+@set deathcause="운락"
+@ending
+@regress
+@goto MolakOver#UnrakAfter
+
+; ================= 교의 칼이 된 생 =================
+; Molak06 #IpmaA 에서 "존명" 뒤로 들어온다.
+# Cult
+@page
+@chapter text:"교의 칼" sub:"입마" desc:"문양이 뜯겨 나간 가슴, 붉은 옷"
+@art scene:valley
+@art char:none
+혈랑대 부대주의 옷을 받는다. 검붉다. 가슴이 가볍다. 열이 없다. 일 년을 함께 산 열이다.
+'끊어 준다더니, 끊어 주었다. 생각보다 허전하다.'
+첫 소임. 운락의 객잔. 교의 세작이 드나든다는 집이다.
+@art scene:innhall
+@print "하진무가 계산대에서 고개를 든다. 붉은 옷을 보고, 당신 얼굴을 보고, 다시 붉은 옷을 본다. 주판알이 멎는다. \"……객.\"" if:f_hajindead<1
+@print "주인 없는 객잔이다. 점소이가 붉은 옷을 보고 무릎을 꿇는다. 세작은 이 아이였다. 교의 소식을 맹에 흘리던." if:f_hajindead>0
+@goto #CultInnBoy if:f_hajindead>0
+"교가 찾는 귀는 나요. 이십 년 전에 장문인이 지져 준 낙인 자리를 징세조가 누르러 오는 것도 나 때문이오."
+하진무가 소매를 걷는다. 뭉갠 낙인이 있다.
+"끌고 가시오. 객이 끌고 가면, 객은 살겠지."
+@choice "끌고 간다 — 소임이다" goto:#CultTake
+@choice "\"세작은 없었소.\" 거짓으로 보고한다" goto:#CultLie
+@choice "칼을 뽑았다가, 계산대에 내려놓는다" goto:#CultStop
+@stop
+# CultInnBoy
+@choice "끌고 간다 — 소임이다" goto:#CultTake
+@choice "\"세작은 없었소.\" 거짓으로 보고한다" goto:#CultLie
+@stop
+# CultTake
+@set f_culttook=1
+@fx sl:3 why:"소임을 다했다"
+끌고 간다. 등 뒤에서 아무도 울지 않는다. 운락 사람들은 고개를 숙이는 법을 안다.
+@print "이튿날 관아 처마에 넷째 사람이 매달린다. 주판이 그 발밑에 떨어져 있다." if:f_hajindead<1
+@set f_hajindead=1
+'가슴이 가볍다. 너무 가볍다.'
+@goto #CultHall
+# CultLie
+@set f_cultlie=1
+"세작은 없었소."
+집법전주가 오래 본다. "다음엔 거짓도 잘하게 될 것이다. 교의 칼은 다 그렇게 큰다."
+@goto #CultHall
+# CultStop
+@set f_cultlie=1
+칼을 뽑는다. 하진무가 눈을 감는다. 칼을 계산대에 내려놓는다.
+"……오늘은 셈이 안 맞소."
+하진무가 눈을 뜬다. 주판알 하나를 튕긴다.
+"객이 그 말을 할 줄은 셈하지 못했소."
+@goto #CultLie
+
+# CultHall
+@page
+@art scene:shrineash
+@art char:jinbaek
+혈랑대 막사. 대주의 자리 옆이 부대주의 자리다. 대주가 북두를 거꾸로 밟으며 들어온다.
+"……막내야."
+대사형이다. 같은 옷이다.
+"너도 결국 이 옷이구나. 내가 문을 열어 산 일곱 가운데, 너는 없었는데."
+@choice "\"사형도 끊었소? 이 가슴의 것.\"" goto:#CultJin1
+@choice "대사형의 거래를 교주에게 고한다 — 자리를 위해" goto:#CultJin2
+@choice "\"안에서 무너뜨립시다. 둘이면 하오.\"" goto:#CultJin3
+@stop
+# CultJin1
+"끊을 것이 없었다. 나는 열매가 아니었으니. 너는…… 끊어 준 게 아니다, 막내야."
+대사형이 당신 옷깃을 젖힌다. 문양이 있던 자리에 아무것도 없다.
+"교주가 먹었다. 삼십 년 전 제 것을 베어냈다는 그 자리에, 남의 열매를 삼켜 산다. 너도 먹혔다."
+'끊어 준 것이 아니라, 먹은 것이다.'
+@set g_know_lordeat=1
+@goto #CultJin3
+# CultJin2
+@set f_cultbetray=1
+교주가 웃는다. 대사형이 대전 기둥에 묶인다. 북두를 거꾸로 밟던 발이 꺾인다.
+당신은 대주의 자리에 앉는다. 옆자리가 비었다.
+"막내야." 기둥에서 대사형이 마지막으로 부른다. "……그 옷, 잘 맞는구나."
+@set f_jinbaekdead=1
+@goto #CultYears
+# CultJin3
+@set f_cultplot=1
+대사형이 오래 말이 없다. 그러다 매듭 하나를 두 번 묶는다.
+"보름마다 사당에 쌀을 두러 간다. 그 길에 대전 뒷길이 있다. 교주가 연회를 여는 밤, 거기로 사람을 들일 수 있다."
+<align=right>"누구를."</align>
+"네가 이 생에 쌓은 사람들. 남아 있다면."
+@goto #CultFeast
+
+# CultFeast
+@page
+@art scene:hapbyeok
+@art char:lord
+교주의 연회. 서열록의 이름들이 술잔을 든다. 당신은 교주 등 뒤에 선다. 칼을 차고.
+교주가 잔을 들며 당신을 돌아본다. 가슴께가 붉게 맥이 뛴다. 당신 것이었던 맥이다.
+"맛이 좋구나, 네 열매는. 그 늙은이가 공들였어."
+'저 가슴에서 뛰는 것이 내 일 년이다.'
+@choice "대사형이 연 뒷길로 사람들을 들인다 — 지금" goto:#CultOpen
+@choice "교주의 등을 벤다 — 지금, 혼자" goto:#CultStab
+@choice "잔을 따른다 — 오늘이 아니다" goto:#CultYears
+@stop
+# CultOpen
+@set rallyn=0
+@set rallyn=rallyn+1 if:f_gwakally>0
+@set rallyn=rallyn+1 if:f_yongcrew>0
+@set rallyn=rallyn+1 if:f_soamet>0&&f_soadead<1&&aff>=3
+@set rallyn=rallyn+1 if:f_gyeolally>0&&f_gyeoldead<1
+@print "뒷길에서 창 한 자루가 먼저 들어온다. 곽산이다." if:f_gwakally>0
+@print "외눈이 연회상을 밟고 넘어온다. 붉은 옷을 보고 쌍검 끝이 반 치 흔들린다. \"……그 옷은 나중에 따지자.\"" if:f_soamet>0&&f_soadead<1&&aff>=3
+@goto #CultFall if:rallyn>=2
+뒷길에서 아무도 오지 않는다. 대사형 혼자 들어와, 혼자 혈랑대 열둘 앞에 선다.
+@goto #CultStab
+# CultStab
+@vfx kind:clash
+칼이 교주의 등에 닿는다. 반 치 들어간다. 그리고 멎는다.
+교주가 돌아본다. 가슴께의 맥이 붉게 뛴다.
+"제 열매에 베이는 나무는 없느니라."
+@set g_know_lordeat=1
+@goto #CultDie
+# CultFall
+@set g_know_backpath=1
+교주가 일어선다. 연회상이 엎어진다. 서열록의 이름들이 칼을 뽑는다.
+싸움은 새벽까지 간다. 대전 뒷길이 피로 미끄럽다.
+교주는 끝내 쓰러지지 않는다. 가슴께의 붉은 맥이, 남의 열매가 그를 버티게 한다.
+그래도 대전이 불탄다. 교의 장부가 불탄다. 운락 사람들 이름이 적힌 장도.
+@goto #CultDie
+# CultDie
+@page
+@art char:none
+@black text:"숨이 끊긴다." hold:1.4 red:true
+@print "<color=#9A70C4>교주 대전 뒤에 길이 있다. 보름마다 쌀자루가 지나는 길.</color> 그것만은 뼛속에 남는다." if:g_know_backpath>0
+@print "<color=#9A70C4>교주는 남의 열매를 먹고 산다. 내 일 년이 그 가슴에서 뛰었다.</color> 그것만은 뼛속에 남는다." if:g_know_lordeat>0
+\[ 終 \] — 교를 등진 칼.
+@set deathcause="배교"
+@ending
+@regress
+@goto MolakOver#BaegyoAfter
+
+# CultYears
+@page
+@art scene:valley
+@art char:none
+몇 해가 간다. 붉은 옷이 몸에 맞는다. 명부의 이름을 지우는 소임이 손에 익는다.
+@print "운락 쪽 소임은 일부러 피한다. 그래도 운락 사람 이름이 명부에 오르면, 그 장은 당신 앞으로 온다." if:f_culttook<1
+@print "운락 쪽 소임은 다 당신 몫이다. 한 번 끌고 간 손은 두 번째도 끌고 간다." if:f_culttook>0
+가슴이 가볍다. 칼이 가볍다. 사람이 가볍다.
+열 몇 해째 겨울, 교주가 늙는다. 남의 열매로 버티던 가슴이 식어 간다.
+교주가 당신을 부른다. 가슴께의 맥이 꺼져 가는데, 눈은 당신 가슴을 본다.
+"……너에게 돌려줄 때가 되었구나."
+교주의 손이 당신 가슴에 얹힌다. 뜨겁다. 그 밤처럼. 뜯겨 나갔던 것이 <color=#C03434>뿌리째 돌아온다</color>. 열 몇 해 교주 가슴에서 자란 채로.
+@art char:oldman
+대전 문간에 복면의 백발이 서 있다.
+"썩은 나무에 맡겨 두었더니, 더 잘 익었구나."
+'끊어진 적이 없었다. 남의 가슴에서 자랐을 뿐이다.'
+@choice "\"……존명.\" 마지막까지 교의 칼로" goto:#CultEnd
+@choice "식어 가는 교주의 목을 벤다 — 한 번은 내 칼로" goto:#CultEnd2
+@stop
+# CultEnd
+@goto #CultTail
+# CultEnd2
+@vfx kind:clash
+교주의 목이 떨어진다. 저항이 없다. 이미 다 먹힌 사람이었다.
+서열록의 일위가 비어 있다. 그 자리에 앉을 열매가 하나 남았다.
+@goto #CultTail
+# CultTail
+@art char:none
+@black text:"숨이 끊긴다.|……|열 몇 해가 되감긴다." hold:1.8 red:true
+\[ 終 \] — 무릎을 꿇은 검.
+@set g_know_lordeat=1
+@set deathcause="입마"
+@ending
+@regress
+@goto MolakOver#IpmaAfter

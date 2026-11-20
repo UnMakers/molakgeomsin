@@ -231,20 +231,9 @@
 @art scene:crossroad
 @art char:amhyang_soft
 남쪽으로 보름. 찻잎 냄새가 나는 고을에 닿는다. 그녀는 향을 피우지 않는다. 대신 아침마다 동생 머리를 빗는다.
-어느 밤, 그녀가 당신 손목을 짚는다. 이제는 묻지도 않는다.
-"……맥이 하나가 됐어요."
-문양이 목까지 올라와 있다. 둘 다 안다. 하나가 된 맥은 당신 것이 아니다.
-<align=right>"설."</align>
-"네."
-<align=right>"다음엔, 내가 먼저 그대 손목을 잡겠소."</align>
-그녀는 다음이 무슨 뜻인지 묻지 않는다. 손목을 내민다.
-@vfx kind:petals
-\[ 終 \] — 향 없는 곳.
-@set deathcause="무향"
-@art char:none
-@ending
-@regress
-@goto MolakOver#MuhyangAfter
+; 0.4.85 그물 밖의 생 — Molak20
+@set f_lw=2
+@goto Molak20#LongGo
 # Am3B
 그녀가 보따리를 내려다본다.
 "기다리는 건 잘해요. 루에서 평생 그것만 했으니까요."
@@ -436,16 +425,9 @@
 골짜기의 초막. 둘이 지붕을 잇고, 마당을 쓴다. 막내가 하던 일이다. 이번엔 둘이 한다.
 위패를 세우는 날, 그녀가 향 대신 장작 하나를 세운다. 아홉째, 운해. 장작이 소리 없이 갈라진다.
 "사부님, 막내가 다 배웠어요."
-그날 밤, 가슴의 문양이 목을 넘는다. 둘 다 안다.
-청묘가 당신 손을 쥐고 경을 왼다. 한 줄도 막히지 않는다. 그 밤 곳간에서 백 번을 외웠다고 했다.
-"막내. 다음에 오면, 이번엔 제가 마당을 쓸게요."
-@vfx kind:dawn
-\[ 終 \] — 산문 밖의 봄.
-@set deathcause="환속"
-@art char:none
-@ending
-@regress
-@goto MolakOver#HwansokAfter
+; 0.4.85 그물 밖의 생 — Molak20
+@set f_lw=3
+@goto Molak20#LongGo
 # Cm3B
 @art char:cheongmyo
 청묘가 칼집을 쥔 채 오래 서 있다.

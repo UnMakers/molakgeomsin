@@ -45,6 +45,11 @@ public class MolakEnd : MonoBehaviour
         new Entry("mumyeong",  "無名", "무명", "이름 없는 두 사람",      "하오문 소식꾼이 당신의 죽음을 팔고, 둘이 이름 없이 남쪽으로 내려갔을 때"),
         new Entry("dongmun",   "同門", "동문", "아홉째를 아는 검",      "달 없는 밤, 숫자를 지우러 온 사형과 마주했을 때"),
         new Entry("chusal",    "追殺", "추살", "산 채로라 했는데",        "나흘째 밤, 객잔 이층으로 발소리 둘이 올라왔을 때"),
+        new Entry("unrak",     "雲樂", "운락", "지킨 고을",              "떠나기 전 밤, 북쪽 대신 운락으로 돌아가 그물이 닫히는 밤을 막았을 때"),
+        new Entry("myeonhyang","眠香", "면향", "향이 잠든 곳",           "향 없는 곳에서 서른 해를 산 뒤, 다음 생에 그녀와 문양을 끄지 않고 재웠을 때"),
+        new Entry("unhae",     "雲海", "운해", "한 검을 둘이",           "산문 밖에서 서른 해를 산 뒤, 다음 생에 사저와 위패를 산문 안에 모셨을 때"),
+        new Entry("myeongga",  "名價", "명가", "이름 값",                "이름 없이 서른 해를 산 뒤, 다음 생에 누가 내 이름을 샀는지 찾았을 때"),
+        new Entry("baegyo",    "背敎", "배교", "교를 등진 칼",           "무릎을 꿇은 뒤, 교의 안에서 교주에게 칼을 돌렸을 때"),
     };
 
     public static string Resolve ()
@@ -81,6 +86,11 @@ public class MolakEnd : MonoBehaviour
         if (cause == "무명") return "mumyeong";
         if (cause == "추살") return "chusal";
         if (cause == "동문") return "dongmun";
+        if (cause == "운락") return "unrak";
+        if (cause == "배교") return "baegyo";
+        if (cause == "면향") return "myeonhyang";
+        if (cause == "운해") return "unhae";
+        if (cause == "명가") return "myeongga";
         if (cause == "비무 패배")
         {
             if (kind == "hochi") return "dokni";
@@ -114,7 +124,7 @@ public class MolakEnd : MonoBehaviour
     public static void Show (string hanja, string kor, string title, bool isNew)
     {
         cHanja = hanja; cKor = kor; cTitle = title; cNew = isNew; cT = 0f;
-        cTrue = hanja == "合璧";
+        cTrue = hanja == "合璧" || hanja == "眠香" || hanja == "雲海" || hanja == "名價";   // 0.4.85 사술이 풀리는 끝은 히로인마다
         if (cTrue) MolakSfx.TrueBell(); else MolakSfx.Death();
     }
     static bool cTrue;
