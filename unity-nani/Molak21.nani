@@ -18,6 +18,7 @@
 @set rallyn=rallyn+1 if:f_herbfriend>0&&f_herbdead<1
 @set rallyn=rallyn+1 if:f_hyeop>=4
 @set rallyn=rallyn+1 if:f_soamet>0&&f_soadead<1&&aff>=3
+@set rallyn=rallyn+2 if:g_long_unrak>0
 @art char:hajinmu
 @print "객잔 문을 도로 연다. 하진무가 계산대에서 고개를 든다. 주판알이 멎는다. \"……방값은 아직 셈 안 했소.\"" if:f_hajindead<1
 @print "주인 없는 객잔 문을 도로 연다. 점소이가 국자를 떨어뜨린다." if:f_hajindead>0
@@ -25,6 +26,7 @@
 @art char:none
 '교주를 베러 가면 이 고을은 그물에 걸린다. 지난 생들마다 그랬다. 이번엔 고을 쪽을 고른다.'
 그물이 닫히기까지 며칠. 사람을 모은다. 이번 생에 쌓은 얼굴들이다.
+@print "'<color=#9A70C4>지난 생, 이 고을을 열 몇 해 지켰다. 그 밤 누가 어느 골목을 막았는지, 어느 골목이 먼저 뚫렸는지 안다.</color>' 깡통을 어디에 매달지, 좌판을 어디에 엎을지 아이들보다 먼저 말한다." if:g_long_unrak>0
 @print "지게꾼 일곱이 지게를 내려놓고 작대기를 든다. 용개가 맨 앞이다. \"나리, 이번엔 길을 안 팝니다요.\"" if:f_yongcrew>0
 @print "거지 아이들이 골목마다 깡통을 매단다. 꼬지가 매듭을 셈한다. \"붉은 끈이 들어오면 깡통이 울려요.\"" if:rep_gae>=2
 @print "곽산이 창을 어깨에 메고 온다. \"자네가 북쪽으로 안 간다기에. 국 식기 전에 끝내세.\"" if:f_gwakally>0
