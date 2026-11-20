@@ -59,6 +59,15 @@ public class MolakArt : MonoBehaviour
                 Gesture(row[0]); return;
             }
     }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary>0.4.85 화면 점검용: 지금 실제로 그려지는 그림과 투명도.</summary>
+    public static string DbgScene { get { return inst != null && inst.sceneR != null && inst.sceneR.sprite != null && inst.sceneR.enabled ? inst.sceneR.sprite.name : ""; } }
+    public static float DbgSceneA { get { return inst != null && inst.sceneR != null && inst.sceneR.enabled && inst.sceneR.sprite != null ? inst.sceneR.color.a : 0f; } }
+    public static string DbgChar { get { return inst != null && inst.charR != null && inst.charR.sprite != null && inst.charR.enabled ? inst.charR.sprite.name : ""; } }
+    public static float DbgCharA { get { return inst != null && inst.charR != null && inst.charR.enabled && inst.charR.sprite != null ? inst.charR.color.a : 0f; } }
+    public static float DbgDipA { get { return inst != null && inst.dipR != null && inst.dipR.enabled ? inst.dipR.color.a : 0f; } }
+    public static float DbgKeyA { get { return inst != null && inst.keyR != null && inst.keyR.enabled && inst.keyR.sprite != null ? inst.keyR.color.a : 0f; } }
+#endif
     public static bool HasArt { get { return inst != null && (inst.sceneCur != null || inst.charCur != null); } }
     public const float BandTop = 184f, BandH = 300f;   // 캔버스 단위(900×1600)
 
