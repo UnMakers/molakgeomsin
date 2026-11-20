@@ -140,14 +140,15 @@ public class MolakArt : MonoBehaviour
     SpriteRenderer dipR; float dipT = 9f;
     // 0.4.85 장면 전환 「먹이 번진다」(언메이커 시안 2): 옛 그림(장면·인물)을 아래 깔아 두고, 새 그림이 가운데서 먹처럼 번져 나온다.
     //   새 장면·인물은 번짐 가림판(SpriteMask, alphaCutoff 를 1→0)에만 비치고, 번지는 끝에 먹 테(Molak/InkEdge)를 두른다.
-    SpriteRenderer oldSceneR, oldCharR, inkR; SpriteMask revealMask, oldMask; Material inkMat, oldMat; Sprite revealSp; float inkT = 9f;
-    const float InkDur = 1.15f;
+    SpriteRenderer oldSceneR, oldCharR, inkR; SpriteMask revealMask, oldMask; Material inkMat, oldMat; Sprite revealSp; float inkT = 9f; int inkWarm = 4;
+    const float InkDur = 1.4f;   // 시안 2 그대로
+    public static float InkMaxDt, InkSumDt; public static int InkN; int inkFrames;   // 점검용: 마지막 번짐 동안 가장 긴 프레임(초)
 #if UNITY_EDITOR
     public static bool CapArm; static float capUntil; static int capN;   // 점검용: 번짐 프레임을 Build/cap 에 찍는다
 #endif
     public static bool InkOn = true;
     public static void Dip () { if (inst != null) inst.dipT = 0f; }
-    public static bool Dipping { get { return inst != null && (inst.dipT < 0.5f || inst.inkT < 0.7f); } }
+    public static bool Dipping { get { return inst != null && (inst.dipT < 0.5f || inst.inkT < 0.6f); } }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
     public static void Scene (string id)
@@ -390,7 +391,7 @@ public class MolakArt : MonoBehaviour
 #endif
             oldSceneR.sprite = sceneR.sprite; oldSceneR.color = sceneR.color; oldSceneR.transform.position = sceneR.transform.position + new Vector3(0f, 0f, 0.05f); oldSceneR.transform.localScale = sceneR.transform.localScale;
             oldCharR.sprite = charR.sprite; oldCharR.color = charR.color; oldCharR.transform.position = charR.transform.position + new Vector3(0f, 0f, 0.05f); oldCharR.transform.localScale = charR.transform.localScale;
-            inkT = 0f;
+            inkT = 0f; InkMaxDt = 0f; InkSumDt = 0f; InkN = 0; inkFrames = 0;
         }
         sceneCur = s; sceneId = id; sceneT = ink ? 1f : 0f; ChangedAt = Time.unscaledTime;
         if (!restoring) MolakStats.SetStr("artscene", id ?? "");   // 0.4.85 불러오기 때 그림을 되살리려고 저장 상태에 적어 둔다
@@ -497,18 +498,25 @@ public class MolakArt : MonoBehaviour
     /// <summary>0.4.85 번짐 가림판: 알파 = 1 - (가운데서 잰 거리 62% + 먹 결 38%). alphaCutoff 를 1→0 으로 내리면 가운데서 번져 나간다.</summary>
     static Sprite RevealSprite ()
     {
+        // 시안 2 그대로: m = (가운데(0.55W, 0.5H)에서 잰 거리, 세로 1.3배)/R × 0.62 + 잡음 × 0.38. 잡음은 가로 8·16·32칸(0.5·0.3·0.2), 세로는 H/W×1.7.
         const int W = 384, H = 220; var tx = new Texture2D(W, H, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
         var px = new Color32[W * H]; float cxp = W * 0.55f, cyp = H * 0.5f, R = Mathf.Sqrt(W * W + H * H) * 0.55f;
-        float mn = 9f, mx = -9f; var m = new float[W * H];
+        var n = new float[W * H]; float mn = 9f, mx = -9f;
         for (int y = 0; y < H; y++) for (int x = 0; x < W; x++)
         {
-            float n = Mathf.PerlinNoise(x * 0.028f + 3.1f, y * 0.028f + 7.7f) * 0.5f + Mathf.PerlinNoise(x * 0.07f + 11f, y * 0.07f + 2f) * 0.28f + Mathf.PerlinNoise(x * 0.16f, y * 0.16f + 5f) * 0.14f + Mathf.PerlinNoise(x * 0.42f + 9f, y * 0.42f) * 0.08f;   // 가는 결까지(먹이 종이 결을 타고 번지게)
-            float d = Mathf.Sqrt((x - cxp) * (x - cxp) + (y - cyp) * 1.3f * (y - cyp) * 1.3f) / R;
-            float v = d * 0.62f + n * 0.38f; m[y * W + x] = v; if (v < mn) mn = v; if (v > mx) mx = v;
+            float v = 0f; float[] f = { 8f, 16f, 32f }, w = { 0.5f, 0.3f, 0.2f };
+            for (int o = 0; o < 3; o++) v += w[o] * Mathf.PerlinNoise(x / (float)W * f[o] + 13.7f * o, y / (float)H * f[o] * H / W * 1.7f + 5.3f * o);
+            n[y * W + x] = v; if (v < mn) mn = v; if (v > mx) mx = v;
         }
-        for (int i = 0; i < m.Length; i++) { float v = (m[i] - mn) / (mx - mn); byte a = (byte)Mathf.Clamp(Mathf.RoundToInt((1f - v) * 254f) + 1, 1, 255); px[i] = new Color32(255, 255, 255, a); }
+        for (int y = 0; y < H; y++) for (int x = 0; x < W; x++)
+        {
+            float d = Mathf.Sqrt((x - cxp) * (x - cxp) + ((y - cyp) * 1.3f) * ((y - cyp) * 1.3f)) / R;
+            float m = d * 0.62f + (n[y * W + x] - mn) / (mx - mn) * 0.38f;
+            byte a = (byte)Mathf.Clamp(Mathf.RoundToInt((1f - m) * 255f), 0, 255);
+            px[y * W + x] = new Color32(255, 255, 255, a);
+        }
         tx.SetPixels32(px); tx.Apply();
-        return Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f);
+        return Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
     }
 
     /// <summary>0.4.82 극장판 그림 창의 좌우 먹(시안 DE4): 왼쪽 55% → 30%에서 0 … 70%에서 0 → 오른쪽 40%.</summary>
@@ -637,14 +645,12 @@ public class MolakArt : MonoBehaviour
         mask.transform.localScale = new Vector3(bandW/0.04f, bandH/0.04f, 1f);
         oldMask.transform.position = mask.transform.position; oldMask.transform.localScale = mask.transform.localScale;
         // 번짐: 1초 동안 alphaCutoff 1 → 0(가운데서 바깥으로). 끝나면 가림판은 띠 전체를 비춘다.
-        inkT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+        inkT += Mathf.Min(Time.unscaledDeltaTime, 0.1f);   // 프레임이 늦어도 번짐이 느려지지 않게(0.05 로 묶었더니 20프레임 아래에선 늘어졌다)
         float ip = Mathf.Clamp01(inkT / InkDur);
         bool inking = inkT < InkDur && !hide;
-        // 두 겹의 앞선: 먹이 먼저 옛 그림을 먹어 들어가고(0.6초), 0.32초 뒤에 그 먹 속에서 새 그림이 떠오른다(0.83초).
-        float pInk = Mathf.Clamp01(inkT / 0.6f), eInk = 1f - (1f - pInk) * (1f - pInk);
-        float pNew = Mathf.Clamp01((inkT - 0.32f) / 0.83f), eNew = pNew * pNew * (3f - 2f * pNew);
-        float cutInk = Mathf.Lerp(1.02f, -0.25f, eInk);
-        float cut = inking ? Mathf.Lerp(1.02f, -0.02f, eNew) : 0.001f;
+        // 시안 2: 앞선 하나가 1.4초 동안 고르게 퍼진다(th −0.1 → 1.05). 앞선 안쪽은 새 그림, 끝에 먹, 바깥은 옛 그림.
+        if (inking) { inkFrames++; if (inkFrames > 3) { InkMaxDt = Mathf.Max(InkMaxDt, Time.unscaledDeltaTime); InkSumDt += Time.unscaledDeltaTime; InkN++; } }
+        float cut = inking ? 1f - Mathf.Lerp(-0.1f, 1.05f, ip) : -1f;
         if (oldMat != null) { oldMat.SetFloat("_Cut2", cut); oldMat.SetVector("_Band", new Vector4(cx - bandW * 0.5f, bandCy - bandH * 0.5f, bandW, bandH)); }
 #if UNITY_EDITOR
         if (CapArm && capUntil > 0f && inkT < InkDur + 0.1f && capN < 80) { System.IO.Directory.CreateDirectory("Build/cap"); ScreenCapture.CaptureScreenshot("Build/cap/f" + (capN++).ToString("000") + "_" + inkT.ToString("0.00") + ".png"); }
@@ -655,11 +661,19 @@ public class MolakArt : MonoBehaviour
         inkR.enabled = inking && inkMat != null;
         if (inkR.enabled)
         {
-            inkMat.SetFloat("_Cut", cutInk); inkMat.SetFloat("_Cut2", cut); inkMat.SetFloat("_Soft", 0.22f);
-            inkR.color = new Color(1f, 1f, 1f, colT * Mathf.Clamp01((1f - ip) * 6f));
+            inkMat.SetFloat("_Cut", cut); inkMat.SetFloat("_W", 0.035f); inkMat.SetFloat("_Halo", 0.05f);
+            inkR.color = new Color(1f, 1f, 1f, colT);
             inkR.transform.position = new Vector3(cx, bandCy, z - 0.05f); inkR.transform.localScale = new Vector3(rsx, rsy, 1f);
         }
 
+        // 처음 몇 프레임은 번짐 셰이더를 보이지 않게 한 번 그려 둔다(첫 전환 때 셰이더를 준비하느라 한 박자 멈추던 것)
+        if (inkWarm > 0 && !inking)
+        {
+            inkWarm--;
+            inkR.enabled = inkMat != null; inkR.color = new Color(1f, 1f, 1f, 0f); inkR.transform.position = new Vector3(cx, bandCy, z - 0.05f);
+            if (oldMat != null) { oldSceneR.sprite = revealSp; oldSceneR.enabled = true; oldSceneR.color = new Color(1f, 1f, 1f, 0f); oldSceneR.transform.position = new Vector3(cx, bandCy, z); }
+            if (inkWarm == 0) { inkR.enabled = false; oldSceneR.enabled = false; oldSceneR.sprite = null; }
+        }
         // 맞은 순간의 흔들림(0.32초)
         float jit = 0f;
         if (hurtT >= 0f) { hurtT += Time.deltaTime; float hk = 1f - hurtT / 0.32f; if (hk <= 0f) hurtT = -1f; else jit = Mathf.Sin(hurtT * 70f) * hk * 14f * unit; }

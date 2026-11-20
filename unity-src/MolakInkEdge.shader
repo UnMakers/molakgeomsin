@@ -1,17 +1,16 @@
-// 0.4.85 장면 전환 「먹이 번진다」(시안 2).
-// _MainTex 의 알파 = 1 - m (가운데가 높다). 두 겹의 앞선:
-//   _Cut  — 먹의 앞선. 알파가 이보다 높은 곳은 먹이 덮었다(옛 그림 위).
-//   _Cut2 — 새 그림의 앞선(뒤따라온다). 이보다 높은 곳은 새 그림이 드러나고, 그 안쪽 _Soft 만큼 먹이 마르듯 걷힌다.
-//   먹 앞선 바로 바깥은 물이 먼저 스며든 것처럼 옛 그림을 조금 어둡게.
+// 0.4.85 장면 전환 「먹이 번진다」(시안 2): 앞선 하나. 가운데서 번져 나오는 새 그림의 끝에 짙은 먹, 그 바로 바깥 옛 그림은 물기에 어둑해진다.
+// _MainTex 알파 = 1 - m (가운데가 높다). d = 알파 - _Cut. d > 0 이면 새 그림 쪽(옛 그림은 Molak/InkOld 가 걷는다).
+//   0 < d < _W   : 먹 → 새 그림 (1 - k²)
+//   -_Halo < d < 0 : 옛 그림을 어둡게(시안의 45% 어둡게 — 리니어 색 공간이라 0.7)
 Shader "Molak/InkEdge"
 {
     Properties
     {
         [PerRendererData] _MainTex ("Mask", 2D) = "white" {}
-        _Color ("Ink", Color) = (0.055, 0.047, 0.043, 1)
-        _Cut ("Ink front", Float) = 1
-        _Cut2 ("Picture front", Float) = 1
-        _Soft ("Dry width", Range(0.01,0.5)) = 0.16
+        _Color ("Ink", Color) = (0.063, 0.051, 0.047, 1)
+        _Cut ("Front", Float) = 1
+        _W ("Ink width", Float) = 0.035
+        _Halo ("Wet width", Float) = 0.05
     }
     SubShader
     {
@@ -24,20 +23,19 @@ Shader "Molak/InkEdge"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
-            sampler2D _MainTex; fixed4 _Color; float _Cut, _Cut2, _Soft;
+            sampler2D _MainTex; fixed4 _Color; float _Cut, _W, _Halo;
             struct a2v { float4 vertex : POSITION; float2 uv : TEXCOORD0; fixed4 color : COLOR; };
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; fixed4 color : COLOR; };
             v2f vert (a2v v) { v2f o; o.pos = UnityObjectToClipPos(v.vertex); o.uv = v.uv; o.color = v.color; return o; }
             fixed4 frag (v2f i) : SV_Target
             {
-                float a = tex2D(_MainTex, i.uv).a;
-                float inkCov = smoothstep(-0.010, 0.006, a - _Cut);              // 먹이 덮은 곳
-                float dry = smoothstep(0.0, _Soft, a - _Cut2); dry = dry * dry;   // 처음엔 천천히 걷혀 먹 테두리가 남는다                    // 새 그림 쪽으로 마르며 걷힌다
-                float k = inkCov * (1.0 - dry);
-                // 먹의 농담: 번지는 테두리에 먹이 고여 가장 짙고, 안쪽은 아주 조금 묽다
-                float dens = lerp(1.0, 0.975, saturate((a - _Cut - 0.03) / 0.3));   // 리니어 색 공간이라 0.9 만 줘도 옛 그림이 훤히 비쳤다
-                float wet = (1.0 - inkCov) * smoothstep(-0.06, 0.0, a - _Cut) * 0.5;   // 앞선 바깥: 스며든 물기
-                float alpha = max(k * dens, wet);
+                float d = tex2D(_MainTex, i.uv).a - _Cut;
+                // 시안은 sRGB 에서 섞었다 — 리니어 색 공간에서 같은 결이 나오게 2.2 제곱으로 맞춘다
+                float k = saturate(d / _W);
+                float ink = 1.0 - pow(k * k, 2.2);                                   // 먹 → 새 그림
+                float q = saturate(1.0 + d / _Halo);
+                float wet = 1.0 - pow(1.0 - 0.45 * q, 2.2);                          // 옛 그림을 45% 어둡게
+                float alpha = d > 0 ? ink : wet;
                 return fixed4(_Color.rgb, _Color.a * alpha * i.color.a);
             }
             ENDCG
