@@ -472,6 +472,36 @@ public class MolakHud : MonoBehaviour
     /// <summary>수치 줄 아래 몸의 업보 한 줄(부상·독·빚)이 떠 있나 — 마디 이름 표식이 그만큼 내려간다.</summary>
     public static bool WarnShown;
     GUIStyle sCH, sCN, sCS, sCW, sCB, sSealN; float cineU = -1f;
+    static Texture2D hpGlow;
+    /// <summary>0.4.85 피통: 양끝이 가늘고 가운데가 밝게 번지는 붉은 획(시안 두 번째).</summary>
+    static Texture2D HpGlow
+    {
+        get
+        {
+            if (hpGlow != null) return hpGlow;
+            const int W = 256, H = 32;
+            hpGlow = new Texture2D(W, H, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            var px = new Color32[W * H];
+            for (int xx = 0; xx < W; xx++)
+            {
+                float t = xx / (W - 1f);
+                float taper = Mathf.Pow(Mathf.Sin(Mathf.PI * Mathf.Clamp01(t * 0.98f + 0.01f)), 0.55f);   // 양끝으로 가늘어진다
+                float half = Mathf.Max(0.6f, taper * (H * 0.5f - 1f));
+                for (int yy = 0; yy < H; yy++)
+                {
+                    float d = Mathf.Abs(yy - (H - 1) * 0.5f) / half;
+                    float body = Mathf.Clamp01(1f - d * d);                      // 몸통
+                    float glow = Mathf.Exp(-d * d * 1.6f) * 0.55f * taper;       // 둘레 번짐
+                    float core = Mathf.Clamp01(1f - d * 2.2f) * taper;           // 가운데 밝은 심
+                    float a = Mathf.Clamp01(body * 0.9f + glow);
+                    var c = Color.Lerp(new Color(0.72f, 0.10f, 0.16f), new Color(1f, 0.55f, 0.58f), core);
+                    px[yy * W + xx] = new Color(c.r, c.g, c.b, a);
+                }
+            }
+            hpGlow.SetPixels32(px); hpGlow.Apply();
+            return hpGlow;
+        }
+    }
     static readonly string[] RealmHanja = { "삼류", "이류", "일류", "절정", "초절정", "화경", "현경", "생사경", "신화경" };   // 0.4.85 언메이커: 체력 줄은 기본 한글로
     public static Rect CineBagButton (float w, float u)
     {
@@ -663,7 +693,8 @@ public class MolakHud : MonoBehaviour
             sCW.alignment = ws;
         }
         // 수치 한 줄(아래 금줄 위에 고정)
-        float l2 = (MolakLayout.ThInsetTop + MolakLayout.ThStatLineY) * s, rowH = 50*u, ry = l2 - rowH * 0.5f;
+        // 0.4.85 언메이커: 수치 한 줄 + 그 아래 체력 피통(양끝이 가늘고 가운데가 밝게 번지는 붉은 획)
+        float l2 = (MolakLayout.ThInsetTop + MolakLayout.ThStatLineY) * s - 12*u, rowH = 50*u, ry = l2 - rowH * 0.5f;
         bool lowHp = hp/hpm <= 0.34f;
         string[] keys = { "hp", "ng", "sl", "sw", "mn" };
         string[] hz = { "체력", "내공", "살기", "검술", "은자" };
@@ -677,22 +708,27 @@ public class MolakHud : MonoBehaviour
             string ns = keys[i] == "hp" ? (lowHp ? "<color=#E06A5A>" + Num("hp", hp) + "</color>" : StatNum("hp", hp, StatCol.Hp)) : keys[i] == "mn" ? Num("mn", v) : StatNum(keys[i], v, cols[i]);
             float lw = sCH.CalcSize(new GUIContent(ls)).x;
             GUI.Label(new Rect(rx, ry, lw + 4*u, rowH), ls, sCH); rx += lw + 10*u;
-            if (keys[i] == "hp")
-            {   // 體 옆 가는 체력 선
-                float bw = 90*u, bh = Mathf.Max(2f, 5*u), by = l2 - bh * 0.5f + 2*u;
-                float rr = Mathf.Clamp01(hp/hpm);
-                bool low = rr <= 0.34f;
-                if (low && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
-                if (Event.current.type == EventType.Repaint) wasLow = low;
-                float pul = low ? 0.7f + 0.3f*Mathf.Sin(Time.time*4f) : 1f;
-                Box(new Rect(rx, by, bw, bh), new Color(0.93f, 0.89f, 0.83f, 0.18f));
-                Box(new Rect(rx, by, bw * rr, bh), low ? new Color(0.85f, 0.25f, 0.20f, pul) : new Color(0.82f, 0.28f, 0.35f, 1f));
-                rx += bw + 10*u;
-            }
             float nw = sCN.CalcSize(new GUIContent(ns)).x;
             GUI.Label(new Rect(rx, ry + 1*u, nw + 4*u, rowH), ns, sCN); rx += nw + gap;
         }
         { string rl = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>"; var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(25*u); GUI.Label(new Rect(rx, ry + 2*u, 200*u, rowH), rl, sCH); sCH.fontSize = g0; }
+        {   // 피통: 수치 줄 아래, 줄 길이만큼
+            string hpRl = RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)];
+            float hpEnd = rx + sCH.CalcSize(new GUIContent(hpRl)).x;
+            float hbW = Mathf.Max(200*u, hpEnd - x), hbH = 16*u, hbY = l2 + rowH * 0.5f - 4*u;
+            float hpR = Mathf.Clamp01(hp/hpm);
+            bool hpLow = hpR <= 0.34f;
+            if (hpLow && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
+            if (Event.current.type == EventType.Repaint) wasLow = hpLow;
+            float hpPul = hpLow ? 0.65f + 0.35f*Mathf.Sin(Time.time*4f) : 1f;
+            var hpTex = HpGlow;
+            var hpG = GUI.color;
+            GUI.color = new Color(0.93f, 0.89f, 0.83f, 0.16f);
+            GUI.DrawTexture(new Rect(x, hbY, hbW, hbH), hpTex);
+            GUI.color = hpLow ? new Color(1f, 0.55f, 0.5f, hpPul) : Color.white;
+            if (hpR > 0f) GUI.DrawTextureWithTexCoords(new Rect(x, hbY, hbW * hpR, hbH), hpTex, new Rect(0, 0, hpR, 1));
+            GUI.color = hpG;
+        }
         MolakInputGuard.Guard(new Rect(0, 0, w, bandB));
         if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(new Rect(x - 10*u, l2 - 40*u, menuR.x - x, 80*u), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 맨 아래 띠: 왼쪽 「앞 쪽」, 가운데 行囊 + 최근에 얻은 것(누르면 행낭), 오른쪽 「자동」「빨리」(0.4.83 — 메뉴를 열지 않고 바로)
@@ -726,9 +762,16 @@ public class MolakHud : MonoBehaviour
             var rec = MolakBag.Recent(3);
             float cw0 = sThBag.CalcSize(new GUIContent("행낭")).x;
             var ws2 = new System.Collections.Generic.List<float>(); float tot = cw0;
+            // 0.4.85 칸보다 긴 이름은 잘리던 것(언메이커) → 칸에 맞게 줄이고 「…」
+            for (int ri = 0; ri < rec.Count; ri++)
+            {
+                string t0 = rec[ri];
+                while (t0.Length > 2 && sThChip.CalcSize(new GUIContent(t0)).x + 28*u > 240*u) t0 = t0.Substring(0, t0.Length - 1);
+                if (t0 != rec[ri]) rec[ri] = t0.TrimEnd(' ', '·') + "…";
+            }
             foreach (var nm in rec)
             {
-                float wv = Mathf.Min(220*u, sThChip.CalcSize(new GUIContent(nm)).x + 28*u);
+                float wv = sThChip.CalcSize(new GUIContent(nm)).x + 28*u;
                 if (tot + 16*u + wv > midR - midL) break;
                 ws2.Add(wv); tot += 16*u + wv;
             }
