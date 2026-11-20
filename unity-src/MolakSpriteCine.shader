@@ -36,7 +36,7 @@ Shader "Molak/SpriteCine"
                     float al = acc.a / wsum;
                     float3 col = al > 0.001 ? (acc.rgb / wsum) / al : t.rgb;
                     float lum = dot(col, float3(0.3, 0.59, 0.11));
-                    col = lerp(col, lum.xxx, 0.35 * _Quiet) * lerp(1.0, 0.62, _Quiet);
+                    col = lerp(col, lum.xxx, 0.5 * _Quiet) * lerp(1.0, 0.5, _Quiet);   // 0.4.85 언메이커: 흐림 없이 더 어둡게(밝기 약 45%, 빛 절반)
                     t = float4(col, lerp(t.a, al, _Quiet));
                 }
                 fixed4 o; o.rgb = t.rgb * IN.color.rgb;

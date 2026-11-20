@@ -25,8 +25,11 @@ public class MolakArt : MonoBehaviour
     // 0.4.85 몸짓(언메이커: 상황에 따라 표정이나 몸짓도 드라마틱하게). 서술 한 줄의 낱말로 고르거나(AutoGesture) 대본에서 @gesture kind: 로 부른다.
     //  lunge 다가서기 · recoil 움찔 · tremble 떨림 · sink 무너짐(다음 인물까지 유지) · bounce 웃음 · nod 끄덕 · turn 돌아섬
     static string gest = ""; static float gestT = 9f; static bool sunk;
+    /// <summary>0.4.85 몸짓을 끈다(언메이커: 그림을 밀고 당기기보다 상황에 맞는 그림을 새로 뽑자). 코드는 남겨 둔다.</summary>
+    public static readonly bool GestureOn = false;
     public static void Gesture (string kind)
     {
+        if (!GestureOn) return;
         if (inst == null || inst.charR == null || inst.charR.sprite == null) return;
         gest = kind ?? ""; gestT = 0f;
         if (gest == "sink") sunk = true; else if (gest == "lunge" || gest == "bounce" || gest == "nod") sunk = false;
@@ -43,7 +46,7 @@ public class MolakArt : MonoBehaviour
     /// <summary>서술 한 줄(대사·독백 아님)에 몸짓 낱말이 있으면 서 있는 인물이 그렇게 움직인다. 주인공(당신)이 주어인 줄은 건너뛴다.</summary>
     public static void AutoGesture (string plain)
     {
-        if (inst == null || inst.charR == null || inst.charR.sprite == null || string.IsNullOrEmpty(plain)) return;
+        if (!GestureOn || inst == null || inst.charR == null || inst.charR.sprite == null || string.IsNullOrEmpty(plain)) return;
         string t = plain.Trim();
         if (t.StartsWith("'") || t.StartsWith("\"") || t.StartsWith("당신")) return;
         foreach (var row in GestureWords)
@@ -336,6 +339,7 @@ public class MolakArt : MonoBehaviour
             string g = e.Contains("wrath") || e.Contains("angry") || e.Contains("fierce") || e.Contains("scold") ? "lunge"
                      : e.Contains("tears") ? "tremble" : e.Contains("grief") || e.Contains("sorrow") || e.Contains("grave") || e.Contains("pain") ? "sink"
                      : e.Contains("laugh") || e.Contains("smile") || e.Contains("kind") ? "bounce" : e.Contains("uneasy") || e.Contains("fear") ? "recoil" : "";
+            if (!GestureOn) g = "";
             if (g.Length > 0) { gest = g; gestT = 0f; sunk = g == "sink"; }
             else if (e.Length == 0) sunk = false;   // 평소 얼굴로 돌아오면 다시 선다
         }
@@ -488,7 +492,7 @@ public class MolakArt : MonoBehaviour
         if (sunk) gDim *= 0.85f;
         charR.color = cine || thr ? new Color(0.9f * gDim, 0.9f * gDim, 0.9f * gDim, cA*colT) : new Color(gDim, gDim, gDim, cA*colT);
         // 0.4.82 말하지 않는 동안 인물은 흐리고 어둡게 물러나 있다가, 입을 열면 0.25초에 또렷해진다
-        quietK = Mathf.MoveTowards(quietK, (cine || thr) && !MolakScroll.CharSpeaking ? 0.75f : 0f, Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.25f);   // 0.75: 밝기 약 72%, 빛 4분의 1 뺌
+        quietK = Mathf.MoveTowards(quietK, (cine || thr) && !MolakScroll.CharSpeaking ? 1f : 0f, Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.25f);   // 0.4.85 1: 밝기 약 45%(인물 0.9 × 셰이더 0.5), 빛 절반 뺌
         if (matCine != null && matCine != matScene) matCine.SetFloat("_Quiet", quietK);
 
         // 배치: 카메라 뷰 기준 캔버스(900×1600) 좌표 → 월드
