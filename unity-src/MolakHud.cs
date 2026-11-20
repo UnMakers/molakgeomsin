@@ -487,7 +487,7 @@ public class MolakHud : MonoBehaviour
             for (int xx = 0; xx < W; xx++)
             {
                 float t = xx / (W - 1f);
-                float taper = Mathf.Pow(Mathf.Sin(Mathf.PI * Mathf.Clamp01(t * 0.99f + 0.005f)), 0.7f);
+                float taper = t < 0.55f ? 1f : Mathf.Pow(Mathf.Cos((t - 0.55f) / 0.45f * Mathf.PI * 0.5f), 0.7f);   // 왼쪽은 꽉, 오른쪽만 바늘 끝
                 float coreW = 0.5f + 1.6f * taper;          // 심 반폭(px)
                 float glowW = 1.5f + 7.5f * taper;          // 번짐 반폭(px)
                 for (int yy = 0; yy < H; yy++)
@@ -730,7 +730,7 @@ public class MolakHud : MonoBehaviour
             GUI.color = new Color(0.93f, 0.89f, 0.83f, 0.10f);
             GUI.DrawTexture(new Rect(x, hbY, hbW, hbH), hpTex);
             GUI.color = hpLow ? new Color(1f, 0.55f, 0.5f, hpPul) : Color.white;
-            if (hpR > 0f) GUI.DrawTextureWithTexCoords(new Rect(x, hbY, hbW * hpR, hbH), hpTex, new Rect(0, 0, hpR, 1));
+            if (hpR > 0f) GUI.DrawTexture(new Rect(x, hbY, hbW * hpR, hbH), hpTex);   // 줄어도 끝은 늘 뾰족하게
             GUI.color = hpG;
         }
         MolakInputGuard.Guard(new Rect(0, 0, w, bandB));
