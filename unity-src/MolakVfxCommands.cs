@@ -81,11 +81,28 @@ public class ArtCommand : Command
         if (Assigned(Off) && Off.Value) MolakArt.Clear();
         if (Assigned(SceneId)) MolakArt.Scene(SceneId.Value);
         if (Assigned(CharId)) MolakArt.Char(CharId.Value);
+        // 0.4.85 바로 이어지는 @art 도 지금 함께 세운다(@art scene:morning → @art char:hajinmu). 둘 사이에서 쪽 넘김 탭을 기다리면
+        //   번짐이 바탕 그림으로 한 번, 탭 뒤에 인물 자리 그림으로 또 한 번 돌았다. 뒤의 @art 가 실행될 땐 이미 같은 그림이라 아무것도 안 한다.
+        try
+        {
+            var sp0 = Engine.GetService<IScriptPlayer>(); var tr0 = sp0 != null ? sp0.MainTrack : null; var pl0 = tr0 != null ? tr0.Playlist : null;
+            for (int i = tr0 != null ? tr0.PlayedIndex + 1 : -1, n = 0; pl0 != null && i >= 0 && i < pl0.Count && n < 3; i++, n++)
+            {
+                var nx = pl0[i] as ArtCommand; if (nx == null) break;
+                if (nx.ConditionalExpression.HasValue) break;   // 조건이 붙은 줄은 제때 실행되게 둔다
+                if (nx.Off != null && nx.Off.HasValue && nx.Off.Value) break;
+                if (nx.SceneId != null && nx.SceneId.HasValue && !nx.SceneId.DynamicValue) MolakArt.Scene(nx.SceneId.Value);
+                if (nx.CharId != null && nx.CharId.HasValue && !nx.CharId.DynamicValue) MolakArt.Char(nx.CharId.Value);
+            }
+        }
+        catch { }
         await Awaitable.NextFrameAsync();
         // 0.4.41: 그림이 먼저 — 새 그림이 거의 다 떠오를 때까지(0.4.42부터 최대 0.3초) 글을 붙들어 둔다.
         //         예전엔 글이 바로 찍히기 시작해 그림이 대사 뒤에 바뀌는 것처럼 보였다. 읽은 글 넘기기·자동 시험 중엔 기다리지 않는다.
         var sp = Engine.GetService<IScriptPlayer>();
         bool skip = (sp != null && sp.Skipping) || MolakBlackout.Auto;
+        // 0.4.85 바로 다음 줄도 @art 면(@art scene:morning → @art char:hajinmu) 기다리지 않는다 — 기다리는 동안 번짐이 바탕 그림으로 한 번, 인물 자리 그림으로 또 한 번 따로 돌았다
+        try { var tr = sp != null ? sp.MainTrack : null; var pl = tr != null ? tr.Playlist : null; int ni = tr != null ? tr.PlayedIndex + 1 : -1; if (pl != null && ni >= 0 && ni < pl.Count && pl[ni] is ArtCommand) skip = true; } catch { }
         float until = Time.realtimeSinceStartup + 0.3f;
         while (!skip && MolakArt.Settling && Time.realtimeSinceStartup < until)
             await Awaitable.NextFrameAsync();

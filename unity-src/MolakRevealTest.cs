@@ -81,7 +81,7 @@ public class MolakRevealTest : MonoBehaviour
         while (!started) yield return null;
         float t0 = Time.realtimeSinceStartup, chapSeen = -1f;
         string lastText = null; int frames = 0, startLen = 0; bool tracking = false; float revStart = 0f;
-        var cont = im.GetInput("Continue");
+        var cont = im.GetInput("Continue"); int stopTries = 0;
         // 0.4.85 화면 점검 상태
         string pScene = MolakArt.DbgScene, pChar = MolakArt.DbgChar, oldCharAtScene = ""; int pLen = 0, afterFrames = 0;
         string gapTrace = ""; float pageClearAt = -9f, textStartAt = -9f, sceneChangedAt = -9f, pressAt = -9f, lastGrowAt = -9f; float charHiAt = -9f, charLoAt = -9f; string charHiName = "";
@@ -149,7 +149,7 @@ public class MolakRevealTest : MonoBehaviour
             {
                 yield return new WaitForSecondsRealtime(0.5f);
                 btns = btns.Where(b => b != null && b.isActiveAndEnabled).ToArray();
-                if (btns.Length > 0) { Log.AppendLine("  [선택] " + Short(btns[0].GetComponentInChildren<TMPro.TMP_Text>().text)); btns[0].GetComponent<UnityEngine.UI.Button>().onClick.Invoke(); pressAt = Time.realtimeSinceStartup; }
+                if (btns.Length > 0) { Log.AppendLine("  [선택] " + Short(btns[0].GetComponentInChildren<TMPro.TMP_Text>().text)); btns[0].GetComponent<UnityEngine.UI.Button>().onClick.Invoke(); pressAt = Time.realtimeSinceStartup; if (CapAfterChoice) { CapAfterChoice = false; StartCoroutine(Cap()); } }
                 yield return new WaitForSecondsRealtime(0.3f);
                 continue;
             }
@@ -160,11 +160,30 @@ public class MolakRevealTest : MonoBehaviour
                 if (cont != null) { cont.Activate(1f); yield return null; cont.Activate(0f); pressAt = Time.realtimeSinceStartup; gapTrace = ""; }
                 yield return new WaitForSecondsRealtime(0.1f);
             }
-            if (tr != null && !tr.Playing && btns.Length == 0 && !tr.AwaitingInput && Time.realtimeSinceStartup - t0 > 3f) { Log.AppendLine("■ 멈춤"); break; }
+            if (tr != null && !tr.Playing && btns.Length == 0 && !tr.AwaitingInput && Time.realtimeSinceStartup - t0 > 3f)
+            {   // 선택지는 마지막 글 뒤 한 번 더 눌러야 뜬다 — 눌러 보고 2초 기다린 뒤에도 없으면 멈춤
+                if (stopTries++ < 3) { if (cont != null) { cont.Activate(1f); yield return null; cont.Activate(0f); } yield return new WaitForSecondsRealtime(0.7f); continue; }
+                Log.AppendLine("■ 멈춤"); break;
+            }
+            stopTries = 0;
         }
         Status = "done";
     }
 
+    public static bool CapAfterChoice;
+    IEnumerator Cap ()
+    {
+        System.IO.Directory.CreateDirectory("Build/capc");
+        float t0 = Time.realtimeSinceStartup; int n = 0;
+        var sp = Engine.GetService<IScriptPlayer>(); var pm = Engine.GetService<ITextPrinterManager>();
+        while (Time.realtimeSinceStartup - t0 < 3f)
+        {
+            var tr = sp.MainTrack; var pr = pm.GetActor(pm.DefaultPrinterId); var d = Dlg();
+            Log.AppendLine("  cap" + n + " t=" + (Time.realtimeSinceStartup - t0).ToString("0.00") + " cmd=" + (tr.PlayedCommand != null ? tr.PlayedCommand.GetType().Name + tr.PlayedCommand.PlaybackSpot.LineIndex : "-") + " play=" + tr.Playing + " rev=" + (pr != null ? pr.RevealProgress.ToString("0.00") : "-") + " len=" + Plain(d != null ? d.text : "").Length + " a=" + (d != null ? d.color.a.ToString("0.00") : "-") + " hold=" + MolakTheme.ChoiceCount);
+            ScreenCapture.CaptureScreenshot("Build/capc/c" + (n++).ToString("00") + ".png");
+            for (int k = 0; k < 6; k++) yield return null;
+        }
+    }
     static void Finish (int frames, int len, float start)
     {
         Messages++;

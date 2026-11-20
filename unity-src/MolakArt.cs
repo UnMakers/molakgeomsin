@@ -142,13 +142,14 @@ public class MolakArt : MonoBehaviour
     //   새 장면·인물은 번짐 가림판(SpriteMask, alphaCutoff 를 1→0)에만 비치고, 번지는 끝에 먹 테(Molak/InkEdge)를 두른다.
     SpriteRenderer oldSceneR, oldCharR, inkR; SpriteMask revealMask, oldMask; Material inkMat, oldMat; Sprite revealSp; float inkT = 9f; int inkWarm = 4;
     const float InkDur = 1.4f;   // 시안 2 그대로
-    public static float InkMaxDt, InkSumDt; public static int InkN; int inkFrames;   // 점검용: 마지막 번짐 동안 가장 긴 프레임(초)
+    public static int InkStarts; public static float InkMaxDt, InkSumDt; public static int InkN; int inkFrames;   // 점검용: 마지막 번짐 동안 가장 긴 프레임(초)
 #if UNITY_EDITOR
     public static bool CapArm; static float capUntil; static int capN;   // 점검용: 번짐 프레임을 Build/cap 에 찍는다
 #endif
     public static bool InkOn = true;
-    public static void Dip () { if (inst != null) inst.dipT = 0f; }
-    public static bool Dipping { get { return inst != null && (inst.dipT < 0.5f || inst.inkT < 0.6f); } }
+    public static void Dip () { if (inst != null) inst.dipAt = Time.frameCount; }   // 0.4.85 바로 뒤에 장면이 바뀌면(번짐) 암전은 하지 않는다 — 몇 프레임 기다려 본다
+    int dipAt = -1;
+    public static bool Dipping { get { return inst != null && (inst.dipAt >= 0 || inst.dipT < 0.5f || inst.inkT < 0.25f); } }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
     public static void Scene (string id)
@@ -383,7 +384,8 @@ public class MolakArt : MonoBehaviour
     {
         bool ink = InkOn && s != null && oldSceneR != null && (sceneR.sprite != null || charR.sprite != null) && !id.StartsWith("duel") && !(sceneId ?? "").StartsWith("duel") && !MolakPlayMode.SkipAll;
         // 바탕(낮·밤)을 깔자마자 진짜 장면이 오면(쪽 넘김 → @art) 번짐을 새로 시작하지 않고 목표만 바꾼다 — 효과가 바탕 그림으로 한 번, 진짜 그림으로 또 한 번 따로 놀던 것
-        if (ink && inkT < 0.35f && oldSceneR.sprite != null) { sceneCur = s; sceneId = id; sceneT = 1f; ChangedAt = Time.unscaledTime; if (!restoring) MolakStats.SetStr("artscene", id ?? ""); if (charCur != null || charR.sprite != null) { SetChar(null, ""); charR.sprite = null; charT = 1f; } sceneR.sprite = s; return; }
+        bool fromBase = Generic.Contains(sceneId ?? "");   // 바탕(낮·밤·비)을 막 깐 참이면 그건 거쳐 가는 그림이다
+        if (ink && oldSceneR.sprite != null && (inkT < 0.35f || (fromBase && inkT < InkDur))) { inkT = Mathf.Min(inkT, 0.05f); sceneCur = s; sceneId = id; sceneT = 1f; ChangedAt = Time.unscaledTime; if (!restoring) MolakStats.SetStr("artscene", id ?? ""); if (charCur != null || charR.sprite != null) { SetChar(null, ""); charR.sprite = null; charT = 1f; } sceneR.sprite = s; return; }
         if (ink)
         {   // 지금 보이는 그대로 아래에 얼려 둔다
 #if UNITY_EDITOR
@@ -391,6 +393,7 @@ public class MolakArt : MonoBehaviour
 #endif
             oldSceneR.sprite = sceneR.sprite; oldSceneR.color = sceneR.color; oldSceneR.transform.position = sceneR.transform.position + new Vector3(0f, 0f, 0.05f); oldSceneR.transform.localScale = sceneR.transform.localScale;
             oldCharR.sprite = charR.sprite; oldCharR.color = charR.color; oldCharR.transform.position = charR.transform.position + new Vector3(0f, 0f, 0.05f); oldCharR.transform.localScale = charR.transform.localScale;
+            InkStarts++; dipT = 9f; dipAt = -1;   // 번짐이 시작되면 쪽 넘김 암전은 걷는다(암전 → 번짐으로 먹이 두 번 보이던 것)
             inkT = 0f; InkMaxDt = 0f; InkSumDt = 0f; InkN = 0; inkFrames = 0;
         }
         sceneCur = s; sceneId = id; sceneT = ink ? 1f : 0f; ChangedAt = Time.unscaledTime;
@@ -650,7 +653,7 @@ public class MolakArt : MonoBehaviour
         bool inking = inkT < InkDur && !hide;
         // 시안 2: 앞선 하나가 1.4초 동안 고르게 퍼진다(th −0.1 → 1.05). 앞선 안쪽은 새 그림, 끝에 먹, 바깥은 옛 그림.
         if (inking) { inkFrames++; if (inkFrames > 3) { InkMaxDt = Mathf.Max(InkMaxDt, Time.unscaledDeltaTime); InkSumDt += Time.unscaledDeltaTime; InkN++; } }
-        float cut = inking ? 1f - Mathf.Lerp(-0.1f, 1.05f, ip) : -1f;
+        float cut = inking ? 1f - Mathf.Lerp(0.02f, 1.05f, ip) : -1f;   // 시안은 −0.1 에서 시작해 처음 0.1초 남짓 아무것도 안 바뀌었다 — 누르자마자 번지기 시작하게
         if (oldMat != null) { oldMat.SetFloat("_Cut2", cut); oldMat.SetVector("_Band", new Vector4(cx - bandW * 0.5f, bandCy - bandH * 0.5f, bandW, bandH)); }
 #if UNITY_EDITOR
         if (CapArm && capUntil > 0f && inkT < InkDur + 0.1f && capN < 80) { System.IO.Directory.CreateDirectory("Build/cap"); ScreenCapture.CaptureScreenshot("Build/cap/f" + (capN++).ToString("000") + "_" + inkT.ToString("0.00") + ".png"); }
@@ -732,6 +735,7 @@ public class MolakArt : MonoBehaviour
             charR.transform.position = new Vector3(x, y + gy, z);
         }
         // 장면 전환 암전: 바로 먹으로 덮고 0.2초 머문 뒤 0.6초에 걷히며 새 장면이 떠오른다
+        if (dipAt >= 0 && Time.frameCount - dipAt >= 6) { dipAt = -1; if (inkT >= InkDur) dipT = 0f; }
         dipT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
         float dipA = dipT < 0.2f ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (dipT - 0.2f) / 0.6f);
         dipR.enabled = !hide && dipT < 0.8f && inkT >= InkDur && (sceneR.sprite != null || charR.sprite != null);

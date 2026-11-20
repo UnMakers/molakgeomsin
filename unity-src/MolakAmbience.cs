@@ -60,11 +60,7 @@ public class MolakAmbience : MonoBehaviour
             cur = want;
             var next = useB ? a : b; useB = !useB;
             next.Stop(); next.clip = null;
-            if (cur.Length > 0)
-            {
-                var c = Resources.Load<AudioClip>("MolakSfx/" + cur);
-                if (c != null) { next.clip = c; next.time = Random.Range(0f, Mathf.Max(0f, c.length - 1f)); next.Play(); }
-            }
+            if (cur.Length > 0) StartCoroutine(LoadPlay(next, cur));   // 0.4.85 그 자리에서 읽으면(동기) 장면이 바뀌는 프레임이 멈춰 먹번짐이 끊겨 보였다 — 뒤에서 읽는다
             mix = 0f;
         }
         mix = Mathf.MoveTowards(mix, 1f, Time.unscaledDeltaTime / 1.5f);
@@ -74,6 +70,23 @@ public class MolakAmbience : MonoBehaviour
         on.volume = muted ? 0f : vol * mix;
         off.volume = muted ? 0f : vol * (1f - mix);
         if (mix >= 1f && off.isPlaying) off.Stop();
+    }
+
+    static readonly System.Collections.Generic.Dictionary<string, AudioClip> clips = new System.Collections.Generic.Dictionary<string, AudioClip>();
+    System.Collections.IEnumerator LoadPlay (AudioSource src, string name)
+    {
+        AudioClip c;
+        if (!clips.TryGetValue(name, out c) || c == null)
+        {
+            var req = Resources.LoadAsync<AudioClip>("MolakSfx/" + name);
+            yield return req;
+            c = req.asset as AudioClip; if (c != null) clips[name] = c;
+        }
+        if (c == null || cur != name) yield break;   // 읽는 사이에 다른 자리로 바뀌었으면 버린다
+        if (c.loadState == AudioDataLoadState.Unloaded) c.LoadAudioData();
+        while (c.loadState == AudioDataLoadState.Loading) yield return null;
+        if (cur != name) yield break;
+        src.clip = c; src.time = Random.Range(0f, Mathf.Max(0f, c.length - 1f)); src.Play();
     }
 
     static float Scale ()
