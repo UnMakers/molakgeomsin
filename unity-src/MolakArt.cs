@@ -48,6 +48,30 @@ public class MolakArt : MonoBehaviour
         inst = go.AddComponent<MolakArt>();
     }
 
+    // 0.4.84 마디 대표 그림: @chapter 가 뜨는 동안 그 줄기(sub)의 그림을 그림 창 맨 위에 깔았다가, 마디 이름이 걷히면 함께 스러진다.
+    static readonly Dictionary<string, string> KeyArt = new Dictionary<string, string>
+    {
+        { "회귀", "regress" }, { "소아", "soa" }, { "복수", "revenge" }, { "청묘", "cheongmyo" }, { "노인", "oldman" },
+        { "그물", "net" }, { "참새", "sparrow" }, { "종장", "finale" }, { "종장 · 닷새", "finale" }, { "암향", "amhyang" }, { "암향루", "amhyang" },
+        { "사당", "shrine" }, { "객잔", "inn" }, { "운락객잔", "inn" }, { "쥐눈이 장", "jang" }
+    };
+    // 좁은 화면에서 잘릴 때 어디를 가운데 둘지(그림 너비 비율)
+    static readonly Dictionary<string, float> KeyFocus = new Dictionary<string, float>
+    {
+        { "regress", 0.62f }, { "soa", 0.70f }, { "revenge", 0.50f }, { "cheongmyo", 0.50f }, { "oldman", 0.40f }, { "net", 0.50f },
+        { "sparrow", 0.55f }, { "finale", 0.48f }, { "amhyang", 0.42f }, { "shrine", 0.62f }, { "inn", 0.50f }, { "jang", 0.55f }
+    };
+    SpriteRenderer keyR; Sprite keyCur; float keyT = 1f, keyIn, keyFx = 0.5f;
+    public static void Key (string sub)
+    {
+        if (inst == null) return;
+        string id; Sprite sp = null;
+        if (!string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id)) sp = Load("MolakArt/key_" + id);
+        inst.keyCur = sp; inst.keyT = 0f; inst.keyIn = 0f;
+        float fx; inst.keyFx = sp != null && KeyFocus.TryGetValue(KeyFor(sub), out fx) ? fx : 0.5f;
+    }
+    public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
+
     public static void Scene (string id)
     {
         if (inst == null) return;
@@ -287,6 +311,9 @@ public class MolakArt : MonoBehaviour
         shadeR = shg.AddComponent<SpriteRenderer>(); shadeR.sharedMaterial = matScene; shadeR.sortingOrder = 12;
         shadeV = ShadeSprite(); shadeH = SideShadeSprite();
         shadeR.sprite = shadeV; shadeR.enabled = false;
+        var kg = new GameObject("Key"); kg.transform.SetParent(band.transform, false); kg.layer = 30;
+        keyR = kg.AddComponent<SpriteRenderer>(); keyR.sharedMaterial = matScene; keyR.sortingOrder = 13;
+        keyR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
     }
 
     /// <summary>0.4.82 극장판 그림 창의 좌우 먹(시안 DE4): 왼쪽 55% → 30%에서 0 … 70%에서 0 → 오른쪽 40%.</summary>
@@ -450,6 +477,26 @@ public class MolakArt : MonoBehaviour
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
             charR.transform.position = new Vector3(x, y, z);
+        }
+        // 마디 대표 그림: 마디 이름이 덮는 만큼 짙게, 0.5초에 떠오르고 아주 느리게 다가간다
+        float cover = MolakVfx.ChapterCover;
+        if (keyCur != null && cover <= 0f && keyIn > 0.5f) keyCur = null;
+        if (keyCur != null && keyR.sprite != keyCur) keyR.sprite = keyCur;
+        if (keyCur == null) { keyR.sprite = null; keyR.enabled = false; }
+        else
+        {
+            keyIn = Mathf.Min(1f, keyIn + Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.5f);
+            keyT += Time.unscaledDeltaTime;
+            keyR.enabled = !hide;
+            float ka = Mathf.SmoothStep(0f, 1f, keyIn) * cover;
+            float kg2 = MolakTheme.Night ? 0.78f : 1f;
+            keyR.color = new Color(kg2, kg2, kg2, ka * colT);
+            var sp = keyR.sprite; float sw = sp.texture.width/100f, sh = sp.texture.height/100f;
+            float k = Mathf.Max(bandW/sw, bandH/sh) * (1.02f + 0.04f * Mathf.Clamp01(keyT / 8f));
+            keyR.transform.localScale = new Vector3(k, k, 1f);
+            float spare = Mathf.Max(0f, sw * k - bandW) * 0.5f;
+            float kx = Mathf.Clamp((0.5f - keyFx) * sw * k, -spare, spare);
+            keyR.transform.position = new Vector3(cx + kx, bandCy, z - 0.2f);
         }
     }
 }

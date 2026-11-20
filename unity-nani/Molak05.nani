@@ -100,8 +100,10 @@
 @set f_beggarnet=1
 @goto Molak02#AfterChapter
 # Hajin2A
+@art char:hajinmu_laugh
 "이 늙은이가 눈이 어두워서 말이오. 객 얼굴이 하나도 기억나지 않소."
 하진무가 능청스레 웃는다. 교도들이 장부를 뒤지고, 침을 뱉고, 떠난다.
+@art char:hajinmu
 주판을 다시 집는 그의 손이 떨린다.
 그날 밤 방값에 두 냥을 더 얹어 두자, 하진무는 이튿날 그 두 냥을 당신 밥상 밑에 도로 깔아 둔다.
 빚이 또 늘었다.

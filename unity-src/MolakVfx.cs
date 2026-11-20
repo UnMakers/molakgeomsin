@@ -87,7 +87,7 @@ public class MolakVfx : MonoBehaviour
             return 1f - Mathf.Clamp01(instance.chapOutT / 0.6f);
         }
     }
-    public static void Chapter (string text, string sub, string desc = "") { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapDesc = desc ?? ""; instance.chapT = 0f; instance.chapHold = true; instance.chapOutT = -1f; instance.pinText = ""; instance.pinDay = MolakStats.Get("day"); MolakSfx.Chapter(); }
+    public static void Chapter (string text, string sub, string desc = "") { if (instance == null || string.IsNullOrEmpty(text)) return; instance.chapText = text; instance.chapSub = sub ?? ""; instance.chapDesc = desc ?? ""; instance.chapT = 0f; instance.chapHold = true; instance.chapOutT = -1f; instance.pinText = ""; instance.pinDay = MolakStats.Get("day"); MolakSfx.Chapter(); MolakArt.Key(sub); }
 
     // 인장 도장(승부수 판정): 화면 위쪽에 한자 하나가 찍히고 바랜다. 입력은 막지 않는다.
     float stampT = -1f; string stampHanja = "", stampLine = ""; bool stampBig;
