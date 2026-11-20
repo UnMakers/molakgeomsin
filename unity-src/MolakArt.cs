@@ -385,7 +385,8 @@ public class MolakArt : MonoBehaviour
         bool ink = InkOn && s != null && oldSceneR != null && (sceneR.sprite != null || charR.sprite != null) && !id.StartsWith("duel") && !(sceneId ?? "").StartsWith("duel") && !MolakPlayMode.SkipAll;
         // 바탕(낮·밤)을 깔자마자 진짜 장면이 오면(쪽 넘김 → @art) 번짐을 새로 시작하지 않고 목표만 바꾼다 — 효과가 바탕 그림으로 한 번, 진짜 그림으로 또 한 번 따로 놀던 것
         bool fromBase = Generic.Contains(sceneId ?? "");   // 바탕(낮·밤·비)을 막 깐 참이면 그건 거쳐 가는 그림이다
-        if (ink && oldSceneR.sprite != null && (inkT < 0.35f || (fromBase && inkT < InkDur))) { inkT = Mathf.Min(inkT, 0.05f); sceneCur = s; sceneId = id; sceneT = 1f; ChangedAt = Time.unscaledTime; if (!restoring) MolakStats.SetStr("artscene", id ?? ""); if (charCur != null || charR.sprite != null) { SetChar(null, ""); charR.sprite = null; charT = 1f; } sceneR.sprite = s; return; }
+        // 번지는 중에 또 장면이 오면(빨리 누를 때): 반도 안 번졌으면 옛 그림은 그대로 두고 새 목표로 다시 번진다, 반 넘게 번졌으면 지금 그림을 옛 그림 삼아 새로 번진다
+        if (ink && oldSceneR.sprite != null && inkT < InkDur && (inkT < 0.35f || fromBase || inkT < InkDur * 0.5f)) { inkT = Mathf.Min(inkT, 0.05f); sceneCur = s; sceneId = id; sceneT = 1f; ChangedAt = Time.unscaledTime; if (!restoring) MolakStats.SetStr("artscene", id ?? ""); if (charCur != null || charR.sprite != null) { SetChar(null, ""); charR.sprite = null; charT = 1f; } sceneR.sprite = s; return; }
         if (ink)
         {   // 지금 보이는 그대로 아래에 얼려 둔다
 #if UNITY_EDITOR

@@ -33,7 +33,7 @@ public class MolakFlow : MonoBehaviour
     public static void Ack () { if (inst != null) inst.lastPressAt = Time.unscaledTime; }
     // 0.4.44 그림도 글처럼: 맥락이 바뀌어(다른 대본으로·하루 흐름 라벨로·날 넘김) 글이 새 쪽이 될 때, 대본이 그림을 따로 정하지 않았으면
     //        하루의 바탕 그림으로 되돌린다. 선택지 직후·쪽이 꽉 차서 넘길 때·같은 대본 안의 처리 루틴(gosub)은 같은 자리라 그대로 둔다.
-    bool artResetPending;
+    bool artResetPending, artSetSincePrint;
     string lastPrintScript = "";
     bool returning;
     IScriptPlayer player;
@@ -136,12 +136,12 @@ public class MolakFlow : MonoBehaviour
         if (tn.Contains("Ending")) breakNext = true;
         // 맥락 전환 = 본문 초기화: 장면 명령, 사건/서브루틴 진입·복귀, 다른 스크립트로 이동, 하루 허브 라벨로 이동
         if (tn == "SceneCommand" || tn == "DayTickCommand" || tn == "InitRunCommand" || tn == "PageCommand") breakNext = true;
-        if (tn == "DayTickCommand" || tn == "InitRunCommand" || tn == "PageCommand") artResetPending = true;
+        if (tn == "DayTickCommand" || tn == "InitRunCommand" || (tn == "PageCommand" && !artSetSincePrint)) artResetPending = true;   // 0.4.85 @art scene → @page 순이면 방금 정한 그림을 바탕으로 되돌리지 않는다(번짐이 세 번 돌던 것: 골목 → 바탕 → 다시 골목)
         if (tn == "SceneCommand") artResetPending = false;                 // @scene 이 그림을 정한다
         if (cmd is ArtCommand)
         {
             var ac = (ArtCommand)cmd;
-            if (Assigned(ac.SceneId)) { breakNext = true; artResetPending = false; }            // 대본이 장면을 정했다
+            if (Assigned(ac.SceneId)) { breakNext = true; artResetPending = false; artSetSincePrint = true; }            // 대본이 장면을 정했다
             else if (artResetPending && Assigned(ac.CharId)) { artResetPending = false; MolakArt.ResetToBase(); }   // 인물만 정하면 바탕부터 깐 뒤 인물(그 사람 자리 그림이 깔린다)
         }
         if (cmd is Gosub || cmd is Return) breakNext = true;
@@ -176,6 +176,7 @@ public class MolakFlow : MonoBehaviour
 
         var pt = cmd as PrintText;
         if (pt == null) return;
+        artSetSincePrint = false;
         // 0.4.83 말하는 사람(@spk id:soa) — 바로 다음 한 줄에만 붙는다. 없으면 글로 어림한다(MolakScroll.CharSpeaking).
         CurrentSpeaker = PendingSpeaker; PendingSpeaker = null;
         // 0.4.9: {dejapre} 한 줄(지난 생 장면). 비어 있으면 아무것도 찍지 않고 흐름에도 끼지 않는다.

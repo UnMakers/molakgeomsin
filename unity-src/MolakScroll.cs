@@ -279,9 +279,14 @@ public class MolakScroll : MonoBehaviour
             if (thr)
             {
                 string curTx = spkTx != null ? spkTx.text : null;
-                if (MolakTheme.ChoiceCount > 0) { thHold = true; thHoldText = curTx; thHoldT = Time.unscaledTime; }
-                else if (thHold && (!ReferenceEquals(curTx, thHoldText) || Time.unscaledTime - thHoldT > 2f)) thHold = false;
-                if (MolakTheme.ChoiceCount > 0 || thHold) a = 0f;
+                // 0.4.85 선택지가 뜨는 순간의 글만 붙든다. 예전엔 선택지가 스러지는 동안에도 붙든 글을 계속 새 글로 바꿔 적어,
+                //   고른 뒤 첫 문단이 감춰진 채 다 찍혔다가 다음 문단이 올 때 한꺼번에 나타났다(「노점상이 놀라…」).
+                int cc = MolakTheme.ChoiceCount;
+                if (cc > 0 && thPrevChoices == 0) { thHold = true; thHoldText = curTx; }
+                if (cc > 0 && thHold && ReferenceEquals(curTx, thHoldText)) thHoldT = Time.unscaledTime;
+                if (thHold && (!ReferenceEquals(curTx, thHoldText) || Time.unscaledTime - thHoldT > 2f)) thHold = false;
+                thPrevChoices = cc;
+                if (thHold) a = 0f;
             }
             else thHold = false;
             if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
@@ -353,7 +358,7 @@ public class MolakScroll : MonoBehaviour
     public static float TheaterChoiceY = MolakLayout.BagStripH;
     /// <summary>극장판 글 칸의 화면 자리(GUI 좌표). 요약·인장·쪽지가 쓴다.</summary>
     public static Rect TheaterTextGui;
-    static bool thHold; static string thHoldText; static float thHoldT; static float thSumTopC = 800f;
+    static bool thHold; static int thPrevChoices; static string thHoldText; static float thHoldT; static float thSumTopC = 800f;
     void LayoutTheater (float canvasW, float canvasH)
     {
         float side = Mathf.Max(MolakLayout.ThTextSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.ThTextSide);
@@ -431,7 +436,7 @@ public class MolakScroll : MonoBehaviour
     void DrawSummary ()
     {
         if (MolakTitle.Showing) { thHold = false; sumLine1 = ""; sumLine2 = ""; return; }   // 0.4.85 처음 화면으로 돌아오면 남아 있던 선택지 위 요약이 제목 위에 떴다
-        if (!MolakTheme.TheaterNow || (MolakTheme.ChoiceCount <= 0 && !thHold) || TheaterTextGui.width < 2f || MolakMenu.IsOpen) return;
+        if (!MolakTheme.TheaterNow || !thHold || TheaterTextGui.width < 2f || MolakMenu.IsOpen) return;
         if (sumLine1.Length == 0 && sumLine2.Length == 0) return;
         float u = MolakTheme.U;
         if (sSum1 == null || !Mathf.Approximately(sumU, u))
