@@ -719,7 +719,7 @@ public class MolakHud : MonoBehaviour
         {   // 피통: 수치 줄 아래, 줄 길이만큼
             string hpRl = RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)];
             float hpEnd = rx + sCH.CalcSize(new GUIContent(hpRl)).x;
-            float hbW = Mathf.Max(200*u, hpEnd - x), hbH = 12*u, hbY = l2 + rowH * 0.5f - 3*u;
+            float hbW = Mathf.Min(280*u, hpEnd - x), hbH = 12*u, hbY = l2 + rowH * 0.5f - 3*u;
             float hpR = Mathf.Clamp01(hp/hpm);
             bool hpLow = hpR <= 0.34f;
             if (hpLow && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
