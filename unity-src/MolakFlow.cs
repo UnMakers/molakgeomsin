@@ -227,6 +227,7 @@ public class MolakFlow : MonoBehaviour
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
         // 0.4.9: 대사 줄은 앞뒤로 한 줄 띄운다(서술과 대사가 붙어 있으면 읽기 어렵다)
         bool curDlg = IsDialogue(pt);
+        if (!curDlg && !isBridge) { var spk2 = player; if (!(MolakPlayMode.SkipAll || (spk2 != null && spk2.Skipping))) MolakArt.AutoGesture(System.Text.RegularExpressions.Regex.Replace(TextOf(pt) ?? "", "<[^>]+>", "")); }   // 0.4.85 몸짓
         bool beat = lastPrintWaited || afterChoice || curDlg || prevDlg || held;
         // 0.4.37: 한 번에 쭉 나오는 서술이 길면 숨 쉴 자리를 둔다 — 빈 줄 없이 이어진 단락이 둘 이상이고 글자가 RunBreakChars 를 넘었으면
         //         다음 단락 앞에 빈 줄 하나(예: 첫 거리 장면 "…사람들이 길을 비킨다." 다음).

@@ -137,3 +137,16 @@ public class ChapterCommand : Command
         }
     }
 }
+
+/// <summary>0.4.85 @gesture kind:lunge|recoil|tremble|sink|bounce|nod|turn — 서 있는 인물의 몸짓(서술 낱말로도 저절로 나온다).</summary>
+[Alias("gesture")]
+public class GestureCommand : Command
+{
+    public StringParameter Kind;
+#pragma warning disable CS1998
+    public override async Awaitable Execute (ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        if (Assigned(Kind)) MolakArt.Gesture(Kind.Value);
+    }
+}

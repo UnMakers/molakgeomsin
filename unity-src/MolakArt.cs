@@ -22,6 +22,40 @@ public class MolakArt : MonoBehaviour
     static int pose; float poseK;
     /// <summary>0.4.49 비무 기세: 1 덤벼든다(한 걸음 다가옴) 2 물러서 받는다 3 흔든다 0 제자리.</summary>
     public static void Pose (int p) { pose = p; }
+    // 0.4.85 몸짓(언메이커: 상황에 따라 표정이나 몸짓도 드라마틱하게). 서술 한 줄의 낱말로 고르거나(AutoGesture) 대본에서 @gesture kind: 로 부른다.
+    //  lunge 다가서기 · recoil 움찔 · tremble 떨림 · sink 무너짐(다음 인물까지 유지) · bounce 웃음 · nod 끄덕 · turn 돌아섬
+    static string gest = ""; static float gestT = 9f; static bool sunk;
+    public static void Gesture (string kind)
+    {
+        if (inst == null || inst.charR == null || inst.charR.sprite == null) return;
+        gest = kind ?? ""; gestT = 0f;
+        if (gest == "sink") sunk = true; else if (gest == "lunge" || gest == "bounce" || gest == "nod") sunk = false;
+    }
+    static readonly string[][] GestureWords = {
+        new[]{ "lunge", "버럭", "소리친다", "소리를 지른다", "고함", "멱살", "노려본다", "쏘아본다", "다가선다", "바짝 다가", "칼을 뽑는다", "검을 뽑는다", "탁자를 친다", "내리친다" },
+        new[]{ "recoil", "흠칫", "움찔", "멈칫", "뒷걸음", "숨을 삼킨다", "얼굴이 하얗", "눈이 커진다", "굳는다" },
+        new[]{ "tremble", "어깨가 떨", "손이 떨", "흐느", "울음을", "소리 내어 운다", "눈물", "떨리는 목소리", "목이 멘" },
+        new[]{ "sink", "고개를 떨군", "고개를 숙인", "무릎을 꿇", "주저앉", "털썩", "무너진다", "어깨가 처" },
+        new[]{ "bounce", "웃음을 터", "껄껄", "낄낄", "깔깔", "소리 내어 웃", "크게 웃" },
+        new[]{ "nod", "고개를 끄덕" },
+        new[]{ "turn", "등을 돌린다", "돌아선다", "고개를 돌린다" },
+    };
+    /// <summary>서술 한 줄(대사·독백 아님)에 몸짓 낱말이 있으면 서 있는 인물이 그렇게 움직인다. 주인공(당신)이 주어인 줄은 건너뛴다.</summary>
+    public static void AutoGesture (string plain)
+    {
+        if (inst == null || inst.charR == null || inst.charR.sprite == null || string.IsNullOrEmpty(plain)) return;
+        string t = plain.Trim();
+        if (t.StartsWith("'") || t.StartsWith("\"") || t.StartsWith("당신")) return;
+        foreach (var row in GestureWords)
+            for (int i = 1; i < row.Length; i++)
+            {
+                int at = t.IndexOf(row[i]);
+                if (at < 0) continue;
+                int me = t.IndexOf("당신이"); if (me < 0) me = t.IndexOf("당신은");
+                if (me >= 0 && me < at) return;   // 당신이 움찔한다 — 인물이 아니라 나
+                Gesture(row[0]); return;
+            }
+    }
     public static bool HasArt { get { return inst != null && (inst.sceneCur != null || inst.charCur != null); } }
     public const float BandTop = 184f, BandH = 300f;   // 캔버스 단위(900×1600)
 
@@ -293,8 +327,18 @@ public class MolakArt : MonoBehaviour
     void SetChar (Sprite s, string id)
     {
         bool newPerson = s != null && Person(id) != Person(charCur != null ? charId : null);
-        if (newPerson) { pushT = 0f; slideT = 0f; }
+        if (newPerson) { pushT = 0f; slideT = 0f; gest = ""; gestT = 9f; sunk = false; }
         charCur = s; charId = id; charT = 0f; ChangedAt = Time.unscaledTime;
+        // 0.4.85 같은 사람의 표정이 바뀌면 몸도 같이 움직인다
+        if (s != null && !newPerson && !string.IsNullOrEmpty(id))
+        {
+            string e = id.Substring(Person(id).Length);
+            string g = e.Contains("wrath") || e.Contains("angry") || e.Contains("fierce") || e.Contains("scold") ? "lunge"
+                     : e.Contains("tears") ? "tremble" : e.Contains("grief") || e.Contains("sorrow") || e.Contains("grave") || e.Contains("pain") ? "sink"
+                     : e.Contains("laugh") || e.Contains("smile") || e.Contains("kind") ? "bounce" : e.Contains("uneasy") || e.Contains("fear") ? "recoil" : "";
+            if (g.Length > 0) { gest = g; gestT = 0f; sunk = g == "sink"; }
+            else if (e.Length == 0) sunk = false;   // 평소 얼굴로 돌아오면 다시 선다
+        }
     }
     float slideT = 1f;
     /// <summary>0.4.65 그림이 마지막으로 바뀐 때(빨리에서 글을 그림 뒤로 반 박자 늦추는 데 쓴다).</summary>
@@ -509,14 +553,30 @@ public class MolakArt : MonoBehaviour
             // 0.4.83 잘림 없게(언메이커: 움직임까지 고려해 잘리는 데가 없어야): 극장판은 정수리를 창 위 28단위 아래에 묶고(커지고 숨 쉬어도 머리가 창 밖으로 안 나간다),
             //   어떤 움직임에도 그림 아랫변(허벅지에서 끊긴 자리)이 창 안으로 올라오지 않게 키를 받친다. 좌우는 화면 밖으로 밀려나지 않을 만큼만 비켜 선다.
             if (thr) k = Mathf.Max(k, (bandH - 28f * unit + 30f * unit) / sh);
+            // 몸짓
+            gestT += Time.unscaledDeltaTime;
+            float gx = 0f, gy = 0f, gk = 1f;
+            float env = gestT < 0.12f ? gestT / 0.12f : gestT < 0.4f ? 1f : Mathf.Clamp01(1f - (gestT - 0.4f) / 0.45f);
+            env = Mathf.SmoothStep(0f, 1f, env);
+            switch (gest)
+            {
+                case "lunge": gk = 1f + 0.10f * env; gy -= 10f * unit * env; break;
+                case "recoil": gk = 1f - 0.06f * env; gx += camW * 0.05f * env; break;
+                case "tremble": if (gestT < 1.6f) gx += Mathf.Sin(gestT * 48f) * 5f * unit * (1f - gestT / 1.6f); break;
+                case "bounce": if (gestT < 0.7f) gy -= Mathf.Abs(Mathf.Sin(gestT * 13.5f)) * 9f * unit * (1f - gestT / 0.7f); break;
+                case "nod": if (gestT < 0.5f) gy -= Mathf.Sin(Mathf.PI * gestT / 0.5f) * 16f * unit; break;
+                case "turn": gx += camW * 0.07f * env; gk = 1f - 0.03f * env; break;
+            }
+            if (sunk) gy -= bandH * 0.07f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(gest == "sink" ? gestT / 0.7f : 1f));
+            k *= gk;
             charR.transform.localScale = new Vector3(k, k, 1f);
-            float x = cx + jit;   // 홀로 서니 띠 가운데
+            float x = cx + jit + gx;   // 홀로 서니 띠 가운데
             // 새 사람: 오른쪽 화면 밖에서 0.45초에 미끄러져 들어온다(끝에서 부드럽게 선다)
             slideT = Mathf.Min(1f, slideT + Time.unscaledDeltaTime / 0.45f);
             if (slideT < 1f) x += (1f - (1f - Mathf.Pow(1f - slideT, 3f))) * camW * 0.55f;
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
-            charR.transform.position = new Vector3(x, y, z);
+            charR.transform.position = new Vector3(x, y + gy, z);
         }
         // 장면 전환 암전: 바로 먹으로 덮고 0.2초 머문 뒤 0.6초에 걷히며 새 장면이 떠오른다
         dipT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
