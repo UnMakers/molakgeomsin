@@ -129,7 +129,7 @@ public class MolakGloss : MonoBehaviour
         while (showing.Count < 2 && queue.Count > 0) { showing.Add((queue.Dequeue(), now)); MolakSfx.Gloss(); }
         if (showing.Count == 0) return;
         float u = MolakGui.U;
-        if (sT == null || !Mathf.Approximately(bu, u)) { bu = u; sT = MolakGui.Label(25, u, TextAnchor.UpperLeft, true); sT.richText = true; }
+        if (sT == null || !Mathf.Approximately(bu, u)) { bu = u; sT = MolakGui.Label(29, u, TextAnchor.UpperLeft, true); sT.richText = true; }
         GUI.depth = MolakGui.DepthVfx + 2;
         var ta = MolakVfx.SlipArea();   // 0.4.82 그림 화면이면 글자리 위
         bool dark = MolakVfx.DarkSlip;

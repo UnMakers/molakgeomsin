@@ -288,6 +288,18 @@ public class MolakArt : MonoBehaviour
     }
 
     public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); }
+    // 0.4.85 언메이커: 불러오기 하면 그림이 안 뜬다 — 그림 상태는 나니노벨 저장에 들지 않아서, 다음 @art 까지 빈 창이었다.
+    //   장면·인물 이름을 이번 생 변수(artscene/artchar)에 적어 두고, 불러오기가 끝나면 그대로 다시 세운다.
+    static bool restoring;
+    public static void RestoreAfterLoad ()
+    {
+        if (inst == null) return;
+        string sc = MolakStats.Str("artscene", ""), ch = MolakStats.Str("artchar", "");
+        inst.sceneId = "\u0001"; inst.charId = "\u0001"; inst.charCur = null;
+        if (string.IsNullOrEmpty(sc)) Scene(IsNight ? "night" : "morning"); else Scene(sc);
+        if (!string.IsNullOrEmpty(ch)) Char(ch);
+        MolakStats.SetStr("artscene", inst.sceneId ?? ""); MolakStats.SetStr("artchar", inst.charId ?? "");
+    }
 
     static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
 
@@ -332,6 +344,7 @@ public class MolakArt : MonoBehaviour
     void SetScene (Sprite s, string id)
     {
         sceneCur = s; sceneId = id; sceneT = 0f; ChangedAt = Time.unscaledTime;
+        if (!restoring) MolakStats.SetStr("artscene", id ?? "");   // 0.4.85 불러오기 때 그림을 되살리려고 저장 상태에 적어 둔다
         if (s != null && (charCur != null || (charR != null && charR.sprite != null))) { SetChar(null, ""); if (charR != null) charR.sprite = null; charT = 1f; }
     }
     /// <summary>0.4.84 새 사람이 들어오면 옆에서 미끄러져 들어온다(언메이커: 처음 등장할 때 옆에서 나오는 게 좋다). 같은 사람의 표정만 바뀌면(soa → soa_smile) 제자리에서 바뀐다.</summary>
@@ -341,6 +354,7 @@ public class MolakArt : MonoBehaviour
         bool newPerson = s != null && Person(id) != Person(charCur != null ? charId : null);
         if (newPerson) { pushT = 0f; slideT = 0f; gest = ""; gestT = 9f; sunk = false; }
         charCur = s; charId = id; charT = 0f; ChangedAt = Time.unscaledTime;
+        if (!restoring) MolakStats.SetStr("artchar", id ?? "");
         // 0.4.85 같은 사람의 표정이 바뀌면 몸도 같이 움직인다
         if (s != null && !newPerson && !string.IsNullOrEmpty(id))
         {

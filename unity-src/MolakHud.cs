@@ -41,7 +41,7 @@ public class MolakHud : MonoBehaviour
         if (!hookedReset)
         {
             var stm = Engine.GetService<IStateManager>();
-            if (stm != null) { stm.OnResetStarted += () => synced = false; stm.OnGameLoadFinished += _ => synced = false; hookedReset = true; }
+            if (stm != null) { stm.OnResetStarted += () => synced = false; stm.OnGameLoadFinished += _ => { synced = false; MolakArt.RestoreAfterLoad(); }; hookedReset = true; }
         }
         float day = MolakStats.Get("day"), runs = MolakStats.Get("g_runs");
         if (day < 1f || MolakPractice.Active) { synced = false; return; }
@@ -203,7 +203,7 @@ public class MolakHud : MonoBehaviour
         SlipH = 0f;
         if (whyRows.Count > 0 && !MolakVfx.Holding && !MolakDuelCard.Visible && !MolakGiyeonCard.Showing)
         {
-            if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(24, u, TextAnchor.UpperLeft, true); sWhy.richText = true; }
+            if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(28, u, TextAnchor.UpperLeft, true); sWhy.richText = true; }
             var ta = MolakVfx.SlipArea();   // 0.4.82 그림 화면이면 글자리 위 — 글자리를 가리지 않는다
             bool dark = MolakVfx.DarkSlip;
             float ww = ta.width, pad = 12f * u;
