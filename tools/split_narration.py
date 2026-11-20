@@ -1,6 +1,6 @@
 import re,glob,sys
-LONG=60      # 이보다 긴 서술 줄만
-MAXC=55      # 한 줄 목표 상한
+LONG=44      # 이보다 긴 서술 줄만(휴대폰 한 줄 약 22자 — 두 줄을 넘으면)
+MAXC=40      # 한 줄 목표 상한
 MINC=24      # 이보다 짧으면 다음 문장과 붙인다
 TAG=re.compile(r'<[^>]+>')
 def plain(s): return TAG.sub('',s)
