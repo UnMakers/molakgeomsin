@@ -479,22 +479,26 @@ public class MolakHud : MonoBehaviour
         get
         {
             if (hpGlow != null) return hpGlow;
-            const int W = 256, H = 32;
+            // 0.4.85 언메이커: 너무 굵다 → 가는 붉은 심 한 가닥 + 둘레에 옅게 번지는 빛(양끝은 바늘처럼).
+            const int W = 512, H = 32;
             hpGlow = new Texture2D(W, H, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
             var px = new Color32[W * H];
+            float cy = (H - 1) * 0.5f;
             for (int xx = 0; xx < W; xx++)
             {
                 float t = xx / (W - 1f);
-                float taper = Mathf.Pow(Mathf.Sin(Mathf.PI * Mathf.Clamp01(t * 0.98f + 0.01f)), 0.55f);   // 양끝으로 가늘어진다
-                float half = Mathf.Max(0.6f, taper * (H * 0.5f - 1f));
+                float taper = Mathf.Pow(Mathf.Sin(Mathf.PI * Mathf.Clamp01(t * 0.99f + 0.005f)), 0.7f);
+                float coreW = 0.5f + 1.6f * taper;          // 심 반폭(px)
+                float glowW = 1.5f + 7.5f * taper;          // 번짐 반폭(px)
                 for (int yy = 0; yy < H; yy++)
                 {
-                    float d = Mathf.Abs(yy - (H - 1) * 0.5f) / half;
-                    float body = Mathf.Clamp01(1f - d * d);                      // 몸통
-                    float glow = Mathf.Exp(-d * d * 1.6f) * 0.55f * taper;       // 둘레 번짐
-                    float core = Mathf.Clamp01(1f - d * 2.2f) * taper;           // 가운데 밝은 심
-                    float a = Mathf.Clamp01(body * 0.9f + glow);
-                    var c = Color.Lerp(new Color(0.72f, 0.10f, 0.16f), new Color(1f, 0.55f, 0.58f), core);
+                    float d = Mathf.Abs(yy - cy);
+                    float core = Mathf.Clamp01(1f - d / coreW);
+                    float glow = Mathf.Exp(-(d * d) / (glowW * glowW)) * 0.55f * taper;
+                    float hot = Mathf.Clamp01(1f - d / (coreW * 0.55f)) * taper;
+                    float a = Mathf.Clamp01(core + glow);
+                    var c = Color.Lerp(new Color(0.78f, 0.08f, 0.12f), new Color(1f, 0.30f, 0.30f), core);
+                    c = Color.Lerp(c, new Color(1f, 0.86f, 0.82f), hot * 0.85f);
                     px[yy * W + xx] = new Color(c.r, c.g, c.b, a);
                 }
             }
@@ -715,7 +719,7 @@ public class MolakHud : MonoBehaviour
         {   // 피통: 수치 줄 아래, 줄 길이만큼
             string hpRl = RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)];
             float hpEnd = rx + sCH.CalcSize(new GUIContent(hpRl)).x;
-            float hbW = Mathf.Max(200*u, hpEnd - x), hbH = 16*u, hbY = l2 + rowH * 0.5f - 4*u;
+            float hbW = Mathf.Max(200*u, hpEnd - x), hbH = 12*u, hbY = l2 + rowH * 0.5f - 3*u;
             float hpR = Mathf.Clamp01(hp/hpm);
             bool hpLow = hpR <= 0.34f;
             if (hpLow && !wasLow && Event.current.type == EventType.Repaint) MolakSfx.Heart();
@@ -723,7 +727,7 @@ public class MolakHud : MonoBehaviour
             float hpPul = hpLow ? 0.65f + 0.35f*Mathf.Sin(Time.time*4f) : 1f;
             var hpTex = HpGlow;
             var hpG = GUI.color;
-            GUI.color = new Color(0.93f, 0.89f, 0.83f, 0.16f);
+            GUI.color = new Color(0.93f, 0.89f, 0.83f, 0.10f);
             GUI.DrawTexture(new Rect(x, hbY, hbW, hbH), hpTex);
             GUI.color = hpLow ? new Color(1f, 0.55f, 0.5f, hpPul) : Color.white;
             if (hpR > 0f) GUI.DrawTextureWithTexCoords(new Rect(x, hbY, hbW * hpR, hbH), hpTex, new Rect(0, 0, hpR, 1));
