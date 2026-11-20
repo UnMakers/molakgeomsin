@@ -289,6 +289,7 @@ public class MolakScroll : MonoBehaviour
                 if (thHold) a = 0f;
             }
             else thHold = false;
+            BodyAlpha = a;
             if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
             if (vpCg != null && Mathf.Abs(vpCg.alpha - a) > 0.002f) vpCg.alpha = a;
         }
@@ -358,6 +359,8 @@ public class MolakScroll : MonoBehaviour
     public static float TheaterChoiceY = MolakLayout.BagStripH;
     /// <summary>극장판 글 칸의 화면 자리(GUI 좌표). 요약·인장·쪽지가 쓴다.</summary>
     public static Rect TheaterTextGui;
+    /// <summary>점검용: 본문이 지금 얼마나 보이나(0 이면 가려졌다)</summary>
+    public static float BodyAlpha = 1f;
     static bool thHold; static int thPrevChoices; static string thHoldText; static float thHoldT; static float thSumTopC = 800f;
     void LayoutTheater (float canvasW, float canvasH)
     {

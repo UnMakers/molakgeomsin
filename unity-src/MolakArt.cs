@@ -81,7 +81,11 @@ public class MolakArt : MonoBehaviour
 
     SpriteRenderer sceneR, charR, shadeR; Sprite shadeV, shadeH;
     SpriteMask mask;
-    Sprite sceneCur, charCur;
+    Sprite sceneCur, charCur;          // 대본이 정한 그림(곧바로 바뀐다)
+    // 0.4.85 기준: 그림은 글과 함께 바뀐다. 대본이 그림을 몇 번 바꾸든(@art scene → @page 의 바탕 되돌리기 → @art char → 인물 자리 그림 …)
+    //   화면은 다음 글이 찍히기 직전(또는 선택지·정지)에 '마지막으로 보이던 그림 → 지금 정해진 그림'으로 딱 한 번 넘어간다(Commit).
+    //   그 사이의 그림은 화면에 나오지 않는다. 그래서 번짐이 두 번·세 번 도는 일이 구조적으로 생기지 않는다.
+    Sprite showScene, showChar; string showCharId = ""; bool dirty, noInkOnce; float dirtyAt;
     float sceneA, charA, sceneT = 1f, charT = 1f, colT = 1f, sceneVis = 1f;
     string sceneId = "", charId = "";
 
@@ -149,7 +153,7 @@ public class MolakArt : MonoBehaviour
     public static bool InkOn = true;
     public static void Dip () { if (inst != null) inst.dipAt = Time.frameCount; }   // 0.4.85 바로 뒤에 장면이 바뀌면(번짐) 암전은 하지 않는다 — 몇 프레임 기다려 본다
     int dipAt = -1;
-    public static bool Dipping { get { return inst != null && (inst.dipAt >= 0 || inst.dipT < 0.5f || inst.inkT < 0.25f); } }
+    public static bool Dipping { get { return inst != null && (inst.dipT < 0.5f || inst.inkT < 0.25f); } }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
     public static void Scene (string id)
@@ -253,7 +257,7 @@ public class MolakArt : MonoBehaviour
             else if (inst.sceneCur == null)
             {
                 var fs = Load("MolakArt/scene_" + (IsNight ? "night" : "morning"));
-                if (fs != null) { inst.sceneCur = fs; inst.sceneId = IsNight ? "night" : "morning"; inst.sceneT = 0f; ChangedAt = Time.unscaledTime; }
+                if (fs != null) inst.SetScene(fs, IsNight ? "night" : "morning");
             }
         }
         var sp = Load("MolakArt/char_" + id);
@@ -297,7 +301,7 @@ public class MolakArt : MonoBehaviour
         Scene(IsNight ? "night" : "morning");
     }
 
-    public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); }
+    public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); inst.noInkOnce = true; inst.DoCommit(); }
     // 0.4.85 언메이커: 불러오기 하면 그림이 안 뜬다 — 그림 상태는 나니노벨 저장에 들지 않아서, 다음 @art 까지 빈 창이었다.
     //   장면·인물 이름을 이번 생 변수(artscene/artchar)에 적어 두고, 불러오기가 끝나면 그대로 다시 세운다.
     static bool restoring;
@@ -311,6 +315,7 @@ public class MolakArt : MonoBehaviour
         if (string.IsNullOrEmpty(sc)) Scene(IsNight ? "night" : "morning"); else Scene(sc);
         if (!string.IsNullOrEmpty(ch)) Char(ch);
         MolakStats.SetStr("artscene", inst.sceneId ?? ""); MolakStats.SetStr("artchar", inst.charId ?? "");
+        inst.noInkOnce = true; inst.DoCommit();   // 불러온 그림은 번지지 않고 바로
     }
 
     /// <summary>지금 멈춘 줄에서 위로 올라가며 가장 가까운 @art/@scene 을 찾는다. 장면을 만나면 멈추고, 그보다 뒤(아래)에서 세운 인물은 살린다.</summary>
@@ -382,34 +387,62 @@ public class MolakArt : MonoBehaviour
     // 0.4.85 장면이 바뀌면 앞 인물은 그 자리에서 내린다(언메이커: 불탄 장면 뒤 눈을 뜰 때 노인이 살짝 비쳤다 사라지는 잔상) — 옛 인물이 새 장면 위로 스러지지 않게
     void SetScene (Sprite s, string id)
     {
-        bool ink = InkOn && s != null && oldSceneR != null && (sceneR.sprite != null || charR.sprite != null) && !id.StartsWith("duel") && !(sceneId ?? "").StartsWith("duel") && !MolakPlayMode.SkipAll;
-        // 바탕(낮·밤)을 깔자마자 진짜 장면이 오면(쪽 넘김 → @art) 번짐을 새로 시작하지 않고 목표만 바꾼다 — 효과가 바탕 그림으로 한 번, 진짜 그림으로 또 한 번 따로 놀던 것
-        bool fromBase = Generic.Contains(sceneId ?? "");   // 바탕(낮·밤·비)을 막 깐 참이면 그건 거쳐 가는 그림이다
-        // 번지는 중에 또 장면이 오면(빨리 누를 때): 반도 안 번졌으면 옛 그림은 그대로 두고 새 목표로 다시 번진다, 반 넘게 번졌으면 지금 그림을 옛 그림 삼아 새로 번진다
-        if (ink && oldSceneR.sprite != null && inkT < InkDur && (inkT < 0.35f || fromBase || inkT < InkDur * 0.5f)) { inkT = Mathf.Min(inkT, 0.05f); sceneCur = s; sceneId = id; sceneT = 1f; ChangedAt = Time.unscaledTime; if (!restoring) MolakStats.SetStr("artscene", id ?? ""); if (charCur != null || charR.sprite != null) { SetChar(null, ""); charR.sprite = null; charT = 1f; } sceneR.sprite = s; return; }
-        if (ink)
-        {   // 지금 보이는 그대로 아래에 얼려 둔다
-#if UNITY_EDITOR
-            if (CapArm) { capUntil = Time.unscaledTime + 1.5f; capN = 0; }
-#endif
-            oldSceneR.sprite = sceneR.sprite; oldSceneR.color = sceneR.color; oldSceneR.transform.position = sceneR.transform.position + new Vector3(0f, 0f, 0.05f); oldSceneR.transform.localScale = sceneR.transform.localScale;
-            oldCharR.sprite = charR.sprite; oldCharR.color = charR.color; oldCharR.transform.position = charR.transform.position + new Vector3(0f, 0f, 0.05f); oldCharR.transform.localScale = charR.transform.localScale;
-            InkStarts++; dipT = 9f; dipAt = -1;   // 번짐이 시작되면 쪽 넘김 암전은 걷는다(암전 → 번짐으로 먹이 두 번 보이던 것)
-            inkT = 0f; InkMaxDt = 0f; InkSumDt = 0f; InkN = 0; inkFrames = 0;
-        }
-        sceneCur = s; sceneId = id; sceneT = ink ? 1f : 0f; ChangedAt = Time.unscaledTime;
-        if (!restoring) MolakStats.SetStr("artscene", id ?? "");   // 0.4.85 불러오기 때 그림을 되살리려고 저장 상태에 적어 둔다
-        if (s != null && (charCur != null || (charR != null && charR.sprite != null))) { SetChar(null, ""); if (charR != null) charR.sprite = null; charT = 1f; }
-        if (ink && sceneR != null) sceneR.sprite = s;
+        sceneCur = s; sceneId = id;
+        if (!restoring) MolakStats.SetStr("artscene", id ?? "");   // 불러오기 때 그림을 되살리려고 저장 상태에 적어 둔다
+        if (s != null && charCur != null) SetChar(null, "");       // 새 장면은 서 있던 인물을 내린다
+        MarkDirty();
     }
+    void MarkDirty () { if (!dirty) dirtyAt = Time.unscaledTime; dirty = true; }
+
+    /// <summary>0.4.85 지금 정해진 그림을 화면에 올린다 — 마지막으로 보이던 그림에서 한 번만 넘어간다. 다음 글 직전·선택지·정지에서 부른다.</summary>
+    public static void Commit () { if (inst != null) inst.DoCommit(); }
+    void DoCommit ()
+    {
+        if (!dirty || sceneR == null) return;
+        dirty = false;
+        bool sceneChanged = showScene != sceneCur, charChanged = showChar != charCur;
+        bool noInk = noInkOnce; noInkOnce = false;
+        if (!sceneChanged && !charChanged) return;
+        ChangedAt = Time.unscaledTime;
+        string sid = sceneId ?? "";
+        bool ink = !noInk && InkOn && sceneChanged && sceneCur != null && oldSceneR != null && (sceneR.sprite != null || charR.sprite != null)
+                   && !sid.StartsWith("duel") && !(showSceneId ?? "").StartsWith("duel") && !MolakPlayMode.SkipAll && !(Engine.GetService<IScriptPlayer>()?.Skipping ?? false);
+        bool newPerson = charCur != null && Person(charId) != Person(showChar != null ? showCharId : null);
+        if (charChanged && newPerson) { pushT = 0f; slideT = 0f; gest = ""; gestT = 9f; sunk = false; }
+        if (ink)
+        {
+            bool inking = inkT < InkDur && oldSceneR.sprite != null;
+            // 번지는 중에 또 넘어가면: 반도 안 번졌으면 옛 그림은 그대로 두고 새 목표로 다시, 반 넘게 번졌으면 지금 그림을 옛 그림 삼아
+            if (!(inking && inkT < InkDur * 0.5f))
+            {
+#if UNITY_EDITOR
+                if (CapArm) { capUntil = Time.unscaledTime + 1.5f; capN = 0; }
+#endif
+                oldSceneR.sprite = sceneR.sprite; oldSceneR.color = sceneR.color; oldSceneR.transform.position = sceneR.transform.position + new Vector3(0f, 0f, 0.05f); oldSceneR.transform.localScale = sceneR.transform.localScale;
+                oldCharR.sprite = charR.sprite; oldCharR.color = charR.color; oldCharR.transform.position = charR.transform.position + new Vector3(0f, 0f, 0.05f); oldCharR.transform.localScale = charR.transform.localScale;
+            }
+            InkStarts++; dipT = 9f; dipAt = -1;   // 번짐이 시작되면 쪽 넘김 암전은 하지 않는다
+            inkT = 0f; InkMaxDt = 0f; InkSumDt = 0f; InkN = 0; inkFrames = 0;
+            sceneR.sprite = sceneCur; charR.sprite = charCur;
+            sceneT = 1f; charT = 1f;
+        }
+        else
+        {
+            if (sceneChanged) { sceneT = 0f; if (sceneCur != null) sceneR.sprite = sceneCur; }
+            if (charChanged) { charT = 0f; if (charCur != null) charR.sprite = charCur; }
+        }
+        showScene = sceneCur; showSceneId = sid; showChar = charCur; showCharId = charId ?? "";
+    }
+    string showSceneId = "";
+
     /// <summary>0.4.84 새 사람이 들어오면 옆에서 미끄러져 들어온다(언메이커: 처음 등장할 때 옆에서 나오는 게 좋다). 같은 사람의 표정만 바뀌면(soa → soa_smile) 제자리에서 바뀐다.</summary>
     static string Person (string id) { if (string.IsNullOrEmpty(id)) return ""; int u = id.IndexOf('_'); return u > 0 ? id.Substring(0, u) : id; }
     void SetChar (Sprite s, string id)
     {
         bool newPerson = s != null && Person(id) != Person(charCur != null ? charId : null);
-        if (newPerson) { pushT = 0f; slideT = 0f; gest = ""; gestT = 9f; sunk = false; }
-        charCur = s; charId = id; charT = 0f; ChangedAt = Time.unscaledTime;
+        charCur = s; charId = id;
         if (!restoring) MolakStats.SetStr("artchar", id ?? "");
+        MarkDirty();
         // 0.4.85 같은 사람의 표정이 바뀌면 몸도 같이 움직인다
         if (s != null && !newPerson && !string.IsNullOrEmpty(id))
         {
@@ -587,17 +620,24 @@ public class MolakArt : MonoBehaviour
         float fdt = Mathf.Min(Time.unscaledDeltaTime, 0.05f) / FadeIn;
         sceneT = Mathf.Min(1f, sceneT + fdt);
         charT = Mathf.Min(1f, charT + fdt);
-        if (sceneCur != null && sceneR.sprite != sceneCur) sceneR.sprite = sceneCur;
-        if (charCur != null && charR.sprite != charCur) charR.sprite = charCur;
-        float sA = sceneR.sprite == null ? 0f : (sceneCur == null ? 1f - sceneT : Mathf.Lerp(FadeFrom, 1f, sceneT));
+        // 그림이 정해졌는데 아직 화면에 안 올렸다: 대본이 멈췄으면(선택지·정지) 지금, 글 없이 오래 머물면(1.5초, 탭 대기 제외) 그때 올린다
+        if (dirty)
+        {
+            var spc = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null; var trc = spc != null ? spc.MainTrack : null;
+            bool stopped = trc == null || !trc.Playing;
+            if (stopped || MolakPlayMode.SkipAll || (Time.unscaledTime - dirtyAt > 1.5f && !(trc != null && trc.AwaitingInput))) DoCommit();
+        }
+        if (showScene != null && sceneR.sprite != showScene) sceneR.sprite = showScene;
+        if (showChar != null && charR.sprite != showChar) charR.sprite = showChar;
+        float sA = sceneR.sprite == null ? 0f : (showScene == null ? 1f - sceneT : Mathf.Lerp(FadeFrom, 1f, sceneT));
         // 그림은 한 번에 하나: 인물이 서 있으면 장면은 가린다(인물이 빠지면 다시 떠오른다)
         // 0.4.9: 인물이 서면 장면을 지우지 않고 옅게 깔아 둔다 — 인물 뒤에 그 자리의 풍경이 보인다
         bool cine = MolakTheme.CinemaNow, thr = MolakTheme.TheaterNow;
-        sceneVis = Mathf.MoveTowards(sceneVis, charCur != null && !cine ? 0.7f : 1f, Time.deltaTime * 2.4f);   // 그림 화면은 인물 뒤 풍경도 온전히   // 인물이 불투명해졌으니 뒤 풍경은 덜 지운다
+        sceneVis = Mathf.MoveTowards(sceneVis, showChar != null && !cine ? 0.7f : 1f, Time.deltaTime * 2.4f);   // 그림 화면은 인물 뒤 풍경도 온전히   // 인물이 불투명해졌으니 뒤 풍경은 덜 지운다
         sA *= sceneVis;
-        float cA = charR.sprite == null ? 0f : (charCur == null ? 1f - charT : Mathf.Lerp(FadeFrom, 1f, charT));
-        if (sceneCur == null && sceneT >= 1f) sceneR.sprite = null;
-        if (charCur == null && charT >= 1f) charR.sprite = null;
+        float cA = charR.sprite == null ? 0f : (showChar == null ? 1f - charT : Mathf.Lerp(FadeFrom, 1f, charT));
+        if (showScene == null && sceneT >= 1f) sceneR.sprite = null;
+        if (showChar == null && charT >= 1f) charR.sprite = null;
         // 0.4.28: 인물은 곱하기가 아니라 보통 알파로 — 곱하기면 얼굴·흰 옷 같은 밝은 데로 뒤 배경이 비쳤다(인물 그림도 안쪽을 채워 다시 오렸다)
         var wantMat = cine || thr ? matCine : MolakTheme.Night ? matAlpha : matScene;   // 그림 화면: 인물은 제 빛 그대로(종이 오린 듯)
         if (charR.sharedMaterial != wantMat) charR.sharedMaterial = wantMat;
@@ -736,7 +776,7 @@ public class MolakArt : MonoBehaviour
             charR.transform.position = new Vector3(x, y + gy, z);
         }
         // 장면 전환 암전: 바로 먹으로 덮고 0.2초 머문 뒤 0.6초에 걷히며 새 장면이 떠오른다
-        if (dipAt >= 0 && Time.frameCount - dipAt >= 6) { dipAt = -1; if (inkT >= InkDur) dipT = 0f; }
+        if (dipAt >= 0 && Time.frameCount - dipAt >= 6) { dipAt = -1; if (inkT >= InkDur && !dirty) dipT = 0f; }
         dipT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
         float dipA = dipT < 0.2f ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (dipT - 0.2f) / 0.6f);
         dipR.enabled = !hide && dipT < 0.8f && inkT >= InkDur && (sceneR.sprite != null || charR.sprite != null);

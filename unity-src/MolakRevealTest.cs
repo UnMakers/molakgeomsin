@@ -81,7 +81,7 @@ public class MolakRevealTest : MonoBehaviour
         while (!started) yield return null;
         float t0 = Time.realtimeSinceStartup, chapSeen = -1f;
         string lastText = null; int frames = 0, startLen = 0; bool tracking = false; float revStart = 0f;
-        var cont = im.GetInput("Continue"); int stopTries = 0;
+        var cont = im.GetInput("Continue"); int stopTries = 0; float lastProg = 0f; bool hidFlagged = false, inkFlagged = false; int inkAtMsg = MolakArt.InkStarts;
         // 0.4.85 화면 점검 상태
         string pScene = MolakArt.DbgScene, pChar = MolakArt.DbgChar, oldCharAtScene = ""; int pLen = 0, afterFrames = 0;
         string gapTrace = ""; float pageClearAt = -9f, textStartAt = -9f, sceneChangedAt = -9f, pressAt = -9f, lastGrowAt = -9f; float charHiAt = -9f, charLoAt = -9f; string charHiName = "";
@@ -126,10 +126,15 @@ public class MolakRevealTest : MonoBehaviour
                 if (tracking) Finish(frames, startLen, revStart);
                 int prevLen = Plain(lastText).Length, nowLen = Plain(txt).Length;
                 startLen = lastText != null && Plain(txt).StartsWith(Plain(lastText).TrimEnd()) ? nowLen - prevLen : nowLen;   // 이어 쓴 글이면 늘어난 만큼
-                lastText = txt; tracking = true; frames = 0; revStart = prog;
+                lastText = txt; tracking = true; frames = 0; revStart = prog; hidFlagged = false; inkFlagged = false; inkAtMsg = MolakArt.InkStarts;
                 string spot = tr != null ? tr.PlaybackSpot.ToString() : "";
                 Log.Append(spot + " | " + Short(LastPara(txt)) + " | 시작 " + prog.ToString("0.00"));
             }
+            // 0.4.85 기준 점검 ① 본문이 가려진 채 글이 드러난다(고른 뒤 첫 문단이 한꺼번에 뜨던 종류)
+            if (tracking && prog > lastProg + 0.001f && MolakScroll.BodyAlpha < 0.5f && !MolakVfx.ChapterHolding && !hidFlagged) { hidFlagged = true; flag("본문이 가려진 채 글이 찍힘(보임 " + MolakScroll.BodyAlpha.ToString("0.00") + ")"); }
+            lastProg = prog;
+            // ② 글 하나 사이에 번짐이 두 번 이상
+            if (MolakArt.InkStarts - inkAtMsg > 1 && !inkFlagged) { inkFlagged = true; flag("번짐이 " + (MolakArt.InkStarts - inkAtMsg) + "번(글 사이)"); }
             if (tracking) { frames++; if (prog >= 0.999f) { Finish(frames, startLen, revStart); tracking = false; } }
             // 마디 이름: 0.8초 뒤 걷는다
             if (MolakVfx.ChapterHolding)

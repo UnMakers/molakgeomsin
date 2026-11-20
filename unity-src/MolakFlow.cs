@@ -160,6 +160,7 @@ public class MolakFlow : MonoBehaviour
         // 새 선택지 묶음이 시작되면 처리되지 않은 옛 선택지를 정리 (뭉탱이 방지)
         if (cmd is AddChoice)
         {
+            MolakArt.Commit();   // 선택지가 뜨기 전에 그림부터
             if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); }
             // 0.4.63 잠긴 선택지: 대본을 틀 때 '갖추면 열리는' if: 를 lock:!(조건) 으로 옮겨 두었다(PrepareLocks). 여기서는 원래 조건으로 주석을 단다.
             string cexp; bool lockIt = false;
@@ -195,6 +196,7 @@ public class MolakFlow : MonoBehaviour
         bool ovf = !willReset && !(holdPage && !bridgePending) && PageWouldOverflow(TextOf(pt));
         // 다른 대본에서 넘어와 찍는 첫 글이면 맥락이 바뀐 것
         if (artResetPending) { artResetPending = false; if (!holdPage) MolakArt.ResetToBase(); }
+        MolakArt.Commit();   // 0.4.85 기준: 그림은 글과 함께 — 지난 글 뒤로 바뀐 그림을 이 글 직전에 한 번에 올린다
         bool isBridge = bridgePending; bridgePending = false;
         if (holdPage && !isBridge) { breakNext = false; }      // 이음 문장 바로 뒤: 사건의 장면 전환·gosub 이 쪽을 넘기지 않는다
         bool held = holdPage && !isBridge; holdPage = false;
