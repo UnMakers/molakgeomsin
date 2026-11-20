@@ -483,7 +483,10 @@ public class MolakArt : MonoBehaviour
         // 야간(먹색) 모드: 종이색 장면 패널이 하얗게 떠 보이지 않도록 어둡게 눌러 그린다
         float sg = MolakTheme.Night ? 0.62f : 1f;
         sceneR.color = thr ? new Color(0.80f, 0.80f, 0.80f, sA*colT) : cine ? new Color(0.72f, 0.72f, 0.72f, sA*colT) : new Color(sg, sg, sg, sA*(MolakTheme.Night ? 0.80f : 0.88f)*colT);
-        charR.color = cine || thr ? new Color(0.9f, 0.9f, 0.9f, cA*colT) : new Color(1f, 1f, 1f, cA*colT);
+        float gDim = 1f;
+        if (gest == "turn" || gest == "recoil") { float ge = gestT < 0.12f ? gestT / 0.12f : gestT < 0.4f ? 1f : Mathf.Clamp01(1f - (gestT - 0.4f) / 0.45f); gDim = 1f - (gest == "turn" ? 0.35f : 0.18f) * ge; }
+        if (sunk) gDim *= 0.85f;
+        charR.color = cine || thr ? new Color(0.9f * gDim, 0.9f * gDim, 0.9f * gDim, cA*colT) : new Color(gDim, gDim, gDim, cA*colT);
         // 0.4.82 말하지 않는 동안 인물은 흐리고 어둡게 물러나 있다가, 입을 열면 0.25초에 또렷해진다
         quietK = Mathf.MoveTowards(quietK, (cine || thr) && !MolakScroll.CharSpeaking ? 0.75f : 0f, Mathf.Min(Time.unscaledDeltaTime, 0.05f) / 0.25f);   // 0.75: 밝기 약 72%, 빛 4분의 1 뺌
         if (matCine != null && matCine != matScene) matCine.SetFloat("_Quiet", quietK);
@@ -560,14 +563,14 @@ public class MolakArt : MonoBehaviour
             env = Mathf.SmoothStep(0f, 1f, env);
             switch (gest)
             {
-                case "lunge": gk = 1f + 0.10f * env; gy -= 10f * unit * env; break;
-                case "recoil": gk = 1f - 0.06f * env; gx += camW * 0.05f * env; break;
-                case "tremble": if (gestT < 1.6f) gx += Mathf.Sin(gestT * 48f) * 5f * unit * (1f - gestT / 1.6f); break;
-                case "bounce": if (gestT < 0.7f) gy -= Mathf.Abs(Mathf.Sin(gestT * 13.5f)) * 9f * unit * (1f - gestT / 0.7f); break;
-                case "nod": if (gestT < 0.5f) gy -= Mathf.Sin(Mathf.PI * gestT / 0.5f) * 16f * unit; break;
-                case "turn": gx += camW * 0.07f * env; gk = 1f - 0.03f * env; break;
+                case "lunge": gk = 1f + 0.18f * env; gx -= camW * 0.04f * env; break;   // 크게 한 걸음 다가선다(정수리는 창 위에 묶여 있어 아래로 커진다)
+                case "recoil": gx += camW * 0.11f * env; gy -= 14f * unit * env; break;   // 뒤로 젖히며 물러선다
+                case "tremble": if (gestT < 1.8f) gx += Mathf.Sin(gestT * 52f) * 9f * unit * (1f - gestT / 1.8f); break;
+                case "bounce": if (gestT < 0.8f) gy -= Mathf.Abs(Mathf.Sin(gestT * 13.5f)) * 16f * unit * (1f - gestT / 0.8f); break;
+                case "nod": if (gestT < 0.55f) gy -= Mathf.Sin(Mathf.PI * gestT / 0.55f) * 26f * unit; break;
+                case "turn": gx += camW * 0.16f * env; break;
             }
-            if (sunk) gy -= bandH * 0.07f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(gest == "sink" ? gestT / 0.7f : 1f));
+            if (sunk) gy -= bandH * 0.13f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(gest == "sink" ? gestT / 0.7f : 1f));
             k *= gk;
             charR.transform.localScale = new Vector3(k, k, 1f);
             float x = cx + jit + gx;   // 홀로 서니 띠 가운데
