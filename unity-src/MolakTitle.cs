@@ -330,7 +330,7 @@ public class MolakTitle : MonoBehaviour
         float my0 = Mathf.Min(h * 0.56f, h - 200*u - n * ih);
         float rx = w - 52*u, mw = Mathf.Min(w * 0.52f, 560*u);
         Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.25f : 0.35f));
-        string tag = dawn ? "베이고, 돌아가고, 마침내 아침." : "베이고, 돌아가고, 다시 벤다.";
+        string tag = dawn ? "끝내 그 밤을 넘긴 아침." : "죽으면 그 아침으로 돌아간다.";
         GUI.Label(new Rect(rx - mw, my0 - 60*u, mw, 40*u), tag, sTag);
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;

@@ -29,11 +29,11 @@ public class MolakGuide : MonoBehaviour
             "비무에서 사술을 끌어내면 이기기 쉬워지는 대신 저주가 크게 오른다.\n" +
             "<b>예순</b>을 넘기면 사람들이 문양을 알아보기 시작한다. <b>일흔다섯</b>을 넘기면 사술이 제멋대로 나선다. <b>백</b>이면 사술에 먹혀 죽는다.\n" +
             "안식향을 피우거나, 청심차를 달이거나, 봉인을 받으면 덜 오른다. 문양이 터져 죽어 본 몸도 다음 생엔 덜 끓는다.\n" +
-            "문양은 살기와 외로움을 먹고 자란다. 그래서 마음 둔 사람 곁에서 마음 놓고 보낸 때에는 조금 물러선다."),
+            "문양은 살기와 외로움을 먹고 자란다. 마음 둔 사람 곁에서 편히 보낸 날에는 조금 줄어든다."),
         new Card("hurt", "부상 · 독 · 곪은 상처",
             "<b>부상</b> — 비무에서 지면 사흘 동안 몸이 무겁다. 그동안 비무의 승산이 크게 떨어진다.\n" +
             "<b>독</b>과 <b>곪은 상처</b> — 날마다 체력을 깎고, 손쓰지 않으면 점점 깊어진다. 백초당 할멈이 다스린다. 금창약이 있으면 한 번 막는다.\n" +
-            "다친 채로 또 지면 상처가 덧난다. 쉬는 것도 수련이다."),
+            "다친 채로 또 지면 상처가 덧난다. 다쳤으면 며칠 쉬는 편이 낫다."),
         new Card("hunger", "방값과 굶주림",
             "운락객잔의 방값은 하루 한 냥, 스물다섯째 날부터 두 냥이다. 날이 넘어갈 때 저절로 빠진다.\n" +
             "은자가 모자라면 그날은 굶는다. 굶으면 체력이 깎인다.\n" +
@@ -151,7 +151,7 @@ public class MolakGuide : MonoBehaviour
             showT += Time.unscaledDeltaTime;
             var c = Cards[idx];
             float y = Mathf.Max(MolakPaper.Top(h, u), h * 0.08f);
-            MolakPaper.Header(ref y, cx, cw, c.Title, showing >= 0 ? "길잡이 — 처음 겪는 일이라 한 장 펼친다" : "길잡이", u);
+            MolakPaper.Header(ref y, cx, cw, c.Title, showing >= 0 ? "길잡이 — 처음 겪는 일" : "길잡이", u);
             MolakGui.Ink(sBody, ink);
             float bh = sBody.CalcHeight(new GUIContent(c.Body), cw - 70f * u);
             var cr = new Rect(cx, y, cw, bh + 52f * u);
@@ -174,7 +174,7 @@ public class MolakGuide : MonoBehaviour
         // 목록 — 읽은 장은 먹 띠, 아직 펼쳐지지 않은 장은 옅은 띠
         {
             float y = MolakPaper.Top(h, u);
-            MolakPaper.Header(ref y, cx, cw, "길잡이", "처음 겪을 때 한 장씩 펼쳐진 것. 언제든 다시 읽는다.", u);
+            MolakPaper.Header(ref y, cx, cw, "길잡이", "처음 겪을 때 펼쳐졌던 안내. 언제든 다시 읽을 수 있다.", u);
             float rowH = 112f * u, gap = 12f * u;
             float avail = br.y - 24f * u - y;
             if (Cards.Length * (rowH + gap) > avail) rowH = Mathf.Max(84f * u, avail / Cards.Length - gap);

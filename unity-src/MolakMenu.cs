@@ -139,9 +139,9 @@ public class MolakMenu : MonoBehaviour
                 MolakPaper.CardFace(new Rect(lx, ly, lw, lh), MolakPaper.Accent, u);   // 0.4.80 종이 카드
                 var ls = new GUIStyle(sToast){ alignment = TextAnchor.UpperLeft, wordWrap = true, richText = true, fontSize = Mathf.RoundToInt(27*u) };
                 GUI.Label(new Rect(lx + 36*u, ly + 18*u, lw - 60*u, lh - 30*u),
-                    "선택지 앞 인장의 색은 그 길이 열린 까닭이다.\n" +
+                    "선택지 앞 인장의 색은 그 선택지가 열린 이유를 나타낸다.\n" +
                     "<color=#8E62B8>■</color> 지난 생   <color=#4A7398>■</color> 물건·인연   <color=#5A524C>■</color> 능력치   <color=#B08A30>■</color> 은자   <color=#7A2A68>■</color> 사술   <color=#B03A2A>■</color> 그 밖\n" +
-                    "<size=85%>회색 작은 글씨는 그 선택지를 연 조건이다.</size>", ls);
+                    "<size=85%>회색 작은 글씨는 선택지가 열린 조건이다.</size>", ls);
                 GUI.color = g;
             }
         }
@@ -220,7 +220,7 @@ public class MolakMenu : MonoBehaviour
         float totalH = 190*u + (58*u + rowH + gap) + (58*u + 4*(tileH+gap)) + (58*u + 2*(saveH+gap));
         float by = Mathf.Max(MolakPaper.Top(h, u), Mathf.Min(h*0.08f, closeBtn.y - 30*u - totalH));
         if (MolakPaper.CloseX(w, bx, by - 4*u, u)) { open = false; SetProcessInput(true); return; }
-        MolakPaper.Header(ref by, bx, bw, "운락객잔", "진행 · 기록 · 저장. 고른 칸이 바로 펼쳐진다.", u);
+        MolakPaper.Header(ref by, bx, bw, "운락객잔", "진행 · 기록 · 저장", u);
 
         // ── 진행
         MolakPaper.Section(ref by, bx, bw, "진행", u);
@@ -229,11 +229,11 @@ public class MolakMenu : MonoBehaviour
             // 0.4.46: 켜 둔 동안 유지(MolakPlayMode) — 예전엔 사건이 바뀌거나 처음 보는 글이 나오면 저절로 꺼졌다
             bool auto = MolakPlayMode.Auto, skip = MolakPlayMode.Fast;
             if (Switch(new Rect(bx, by, tw, rowH), "자동", auto, u)) MolakPlayMode.SetAuto(!auto);
-            if (Switch(new Rect(bx+tw+gap, by, tw, rowH), "빨리", skip, u)) { MolakPlayMode.SetFast(!skip); if (!skip) Toast("빨리 — 한 쪽씩 한꺼번에 나온다. 누르면 다음 쪽."); }
+            if (Switch(new Rect(bx+tw+gap, by, tw, rowH), "빨리", skip, u)) { MolakPlayMode.SetFast(!skip); if (!skip) Toast("빨리 — 한 쪽씩 한 번에 보여 준다. 누르면 다음 쪽."); }
             if (Tile(new Rect(bx+2*(tw+gap), by, tw, rowH), "읽은 글 ▶▶", null, Color.clear, u))
             {   // 이미 본 글은 빠르게 — 처음 보는 글과 선택지에서 멈춘다(나니노벨 읽은 글 넘기기)
                 open = false; SetProcessInput(true);
-                MolakPlayMode.SkipRead(); Toast("읽은 글을 넘긴다 — 처음 보는 글에서 멈춘다.");
+                MolakPlayMode.SkipRead(); Toast("읽은 글을 넘긴다. 처음 보는 글에서 멈춘다.");
             }
             by += rowH + gap;
         }
@@ -243,7 +243,7 @@ public class MolakMenu : MonoBehaviour
         {
             int ends = 0; foreach (var e in MolakEnd.All) if (MolakStats.Get("g_end_" + e.Id) > 0) ends++;
             string[] t = { "지난 기록", "원수록", "말로록", "남은 기억", "강호록", "길잡이", "그 밤의 진실", "능력치 기록" };
-            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀", "풀다 만 실마리 " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots(), "무엇이 왜 오르내렸나" };
+            string[] sub = { "지나온 글을 다시 읽는다", "벤 자, 살린 자, 나 때문에 죽은 자", "본 말로 " + ends + " / " + MolakEnd.All.Length, "죽어도 남는 앎과 초식", "문파와 사람들", "몸의 셈 · 저주 · 비무 · 회귀", "풀다 만 실마리 " + MolakTruth.TotalKnown() + " / " + MolakTruth.TotalSlots(), "능력치가 바뀐 이유" };
             float tw = (bw - gap) / 2f;
             for (int i = 0; i < t.Length; i++)
             {
@@ -361,7 +361,7 @@ public class MolakMenu : MonoBehaviour
         {
             var em = new GUIStyle(sBtn){alignment=TextAnchor.UpperCenter, fontSize=Mathf.RoundToInt(25*u), wordWrap=true};
             MolakGui.Ink(em, MolakPaper.Sub);
-            GUI.Label(new Rect(bx, y2, bw, 90*u), "아직 아무도 적히지 않았다. 생이 끝날 때마다, 벤 자와 살린 자와 나 때문에 죽은 자가 여기 남는다.", em);
+            GUI.Label(new Rect(bx, y2, bw, 90*u), "아직 적힌 이름이 없다. 생이 끝날 때마다 벤 자, 살린 자, 나 때문에 죽은 자가 여기에 적힌다.", em);
         }
         else
         {
@@ -514,7 +514,7 @@ public class MolakMenu : MonoBehaviour
                 var sb = new System.Text.StringBuilder(); foreach (var ch in e.Name) sb.Append(ch == ' ' ? ' ' : '□');
                 GUI.Label(new Rect(r.x+28*u, r.y+14*u, r.width*0.6f, 48*u), sb.ToString(), ghost);
                 GUI.Label(new Rect(r.x+r.width*0.45f, r.y+18*u, r.width*0.55f-24*u, 40*u), e.Where, whereS);
-                GUI.Label(new Rect(r.x+28*u, r.y+64*u, r.width-56*u, r.height-70*u), "아직 모른다. " + e.Where + "에서 한 번은 겪어 봐야 안다 — 살아서든, 죽어서든.", descS);
+                GUI.Label(new Rect(r.x+28*u, r.y+64*u, r.width-56*u, r.height-70*u), "아직 모른다. " + e.Where + "에서 한 번 겪어야 알 수 있다. 살아서든 죽어서든.", descS);
             }
         }
         GUI.EndScrollView();

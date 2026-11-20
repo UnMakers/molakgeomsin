@@ -24,7 +24,7 @@ public static class MolakTeaser
         new T { Id = "soa",     When = d => d >= 3 && G("f_soamet") < 1 && G("b_soa") < 1, Text = d => "저자 쪽에서 쇳소리가 짧게 두 번 났다. 한 호흡에 두 번." },
         new T { Id = "hajin",   When = d => d >= 5 && G("b_hajin") < 1, Text = d => "하진무가 장부를 덮었다가 다시 편다. 내일은 무슨 말을 꺼낼 얼굴이다." },
         new T { Id = "plate",   When = d => d >= 7 && G("b_plate") < 1, Text = d => "서열각 앞에 새 쇠패를 다는 망치 소리가 늦게까지 난다." },
-        new T { Id = "wanted",  When = d => d >= 8 && G("b_wanted") < 1, Text = d => "관아 담벼락 밑에 풀 솥이 놓였다. 아침이면 무언가 붙는다." },
+        new T { Id = "wanted",  When = d => d >= 8 && G("b_wanted") < 1, Text = d => "관아 담벼락 밑에 풀 솥이 놓였다. 아침이면 방이 붙을 것이다." },
         new T { Id = "jang",    When = d => d >= 11 && G("b_jang") < 1, Text = d => "뒷문 쪽에서 누가 오래 서 있다 간다. 신발 끄는 소리가 가볍다." },
         new T { Id = "unju",    When = d => d >= 15 && G("f_unjudone") < 1, Text = d => "운주 들판 쪽으로 칼 찬 사람들이 밤새 지나간다." },
         new T { Id = "fame",    When = d => d >= 20 && G("rank") > 0 && G("rank") <= 500000 && G("b_fame") < 1, Text = d => "아래층 술꾼들이 서열각 이야기를 하다 당신을 보고 입을 다문다." },

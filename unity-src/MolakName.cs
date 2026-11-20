@@ -92,7 +92,7 @@ public class MolakName : MonoBehaviour
     void Commit ()
     {
         var n = Clean(text);
-        if (n.Length == 0) { warn = "이름이 비었다. 한 글자라도 적어야 명부에 남는다."; return; }
+        if (n.Length == 0) { warn = "이름이 비어 있다. 한 글자 이상 적어야 한다."; return; }
         Apply(n);
         if (kb != null) { kb.active = false; kb = null; }
         Open = false;
@@ -150,7 +150,7 @@ public class MolakName : MonoBehaviour
 
         float cw = Mathf.Min(W - 64 * u, 900 * u), cx = (W - cw) * 0.5f, y = H * 0.30f;
         GUI.Label(new Rect(cx, y, cw, 90 * u), "청운 명부, 맨 끝 줄", sTitle); y += 110 * u;
-        GUI.Label(new Rect(cx, y, cw, 130 * u), "마당을 쓸던 막내에게도 이름은 있었다.\n사형들은 부르지 않았을 뿐이다.", sSub); y += 170 * u;
+        GUI.Label(new Rect(cx, y, cw, 130 * u), "마당을 쓸던 막내에게도 이름이 있었다.\n사형들은 늘 막내라고만 불렀다.", sSub); y += 170 * u;
 
         var fr = new Rect(cx + cw * 0.15f, y, cw * 0.7f, 110 * u);
         {   // 맨 끝 줄: 흰 칸 · 검붉은 띠 · 아래 가는 줄

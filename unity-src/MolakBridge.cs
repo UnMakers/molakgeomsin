@@ -63,7 +63,7 @@ public static class MolakBridge
 
     // 0.4.82 그림 화면의 이름 인장 — 대본에 화자 정보가 없어 '지금 그림에 서 있는 사람'의 이름을 쓴다. 모르는 얼굴은 인장 없이.
     static readonly Dictionary<string, string> SealName = new Dictionary<string, string> {
-        {"hajinmu_grave","하진무"},{"granny_grave","백초 할멈"},{"jinbaek_sorrow","진백"},{"wangsam","왕삼"},{"baekri","백리휘"},
+        {"hajinmu_grave","하진무"},{"mugo","무고"},{"jeomsoi","점소이"},{"panju","판주"},{"storyteller","이야기꾼"},{"porter","지게꾼"},{"yeomga","염가"},{"taxman","징세조"},{"abbot","주지"},{"beggarmonk","거지 중"},{"ferryman","사공"},{"inspector","감찰사"},{"cultist","교도"},{"odam","오담"},{"granny_grave","백초 할멈"},{"jinbaek_sorrow","진백"},{"wangsam","왕삼"},{"baekri","백리휘"},
         {"gyeol","단목결"},{"lawlord","집법전주"},{"ochi","오치"},{"hochi","호치"},
         {"gyeol_angry","단목결"},{"hyeok","염혁"},{"hyeok_grim","염혁"},{"gwaksan_grief","곽산"},{"lord","교주"},{"lord_wrath","교주"},   // 0.4.84 새 입상·표정
     };

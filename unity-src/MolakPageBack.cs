@@ -55,9 +55,9 @@ public class MolakPageBack : MonoBehaviour
 
     public static void Back ()
     {
-        if (pages.Count == 0) { Hint(MolakTheme.ChoiceCount > 0 || afterPick ? "고른 뒤로는 앞 쪽으로 돌아가지 않는다." : "앞 쪽이 없다."); return; }
+        if (pages.Count == 0) { Hint(MolakTheme.ChoiceCount > 0 || afterPick ? "선택한 뒤에는 앞 쪽으로 돌아갈 수 없다." : "앞 쪽이 없다."); return; }
         int to = view < 0 ? pages.Count - 1 : view - 1;
-        if (to < 0) { Hint("더 앞 쪽은 없다. 선택지를 고른 자리부터다."); return; }
+        if (to < 0) { Hint("더 앞 쪽은 없다. 마지막으로 선택한 뒤부터 볼 수 있다."); return; }
         Show(to);
     }
 
@@ -209,7 +209,7 @@ public class MolakPageBack : MonoBehaviour
         if (st == null || !Mathf.Approximately(builtU, u)) { builtU = u; st = MolakGui.Label(24, u, TextAnchor.MiddleCenter, false); }
         GUI.depth = MolakGui.DepthVfx - 10;
         var g0 = GUI.color;
-        string msg = view >= 0 ? "지난 쪽 " + (pages.Count - view) + " · 왼쪽으로 밀면 돌아온다 · 누르면 지금 쪽" : hintMsg;
+        string msg = view >= 0 ? "지난 쪽 " + (pages.Count - view) + " · 왼쪽으로 밀거나 누르면 지금 쪽으로" : hintMsg;
         float a = view >= 0 ? 1f : (hintT < 1.4f ? 1f : Mathf.Clamp01(1f - (hintT - 1.4f) / 0.4f));
         var r = new Rect(w / 2f - 330f * u, h * 0.83f, 660f * u, 56f * u);
         GUI.color = new Color(0.08f, 0.06f, 0.05f, 0.82f * a); GUI.DrawTexture(r, MolakGui.Px); GUI.color = Color.white;

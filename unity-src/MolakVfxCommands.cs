@@ -89,6 +89,10 @@ public class ArtCommand : Command
         float until = Time.realtimeSinceStartup + 0.3f;
         while (!skip && MolakArt.Settling && Time.realtimeSinceStartup < until)
             await Awaitable.NextFrameAsync();
+        // 0.4.85 장면이 바뀌는 쪽(@page 뒤 새 장면): 먹이 걷힐 때까지(최대 0.6초) 첫 글을 붙든다 — 앞 장면 끝 대사에서 바로 넘어가지 않게
+        until = Time.realtimeSinceStartup + 0.6f;
+        while (!skip && MolakArt.Dipping && Time.realtimeSinceStartup < until)
+            await Awaitable.NextFrameAsync();
     }
 }
 

@@ -90,6 +90,10 @@ public class MolakArt : MonoBehaviour
         Color32[] edge;
         if (sp != null && inst.keyBgTex != null && KeyEdge.TryGetValue(kid, out edge)) { inst.keyBgTex.SetPixels32(new Color32[]{ edge[0], edge[1] }); inst.keyBgTex.Apply(); }
     }
+    // 0.4.85 장면 전환 암전(언메이커: 대화로 장면이 끝나며 바로 다음 장면이라 갑작스럽다): @page 로 장면이 바뀌면 그림 창이 먹으로 잠깐 덮였다가 새 그림이 떠오른다.
+    SpriteRenderer dipR; float dipT = 9f;
+    public static void Dip () { if (inst != null) inst.dipT = 0f; }
+    public static bool Dipping { get { return inst != null && inst.dipT < 0.5f; } }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
     public static void Scene (string id)
@@ -158,7 +162,7 @@ public class MolakArt : MonoBehaviour
         {"soa","innhall"},{"soa_smile","market"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},{"kyona","valley"},
         {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},{"cheongmyo","temple"},
         {"cheongmyo_robe","temple"},{"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},{"jang","alley"},
-        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},{"hyeok","yard"},{"gyeol","alley"},
+        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"mugo","smithy"},{"jeomsoi","innhall"},{"panju","alley"},{"storyteller","market"},{"porter","ferry"},{"yeomga","yard"},{"taxman","market"},{"abbot","temple"},{"beggarmonk","crossroad"},{"ferryman","ferry"},{"inspector","gate"},{"cultist","market"},{"odam","village"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},{"hyeok","yard"},{"gyeol","alley"},
         {"hyeok_grim","yard"},{"gyeol_angry","alley"},{"gwaksan_grief","market"},{"lord_wrath","lordhall"},
     };
     static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
@@ -167,7 +171,7 @@ public class MolakArt : MonoBehaviour
         {"soa","roofmoon"},{"soa_smile","roofmoon"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},
         {"jinbaek","alley"},{"lawlord","gate"},{"oldman","night"},{"jang","alley"},
         {"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},
-        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},{"hyeok","alley"},{"gyeol","roofmoon"},
+        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"mugo","smithy"},{"jeomsoi","innhall"},{"panju","nightmarket"},{"storyteller","nightmarket"},{"porter","ferry"},{"yeomga","yard"},{"taxman","alley"},{"abbot","temple"},{"beggarmonk","alley"},{"ferryman","ferry"},{"inspector","gate"},{"cultist","night"},{"odam","village"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},{"hyeok","alley"},{"gyeol","roofmoon"},
         {"hyeok_grim","alley"},{"gyeol_angry","roofmoon"},{"gwaksan_grief","alley"},{"lord_wrath","lordhall"},
     };
     public static bool IsNight;
@@ -278,7 +282,12 @@ public class MolakArt : MonoBehaviour
         return s;
     }
 
-    void SetScene (Sprite s, string id) { sceneCur = s; sceneId = id; sceneT = 0f; ChangedAt = Time.unscaledTime; if (s != null && charCur != null) SetChar(null, ""); }
+    // 0.4.85 장면이 바뀌면 앞 인물은 그 자리에서 내린다(언메이커: 불탄 장면 뒤 눈을 뜰 때 노인이 살짝 비쳤다 사라지는 잔상) — 옛 인물이 새 장면 위로 스러지지 않게
+    void SetScene (Sprite s, string id)
+    {
+        sceneCur = s; sceneId = id; sceneT = 0f; ChangedAt = Time.unscaledTime;
+        if (s != null && (charCur != null || (charR != null && charR.sprite != null))) { SetChar(null, ""); if (charR != null) charR.sprite = null; charT = 1f; }
+    }
     /// <summary>0.4.84 새 사람이 들어오면 옆에서 미끄러져 들어온다(언메이커: 처음 등장할 때 옆에서 나오는 게 좋다). 같은 사람의 표정만 바뀌면(soa → soa_smile) 제자리에서 바뀐다.</summary>
     static string Person (string id) { if (string.IsNullOrEmpty(id)) return ""; int u = id.IndexOf('_'); return u > 0 ? id.Substring(0, u) : id; }
     void SetChar (Sprite s, string id)
@@ -334,6 +343,10 @@ public class MolakArt : MonoBehaviour
         var kg = new GameObject("Key"); kg.transform.SetParent(band.transform, false); kg.layer = 30;
         keyR = kg.AddComponent<SpriteRenderer>(); keyR.sharedMaterial = matScene; keyR.sortingOrder = 13;
         keyR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+        var dg = new GameObject("Dip"); dg.transform.SetParent(band.transform, false); dg.layer = 30;
+        dipR = dg.AddComponent<SpriteRenderer>(); dipR.sharedMaterial = matScene; dipR.sortingOrder = 15;
+        dipR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+        dipR.sprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 100f); dipR.enabled = false;
         var kbg = new GameObject("KeyBg"); kbg.transform.SetParent(band.transform, false); kbg.layer = 30;
         keyBgR = kbg.AddComponent<SpriteRenderer>(); keyBgR.sharedMaterial = matScene; keyBgR.sortingOrder = 13;
         keyBgR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
@@ -504,6 +517,16 @@ public class MolakArt : MonoBehaviour
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
             charR.transform.position = new Vector3(x, y, z);
+        }
+        // 장면 전환 암전: 바로 먹으로 덮고 0.2초 머문 뒤 0.6초에 걷히며 새 장면이 떠오른다
+        dipT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+        float dipA = dipT < 0.2f ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (dipT - 0.2f) / 0.6f);
+        dipR.enabled = !hide && dipT < 0.8f && (sceneR.sprite != null || charR.sprite != null);
+        if (dipR.enabled)
+        {
+            dipR.color = new Color(17f/255f, 15f/255f, 14f/255f, Mathf.Clamp01(dipA) * 0.92f * colT);
+            dipR.transform.localScale = new Vector3(bandW / 0.04f, bandH / 0.04f, 1f);
+            dipR.transform.position = new Vector3(cx, bandCy, z - 0.25f);
         }
         // 마디 대표 그림: 마디 이름이 덮는 만큼 짙게, 0.5초에 떠오르고 아주 느리게 다가간다
         float cover = MolakVfx.ChapterCover;

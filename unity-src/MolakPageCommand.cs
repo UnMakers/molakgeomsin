@@ -10,5 +10,6 @@ public class PageCommand : Command
 #pragma warning restore CS1998
     {
         MolakFlow.Break();
+        if (!MolakPlayMode.SkipAll) MolakArt.Dip();   // 0.4.85 장면이 바뀌는 쪽 넘김: 그림 창을 잠깐 먹으로
     }
 }

@@ -198,7 +198,7 @@ public class MolakSettings : MonoBehaviour
         {
             bool armed = Time.unscaledTime - wipeArm < 4f;
             var wr = new Rect(cx + cw * 0.1f, cr.yMax + 10 * u, cw * 0.8f, 64 * u);
-            string wl = wipeDone > 0f && Time.unscaledTime - wipeDone < 3f ? "모든 생의 기억을 지웠다. 이제 정말 처음부터다."
+            string wl = wipeDone > 0f && Time.unscaledTime - wipeDone < 3f ? "모든 생의 기억을 지웠다. 처음부터 시작한다."
                       : armed ? "<color=#" + ColorUtility.ToHtmlStringRGB(MolakPaper.Accent) + ">한 번 더 누르면 모든 생의 기억(앎·말로·업보)이 사라진다</color>" : "<u>모든 생의 기억 지우기</u>";
             GUI.Label(wr, wl, sHint);
             if (GUI.Button(wr, GUIContent.none, GUIStyle.none))

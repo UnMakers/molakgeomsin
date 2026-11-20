@@ -280,7 +280,7 @@ public class MolakStoryBook : MonoBehaviour
         float m = Mathf.Max(48f * u, (W - 980f * u) * 0.5f), cw = W - m * 2f;
         float y = Mathf.Max(90f * u, H * 0.06f);
         GUI.Label(new Rect(m, y, cw, 80 * u), "이야기 모드", sHead); y += 84 * u;
-        GUI.Label(new Rect(m, y, cw, 90 * u), "죽지 않고 이야기만 따라 읽는다. 한 번 닿은 마디는 여기 남아, 다음엔 그 자리부터 펼칠 수 있다.", sSub); y += 96 * u;
+        GUI.Label(new Rect(m, y, cw, 90 * u), "죽지 않고 이야기를 따라 읽는다. 한 번 읽은 마디는 여기에 남아 그 자리부터 다시 읽을 수 있다.", sSub); y += 96 * u;
         Box(new Rect(m, y, 120 * u, Mathf.Max(1f, 2f * u)), new Color(0.55f, 0.16f, 0.12f, 0.9f)); y += 18 * u;
 
         // 아래 돌아가기 단추 자리
@@ -343,7 +343,7 @@ public class MolakStoryBook : MonoBehaviour
             yy += rowH + gapR;
         }
         if (list.Count == 0)
-            GUI.Label(new Rect(m, yy + 20 * u, cw, 120 * u), "아직 닿은 마디가 없다.\n이야기 모드로 읽다 보면, 지난 마디가 여기 하나씩 쌓인다.", sNote);
+            GUI.Label(new Rect(m, yy + 20 * u, cw, 120 * u), "아직 읽은 마디가 없다.\n이야기 모드로 읽으면 마디가 여기에 하나씩 쌓인다.", sNote);
         GUI.EndGroup();
 
         // 흐림(목록 위아래)

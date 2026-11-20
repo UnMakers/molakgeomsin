@@ -202,7 +202,7 @@ public class MolakStatLogView : MonoBehaviour
         float cx = MolakPaper.Margin(w, u), cw = w - cx * 2f;
         float y = MolakPaper.Top(h, u);
         var list = MolakStatLog.Load();
-        MolakPaper.Header(ref y, cx, cw, "능력치 기록", list.Count == 0 ? "이번 생에는 아직 오르내린 것이 없다" : "이번 생 · 최근 " + list.Count + "줄 · 아래가 가장 최근", u);
+        MolakPaper.Header(ref y, cx, cw, "능력치 기록", list.Count == 0 ? "이번 생에는 아직 바뀐 능력치가 없다" : "이번 생 · 최근 " + list.Count + "줄 · 아래가 가장 최근", u);
         var br = MolakPaper.BottomButton(w, h, u);
 
         float rowH = 62f * u, top = y, bottom = br.y - 24f * u, viewH = bottom - top;
@@ -244,7 +244,7 @@ public class MolakStatLogView : MonoBehaviour
                 MolakGui.Ink(sNum, ink);
                 GUI.Label(new Rect(18f * u, yy, 200f * u, rowH), "<color=" + col + ">" + MolakStatLog.Name(e.Key) + " " + (e.D > 0 ? "+" : "−") + Mathf.Abs(e.D) + "</color>", sNum);
                 MolakGui.Ink(sRow, string.IsNullOrEmpty(e.Why) ? dim : ink);
-                GUI.Label(new Rect(210f * u, yy, cw - 224f * u, rowH), string.IsNullOrEmpty(e.Why) ? "까닭을 적지 못했다" : e.Why, sRow);
+                GUI.Label(new Rect(210f * u, yy, cw - 224f * u, rowH), string.IsNullOrEmpty(e.Why) ? "이유 모름" : e.Why, sRow);
             }
             yy += rowH;
         }
