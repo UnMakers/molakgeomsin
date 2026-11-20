@@ -49,8 +49,16 @@ public class MolakRevealTest : MonoBehaviour
 
     static TMPro.TMP_Text Dlg ()
     {
-        foreach (var t in FindObjectsByType<TMPro.TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) if (t.gameObject.name == "DialogueText") return t;
-        return null;
+        // 0.4.85 극장판에선 쓰지 않는 기본 인쇄기의 자리표시 글(Lorem ipsum)이 같은 이름으로 남아 있다 — 실제로 찍히는 쪽을 고른다
+        TMPro.TMP_Text any = null;
+        foreach (var t in FindObjectsByType<TMPro.TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (t.gameObject.name != "DialogueText") continue;
+            if (any == null) any = t;
+            if (!t.isActiveAndEnabled || (t.text ?? "").StartsWith("Lorem")) continue;
+            return t;
+        }
+        return any != null && (any.text ?? "").StartsWith("Lorem") ? null : any;
     }
 
     IEnumerator Go (string script, string label, string sets, float seconds)
