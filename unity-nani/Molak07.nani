@@ -81,9 +81,10 @@
 @choice "보낸다 — 그녀의 일이다" goto:#SoaN10C
 @stop
 # SoaN10X
-<color=#9A70C4>사슬이 도는 길을 안다.</color> 창고 앞 사슬잡이는 둘, 교대는 반시진마다. 뒷문 빗장은 안쪽에서 철사로 감겨 있다.
+사슬이 도는 길을 안다. 창고 앞 사슬잡이는 둘, 교대는 반시진마다. 뒷문 빗장은 안쪽에서 철사로 감겨 있다.
 "……어디서 들었지."
-<align=right>"<color=#9A70C4>죽기 전에 들었소.</color>"</align>
+@print "<align=right>\"<color=#9A70C4>죽기 전에 들었소.</color>\"</align>" if:g_soaalone>0
+@print "<align=right>\"들은 데가 있소. 값은 치렀소.\"</align>" if:g_soaalone<1
 소아가 웃지 않는다. 대신 신을 신는다.
 @set f_chainroute=1
 @goto #SoaN10Go
@@ -209,8 +210,11 @@
 # SoaN10B
 @art char:soa
 팔을 붙잡는다. 소아가 내려다본다. 뿌리치지 않는다.
-<align=right>"<color=#9A70C4>오늘 가면 죽소. 사슬잡이가 보름엔 둘에서 여섯으로 느오.</color>"</align>
-"……그걸 어떻게 아는 거지?"
+@print "<align=right>\"<color=#9A70C4>오늘 가면 죽소. 사슬잡이가 보름엔 둘에서 여섯으로 느오.</color>\"</align>" if:g_soaalone>0
+@print "<align=right>\"보름엔 사슬잡이가 둘에서 여섯으로 는다 들었소.\"</align>" if:g_soaalone<1&&f_chaininfo>0
+@print "<align=right>\"오늘은 안 되오. 까닭은 묻지 마시오.\"</align>" if:g_soaalone<1&&f_chaininfo<1
+@print "\"……그걸 어떻게 아는 거지?\"" if:g_soaalone>0||f_chaininfo>0
+@print "\"……까닭도 없이 붙잡는 손이라.\"" if:g_soaalone<1&&f_chaininfo<1
 <align=right>"모르오. 그냥 그렇다고 하시오."</align>
 한참. 그녀가 신을 내려놓는다.
 "그럼 다음 보름이다. 그땐 네가 앞장서라. 거짓말이었으면, 네 목부터 친다."
@@ -344,8 +348,9 @@
 @stop
 # SoaG1A
 마지막 장. 먹이 다르다. 그 밤 이틀 전의 날짜.
-「청운 놈이 계단에 등잔 기름 붓는 꿈을 꿨다. 웃긴 꿈. 다음엔 둘이 서자고 할 것.」
-꿈이 아니었다. 지난 생의 당신이 했던 일이다. 그녀는 그것을 꿈으로 보았다.
+@print "「청운 놈이 계단에 등잔 기름 붓는 꿈을 꿨다. 웃긴 꿈. 다음엔 둘이 서자고 할 것.」" if:g_runs>0
+@print "꿈이 아니었다. 지난 생의 당신이 했던 일이다. 그녀는 그것을 꿈으로 보았다." if:g_runs>0
+@print "「청운 놈이 계단 셋째 칸을 자꾸 내려다본다. 뭘 보는지 안 물었다. 다음엔 둘이 서자고 할 것.」" if:g_runs<1
 책을 쥔 손이 떨린다. 우물이 그 소리를 받아 한참 울린다.
 @vfx kind:beat
 @fx curse:4 sl:1
