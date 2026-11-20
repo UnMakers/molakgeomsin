@@ -217,6 +217,7 @@
 @fx curse:-4 sw:1
 @set aff=aff+1
 @set f_soabond=1
+@set g_soabond=1
 @mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 # SoaN5X
@@ -227,6 +228,7 @@
 "어디 두고 보지."
 @fx curse:-3 sw:1
 @set f_soabond=1
+@set g_soabond=1
 @mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 # SoaN5A
@@ -236,6 +238,7 @@
 소아가 다시 기와에 눕는다. 그날 밤과 같은 달인데, 오늘은 그냥 밝다.
 @fx curse:-5
 @set f_soabond=1
+@set g_soabond=1
 @mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 # SoaN5B
@@ -245,6 +248,7 @@
 기와 아래 어딘가에서 짧은 휘파람이 두 번 울린다. 소아의 손이 쌍검 자루로 간다. 달은 그대로인데, 밤이 식는다.
 @fx curse:-6 hp:1
 @set f_soabond=1
+@set g_soabond=1
 @mark text:"소아 곁에 남았다"
 @goto Molak02#AfterChapter
 
@@ -473,7 +477,9 @@
 @goto #SoaN8ReT if:theme!=4
 <color=#9A70C4>지난 생보다 사흘 이르다.</color> 이번 생엔 혈랑대가 일찍 왔다. 그래도 발소리는 같다.
 # SoaN8ReT
-@print "<color=#9A70C4>지난 생과 날이 다르다.</color> 한 번 막아 낸 밤은 날을 바꿔서 온다. 오늘이 그날이라는 걸 기와 위의 첫 발소리로 안다." if:raidshift!=0
+@print "<color=#9A70C4>지난 생보다 이르다.</color> 돌아오지 않은 척후 둘의 값이다. 대주가 날을 당겼다." if:g_raidlast>0&&raidday<g_raidlast&&rp_tok>0
+@print "<color=#9A70C4>지난 생보다 이르다.</color> 수배서에 내 얼굴이 붙은 뒤로 혈랑대가 서두른다." if:g_raidlast>0&&raidday<g_raidlast&&rp_want>0&&rp_tok<1
+@print "<color=#9A70C4>지난 생보다 늦다.</color> 빈방을 부순 붉은 끈들이 고을 밖부터 뒤지느라 이틀을 썼다." if:g_raidlast>0&&raidday>g_raidlast&&rp_dodge>0
 @set g_know_raid=1
 아직 발소리는 없다. 시간이 조금 남았다.
 @choice "계단에 등잔 기름을 붓고, 하진무와 점소이를 아궁이 뒤에 숨긴다" goto:#SoaN8P1
@@ -1926,6 +1932,7 @@
 "……가르쳐 준 기억이 없는 법을 배운 놈이랑, 등을 맞대는구나. 사부가 알면 웃겠다."
 @set f_soapromise=1
 @set f_soabond=1
+@set g_soabond=1
 @set aff=aff+3
 @goto Molak02#AfterChapter
 

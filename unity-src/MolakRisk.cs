@@ -12,6 +12,8 @@ public class RiskCommand : Command
 {
     [Alias("on")] public StringParameter On;
     public StringParameter Need;
+    /// <summary>0.4.85 지난 생에 본 수로 연 판정: 승산이 RiskKnowFloor 아래로 내려가지 않고, 빗나가면 「몸이 늦었다」.</summary>
+    public BooleanParameter Know;
 
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
@@ -22,6 +24,8 @@ public class RiskCommand : Command
         float need = MolakRules.RiskNeed(stat, Assigned(Need) ? Need.Value : "0", day);
         float have = MolakStats.Get(stat);
         int p = MolakRules.RiskOdds(stat, have, need);
+        bool know = Assigned(Know) && Know.Value;
+        if (know) p = Mathf.Max(p, MolakRules.RiskKnowFloor);
         bool pass = Random.Range(0, 100) < p;
 #if UNITY_EDITOR
         { float f = MolakStats.Get("riskforce"); if (f > 0) pass = f == 1f; }   // 시험용: 1 통과 2 실패
@@ -38,7 +42,7 @@ public class RiskCommand : Command
         else
         {
             MolakSfx.Hit();
-            MolakVfx.Stamp("失", "승산 " + MolakRules.OddsText(p) + " · 빗나갔다", p >= 60);
+            MolakVfx.Stamp("失", know ? "아는 수였다 · 몸이 늦었다" : "승산 " + MolakRules.OddsText(p) + " · 빗나갔다", p >= 60);
             MolakVfx.Shake(p >= 60 ? 14f : 9f);
         }
     }

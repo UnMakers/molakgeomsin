@@ -9301,14 +9301,14 @@
 교도가 칼자루를 당긴다. 꿈쩍 않는다. 뒤의 둘이 그제야 칼을 뽑는다. 반 박자 늦다.
 @print "'<color=#9A70C4>저 반 박자를 얻으려고 한 생을 썼다.</color>'" if:g_ev_cultists<3
 @print "'<color=#9A70C4>저 반 박자를 얻으려고 생을 몇 개 썼다.</color>'" if:g_ev_cultists>=3
-@choice "놀란 틈에 먼저 벤다 〔검술〕" goto:#E_CultistsKA
+@choice "놀란 틈에 먼저 벤다 〔검술 앎〕" goto:#E_CultistsKA
 @choice "가슴의 문양으로 사술을 끌어쓴다" goto:#E_CultistsC1
 @choice "죽립 챙을 내린다. \"사람을 잘못 보셨소.\"" if:f_hat>0 goto:#E_CultistsX
 @choice "허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다" if:f_rankplate>0 goto:#E_CultistsP
 @choice "달아난다" goto:#E_CultistsC2
 @stop
 # E_CultistsKA
-@risk on:sw need:0
+@risk on:sw need:0 know:true
 @goto #E_CultFail if:pass==0
 @goto #E_CultF
 
@@ -9324,12 +9324,12 @@
 곰 가죽이 말을 잇지 못한다. 여우 가죽이 곰 가죽을 본다. 곰 가죽이 여우 가죽을 본다. 겁을 주던 쪽이 코앞에서 대사를 까먹었다.
 @print "'<color=#9A70C4>지난 생이다. 저 둘만 모른다.</color>'" if:g_ev_thugs<3
 @print "'<color=#9A70C4>나도 정확히는 모른다. 몇 생 전이더라.</color>'" if:g_ev_thugs>=3
-@choice "둘이 어리둥절한 틈에 골목을 빠져나간다 〔검술-1〕" goto:#E_ThugsKA
+@choice "둘이 어리둥절한 틈에 골목을 빠져나간다 〔검술-1 앎〕" goto:#E_ThugsKA
 @choice "은자 두 냥을 던진다" if:mn>=2 goto:#E_ThugsC1
 @choice "맨주먹으로 맞선다" goto:#E_ThugsC0
 @stop
 # E_ThugsKA
-@risk on:sw need:-1
+@risk on:sw need:-1 know:true
 @goto #E_ThugsF if:pass==0
 두 어깨 사이로 빠진다. 도끼가 늦게 돈다. 골목 끝에서 돌아보니 둘이 아직 서로를 보고 있다.
 "……형님, 우리 저놈한테 이빨 받은 적 있소?"
@@ -9435,7 +9435,7 @@
 <align=right>"한 번도 안 보셨으니 적을 것도 없겠소. 술이나 한 잔 하시오."</align>
 '세 번 봐야 일이 된다. 한 번도 못 보게 하면 된다.'
 @choice "술을 따라 주고 먼저 일어선다" goto:#E_SpyKA
-@choice "뒷골목으로 꾀어 입을 막는다 〔검술-2〕" goto:#E_SpyKB
+@choice "뒷골목으로 꾀어 입을 막는다 〔검술-2 앎〕" goto:#E_SpyKB
 @stop
 # E_SpyKA
 사내는 그날 술값만 탁자에 두고 사라진다. 잔은 비지 않았다.
@@ -9443,7 +9443,7 @@
 @fx mn:-1 curse:-1
 @return
 # E_SpyKB
-@risk on:sw need:-2
+@risk on:sw need:-2 know:true
 @goto #E_Spy2Fail if:pass==0
 @goto #E_Spy2
 
@@ -9455,12 +9455,12 @@
 붉은 끈의 사냥꾼이 칼을 반쯤 뽑다 멈춘다.
 "……넷째에서 칠 줄은 어찌 알았나."
 '몰랐다. 등줄기가 알았다.'
-@choice "먼저 친다 〔검술-1〕" goto:#E_HunterKA
+@choice "먼저 친다 〔검술-1 앎〕" goto:#E_HunterKA
 @choice "길목을 꺾어 따돌린다" goto:#E_HunterC0
 @choice "거지 아이가 일러 준 낮은 담으로 뛴다" if:f_alms>0 goto:#E_HunterX
 @stop
 # E_HunterKA
-@risk on:sw need:-1
+@risk on:sw need:-1 know:true
 @goto #E_HunterFFail if:pass==0
 @goto #E_HunterF
 
@@ -9550,19 +9550,19 @@
 타짜의 손이 반 박자 멈춘다.
 "……손 보는 객은 질색인데."
 '<color=#9A70C4>지난 생엔 이 판에서 손을 못 봤다. 오늘은 손부터 본다.</color>'
-@choice "패는 버려 두고 손만 읽는다 〔살기〕" goto:#E_GambleKB
+@choice "패는 버려 두고 손만 읽는다 〔살기 앎〕" goto:#E_GambleKB
 @choice "\"농이오.\" 일어선다" goto:#E_GambleC2
 @stop
 # E_GambleKM
-@choice "셋째 판만 거르며 판을 읽는다 〔살기-1〕" goto:#E_GambleKA
+@choice "셋째 판만 거르며 판을 읽는다 〔살기-1 앎〕" goto:#E_GambleKA
 @choice "\"농이오.\" 일어선다" goto:#E_GambleC2
 @stop
 # E_GambleKB
-@risk on:sl need:0
+@risk on:sl need:0 know:true
 @goto #E_Gamble2Fail if:pass==0
 @goto #E_Gamble2
 # E_GambleKA
-@risk on:sl need:-1
+@risk on:sl need:-1 know:true
 @goto #E_Gamble2Fail if:pass==0
 @goto #E_Gamble2
 

@@ -75,12 +75,12 @@ public static class MolakChoiceMeta
     }
 
     /// <summary>글귀 안의 승부수 표시.</summary>
-    static readonly Regex RiskRx = new Regex(@"\s*〔(검술|내공|살기)\s*([+\-]?\d+)?〕");
+    static readonly Regex RiskRx = new Regex(@"\s*〔(검술|내공|살기)\s*([+\-]?\d+)?(\s*앎)?〕");   // 0.4.85 「앎」: 지난 생에 본 수 — 승산이 여덟 아래로 내려가지 않는다
     public static string RiskTag (string label)
     {
         if (string.IsNullOrEmpty(label)) return null;
         var m = RiskRx.Match(label);
-        return m.Success ? MolakRules.StatKey(m.Groups[1].Value) + "|" + (m.Groups[2].Success ? m.Groups[2].Value : "0") : null;
+        return m.Success ? MolakRules.StatKey(m.Groups[1].Value) + "|" + (m.Groups[2].Success ? m.Groups[2].Value : "0") + (m.Groups[3].Success ? "|k" : "") : null;
     }
     public static string StripRisk (string label) { return string.IsNullOrEmpty(label) ? label : RiskRx.Replace(label, ""); }
 
@@ -91,7 +91,9 @@ public static class MolakChoiceMeta
         string stat = parts[0]; float day = MolakStats.Get("day");
         float need = MolakRules.RiskNeed(stat, parts.Length > 1 ? parts[1] : "0", day);
         float have = MolakStats.Get(stat);
-        return MolakRules.StatName(stat) + " " + have.ToString("0") + " 대 " + need.ToString("0") + " · 승산 " + MolakRules.OddsText(MolakRules.RiskOdds(stat, have, need));
+        bool know = parts.Length > 2 && parts[2] == "k";
+        int p = MolakRules.RiskOdds(stat, have, need); if (know) p = Mathf.Max(p, MolakRules.RiskKnowFloor);
+        return MolakRules.StatName(stat) + " " + have.ToString("0") + " 대 " + need.ToString("0") + " · 승산 " + MolakRules.OddsText(p) + (know ? " · 아는 수" : "");
     }
 
     public static Meta Get (int index, string label)

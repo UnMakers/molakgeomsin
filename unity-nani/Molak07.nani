@@ -280,6 +280,7 @@
 "그럼 둘 다 처음이군. 길 잃으면 네 탓이다."
 @vfx kind:petals
 @set f_soabond=1
+@set g_soabond=1
 @mark text:"소아와 한 길을 골랐다"
 @set aff=aff+2
 @goto Molak02#AfterChapter
@@ -313,6 +314,7 @@
 "같이 가자. 이번엔 둘이 올라오자."
 @vfx kind:petals
 @set f_soabond=1
+@set g_soabond=1
 @mark text:"소아와 한 길을 골랐다"
 @set aff=aff+3
 @fx curse:-3

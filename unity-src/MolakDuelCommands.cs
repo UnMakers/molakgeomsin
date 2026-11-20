@@ -328,7 +328,7 @@ public class DuelCommand : Command
             MolakVfx.Gold(); MolakVfx.Shake(10f); MolakSfx.Draw();
             MolakHud.RankShift(oldRank, newRank, tierUp, MolakRealm.Current);
             MolakDuelCard.Show(true, foe.Name, "서열 " + MolakDuel.RankText(oldRank) + " → " + MolakDuel.RankText(newRank), capped ? "─ " + MolakRealm.Name(MolakRealm.Next) + "의 벽 앞에서 멎는다 ─" : "");
-            if (foe.Boss == "wolf") MolakStats.Set("f_wolfdown", 1f);
+            if (foe.Boss == "wolf") { MolakStats.Set("f_wolfdown", 1f); MolakStats.Set("g_wolfwon", 1f); }   // 0.4.85 그 밤의 진실 「합벽」 줄기
             if (foe.Boss == "hochi") MolakStats.Set("f_hmsaved", 1f);
             if (sit == 3 || sit == 7) MolakStatLog.Why("mn", "비무 상금에 판돈이 얹혔다");
             if (sit == 3) { MolakStats.Add("mn", 3f); MolakStats.Add("sl", 1f); }

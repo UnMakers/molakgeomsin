@@ -113,9 +113,12 @@ public static class MolakCompanion
     {
         MolakStats.SetStr("comp", "none");
         if (kind != "day" && kind != "night") return "";
+        // 0.4.85 하루 한 번만 따라붙는다(언메이커 지적: 지붕에서 술 마시던 사람이 같은 날 사건마다 서 있으면 어색하다)
+        if (G("compjoinday") >= G("day")) return "";
         if (Random.value > (kind == "day" ? 0.5f : 0.35f)) return "";
         var h = Choose(HeroOf(nextEvent), 3f);
         if (h == null) return "";
+        MolakStats.Set("compjoinday", G("day"));
         Bond(h.Value);
         return PickLine((kind == "day" ? Day : Night)[h.Value.Id]);
     }

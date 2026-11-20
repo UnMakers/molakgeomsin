@@ -206,7 +206,7 @@ public static class MolakMemory
         }
         float sw1 = StartSword(), ng1 = StartCore(), hp1 = StartHp(), seal1 = SealLv();
         MolakStats.Set("griefk", died && cause != "희생" ? GriefKind() : 0f);
-        if (sw1 > sw0) lines.Add("<color=#C9A227>손이 기억한 검</color> — 다음 생은 검술 " + sw1.ToString("0") + "로 깨어난다.");
+        if (sw1 > sw0) lines.Add("<color=#C9A227>손이 기억한 검</color> — 문양이 지난 생의 칼길을 품고 돌아온다. 다음 생은 검술 " + sw1.ToString("0") + "로 깨어난다.");
         if (ng1 > ng0) lines.Add("<color=#C9A227>단전에 남은 진기</color> — 다음 생은 내공 " + ng1.ToString("0") + "로 깨어난다.");
         if (newScar) lines.Add("<color=#C9A227>처음 겪은 죽음(" + cause + ")</color> — 몸이 그 아픔을 기억한다. 체력 상한 " + hp1.ToString("0") + ".");
         else if (hp1 > hp0) lines.Add("<color=#C9A227>살아남은 몸</color> — 체력 상한 " + hp1.ToString("0") + ".");

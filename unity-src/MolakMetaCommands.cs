@@ -9,7 +9,7 @@ public class InitRunCommand : Command
 {
     /// <summary>코드에서만 쓰는 전역 수치(스크립트에는 나오지 않아 자동 목록에 없는 것).</summary>
     static readonly string[] CodeGlobals = {
-        "g_pts", "g_runs", "g_clears", "g_lastday", "g_bestday", "g_bestrank", "g_hapbo", "g_samecount", "g_lasttheme",
+        "g_pts", "g_runs", "g_clears", "g_wolfwon", "g_lastday", "g_bestday", "g_bestrank", "g_hapbo", "g_samecount", "g_lasttheme",
         "g_next_bond", "g_next_item", "g_realmbest", "g_redo", "g_lk_nameless", "g_ls_nameless",
         "g_bestsw", "g_bestng", "g_vow_rev", "g_vow_bond", "g_vow_live", "g_cursedeaths", "g_memv", "g_membuy", "g_up_mem", "g_wk_sw", "g_wk_sl", "g_wk_curse",
         "g_up_sword", "g_up_body", "g_up_core", "g_up_coin", "g_up_seal", "g_up_tea", "g_up_lodge", "g_up_vigor",
@@ -62,13 +62,9 @@ public class InitRunCommand : Command
             MolakStats.Set("theme", th);
             MolakStats.Set("g_lasttheme", th);
             MolakStats.Set("raidday", th == MolakRules.ThemeEarlyRaid ? MolakRules.RaidDayEarly : MolakRules.RaidDay);
-            // 0.4.58 한 번 막아 낸 밤은 날을 바꿔서 온다
+            // 0.4.85 야습 날짜를 주사위로 흔들지 않는다(언메이커: 앎이 배신하면 납득이 안 된다).
+            // 이번 생에 한 일(척후를 벰·수배·거처를 옮김)로만 움직인다 — Molak02 #DayLoop 머리.
             MolakStats.Set("raidshift", 0f);
-            if (MolakStats.Get("g_raid_won") > 0f)
-            {
-                int sh = Random.Range(-5, 4); if (sh == 0) sh = -2;
-                MolakStats.Add("raidday", sh); MolakStats.Set("raidshift", sh);
-            }
             MolakStats.Set("thday", MolakRules.ThemeHintDay);
         }
         MolakStats.Set("rank", 0);
@@ -140,6 +136,8 @@ public class RegressCommand : Command
     {
         if (MolakStats.Get("practice") > 0f) return;
         MolakMemory.OnLifeEnd();
+        // 0.4.85 그 밤까지 산 생이면 그날을 기억한다 — 다음 생에 날이 달라지면 까닭과 함께 말한다
+        if (MolakStats.Get("raidday") > 0f && MolakStats.Get("day") >= MolakStats.Get("raidday")) MolakStats.Set("g_raidlast", MolakStats.Get("raidday"));
         MolakStats.Add("g_runs", 1f);
         MolakLedger.Accumulate();
         MolakAutoSave.LogLife(MolakStats.Get("rm_c"));

@@ -1,6 +1,19 @@
 ; ===== 몰락검신 — 조운고을의 나날 (하루 루프) =====
 # DayLoop
 @ensurevars
+; 0.4.85 야습 날짜는 이번 생에 한 일로 움직인다(주사위로 흔들지 않는다). 그 밤 귀띔(사흘 전)이 뜨기 전까지만.
+@set rp_go=0
+@set rp_go=1 if:f_scouttoken>0&&rp_tok<1&&raidday>0&&day<raidday-3
+@set raidday=raidday-3 if:rp_go>0
+@set rp_tok=1 if:rp_go>0
+@set rp_go=0
+@set rp_go=1 if:f_wanted>0&&rp_want<1&&raidday>0&&day<raidday-3
+@set raidday=raidday-2 if:rp_go>0
+@set rp_want=1 if:rp_go>0
+@set rp_go=0
+@set rp_go=1 if:f_huntdodge>0&&rp_dodge<1&&raidday>0&&day<raidday-3
+@set raidday=raidday+2 if:rp_go>0
+@set rp_dodge=1 if:rp_go>0
 @art char:none
 @set chain=0
 @set nmul=0
@@ -2041,6 +2054,9 @@
 성문 앞 포졸이 넷으로 늘었다. 나루에는 관아의 배가 묶였다.
 "객. 그물을 칠 때는 바깥부터 조이는 법이오. 며칠 남지 않았소."
 하진무가 창밖을 본다.
+@print "\"혈랑대가 객을 조용히 데려가려다 몇 번을 놓쳤다 하오. 이제는 관아를 움직인다지. 교주의 명이오. 객의 가슴에 든 것이 익을 때를 기다렸다는 말도 돌더이다.\"" if:f_hajindead<1
+@print "점소이가 문간에서 수군댄다. \"혈랑대가 놓친 손님을 이제 관아가 잡는대요. 교주 명이래요. 뭐가 익기를 기다렸다나.\"" if:f_hajindead>0
+'익기를 기다렸다. 그래서 여태 손목만 묶으려 들었구나.'
 그 안에 끝을 보지 못하면, 관아의 그물이 먼저 당신을 덮칠 것이다.
 @choice "소금길로 빠진다 — 곽산이 그어 준 산 둘, 물길 하나" if:f_valleyroute>0 goto:#BNetA
 @choice "나루의 밤배를 산다 (은자 15)" if:mn>=15&&f_ferryfree<1 goto:#BNetB
@@ -2402,7 +2418,7 @@
 "집법전주가 운락에 내려온다는 소문이오. 혈마교의 율법을 쥔 곳, 집법전의 우두머리요. 교주의 말을 전하러. 무릎 꿇는 놈은 살려 준다고."
 @goto #Town1
 # TJR7
-"관아 그물이 운락을 다 덮을 때까지 두 달이 채 안 남았소. 그 전에 끝을 보든지, 떠나든지."
+"교에서 운락을 두 달 안에 다 훑으라는 명이 내려왔다 하오. 관아가 성문부터 조인다더군. 그 전에 끝을 보든지, 떠나든지."
 @goto #Town1
 # TJR8
 "산사의 비구니 하나가 청운 걸음으로 장작을 팬다더군. 혈마교 추격대의 우두머리, 혈랑대주가 보름마다 그 산 아래 사당에 쌀을 둔다는 소문이랑 같이 도오."

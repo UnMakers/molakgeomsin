@@ -357,7 +357,7 @@
 @goto #WinSame if:oldrank==newrank
 강호 서열 <color=#C9A227>{oldrank} → {newrank}</color>. 한 계단을 또 오른다.
 @goto #TierUp if:tierup>0
-@print "<color=#C9A227>서열이 {btnext}의 벽 앞에서 멎는다.</color> 판은 이겼으나 숫자가 더 오르지 않는다. 경지가 서열을 따라가지 못한다." if:rankcap>0
+@print "<color=#C9A227>서열이 {btnext}의 벽 앞에서 멎는다.</color> 서열각의 붓이 판을 적다 말고 선다. 「경지를 넘지 못한 자는 이 위 칸에 적지 않는다. 운이 좋았던 판과 실력은 다르다.」 판은 이겼는데 이름이 그 줄에 머문다." if:rankcap>0
 @goto #WinAfter
 # WinSame
 강호 서열은 <color=#C9A227>{newrank}</color> 그대로다. 아래 서열을 이겨서는 계단이 생기지 않는다.

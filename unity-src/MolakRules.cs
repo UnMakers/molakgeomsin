@@ -14,6 +14,8 @@ public static class MolakRules
     public const float NetWarnDay = 46f, NetCloseDay = 55f;
     /// <summary>혈랑대 야습 날 — 보통 / '혈랑대 이른 생'.</summary>
     public const float RaidDay = 42f, RaidDayEarly = 38f;
+    /// <summary>0.4.85 지난 생에 본 수로 연 승부수의 최저 승산(언메이커: 알고도 지면 납득이 안 된다).</summary>
+    public const int RiskKnowFloor = 85;
     /// <summary>이번 생의 바람을 처음 귀띔하는 날.</summary>
     public const float ThemeHintDay = 3f;
     /// <summary>귀띔하지 않음(바람이 생기기 전 저장을 불러왔을 때).</summary>

@@ -144,7 +144,12 @@
 # Soa2C0
 @goto #Soa2a
 # Soa2C1
+@goto #Soa2C1S if:storymode>0
 @goto #H_Soastub
+# Soa2C1S
+젓가락 끝이 살갗을 파고들다 멎는다. 핏방울 하나가 목을 타고 흐른다.
+"……입이 무거운 건 봐주마. 한 번만이다."
+@goto #Soa2a
 # Soa2X
 젓가락 끝이 한 치 물러난다.
 "저잣거리 이야기꾼이 떠드는 소리를 어디서 주워들었지?"

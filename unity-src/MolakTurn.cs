@@ -54,7 +54,7 @@ public static class MolakTeaser
         bool knows = G("g_runs") >= 1f;   // 한 번이라도 죽어 본 몸은 날을 센다
         if (!knows) return "북쪽 산마루에 횃불이 셋. 사냥꾼은 저렇게 많이 다니지 않는다.";
         string when = left <= 0 ? "오늘 밤이다" : left == 1 ? "내일 밤이다" : Num(left) + " 남았다";
-        string shift = G("raidshift") != 0f ? " <color=#8A7A66>(지난 생과 날이 다르다)</color>" : "";
+        string shift = G("g_raidlast") > 0f && Mathf.Abs(G("raidday") - G("g_raidlast")) > 0.5f ? " <color=#8A7A66>(" + (G("raidday") < G("g_raidlast") ? "지난 생보다 이르다" : "지난 생보다 늦다") + ")</color>" : "";
         return "북쪽 산마루에 횃불이 셋. 혈랑대가 내려오기까지 — <color=#C03434>" + when + "</color>." + shift;
     }
 
