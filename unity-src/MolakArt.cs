@@ -138,8 +138,13 @@ public class MolakArt : MonoBehaviour
     }
     // 0.4.85 장면 전환 암전(언메이커: 대화로 장면이 끝나며 바로 다음 장면이라 갑작스럽다): @page 로 장면이 바뀌면 그림 창이 먹으로 잠깐 덮였다가 새 그림이 떠오른다.
     SpriteRenderer dipR; float dipT = 9f;
+    // 0.4.85 장면 전환 「먹이 번진다」(언메이커 시안 2): 옛 그림(장면·인물)을 아래 깔아 두고, 새 그림이 가운데서 먹처럼 번져 나온다.
+    //   새 장면·인물은 번짐 가림판(SpriteMask, alphaCutoff 를 1→0)에만 비치고, 번지는 끝에 먹 테(Molak/InkEdge)를 두른다.
+    SpriteRenderer oldSceneR, oldCharR, inkR; SpriteMask revealMask, oldMask; Material inkMat; Sprite revealSp; float inkT = 9f;
+    const float InkDur = 1.0f;
+    public static bool InkOn = true;
     public static void Dip () { if (inst != null) inst.dipT = 0f; }
-    public static bool Dipping { get { return inst != null && inst.dipT < 0.5f; } }
+    public static bool Dipping { get { return inst != null && (inst.dipT < 0.5f || inst.inkT < 0.55f); } }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
     public static void Scene (string id)
@@ -343,9 +348,17 @@ public class MolakArt : MonoBehaviour
     // 0.4.85 장면이 바뀌면 앞 인물은 그 자리에서 내린다(언메이커: 불탄 장면 뒤 눈을 뜰 때 노인이 살짝 비쳤다 사라지는 잔상) — 옛 인물이 새 장면 위로 스러지지 않게
     void SetScene (Sprite s, string id)
     {
-        sceneCur = s; sceneId = id; sceneT = 0f; ChangedAt = Time.unscaledTime;
+        bool ink = InkOn && s != null && oldSceneR != null && (sceneR.sprite != null || charR.sprite != null) && !id.StartsWith("duel") && !(sceneId ?? "").StartsWith("duel") && !MolakPlayMode.SkipAll;
+        if (ink)
+        {   // 지금 보이는 그대로 아래에 얼려 둔다
+            oldSceneR.sprite = sceneR.sprite; oldSceneR.color = sceneR.color; oldSceneR.transform.position = sceneR.transform.position + new Vector3(0f, 0f, 0.05f); oldSceneR.transform.localScale = sceneR.transform.localScale; oldSceneR.sharedMaterial = sceneR.sharedMaterial;
+            oldCharR.sprite = charR.sprite; oldCharR.color = charR.color; oldCharR.transform.position = charR.transform.position + new Vector3(0f, 0f, 0.05f); oldCharR.transform.localScale = charR.transform.localScale; oldCharR.sharedMaterial = charR.sharedMaterial;
+            inkT = 0f;
+        }
+        sceneCur = s; sceneId = id; sceneT = ink ? 1f : 0f; ChangedAt = Time.unscaledTime;
         if (!restoring) MolakStats.SetStr("artscene", id ?? "");   // 0.4.85 불러오기 때 그림을 되살리려고 저장 상태에 적어 둔다
         if (s != null && (charCur != null || (charR != null && charR.sprite != null))) { SetChar(null, ""); if (charR != null) charR.sprite = null; charT = 1f; }
+        if (ink && sceneR != null) sceneR.sprite = s;
     }
     /// <summary>0.4.84 새 사람이 들어오면 옆에서 미끄러져 들어온다(언메이커: 처음 등장할 때 옆에서 나오는 게 좋다). 같은 사람의 표정만 바뀌면(soa → soa_smile) 제자리에서 바뀐다.</summary>
     static string Person (string id) { if (string.IsNullOrEmpty(id)) return ""; int u = id.IndexOf('_'); return u > 0 ? id.Substring(0, u) : id; }
@@ -396,7 +409,21 @@ public class MolakArt : MonoBehaviour
         var mg = new GameObject("Mask"); mg.transform.SetParent(band.transform, false); mg.layer = 30;
         mask = mg.AddComponent<SpriteMask>();
         mask.sprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 100f);
-        mask.isCustomRangeActive = false;
+        mask.isCustomRangeActive = true; mask.backSortingOrder = 11; mask.frontSortingOrder = 30;   // 띠 가림판: 먹막·대표 그림·암전(12~)
+        var og = new GameObject("MaskOld"); og.transform.SetParent(band.transform, false); og.layer = 30;
+        oldMask = og.AddComponent<SpriteMask>(); oldMask.sprite = mask.sprite; oldMask.isCustomRangeActive = true; oldMask.backSortingOrder = 4; oldMask.frontSortingOrder = 9;   // 옛 그림(5·6)
+        var rg = new GameObject("MaskReveal"); rg.transform.SetParent(band.transform, false); rg.layer = 30;
+        revealMask = rg.AddComponent<SpriteMask>(); revealSp = RevealSprite(); revealMask.sprite = revealSp; revealMask.isCustomRangeActive = true; revealMask.backSortingOrder = 9; revealMask.frontSortingOrder = 11;   // 새 장면·인물(10·11)
+        revealMask.alphaCutoff = 0.001f;
+        var osg = new GameObject("OldScene"); osg.transform.SetParent(band.transform, false); osg.layer = 30;
+        oldSceneR = osg.AddComponent<SpriteRenderer>(); oldSceneR.sortingOrder = 5; oldSceneR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; oldSceneR.enabled = false;
+        var ocg = new GameObject("OldChar"); ocg.transform.SetParent(band.transform, false); ocg.layer = 30;
+        oldCharR = ocg.AddComponent<SpriteRenderer>(); oldCharR.sortingOrder = 6; oldCharR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; oldCharR.enabled = false;
+        var ig = new GameObject("InkEdge"); ig.transform.SetParent(band.transform, false); ig.layer = 30;
+        inkR = ig.AddComponent<SpriteRenderer>(); inkR.sortingOrder = 11; inkR.sprite = revealSp; inkR.enabled = false;
+        var inkRes = Resources.Load<Material>("MolakArt/InkEdge"); var ish = Shader.Find("Molak/InkEdge");
+        inkMat = inkRes != null ? new Material(inkRes) : ish != null ? new Material(ish) : null;
+        if (inkMat != null) inkR.sharedMaterial = inkMat; else InkOn = false;
 
         var sg = new GameObject("Scene"); sg.transform.SetParent(band.transform, false); sg.layer = 30;
         sceneR = sg.AddComponent<SpriteRenderer>(); sceneR.sharedMaterial = matScene; sceneR.sortingOrder = 10;
@@ -425,6 +452,23 @@ public class MolakArt : MonoBehaviour
         keyBgTex.SetPixels32(new Color32[]{ new Color32(250,246,228,255), new Color32(250,246,228,255) }); keyBgTex.Apply();
         keyBgR.sprite = Sprite.Create(keyBgTex, new Rect(0, 0, 2, 1), new Vector2(0.5f, 0.5f), 100f); keyBgR.enabled = false;
         keyR.sortingOrder = 14;
+    }
+
+    /// <summary>0.4.85 번짐 가림판: 알파 = 1 - (가운데서 잰 거리 62% + 먹 결 38%). alphaCutoff 를 1→0 으로 내리면 가운데서 번져 나간다.</summary>
+    static Sprite RevealSprite ()
+    {
+        const int W = 384, H = 220; var tx = new Texture2D(W, H, TextureFormat.RGBA32, false); tx.filterMode = FilterMode.Bilinear; tx.wrapMode = TextureWrapMode.Clamp;
+        var px = new Color32[W * H]; float cxp = W * 0.55f, cyp = H * 0.5f, R = Mathf.Sqrt(W * W + H * H) * 0.55f;
+        float mn = 9f, mx = -9f; var m = new float[W * H];
+        for (int y = 0; y < H; y++) for (int x = 0; x < W; x++)
+        {
+            float n = Mathf.PerlinNoise(x * 0.028f + 3.1f, y * 0.028f + 7.7f) * 0.6f + Mathf.PerlinNoise(x * 0.07f + 11f, y * 0.07f + 2f) * 0.3f + Mathf.PerlinNoise(x * 0.16f, y * 0.16f + 5f) * 0.1f;
+            float d = Mathf.Sqrt((x - cxp) * (x - cxp) + (y - cyp) * 1.3f * (y - cyp) * 1.3f) / R;
+            float v = d * 0.62f + n * 0.38f; m[y * W + x] = v; if (v < mn) mn = v; if (v > mx) mx = v;
+        }
+        for (int i = 0; i < m.Length; i++) { float v = (m[i] - mn) / (mx - mn); byte a = (byte)Mathf.Clamp(Mathf.RoundToInt((1f - v) * 254f) + 1, 1, 255); px[i] = new Color32(255, 255, 255, a); }
+        tx.SetPixels32(px); tx.Apply();
+        return Sprite.Create(tx, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f);
     }
 
     /// <summary>0.4.82 극장판 그림 창의 좌우 먹(시안 DE4): 왼쪽 55% → 30%에서 0 … 70%에서 0 → 오른쪽 40%.</summary>
@@ -550,6 +594,24 @@ public class MolakArt : MonoBehaviour
 
         mask.transform.position = new Vector3(cx, bandCy, z);
         mask.transform.localScale = new Vector3(bandW/0.04f, bandH/0.04f, 1f);
+        oldMask.transform.position = mask.transform.position; oldMask.transform.localScale = mask.transform.localScale;
+        // 번짐: 1초 동안 alphaCutoff 1 → 0(가운데서 바깥으로). 끝나면 가림판은 띠 전체를 비춘다.
+        inkT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+        float ip = Mathf.Clamp01(inkT / InkDur); float ie = ip * ip * (3f - 2f * ip);
+        bool inking = inkT < InkDur && !hide;
+        float cut = inking ? Mathf.Lerp(1.02f, -0.02f, ie) : 0.001f;
+        revealMask.alphaCutoff = Mathf.Clamp(cut, 0.001f, 1f);
+        float rsx = bandW / (revealSp.texture.width / 100f), rsy = bandH / (revealSp.texture.height / 100f);
+        revealMask.transform.position = new Vector3(cx, bandCy, z); revealMask.transform.localScale = new Vector3(rsx, rsy, 1f);
+        oldSceneR.enabled = inking && oldSceneR.sprite != null; oldCharR.enabled = inking && oldCharR.sprite != null;
+        if (!inking) { oldSceneR.sprite = null; oldCharR.sprite = null; }
+        inkR.enabled = inking && inkMat != null;
+        if (inkR.enabled)
+        {
+            inkMat.SetFloat("_Cut", Mathf.Clamp01(cut)); inkMat.SetFloat("_Width", 0.07f);
+            inkR.color = new Color(1f, 1f, 1f, colT * Mathf.Clamp01((1f - ip) * 4f));
+            inkR.transform.position = new Vector3(cx, bandCy, z - 0.05f); inkR.transform.localScale = new Vector3(rsx, rsy, 1f);
+        }
 
         // 맞은 순간의 흔들림(0.32초)
         float jit = 0f;
@@ -611,7 +673,7 @@ public class MolakArt : MonoBehaviour
         // 장면 전환 암전: 바로 먹으로 덮고 0.2초 머문 뒤 0.6초에 걷히며 새 장면이 떠오른다
         dipT += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
         float dipA = dipT < 0.2f ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (dipT - 0.2f) / 0.6f);
-        dipR.enabled = !hide && dipT < 0.8f && (sceneR.sprite != null || charR.sprite != null);
+        dipR.enabled = !hide && dipT < 0.8f && inkT >= InkDur && (sceneR.sprite != null || charR.sprite != null);
         if (dipR.enabled)
         {
             dipR.color = new Color(17f/255f, 15f/255f, 14f/255f, Mathf.Clamp01(dipA) * 0.92f * colT);
