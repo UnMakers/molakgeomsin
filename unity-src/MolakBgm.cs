@@ -22,7 +22,7 @@ public class MolakBgm : MonoBehaviour
     static MolakBgm inst;
     AudioSource src;
     bool settingsReady, loading, started;
-    string set = "bgm";                 // 지금 틀고 있는 묶음
+    string set = "title";               // 지금 틀고 있는 묶음(0.4.85 옛 시험곡 bgm_* 를 뺐다 — 처음엔 제목 곡)
     string mood = "";                   // 지금 장면
     readonly Dictionary<string, int> pos = new Dictionary<string, int>();   // 묶음별 마지막 토막(돌아오면 다음 곡부터)
     static readonly Dictionary<string, bool> has = new Dictionary<string, bool>();
@@ -74,7 +74,7 @@ public class MolakBgm : MonoBehaviour
         if (near.Length > 0 && Has(near)) return near;
         if (m == "night" || m == "rain" || m == "sorrow") { if (Has("night")) return "night"; }
         if (Has("day")) return "day";
-        return "bgm";
+        return "title";
     }
 
     void Next ()
