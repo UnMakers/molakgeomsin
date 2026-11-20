@@ -300,10 +300,39 @@ public class MolakArt : MonoBehaviour
     {
         if (inst == null) return;
         string sc = MolakStats.Str("artscene", ""), ch = MolakStats.Str("artchar", "");
+        // 그림 이름이 저장에 없으면(이 기능 전의 기록) 대본을 거슬러 올라가 마지막으로 깐 장면·인물을 찾는다
+        if (string.IsNullOrEmpty(sc) && string.IsNullOrEmpty(ch)) ScanBack(out sc, out ch);
         inst.sceneId = "\u0001"; inst.charId = "\u0001"; inst.charCur = null;
         if (string.IsNullOrEmpty(sc)) Scene(IsNight ? "night" : "morning"); else Scene(sc);
         if (!string.IsNullOrEmpty(ch)) Char(ch);
         MolakStats.SetStr("artscene", inst.sceneId ?? ""); MolakStats.SetStr("artchar", inst.charId ?? "");
+    }
+
+    /// <summary>지금 멈춘 줄에서 위로 올라가며 가장 가까운 @art/@scene 을 찾는다. 장면을 만나면 멈추고, 그보다 뒤(아래)에서 세운 인물은 살린다.</summary>
+    static void ScanBack (out string sc, out string ch)
+    {
+        sc = ""; ch = "";
+        try
+        {
+            var sp = Engine.GetService<IScriptPlayer>();
+            var tr = sp != null ? sp.MainTrack : null;
+            var pl = tr != null ? tr.Playlist : null;
+            if (pl == null) return;
+            for (int i = Mathf.Min(tr.PlayedIndex, pl.Count - 1); i >= 0; i--)
+            {
+                var ac = pl[i] as ArtCommand;
+                if (ac != null)
+                {
+                    if (ac.Off != null && ac.Off.HasValue && ac.Off.Value) return;
+                    if (ch.Length == 0 && ac.CharId != null && ac.CharId.HasValue) ch = ac.CharId.Value ?? "";
+                    if (ac.SceneId != null && ac.SceneId.HasValue) { sc = ac.SceneId.Value ?? ""; return; }
+                    continue;
+                }
+                var sc2 = pl[i] as SceneCommand;
+                if (sc2 != null && sc2.Id != null && sc2.Id.HasValue) { sc = sc2.Id.Value ?? ""; return; }
+            }
+        }
+        catch (System.Exception e) { Debug.LogWarning("[MolakArt] ScanBack " + e.Message); }
     }
 
     static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
@@ -518,6 +547,7 @@ public class MolakArt : MonoBehaviour
         var st = Engine.GetService<IStateManager>();
         if (st == null) return;
         st.OnResetStarted += () => Clear();
+        st.OnGameLoadFinished += _ => RestoreAfterLoad();   // 0.4.85 이어하기·불러오기 뒤 그림 되살리기(예전엔 MolakHud 의 정적 깃발에 걸려 있어 다시 걸리지 않는 때가 있었다)
         hooked = true;
     }
 

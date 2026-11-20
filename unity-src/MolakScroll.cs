@@ -430,6 +430,7 @@ public class MolakScroll : MonoBehaviour
     }
     void DrawSummary ()
     {
+        if (MolakTitle.Showing) { thHold = false; sumLine1 = ""; sumLine2 = ""; return; }   // 0.4.85 처음 화면으로 돌아오면 남아 있던 선택지 위 요약이 제목 위에 떴다
         if (!MolakTheme.TheaterNow || (MolakTheme.ChoiceCount <= 0 && !thHold) || TheaterTextGui.width < 2f || MolakMenu.IsOpen) return;
         if (sumLine1.Length == 0 && sumLine2.Length == 0) return;
         float u = MolakTheme.U;

@@ -29,7 +29,7 @@ public class MolakHud : MonoBehaviour
     static readonly float[] flashT = { -1f, -1f, -1f, -1f, -1f, -1f, -1f };
     static readonly float[] flashD = new float[7];
     static readonly float[] lastV = new float[7];
-    static bool synced, hookedReset; static float lastRuns = -1f, lastDay = -1f;
+    static bool synced; static object hookedSt; static float lastRuns = -1f, lastDay = -1f;
     /// <summary>옛 호출 자리(@fx). 이제는 Update 가 모든 변화를 잡으므로 아무것도 하지 않는다.</summary>
     public static void Delta (string key, float d) { }
     /// <summary>한꺼번에 바뀌는 순간(연습 몸 고르기 등) — 다음 프레임에 지금 값으로 다시 맞춘다.</summary>
@@ -38,10 +38,9 @@ public class MolakHud : MonoBehaviour
     void Update ()
     {
         if (!Engine.Initialized) return;
-        if (!hookedReset)
-        {
+        {   // 0.4.85 정적 깃발 대신 지금의 상태 관리자에 걸렸는지로 본다(플레이를 다시 켜면 옛 관리자에만 걸려 있던 것)
             var stm = Engine.GetService<IStateManager>();
-            if (stm != null) { stm.OnResetStarted += () => synced = false; stm.OnGameLoadFinished += _ => { synced = false; MolakArt.RestoreAfterLoad(); }; hookedReset = true; }
+            if (stm != null && !ReferenceEquals(stm, hookedSt)) { stm.OnResetStarted += () => synced = false; stm.OnGameLoadFinished += _ => synced = false; hookedSt = stm; }
         }
         float day = MolakStats.Get("day"), runs = MolakStats.Get("g_runs");
         if (day < 1f || MolakPractice.Active) { synced = false; return; }
