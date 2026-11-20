@@ -48,6 +48,12 @@ public class MolakDuelCard : MonoBehaviour
         if (cT < 0f) return;
         // 화면 전체 가드: 카드가 떠 있는 동안 탭이 대사 진행으로 새지 않는다
         MolakInputGuard.Guard(new Rect(0, 0, Screen.width, Screen.height));
+        // 0.4.86 시계·자동 걷힘·닫힘은 프레임마다(예전엔 OnGUI 의 Repaint 에서만 — 화면이 다시 그려지지 않으면 카드가 끝내 안 닫혀 대본이 멈췄다)
+        cT += Time.unscaledDeltaTime;
+        var sp = Naninovel.Engine.Initialized ? Naninovel.Engine.GetService<Naninovel.IScriptPlayer>() : null;
+        float auto = sp != null && sp.Skipping ? 0.6f : MolakPlayMode.Auto ? 2.2f : -1f;
+        if (outAt < 0f && auto > 0f && cT > auto) { outAt = cT; MolakInputGuard.MuteFor(0.2f); }
+        if (outAt >= 0f && cT - outAt > 0.35f) { cT = -1f; outAt = -1f; }
     }
 
     // 0.4.68 결과판은 글 위에 겹쳐 뜨지 않는다(언메이커: "촌스럽게 화면을 가린다"): 글자리를 빈 종이로 덮고 그 안에 가라앉은 먹빛으로.
@@ -56,21 +62,16 @@ public class MolakDuelCard : MonoBehaviour
     void OnGUI ()
     {
         if (cT < 0f) return;
-        if (Event.current.type == EventType.Repaint) cT += Time.unscaledDeltaTime;
-        const float Out = 0.35f;
-        var sp = Naninovel.Engine.Initialized ? Naninovel.Engine.GetService<Naninovel.IScriptPlayer>() : null;
-        float auto = sp != null && sp.Skipping ? 0.6f : MolakPlayMode.Auto ? 2.2f : -1f;
         if (outAt < 0f)
         {
             bool tap = Event.current.type == EventType.MouseDown && cT > 0.35f;
-            if (tap || (auto > 0f && cT > auto)) { if (tap) Event.current.Use(); outAt = cT; MolakInputGuard.MuteFor(0.2f); }
+            if (tap) { Event.current.Use(); outAt = cT; MolakInputGuard.MuteFor(0.2f); }
         }
-        if (outAt >= 0f && cT - outAt > Out) { cT = -1f; outAt = -1f; return; }
         float u = MolakTheme.U;
         EnsureStyles(u);
         GUI.depth = MolakGui.DepthVfx - 6;
         float a = cT < 0.25f ? cT / 0.25f : 1f;
-        if (outAt >= 0f) a = Mathf.Clamp01(1f - (cT - outAt) / Out);
+        if (outAt >= 0f) a = Mathf.Clamp01(1f - (cT - outAt) / 0.35f);
         var ta = MolakVfx.TextArea();
         // 0.4.80 창의 결: 글자리를 종이로 덮고 가운데에 흰 카드 한 장(왼쪽 띠). 勝은 검붉은 인장, 敗는 먹 인장.
         var accent = cWin ? MolakPaper.Accent : MolakPaper.Ink;
@@ -89,7 +90,9 @@ public class MolakDuelCard : MonoBehaviour
         GUI.Label(new Rect(ta.x, cy + 262 * u, ta.width, 46 * u), cLine, sLine);
         MolakGui.Ink(sSub, cWin ? MolakPaper.Accent : MolakPaper.Sub);
         if (!string.IsNullOrEmpty(cSub)) GUI.Label(new Rect(ta.x, cy + 306 * u, ta.width, 44 * u), cSub, sSub);
-        if (auto < 0f && outAt < 0f && cT > 0.8f) { var sb = MolakPaper.Sub; MolakGui.Ink(sSub, new Color(sb.r, sb.g, sb.b, Mathf.Clamp01((cT - 0.8f) / 0.4f))); GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sSub); }
+        var spg = Naninovel.Engine.Initialized ? Naninovel.Engine.GetService<Naninovel.IScriptPlayer>() : null;
+        bool autoOn = (spg != null && spg.Skipping) || MolakPlayMode.Auto;
+        if (!autoOn && outAt < 0f && cT > 0.8f) { var sb = MolakPaper.Sub; MolakGui.Ink(sSub, new Color(sb.r, sb.g, sb.b, Mathf.Clamp01((cT - 0.8f) / 0.4f))); GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sSub); }
         GUI.color = g;
     }
 }

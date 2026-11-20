@@ -228,6 +228,13 @@ public class MolakVfx : MonoBehaviour
 
     void Update ()
     {
+        // 0.4.86 인장 시계는 프레임마다 간다. 예전엔 OnGUI 의 Repaint 에서만 늘어서, 화면이 다시 그려지지 않는 동안(창이 가려짐·다른 탭)
+        //        시계가 멎고 자동으로 걷히는 인장(건너뛰기·자동 진행)이 끝내 걷히지 않아 대본이 멈췄다(소크 r0486 정책 7에서 봄).
+        if (stampT >= 0f)
+        {
+            stampT += Time.unscaledDeltaTime;
+            if (stampHold && ((stampAuto > 0f && stampT > stampAuto) || (MolakPlayMode.SkipAll && stampT > 0.3f))) { stampHold = false; stampOutAt = stampT; MolakInputGuard.MuteFor(0.2f); }
+        }
         // 0.4.71 마디 이름: 누르면 걷힌다. 그 누름은 글을 넘기지 않는다.
         {
             Vector2 pp; bool down = MolakGui.PointerScreen(out pp);
@@ -464,7 +471,6 @@ public class MolakVfx : MonoBehaviour
         // 승부수 인장
         if (stampT >= 0f)
         {
-            if (Event.current.type == EventType.Repaint) stampT += Time.unscaledDeltaTime;
             const float Out = 0.35f;
             if (stampHold)
             {
