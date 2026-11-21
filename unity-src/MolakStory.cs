@@ -48,6 +48,13 @@ public class MolakStory : MonoBehaviour
     };
     /// <summary>편에 속하지 않는 히로인의 사건(두 히로인이 함께 나오는 것 포함)은 뺀다.</summary>
     static readonly string[][] Heroine = { new[] { "E_Amh", "E_SoaAmh", "E_JangAmh", "E_YongAmh", "E_HajinAmh" }, new[] { "E_Cm", "E_SoaCm", "E_HerbCm", "E_JinSister", "E_TempleBell" }, new[] { "E_Cham" } };
+    /// <summary>0.4.94 인연별 이야기 모드의 사건 무게: 그 편이 더 읽는 줄기(RouteKeep)는 ×4 — 그 히로인의 진짜 끝을 여는 사건(할멈의 금침 등)이 무작위에 밀려 그 생에 오지 않던 것.</summary>
+    public static float RouteWeight (string id)
+    {
+        int r = Route;
+        if (r > 0) foreach (var k in RouteKeep[r]) if (id.StartsWith(k)) return 4f;
+        return 1f;
+    }
     public static bool EventAllowed (string id)
     {
         int r = Route;

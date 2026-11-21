@@ -208,7 +208,7 @@ public class PickEventCommand : Command
     const int DryBoost = 20;
 
     /// <summary>가중치 × 이번 생의 바람(theme). 정수로 10배해서 쓴다.</summary>
-    static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id) * RunMul(d.Id))); }
+    static int W (MolakEventDefs.Def d) { return Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(1, d.Weight) * 10f * ThemeMul(d.Id) * (MolakStory.Auto ? MolakStory.RouteWeight(d.Id) : RunMul(d.Id)))); }   // 0.4.94 인연별 이야기 모드: 지난 생에 본 사건을 깎지 않고, 그 편의 줄기 사건을 먼저
     // 0.4.21 생을 넘는 사건 기억: 앞선 생들에서 자주 본 사건은 덜, 아직 못 본 사건은 더 나온다(첫 생에는 그대로).
     // g_ev_<id>는 나니노벨 전역 변수(g_ 접두)라 회귀해도 남는다.
     // 0.4.58 생마다 더 달라지게(언메이커): 한 번도 못 본 사건 ×3, 바로 앞 생에 본 사건은 한 번 더 깎는다(×0.45).

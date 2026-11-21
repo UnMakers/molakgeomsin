@@ -86,6 +86,9 @@
 
 @art scene:night
 @art char:none
+; 0.4.94 인연별 이야기 모드: 이 밤 문을 두드리는 사람은 그 편의 히로인이 먼저다
+@goto #EveAmh if:storyauto>0&&g_storyroute==2&&f_amhdead<1&&amhaff>=5&&f_amhturn>0
+@goto #EveCm if:storyauto>0&&g_storyroute==3&&cmaff>=4
 @goto #EveSoa if:f_soamet>0&&f_soadead<1&&aff>=4
 @goto #EveAmh if:f_amhdead<1&&amhaff>=5&&f_amhturn>0
 @goto #EveCm if:cmaff>=4
