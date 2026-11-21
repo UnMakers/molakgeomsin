@@ -55,6 +55,8 @@
 @goto #SoaN9Tail
 # SoaN9Tail
 @page
+@art scene:innroom
+@art char:soa_grief
 매듭을 짓자 소아가 품에서 책을 꺼낸다. 첫 장은 이제 없다.
 찢어 태운 자리가 거뭇하다.
 붓 대신 손가락에 아직 마르지 않은 피를 묻혀, 빈 장에 한 줄을 쓴다.

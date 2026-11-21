@@ -317,6 +317,8 @@
 @goto Molak02#AfterChapter
 # Cm1Tail
 @page
+@art scene:templeyard
+@art char:cheongmyo
 돌아가는 길, 산문까지 그녀가 배웅한다. 승복 소매에서 작은 보따리를 꺼낸다.
 "말린 대추예요. 막내는 늘 배가 고팠잖아요. 마당 쓸 때마다 사형들 몰래 부엌을 들여다보고."
 그런 일이 있었다. 당신도 잊고 있었다. 그녀는 기억하고 있었다.
@@ -408,6 +410,8 @@
 @goto #Cm2Tail
 # Cm2Tail
 @page
+@art scene:shrine
+@art char:cheongmyo
 산사로 돌아가는 그녀의 승복 자락이 달빛에 희다. 산문 앞에서 그녀가 돌아본다.
 "막내. 이번 생엔 끝까지 살아 계세요. 저 혼자 남는 건 한 번이면 됐어요."
 이번 생. 그녀는 그 말을 그냥 했다. 당신만 그 말의 무게를 안다.

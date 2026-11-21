@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Naninovel;
 using UnityEngine;
 
@@ -182,8 +182,7 @@ public class MolakArt : MonoBehaviour
         if (!isDuel) MolakFlow.Break();
         var sp = Load("MolakArt/scene_" + key);
         inst.SetScene(sp, key);
-        MolakBgm.Mood(MoodFor(key));
-        MolakAmbience.Scene(key);
+        inst.soundPending = true;   // 0.4.91 배경음·장면 소리는 그림이 화면에 오를 때(Commit) 같이 바뀐다
     }
 
     // 0.4.70 장면에 맞는 배경음 묶음
@@ -234,7 +233,7 @@ public class MolakArt : MonoBehaviour
     public static void Char (string id)
     {
         if (inst == null) return;
-        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); inst.SetPart(null, ""); if (!inst.sceneId.StartsWith("duel")) MolakBgm.Mood(CurrentMood()); return; }
+        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); inst.SetPart(null, ""); inst.soundPending = true; return; }
         if (inst.charId == id) return;
         // 0.4.88 곁에 선 사람이 입을 열면 두 사람의 역할만 바꾼다(그 자리에 그대로 선 채 밝기만 바뀐다)
         if (inst.partCur != null && Person(id) == Person(inst.partId))
@@ -261,7 +260,7 @@ public class MolakArt : MonoBehaviour
         }
         var sp = Load("MolakArt/char_" + id);
         inst.SetChar(sp, id);
-        if (!inst.sceneId.StartsWith("duel")) MolakBgm.Mood(CurrentMood());   // 0.4.70 소아·히로인이 나오면 그 사람의 곡
+        inst.soundPending = true;   // 0.4.70 소아·히로인이 나오면 그 사람의 곡 — 0.4.91 그 사람이 화면에 설 때(Commit)
     }
 
     static string prevScene;
@@ -418,9 +417,23 @@ public class MolakArt : MonoBehaviour
 
     /// <summary>0.4.85 지금 정해진 그림을 화면에 올린다 — 마지막으로 보이던 그림에서 한 번만 넘어간다. 다음 글 직전·선택지·정지에서 부른다.</summary>
     public static void Commit () { if (inst != null) inst.DoCommit(); }
+    /// <summary>0.4.91 기준: 소리는 그림을 따른다(언메이커: 글이 끝나고 다음 장으로 넘어가기 전에 배경음이 먼저 바뀐다).
+    /// 예전엔 @art 명령이 실행되는 순간 곡을 바꿔, 쪽 넘김 덮개가 내려오는 동안(옛 글이 아직 보이는 동안) 새 곡이 먼저 흘렀다.
+    /// 이제 장면·인물 명령은 '바꿀 곡'만 적어 두고, 그 그림이 화면에 오르는 순간(DoCommit) 배경음 묶음과 장면 소리를 함께 바꾼다.</summary>
+    bool soundPending;
+    void ApplySound ()
+    {
+        if (!soundPending) return;
+        soundPending = false;
+        string sid = sceneId ?? "";
+        MolakBgm.Mood(sid.StartsWith("duel") ? MoodFor(sid) : CurrentMood());
+        MolakAmbience.Scene(sid);
+    }
     void DoCommit ()
     {
-        if (!dirty || sceneR == null) return;
+        if (sceneR == null) return;
+        ApplySound();
+        if (!dirty) return;
         dirty = false;
         bool sceneChanged = showScene != sceneCur, charChanged = showChar != charCur, partChanged = showPart != partCur;
         // 0.4.88 두 사람이 역할만 바꿨다(말하던 사람 ↔ 곁의 사람): 미끄러져 들어오거나 다시 떠오르지 않는다
@@ -651,7 +664,7 @@ public class MolakArt : MonoBehaviour
         sceneT = Mathf.Min(1f, sceneT + fdt);
         charT = Mathf.Min(1f, charT + fdt);
         // 그림이 정해졌는데 아직 화면에 안 올렸다: 대본이 멈췄으면(선택지·정지) 지금, 글 없이 오래 머물면(1.5초, 탭 대기 제외) 그때 올린다
-        if (dirty)
+        if (dirty || soundPending)
         {
             var spc = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null; var trc = spc != null ? spc.MainTrack : null;
             bool stopped = trc == null || !trc.Playing;

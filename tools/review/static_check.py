@@ -11,6 +11,7 @@
   ④ 생 수 말: '지난 생·몇 번을 되감·몇 생을·또 이 …' 처럼 회귀를 겪은 사람만 할 말이
      첫 생에도 열리는 자리(들어오는 길에 회귀·앎 조건이 하나도 없는 라벨)에 있는가.
   ⑤ 따옴표·색 태그 짝.
+  ⑥ 쪽 넘김 뒤 장면 · ⑦ 쪽 넘김 뒤 인물(0.4.91: @page 뒤 그림 없이 앞 인물이 이어 말하면).
 """
 import io, os, re, sys, glob, collections
 
@@ -204,7 +205,31 @@ for s, L in scripts.items():
         if sawchar and not sawscene and last and last not in BASE:
             rep('쪽 넘김 장면', s, i, '@page 뒤 인물(%s)만 — 앞 장면 %s 를 다시 적을 것' % (sawchar, last))
 
-order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '짝']
+# ⑦ 0.4.91 쪽 넘김 뒤 인물: @page 는 그림을 바탕으로 되돌린다. 그런데 앞에 서 있던 인물이 이어서 말하면(@page 뒤 그림 없이 대사가 나오면)
+#    대화가 안 끝났는데 그림이 넘어간다(언메이커: 참새 첫 만남). 기준: 같은 장면이 이어지면 @page 뒤에 장면·인물을 다시 적고,
+#    장면이 바뀌면 새 장면을 적는다 — 어느 쪽이든 그림을 적는다. 시간이 흐른 쪽(「밤.」「새벽.」 같은 첫 줄)도 사람이 말하면 누구 앞인지 적는다.
+for s, L in scripts.items():
+    for i, l in enumerate(L):
+        if not (l.strip() == '@page' or l.strip().startswith('@page ')): continue
+        j = i + 1; art = False; talk = None
+        while j < len(L):
+            t = L[j].strip()
+            if t.startswith('@art') or t.startswith('@scene'): art = True; break
+            if t.startswith(('#', '@page', '@goto', '@gosub', '@return', '@stop', '@choice')): break
+            if t and not t.startswith(('@', ';')) and t[0] in '"“' and talk is None: talk = t
+            j += 1
+        if art or not talk: continue
+        k = i - 1; pc = None
+        while k > 0:
+            t = L[k].strip()
+            if t.startswith('@art char:'): pc = t.split(':', 1)[1].split()[0]; break
+            if t.startswith(('@art scene', '@page', '@scene')) or re.match(r'^#\s*\S', t) and False: break
+            if t.startswith(('@art scene', '@page', '@scene')): break
+            k -= 1
+        if pc and pc != 'none':
+            rep('쪽 넘김 인물', s, i, '@page 뒤 그림 없이 대사 — 앞 인물 %s: %s' % (pc, talk[:30]))
+
+order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝']
 total = 0
 for k in order:
     v = out.get(k, [])

@@ -6610,6 +6610,8 @@
 # E_JSAfter
 @goto #E_JTAfter if:f_jangtaken>0&&f_jangsold<1
 @page
+@art scene:innhall
+@art char:none
 이튿날, 주루 계단 밑에 눈이 맑은 열 살쯤 된 계집아이가 쪼그려 앉아 있다.
 "아버지가 어제 은자를 많이 가져왔어요. 이제 징세 명부에서 내 이름이 지워진대요."
 아이가 계단 위를 올려다본다.

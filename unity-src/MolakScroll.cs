@@ -1,4 +1,4 @@
-﻿using Naninovel;
+using Naninovel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -289,6 +289,7 @@ public class MolakScroll : MonoBehaviour
                 if (thHold) a = 0f;
             }
             else thHold = false;
+            a *= 1f - MolakVfx.StampCover;   // 0.4.91 인장이 뜨면 글을 걷는다(덮개판 대신)
             BodyAlpha = a;
             if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
             if (vpCg != null && Mathf.Abs(vpCg.alpha - a) > 0.002f) vpCg.alpha = a;

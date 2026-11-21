@@ -126,6 +126,12 @@ public class MolakVfx : MonoBehaviour
         return TextArea();
     }
     /// <summary>쪽지를 먹빛(그림 화면)으로 그리나.</summary>
+    /// <summary>0.4.91 인장이 글자리의 글을 걷는 정도(0~1). MolakScroll 이 본문 알파에 곱한다.</summary>
+    public static float StampCover;
+    /// <summary>0.4.91 언메이커 시험: 그림·극장 화면에서도 인장 원을 검은 붓으로.</summary>
+    public static bool InkBlack = true;
+    /// <summary>0.4.91 시험: 인장 자리에만 한지 한 장을 깐다.</summary>
+    public static bool SealCard = false;
     public static bool DarkSlip { get { return (MolakTheme.CinemaNow && MolakScroll.CinemaPanelGui.width > 1f) || (MolakTheme.TheaterNow && MolakScroll.TheaterTextGui.width > 1f); } }
     /// <summary>0.4.82 걷힌 마디 이름(극장판 위 띠 첫 줄이 쓴다).</summary>
     public static string PinText { get { return instance != null && instance.chapT < 0f ? instance.pinText : ""; } }
@@ -469,6 +475,7 @@ public class MolakVfx : MonoBehaviour
             GUI.Label(new Rect(px, py - 4 * u, sz.x + 4 * u, ph), pinText, sPin);
         }
         // 승부수 인장
+        if (stampT < 0f) StampCover = 0f;
         if (stampT >= 0f)
         {
             const float Out = 0.35f;
@@ -480,7 +487,7 @@ public class MolakVfx : MonoBehaviour
                 if (tap || auto) { if (tap) Event.current.Use(); stampHold = false; stampOutAt = stampT; MolakInputGuard.MuteFor(0.2f); }
             }
             else if (stampOutAt < 0f && stampT > 1.1f) stampOutAt = stampT;   // 붙잡지 않는 인장(제목 화면 등)은 1.1초 뒤 걷힌다
-            if (!stampHold && stampOutAt >= 0f && stampT - stampOutAt > Out) { stampT = -1f; stampOutAt = -1f; }
+            if (!stampHold && stampOutAt >= 0f && stampT - stampOutAt > Out) { stampT = -1f; stampOutAt = -1f; StampCover = 0f; }
             else
             {
                 float u = MolakTheme.U;
@@ -496,16 +503,23 @@ public class MolakVfx : MonoBehaviour
                 float a = stampT < 0.12f ? stampT / 0.12f : 1f;
                 if (!stampHold && stampOutAt >= 0f) a = Mathf.Clamp01(1f - (stampT - stampOutAt) / Out);
                 var ta = TextArea();
-                // 글자리를 빈 종이로: 아래 글이 비치지 않게
-                bool dk = DarkSlip;   // 0.4.82 그림 화면: 옻칠 판 그대로 덮는다
-                var bg = GUI.color; GUI.color = dk ? new Color(0.098f, 0.082f, 0.07f, 0.99f * a) : new Color(0.955f, 0.94f, 0.905f, 0.99f * a); GUI.DrawTexture(ta, Px);
-                GUI.color = bg;
+                // 0.4.91 언메이커: 대사를 지우고 인장을 띄운다 — 그림·극장 화면에선 덮개판을 깔지 않고 글자리의 글을 걷는다(MolakScroll 이 StampCover 만큼 본문을 감춘다).
+                //   종이 화면은 예전처럼 빈 종이를 덮는다.
+                bool dk = DarkSlip;
+                if (dk) StampCover = a;
+                else { var bg = GUI.color; GUI.color = new Color(0.955f, 0.94f, 0.905f, 0.99f * a); GUI.DrawTexture(ta, Px); GUI.color = bg; }
                 var piv = new Vector2(ta.center.x, ta.y + ta.height * 0.5f - 30f * u);
                 // 0.4.85 인장(시안 3 「먹 원 · 붉은 획」): 먹 원을 긋고 그 안에 판정의 빛으로 한 글자. 큰 판정은 조금 더 크게.
                 float bs = (stampBig ? 340f : 300f) * u;
                 var box = new Rect(piv.x - bs / 2f, piv.y - bs / 2f, bs, bs);
                 var backC = dk ? new Color(0.098f, 0.082f, 0.07f, 1f) : new Color(0.955f, 0.94f, 0.905f, 1f);
-                MolakSeal.Draw(box, stampHanja, stampT, a, MolakGui.Hanja, backC, !dk);
+                if (dk && SealCard)
+                {   // 0.4.91 시험: 인장 자리에만 한지 한 장(검은 붓 원이 바닥에 묻히지 않게)
+                    var card = new Rect(box.x - bs * 0.12f, box.y - bs * 0.12f, bs * 1.24f, bs * 1.24f);
+                    var gc = GUI.color; GUI.color = new Color(0.94f, 0.91f, 0.84f, 0.97f * a); GUI.DrawTexture(card, Px); GUI.color = gc;
+                    backC = new Color(0.94f, 0.91f, 0.84f, 1f);
+                }
+                MolakSeal.Draw(box, stampHanja, stampT, a, MolakGui.Hanja, backC, InkBlack || !dk);   // 0.4.91 시험: 검은 붓(InkBlack)
                 MolakGui.Ink(sStampLine, dk ? new Color(0.92f, 0.88f, 0.82f, a) : new Color(0.16f, 0.13f, 0.1f, a));
                 GUI.Label(new Rect(ta.x + 20f * u, piv.y + (stampBig ? 180f : 160f) * u, ta.width - 40f * u, 90f * u), stampLine, sStampLine);
                 if (stampHold && stampAuto < 0f && stampT > 0.6f)
