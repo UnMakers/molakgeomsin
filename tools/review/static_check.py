@@ -181,7 +181,7 @@ for s, L in scripts.items():
 
 # ⑥ 쪽 넘김 뒤 장면: @page 는 바탕(낮·밤)으로 되돌리고, 인물만 세우면 그 사람의 자리 그림이 깔린다.
 #    앞 장면이 기본 장면(아침·밤·비·객잔)이 아닌데 @page 뒤 글 전에 인물만 세우면 장소가 엉뚱하게 바뀐다 → 장면을 다시 적는다.
-BASE = {'morning', 'night', 'rain', 'innhall', 'innroom', 'yard', 'market', 'alley'}
+BASE = {'morning', 'night', 'rain', 'innhall', 'innroom', 'yard', 'market', 'marketday', 'alley'}
 for s, L in scripts.items():
     last = None
     for i, l in enumerate(L):

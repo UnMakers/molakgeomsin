@@ -7280,7 +7280,7 @@
 
 ; ---------- 소아: 남의 그릇 (우물 시절의 버릇) ----------
 # E_SoaBowl
-@art scene:market
+@art scene:marketday
 @art char:soa_smile
 @deja text:"국숫집, 젓가락이 건너오는 각도. 지난 생에도 그녀는 이 그릇부터 먹었다. 왜 그런지 이제는 안다."
 {dejapre}
@@ -7324,7 +7324,7 @@
 
 ; ---------- 암향: 향 가게의 여인 (그녀가 먼저 당신을 본다) ----------
 # E_AmhShop
-@art scene:market
+@art scene:marketday
 @art char:amhyang
 @deja text:"침향 한 묶음, 매화 한 묶음. 지난 생에도 그녀는 이 가게에서 둘을 함께 샀다. 어느 쪽이 누구 몫인지 이제는 안다."
 {dejapre}
@@ -7578,7 +7578,7 @@
 
 ; ---------- 암향: 장터의 란 (47~56일 낮, 란을 살린 생) ----------
 # E_YeonMarket
-@art scene:market
+@art scene:marketday
 @art char:none
 @deja text:"장터 모퉁이, 향 바구니를 든 아이. 지난 생에도 이 아이에게서 향을 샀다. 어떤 향을 고르는지 안다."
 {dejapre}
@@ -7686,7 +7686,7 @@
 
 ; ---------- 곽산: 공터의 막대 창 (42~56일 낮, 곽산의 집에 다녀온 생) ----------
 # E_GwakKids
-@art scene:market
+@art scene:marketday
 @art char:gwaksan
 @deja text:"공터의 막대 창 다섯 자루. 지난 생에도 곽산은 이 아이들을 가르쳤다. 어느 아이가 먼저 넘어지는지 안다."
 {dejapre}
@@ -7945,7 +7945,7 @@
 
 ; ---------- 곽산과 용개: 작대기와 창 (44~57일 낮, 공터의 막대 창 뒤, 지게꾼을 거둔 생) ----------
 # E_GwakYong
-@art scene:market
+@art scene:marketday
 @art char:gwaksan with:yonggae
 @deja text:"공터 가장자리의 지게 일곱. 지난 생에도 지게꾼들이 이 수업을 훔쳐보았다. 누가 먼저 작대기를 드는지 안다."
 {dejapre}
@@ -8916,7 +8916,7 @@
 
 ; ===== 0.4.34 사문을 대다: 비무판 서열록에 이름을 올리는 날 =====
 # E_Cheongun
-@art scene:market
+@art scene:marketday
 비무판 앞. 연승 소문을 들은 구경꾼이 저잣거리 끝까지 늘어섰다.
 @art char:panju
 판주가 서열록을 펼치고 붓을 든다.
@@ -8951,7 +8951,7 @@
 
 ; ===== 0.4.34 되갚음: 턱을 들어 올리던 칼끝 =====
 # E_Payback
-@art scene:market
+@art scene:marketday
 @art char:none
 저잣거리 비무판. 판 위에서 낯익은 사내가 쓰러진 젊은 칼잡이를 내려다보고 있다.
 칼끝으로 젊은이의 턱을 들었다 놓는다.
@@ -9002,7 +9002,7 @@
 
 ; ===== 0.4.34 저잣거리의 협(俠) =====
 # E_Hyeop
-@art scene:market
+@art scene:marketday
 @art char:none
 @art char:granny
 장날. 징세조 칼잡이 셋이 노점 할멈의 좌판을 걷어찬다.
@@ -9088,7 +9088,7 @@
 
 ; ---------- 0.4.66 협객이라 불리다 — 남을 위해 나선 일이 다섯을 넘긴 생 ----------
 # E_HyeopName
-@art scene:market
+@art scene:marketday
 @art char:none
 {dejapre}
 장터 이야기꾼의 부채가 펼쳐진다. 오늘 이야기에는 혈마교가 나오지 않는다.
@@ -9289,7 +9289,7 @@
 @return
 
 # E_GiPurse
-@art scene:market
+@art scene:marketday
 @art char:none
 {dejapre}
 저잣거리 한복판에서 "도둑이야!" 소리가 난다.
@@ -11337,7 +11337,7 @@
 
 # E_Ascend
 ; 0.4.88 웃긴 일상 — 백일승천교(白日昇天敎). 하늘에 오른다는 교주와 승천표.
-@art scene:market
+@art scene:ascend
 @art char:prophet
 @deja text:"종이 날개. 고루(鼓樓) 지붕. 두부 가게 차양. 무엇이 어디로 떨어지는지 눈이 먼저 안다."
 {dejapre}
@@ -11364,7 +11364,8 @@
 "제칠석(第七席)이오. 창가 자리요."
 <align=right>"하늘에 창이 있소?"</align>
 "……구름 사이가 다 창이오."
-누런 종이 한 장을 받는다. 붓글씨로 '七'. 뒷면에는 두부 가게 외상 장부가 비친다.
+누런 종이 한 장을 받는다. 붓글씨로 '七'. 글씨가 장사꾼 솜씨처럼 반듯하다.
+뒷면에 붉은 줄 칸이 비친다. 이름 칸, 빌린 돈 칸, 이자 칸. 전당포 장부 종이다.
 @goto #E_AscendNoon
 
 # E_AscendAsk
@@ -11391,7 +11392,7 @@
 
 # E_AscendNoon
 @page
-@art scene:market
+@art scene:drumtower
 @art char:prophet
 정오. 도인이 고루(鼓樓) 지붕 위에 서 있다. 등에 대나무와 창호지로 엮은 날개를 달았다.
 신도들이 지붕 아래서 손을 모은다. 구경꾼은 아침보다 세 배다. 엿장수까지 왔다.
@@ -11446,7 +11447,7 @@
 # E_AscendK
 @set f_ev_ascend=1
 @set g_ev_ascend=g_ev_ascend+1
-@art scene:market
+@art scene:ascend
 @art char:prophet
 장터 한복판에서 북이 울린다. 술독 위에 도포 자락이 펄럭인다.
 도인이 입을 여는 것보다 먼저 말한다.
@@ -11471,3 +11472,279 @@
 @fx hp:1
 @set f_hyeop=f_hyeop+1
 @return
+
+# E_Ascend2
+; 0.4.88 백일승천교 둘째 — 종이옷의 뒷면. 도인은 왕삼 전당포의 장부 서기였다(혈쇄문·왕삼·하오문과 잇는다).
+@art scene:pawn
+@art char:wangsam
+@deja text:"찢긴 종이옷. 뒷면의 붉은 칸. 그 글씨를 누가 썼는지 안다."
+{dejapre}
+@goto #E_Ascend2K if:g_ev_ascend2>0&&f_ev_ascend2<1
+@set g_ev_ascend2=g_ev_ascend2+1 if:f_ev_ascend2<1
+@set f_ev_ascend2=1
+전당포 골목이 시끄럽다. 사슬을 허리에 감은 사내 셋이 흰 종이옷 하나를 바닥에 끌고 있다.
+혈쇄문 문도들이다. 빚진 자를 사슬로 거두어 부리는 곳이다.
+전당포 문간에서 왕삼이 주판을 튕기며 내려다본다.
+문도 하나가 종이옷을 등판째 찢어 왕삼 앞에 펼친다.
+"어른, 보십쇼. 이놈 옷이 우리 장부요."
+붉은 칸 맨 위에 이름 셋이 적혀 있다. 그 가운데 하나가 바닥에 엎어진 젊은 신도의 이름이다.
+"장부 셋째 권이 통째로 없어진 지 달포다. 그게 옷이 되어 장터를 돌아다녔구먼."
+'승천표 뒷면의 그 칸이다.'
+@art char:prophet with:wangsam
+도포 자락이 골목으로 뛰어든다. 승천 도인이다. 종이 날개는 없다.
+"그 글씨는 내 글씨요. 그 사람은 놓아주시오."
+@art char:wangsam with:prophet
+왕삼이 주판을 멈춘다.
+"……정 서기."
+"서기는 그만두었소. 십 년을 그 붓으로 이름을 적었소. 적은 이름이 사슬이 되는 걸 십 년 봤소."
+"그래서 장부를 훔쳐 옷을 지었다? 하늘에 올려 보내면 빚도 같이 오른다고?"
+@art char:prophet with:wangsam
+"장부에 없는 이름은 거둘 수 없잖소. 하늘은 핑계요. 종이가 모자라서 옷을 지었소."
+왕삼이 웃는다. 처음 듣는 듯이 크게.
+"서기가 하늘을 핑계로 장부를 지웠구먼. 그럼 지운 값은 서기 몸으로 받자."
+문도들의 사슬이 도인 쪽으로 돈다.
+@choice "사슬 셋을 막아선다 〔검술〕" goto:#E_Ascend2Fight
+@choice "\"그 장부, 나도 한 권 태웠소. 셈은 나랑 하시오.\"" if:f_wangsam>0 goto:#E_Ascend2Burn
+@choice "참새에게 은자를 쥐여 주고 소문 하나를 사서 푼다 (은자 5)" if:b_ch1>0&&f_chamgone<1&&mn>=5 goto:#E_Ascend2Cham
+@choice "골목을 지나친다" goto:#E_Ascend2Pass
+@stop
+
+# E_Ascend2Fight
+@risk on:sw need:0
+@goto #E_Ascend2FightL if:pass==0
+# E_Ascend2FightW
+첫 사슬이 날아온다. 칼집째 받아 감아 당긴다. 사슬 끝의 문도가 앞으로 고꾸라진다.
+둘째는 칼등으로 손목을, 셋째는 사슬이 돌기 전에 무릎을.
+왕삼은 주판을 들고 문간에서 한 걸음도 나오지 않는다.
+"……정 서기, 셋째 권은 잊어 주마. 넷째 권부터는 손대지 마라."
+@art char:prophet
+도인이 젊은 신도를 일으켜 찢긴 등에 제 도포를 덮어 준다.
+"승천표 한 장 드리리다. 제일석(第一席)이오. 맨 앞자리."
+<align=right>"맨 앞이면 제일 먼저 떨어지는 자리 아니오."</align>
+"……그래서 아무한테도 안 팔았소."
+@fx sw:1 sl:1
+@set f_ascendally=1
+@set f_hyeop=f_hyeop+1
+@return
+# E_Ascend2FightL
+첫 사슬은 받는다. 둘째 사슬이 칼집을 감아 간다. 셋째가 옆구리를 친다.
+흙바닥에 무릎이 닿는다. 문도들이 젊은 신도를 사슬에 꿴다.
+"고리 하나에 은자 열 냥. 너는 고리 셋이다."
+@art char:prophet
+도인이 바닥에 떨어진 찢긴 종이옷을 주워 접는다. 한 장도 버리지 않는다.
+"……내가 적은 이름을 내가 또 잃었소."
+'혈쇄문 사슬은 다 갚아야 끊어 준다. 고리 셋이면 서른 냥.'
+@fx hp:-3
+@set f_ascendchain=1
+@return
+
+# E_Ascend2Burn
+문도들이 돌아본다. 하나가 얼굴을 알아본다.
+"어른, 이놈이 그놈입니다. 장부를 불에 넣은."
+@art char:wangsam with:prophet
+왕삼이 주판알을 하나씩 올린다. 셈하는 소리가 길다.
+"장부 태우는 놈이 둘이면 장사를 접으란 소리지. ……오늘은 접겠다. 오늘만."
+문도들이 사슬을 거둔다. 젊은 신도가 기어서 도인 뒤로 간다.
+@art char:prophet
+"객도 태웠소? 몇 권?"
+<align=right>"한 권. 내 이름이 있는 것만."</align>
+"그거 내 글씨였을 거요. ……미안하오."
+@fx sl:1
+@set grudge=grudge+1
+@set f_ascendally=1
+@return
+
+# E_Ascend2Cham
+@art char:chamsae
+담장 위에서 참새가 다리를 흔들며 은자를 받는다.
+"소문 하나요? 제일 잘 퍼지는 걸로."
+참새가 담에서 내려 전당포 쪽으로 걸어가며 크게 혼잣말을 한다.
+"아이고, 왕삼 어른 금고 뒷문이 열려 있던데. 오늘 하오문 애들이 거기 몰려간다던데."
+왕삼의 얼굴빛이 바뀐다. 문도 셋을 데리고 안으로 뛰어 들어간다. 사슬 소리가 멀어진다.
+"그 서기 아저씨, 우리 쪽에선 '붓쟁이'라 불러요. 장부를 하도 써서 손가락이 휘었거든요."
+"장부 훔치는 법도 내가 가르쳤어요. 옷까지 지을 줄은 몰랐지만."
+@art char:prophet
+도인이 참새에게 고개를 숙인다. 참새가 손을 내젓는다.
+"하늘 가실 때 내 자리 하나 맡아 줘요. 창가로."
+@fx mn:-5
+@set chamaff=chamaff+1
+@set f_ascendally=1
+@return
+
+# E_Ascend2Pass
+등 뒤에서 사슬이 땅에 끌리는 소리가 오래 따라온다.
+'내 빚도 저 장부 어딘가에 있었다. 지금은 없다. 그 차이뿐이다.'
+@set f_ascendchain=1
+@return
+
+# E_Ascend2K
+@set f_ev_ascend2=1
+@set g_ev_ascend2=g_ev_ascend2+1
+@art scene:pawn
+@art char:wangsam
+전당포 골목. 사슬 셋이 흰 종이옷 하나를 끌고 나온다. 문도가 등판을 찢기 전에 먼저 말한다.
+<align=right>"<color=#9A70C4>그 뒷면은 장부 셋째 권이오. 글씨는 정 서기 것이고.</color>"</align>
+문도들이 굳는다. 왕삼이 주판을 멈추고 당신을 오래 본다.
+"……그걸 어찌 아시오. 그 장부는 우리 셋밖에 모르는데."
+@art char:prophet with:wangsam
+골목 끝에서 뛰어오던 도인이 그 자리에서 멈춘다.
+"……나를 아시오?"
+<align=right>"붓 쥔 손가락이 휘었소. 십 년 장부를 쓴 손이오."</align>
+도인이 제 손을 내려다본다. 소매 안으로 감춘다.
+@choice "사슬 셋을 막아선다 〔검술-1 앎〕" goto:#E_Ascend2FightK
+@choice "\"그 장부, 나도 한 권 태웠소. 셈은 나랑 하시오.\"" if:f_wangsam>0 goto:#E_Ascend2Burn
+@choice "골목을 지나친다" goto:#E_Ascend2Pass
+@stop
+# E_Ascend2FightK
+@risk on:sw need:-1 know:true
+@goto #E_Ascend2FightL if:pass==0
+@goto #E_Ascend2FightW
+
+# E_Ascend3
+; 0.4.88 백일승천교 셋째 — 이차 승천. 교가 '하늘에 오르고 싶은 자'를 그릇으로 거두러 온다(북행 빈 마을의 그릇과 잇는다).
+@art scene:redrope
+@art char:cultist
+@deja text:"붉은 끈 수레 둘. 종이 날개. 저 수레가 어느 산으로 가는지 안다."
+{dejapre}
+@goto #E_Ascend3K if:g_ev_ascend3>0&&f_ev_ascend3<1
+@set g_ev_ascend3=g_ev_ascend3+1 if:f_ev_ascend3<1
+@set f_ev_ascend3=1
+보름 밤. 장터 고루 앞 광장에 붉은 끈을 감은 수레 둘이 선다. 바퀴에 쇠가 박혀 있다.
+교도 여섯이 횃불을 들고, 그 뒤에 서열각 감찰사가 장부를 끼고 서 있다.
+교도 하나가 손바닥을 그어 피를 이마에 바른다. 웃는다.
+"하늘에 오르고 싶다는 자들이 있다지. 교가 올려 주마. 그릇으로."
+흰 종이옷 열둘이 광장 가운데 모여 떤다. 엿장수도 두부 가게 주인도 오늘은 없다.
+@art char:prophet with:cultist
+고루 계단에서 종이 날개를 단 도인이 내려온다. 날개 한쪽은 지난번에 접힌 그대로 기워 놓았다.
+"이분들 승천표는 내가 팔았소. 올려 보내도 내가 보내오. 교는 비켜 주시오."
+교도들이 웃는다. 횃불이 흔들릴 만큼.
+"너는 맨 앞 수레다. 날개는 떼고."
+@choice "감찰사에게 이 교가 서열각에 오르지 않았다는 것을 짚는다" if:f_ascendask>0 goto:#E_Ascend3Law
+@choice "용개의 지게꾼들을 불러 신도들을 나루 밤배로 뺀다" if:f_yongcrew>0 goto:#E_Ascend3Yong
+@choice "신도들을 객잔 창고로 이끈다 〔살기〕" if:f_hajindead<1 goto:#E_Ascend3Inn
+@choice "수레 앞에 선다 〔검술+1〕" goto:#E_Ascend3Fight
+@choice "횃불을 등지고 돌아선다" goto:#E_Ascend3Pass
+@stop
+
+# E_Ascend3Law
+<align=right>"감찰사. 백일승천교는 서열각에 오른 교요?"</align>
+@art char:inspector with:cultist
+감찰사가 장부를 펼친다. 손가락으로 줄을 짚어 내려간다. 끝까지 내려간다.
+"……없다."
+<align=right>"오르지 않은 교는 교가 아니오. 교가 아닌 자들의 신도를 교의 그릇으로 거두면, 서열각 장부에 없는 사람이 교의 수레에 타는 거요."</align>
+감찰사의 붓이 멈춘다. 장부가 틀어지는 것을 그는 피보다 싫어한다.
+@art char:cultist with:inspector
+"그딴 게 무슨 상관이오. 그릇은 그릇이지."
+@art char:inspector with:cultist
+"장부에 없는 그릇은 집법전이 받지 않는다. 받지 않는 그릇을 실어 가면 수레 값은 네 서열에서 깐다."
+교도가 횃불을 내린다. 수레 둘이 빈 채로 돌아간다. 바퀴의 쇠가 돌바닥을 긁는 소리가 길다.
+'지난번 장터에서 저 교도가 투덜대던 말이다. 교 이름에 교 자를 붙이려면 서열각에 먼저 올려야 한다고.'
+@goto #E_Ascend3Saved
+
+# E_Ascend3Yong
+@art char:yonggae
+광장 뒷골목에서 지게 일곱이 소리 없이 나온다. 용개가 맨 앞이다.
+"사람 지는 건 처음인데, 짐보다 가볍겠지요."
+지게마다 종이옷 하나씩. 교도들이 도인을 붙잡고 웃는 사이 지게들이 나루 쪽 골목으로 꺾인다.
+@art char:prophet with:cultist
+도인이 종이 날개를 활짝 편다. 교도들의 횃불이 전부 그쪽을 본다.
+"보아라! 이차 승천이다!"
+날개가 또 접힌다. 도인이 수레 위로 엎어진다. 교도들이 배를 잡고 웃는다. 그동안 나루에서 밤배가 뜬다.
+수레에 남은 건 도인 하나다. 교도가 그를 내던진다.
+"그릇도 안 되는 놈."
+@fx hp:-1
+@goto #E_Ascend3Saved
+
+# E_Ascend3Inn
+@risk on:sl need:0
+@goto #E_Ascend3InnL if:pass==0
+종이옷 열둘을 객잔 뒷문으로 몰아넣는다. 하진무가 아무것도 묻지 않고 창고 빗장을 연다.
+@art char:hajinmu
+"방값은 나중에 받겠소. 열두 사람 몫이니 셈이 길겠구려."
+횃불이 객잔 앞까지 온다. 문간에 서서 교도 맨 앞의 눈을 본다. 오래 본다.
+교도가 먼저 눈을 돌린다.
+"……이 집은 나중에 턴다."
+@goto #E_Ascend3Saved
+# E_Ascend3InnL
+객잔 뒷문까지 반을 넣었을 때 횃불이 골목을 막는다.
+교도의 몽둥이가 어깨를 친다. 남은 여섯이 수레로 끌려간다. 그 가운데 도인도 있다.
+@art char:hajinmu
+하진무가 창고 빗장을 걸며 낮게 말한다.
+"여섯은 건졌소. 셈은 거기까지요."
+@fx hp:-3
+@set f_ascendhalf=1
+@goto #E_Ascend3Lost
+
+# E_Ascend3Fight
+@risk on:sw need:+1
+@goto #E_Ascend3FightL if:pass==0
+# E_Ascend3FightW
+첫 횃불을 칼등으로 쳐 떨군다. 기름이 바닥에 번지고 불이 교도들 발밑을 가른다.
+둘째 교도의 손목, 셋째의 무릎. 수레 바퀴의 붉은 끈을 끊는다.
+교도들이 웃음을 거둔다. 감찰사가 장부를 덮는다.
+"오늘 거둘 그릇은 없다고 적겠다."
+@fx sl:1 sw:1
+@goto #E_Ascend3Saved
+# E_Ascend3FightL
+여섯이다. 넷을 받아 내는 동안 둘이 수레에 종이옷을 싣는다.
+칼등이 등을 친다. 돌바닥에 엎어진 눈앞으로 수레가 지나간다.
+도인이 수레 위에서 날개를 접은 채 이쪽을 본다. 울지 않는다.
+@fx hp:-4
+@goto #E_Ascend3Lost
+
+# E_Ascend3Pass
+등 뒤에서 수레 바퀴가 구르기 시작한다. 종이옷 스치는 소리가 바람 소리 같다.
+'익으면 안다고 했다. 무엇이 익는지.'
+@goto #E_Ascend3Lost
+
+# E_Ascend3Saved
+@art char:prophet
+광장이 빈다. 도인이 기운 날개를 벗어 고루 계단에 내려놓는다.
+"승천은 미루겠소. 하늘에도 장부가 있을 거요. 거기 이름이 먼저 올라가면 곤란하오."
+품에서 누런 종이 한 장을 꺼내 내민다. '一'.
+"제일석이오. 이번엔 받으시오. 떨어지는 자리라도, 앞자리는 앞자리요."
+승천표를 받아 접는다. 뒷면의 붉은 칸은 비어 있다. 아무 이름도 없는 장이다.
+이튿날 장터 구석에서 이야기꾼이 새 대목을 판다. 「승천 도인, 콩물에 빠지다」. 구경꾼이 아침보다 많다.
+@fx curse:-2
+@set f_ascendsaved=1
+@set f_hyeop=f_hyeop+1
+@return
+
+# E_Ascend3Lost
+수레 둘이 북쪽 길로 사라진다. 광장에 기운 종이 날개 한 짝이 남는다.
+'북쪽 산. 그릇. 노인과 같은 말을 쓰는 자들.'
+@set f_ascendlost=1
+@set g_kn_ascendcart=1
+@return
+
+# E_Ascend3K
+@set f_ev_ascend3=1
+@set g_ev_ascend3=g_ev_ascend3+1
+@art scene:redrope
+@art char:prophet
+보름 밤이 오기 전, 해 질 녘. 고루 계단에서 도인이 종이 날개를 깁고 있다.
+<align=right>"<color=#9A70C4>오늘 밤 붉은 끈 수레 둘이 이 광장에 서오. 신도들을 지금 흩으시오.</color>"</align>
+도인이 바늘을 멈춘다.
+"……천기를 보는 분이시오?"
+<align=right>"한 번 본 거요. 수레가 북쪽 산으로 가는 걸."</align>
+@choice "신도들을 지금 흩어 두게 한다" goto:#E_Ascend3KA
+@choice "밤까지 기다렸다가 맞선다" goto:#E_Ascend3Ch
+@stop
+# E_Ascend3KA
+도인이 날개를 내려놓고 일어선다. 종이옷 열둘의 이름을 하나씩 부르며 골목마다 흩어 보낸다.
+이름을 다 외운다. 십 년 장부를 쓴 사람이다.
+보름 밤, 수레 둘이 빈 광장에 선다. 교도들이 이 집 저 집 문을 두드리다 돌아간다.
+@goto #E_Ascend3Saved
+# E_Ascend3Ch
+@art char:cultist
+밤. 붉은 끈 수레 둘이 광장에 선다. 교도가 손바닥을 그어 이마에 피를 바른다.
+"하늘에 오르고 싶다는 자들이 있다지. 교가 올려 주마. 그릇으로."
+@choice "감찰사에게 이 교가 서열각에 오르지 않았다는 것을 짚는다" if:f_ascendask>0 goto:#E_Ascend3Law
+@choice "용개의 지게꾼들을 불러 신도들을 나루 밤배로 뺀다" if:f_yongcrew>0 goto:#E_Ascend3Yong
+@choice "신도들을 객잔 창고로 이끈다 〔살기〕" if:f_hajindead<1 goto:#E_Ascend3Inn
+@choice "수레 앞에 선다 〔검술〕" goto:#E_Ascend3FightK
+@stop
+# E_Ascend3FightK
+@risk on:sw need:0 know:true
+@goto #E_Ascend3FightL if:pass==0
+@goto #E_Ascend3FightW

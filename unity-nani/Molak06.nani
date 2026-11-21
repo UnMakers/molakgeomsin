@@ -42,7 +42,7 @@
 
 ; --- S2: 저자 동행 (10일+) ---
 # SoaN2
-@art scene:market
+@art scene:marketday
 @art char:soa
 @deja need:g_soadied text:"나란히 걷는 이 저잣거리가, 지난 생에는 그녀와의 마지막 나들이였다."
 {dejapre}
@@ -1783,7 +1783,7 @@
 # St1
 @page
 @scene id:day
-@art scene:market
+@art scene:marketday
 @art char:soa
 @deja text:"탁자 위에 엽전 일곱 닢. 지난 생에도 그녀는 이 국밥 값을 갚으러 왔다. 받지 않은 빚이 그 장부에 끝까지 남아 있었다."
 {dejapre}
@@ -1975,7 +1975,7 @@
 # St5
 @page
 @scene id:day
-@art scene:market
+@art scene:marketday
 @art char:soa
 <color=#9A70C4>이 국밥집, 이 자리. 지난 생엔 이 맞은편에 그녀가 앉아 장부를 펴고 국밥 값을 셌다.</color>
 @goto #St5W if:f_soamet<1

@@ -143,6 +143,9 @@ public static class MolakEventDefs
             new Def("E_Talisman2", 15, 0, 'd', null, "E_Talisman", 6, 8),
             // 0.4.88 웃긴 일상 — 백일승천교 교주의 승천(고루 지붕 → 두부 가게 콩물 독)
             new Def("E_Ascend", 4, 45, 'd', null, null, 0, 14),
+            // 0.4.88 백일승천교 둘째(종이옷의 뒷면 — 왕삼·혈쇄문·참새) · 셋째(이차 승천 — 교의 그릇 수레, 감찰사·용개·하진무)
+            new Def("E_Ascend2", 9, 50, 'd', null, "E_Ascend", 3, 18),
+            new Def("E_Ascend3", 20, 56, 'n', "!f_ascendsaved&!f_ascendlost", "E_Ascend2", 4, 22),
             new Def("E_Sutra", 6, 18, 'd', null, null, 0, 10),
             new Def("E_Sutra2", 16, 0, 'd', null, "E_Sutra", 5, 12),
             new Def("E_Sutra3", 30, 0, 'd', "!f_herbdead", "E_Sutra2", 7, 12),

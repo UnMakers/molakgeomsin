@@ -456,6 +456,7 @@
 @set rolln=rolln+1 if:f_hajindead<1
 @set rolln=rolln+1 if:f_jangfriend>0
 @set rolln=rolln+1 if:f_hyeop>0
+@set rolln=rolln+1 if:f_ascendsaved>0
 @return if:rolln<2
 @page
 @art char:none
@@ -495,6 +496,10 @@
 <color=#8A7A66>꼬지와 아이들</color> — 벼랑의 새끼 매듭이 길이 되었다.
 장꾼들이 그 길로 소금을 나르고, 아이들이 통행세로 주먹밥 하나를 받는다.
 # ERl6
+@goto #ERl6b if:f_ascendsaved<1
+<color=#8A7A66>승천 도인</color> — 두부 가게 콩물 독 옆에 백일승천교 간판을 거꾸로 걸어 두었다.
+이제 장부를 쓴다. 왕삼 골목 사람들의 빚을 지워 나가는 장부다. 다 지우면 그때 오르겠다고 한다.
+# ERl6b
 @goto #ERl7 if:f_mournerally<1
 <color=#8A7A66>도길의 맏아들</color> — 아버지 기일마다 운락객잔 문간에 술 한 병을 두고 간다.
 내일 다시 원수 하겠다던 말은 아직 지키는 중이다.

@@ -175,7 +175,12 @@
 @set f_amhwarn=0
 @set f_amhyangknown=0
 @set f_antidote=0
+@set f_ascendally=0
 @set f_ascendask=0
+@set f_ascendchain=0
+@set f_ascendhalf=0
+@set f_ascendlost=0
+@set f_ascendsaved=0
 @set f_baekridead=0
 @set f_beggarnet=0
 @set f_bilok=0
@@ -269,6 +274,8 @@
 @set f_ev_amhshop=0
 @set f_ev_amhspill=0
 @set f_ev_ascend=0
+@set f_ev_ascend2=0
+@set f_ev_ascend3=0
 @set f_ev_beggar=0
 @set f_ev_beggar3=0
 @set f_ev_beggar4=0
@@ -1322,7 +1329,7 @@
 @fx mn:8 why:"쥐눈이 장에게 보름의 운주 들판을 팔았다"
 @goto #P4Go
 # P4b
-@art scene:market
+@art scene:marketday
 @art char:none
 @goto #P4bR if:mkv>0
 @set mkv=1

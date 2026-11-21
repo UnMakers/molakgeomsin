@@ -2819,7 +2819,7 @@
 
 ; ---------- 0.4.76 장날: 쉬어가는 하루. 염혁이 고개로 떠나기 전, 셋이 장을 돈다 ----------
 # S_Market
-@art scene:market
+@art scene:marketday
 @art char:hyeok
 @deja text:"장날이다. 빈 지게를 진 표사가 객잔 문을 두드릴 것이다. 이번엔 표호 숨까지 끝까지 보고 싶다."
 {dejapre}
