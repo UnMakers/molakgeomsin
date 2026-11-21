@@ -9,6 +9,9 @@ using UnityEngine;
 public class MolakName : MonoBehaviour
 {
     public const int MaxLen = 6;
+    /// <summary>0.4.89 칸에 미리 적혀 있는 이름(언메이커: 기본 이름이 적혀 있으면 좋겠다). 소설판의 주인공 이름과 같다.
+    /// 그대로 「붓을 놓는다」를 누르거나, 지우고 비운 채 누르면 이 이름으로 적힌다.</summary>
+    public const string DefaultName = "한서";
     public static bool Open { get; private set; }
 
     static MolakName inst;
@@ -16,7 +19,7 @@ public class MolakName : MonoBehaviour
     string warn = "";
     TouchScreenKeyboard kb;
     GUIStyle sTitle, sSub, sField, sBtn, sWarn;
-    float openedAt;
+    float openedAt; bool selected;
 
     public static string Name { get { return MolakStats.Str("g_pname", ""); } }
     public static bool HasName { get { return Name.Trim().Length > 0; } }
@@ -76,7 +79,8 @@ public class MolakName : MonoBehaviour
             DontDestroyOnLoad(go);
             inst = go.AddComponent<MolakName>();
         }
-        inst.text = Name;
+        inst.text = HasName ? Name : DefaultName;   // 0.4.89 처음이면 기본 이름이 적혀 있다
+        inst.selected = false;
         inst.warn = "";
         inst.openedAt = Time.realtimeSinceStartup;
         Open = true;
@@ -92,8 +96,9 @@ public class MolakName : MonoBehaviour
     void Commit ()
     {
         var n = Clean(text);
-        if (n.Length == 0) { warn = "이름이 비어 있다. 한 글자 이상 적어야 한다."; return; }
+        if (n.Length == 0) n = DefaultName;   // 0.4.89 비우고 누르면 기본 이름
         Apply(n);
+        MolakSfx.Stamp();   // 명부에 이름이 찍힌다
         if (kb != null) { kb.active = false; kb = null; }
         Open = false;
     }
@@ -107,7 +112,7 @@ public class MolakName : MonoBehaviour
         if (sTitle != null) return;
         var f = MolakGui.Gowun;
         sTitle = new GUIStyle { font = MolakTypography.Heading(f), alignment = TextAnchor.MiddleCenter, wordWrap = true };
-        // 0.4.80 창의 결: 명부 한 장 — 종이 바탕, 먹 글자, 맨 끝 줄은 검붉은 띠의 흰 칸, 먹색 「적는다」(명부라 늘 낮 빛)
+        // 0.4.80 창의 결: 명부 한 장 — 종이 바탕, 먹 글자, 맨 끝 줄은 검붉은 띠의 흰 칸, 먹색 「붓을 놓는다」(명부라 늘 낮 빛)
         sTitle.normal.textColor = Ink;
         sSub = new GUIStyle(sTitle) { font = f };
         sSub.normal.textColor = SubC;
@@ -174,18 +179,24 @@ public class MolakName : MonoBehaviour
             text = Clean(GUI.TextField(fr, text, MaxLen, sField));
             ss.selectionColor = sc; ss.cursorColor = cc;
             if (Time.realtimeSinceStartup - openedAt < 0.3f) GUI.FocusControl("molakname");
+            else if (!selected && GUIUtility.keyboardControl != 0)
+            {   // 0.4.89 미리 적힌 이름은 통째로 골라 둔다 — 바로 치면 바뀌고, 그대로 두면 그 이름
+                var te = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
+                if (te != null) te.SelectAll();
+                selected = true;
+            }
             var e = Event.current;
             if (e.type == EventType.KeyDown && (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter)) { Commit(); e.Use(); }
         }
         y += 140 * u;
-        GUI.Label(new Rect(cx, y, cw, 60 * u), warn.Length > 0 ? warn : "회귀해도 이 이름은 남는다.", warn.Length > 0 ? sWarn : sSub); y += 100 * u;
+        GUI.Label(new Rect(cx, y, cw, 100 * u), warn.Length > 0 ? warn : "지우고 고쳐 써도 된다.\n회귀해도 이 이름은 남는다.", warn.Length > 0 ? sWarn : sSub); y += 130 * u;
 
         var old2 = GUI.color;
         GUI.color = Ink;
         var br = new Rect(cx + cw * 0.3f, y, cw * 0.4f, 100 * u);
         GUI.DrawTexture(br, MolakGui.Px);
         GUI.color = old2;
-        if (GUI.Button(br, "적는다", sBtn)) Commit();
+        if (GUI.Button(br, "붓을 놓는다", sBtn)) Commit();   // 0.4.89 「적는다」 → 명부에 이름을 쓰고 붓을 내려놓는다
     }
 }
 
