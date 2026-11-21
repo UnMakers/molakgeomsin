@@ -8,7 +8,7 @@
   · 정: 그 편 히로인의 정 한 칸 +3, 소아의 정은 어느 편이든 +2(본줄기의 끝은 합벽), 다른 히로인 +0.3.
   · 사실·앎(f_·g_): 대본 전체 조건에서 「있으면 열린다(>0)」 수와 「없어야 열린다(<1)」 수의 차(±6에서 자름)×0.25.
     진엔딩 대목(Molak04 True·Epi·LdHap·OldFight, Molak22)이 「있으면」으로 보는 깃발은 +3. 그 편 히로인 이름이 든 깃발 ×2, 다른 히로인 ×0.3.
-  · 사람이 죽는 깃발(…dead): −8, 소아 −15.
+  · 사람이 죽는 깃발(…dead): −8, 소아 −15. 누군가 죽을 수 있는 사건(본문에 …dead=1)을 여는 조건 깃발 −6, 막는 깃발(!) +3.
   · 끝(@ending): 그 편의 진짜 끝(Molak22 True○○2, 소아 편은 합벽의 TrueBoardE) +60, 합벽 없이 교주를 꺾은 끝(EpiBoardE) +30, 다른 편의 진짜 끝 +15,
     그 편 히로인과 「도망쳐 산 생」(LongTail○○, g_long_○○ 를 남긴다 — 다음 생에 진짜 끝을 여는 열쇠) +30, 그 밖의 끝 −20, 죽음 −50.
   · 되감기(StoryFold, 소아의 구결을 품고 다음 생으로): 소아 편 +25 · 히로인 편 −10(그 생을 끝까지 걸어 떠나기 전 밤에 닿아야 한다). 「처음 화면」: −100.
@@ -60,6 +60,30 @@ for s, ls in scripts.items():
                 if q: neg[v] = neg.get(v, 0) + 1
                 if p and region: truepos.add(v)
 
+# ---- 사람이 죽을 수 있는 사건을 여는 깃발(0.4.94) ----
+# MolakEventDefs 의 사건 가운데 본문(그 사건의 라벨 묶음)에 누군가 죽는 깃발(…dead=1)이 있는 것은 위험한 사건이다.
+# 그 사건의 조건에서 「있어야 열린다」 깃발은 사람을 죽게 하는 문이라 −6, 「없어야 열린다(!)」 깃발은 막는 손이라 +3.
+# (암향 편 시험: 꾸러미를 바꿔 주자는 선택 f_poisonswap 이 며칠 뒤 백초당 불길을 열어 할멈이 죽고, 재우는 약이 사라졌다)
+danger = {}
+_defs = open(os.path.join(ROOT, 'unity-src', 'MolakEventDefs.cs'), encoding='utf-8-sig').read()
+_ev = scripts.get('MolakEvents', [])
+_alldefs = re.findall(r'new Def\("(E_\w+)",\s*\d+,\s*\d+,\s*\'\w\',\s*(?:"([^"]*)"|null)', _defs)
+_ids = {e for e, _ in _alldefs}
+for eid, cond in _alldefs:
+    if not cond or ('MolakEvents', eid) not in labels: continue
+    i = labels[('MolakEvents', eid)] + 1; deadly = False
+    while i < len(_ev):
+        m = re.match(r'^#\s*(\S+)', _ev[i])
+        if m and m.group(1) != eid and (m.group(1) in _ids or re.match(r'E_\w+Re$', m.group(1))): break   # 다음 사건(또는 맨 끝 회귀 갈래 묶음)에서 멈춘다
+        if re.search(r'@set f_\w*dead=1', _ev[i]): deadly = True
+        i += 1
+    if not deadly: continue
+    for t in cond.split('&'):
+        t = t.strip()
+        mm = re.match(r'^(!?)(f_\w+)$', t)
+        if not mm or mm.group(2).endswith('dead'): continue
+        danger[mm.group(2)] = danger.get(mm.group(2), 0) + (3.0 if mm.group(1) else -6.0)
+
 def heroine_of(v):
     low = v.lower()
     for her, keys in HER_KEYS.items():
@@ -73,6 +97,7 @@ def flag_w(v, her):
     p, n = pos.get(v, 0), neg.get(v, 0)
     w = max(-6, min(6, p - n)) * 0.25
     if v in truepos: w += 3
+    w += danger.get(v, 0.0)
     if v.endswith('dead') or v.endswith('died'):
         w = -15.0 if 'soa' in v else -8.0
     h = heroine_of(v)
