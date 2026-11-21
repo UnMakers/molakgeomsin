@@ -42,7 +42,7 @@ public class MolakFastTest : MonoBehaviour
         MolakPlayMode.SetFast(true);
         var mouse = Mouse.current;
         float t0 = Time.unscaledTime, nextTap = t0 + tapEvery, lastTap = -9f;
-        string lastTxt = null; float lastAlpha = 1f; int lastVis = -1;
+        string lastTxt = null; float lastAlpha = 1f; int lastVis = -1, lastCc = 0;
         while (Time.unscaledTime - t0 < seconds)
         {
             if (!MolakPlayMode.Fast) MolakPlayMode.SetFast(true);
@@ -55,8 +55,10 @@ public class MolakFastTest : MonoBehaviour
             string mark = "";
             if (txt != lastTxt && lastTxt != null && !tapRecent) mark += " ★누르지 않았는데 글이 바뀜";
             if (a > 0.5f && lastAlpha <= 0.5f && vis > 0) mark += " ★가려졌던 글이 보임";
-            if (txt != lastTxt || Mathf.Abs(a - lastAlpha) > 0.3f || mark.Length > 0)
-                Log.AppendLine(string.Format("{0,6:0.00} 보임{1:0.0} 덮개{2:0.0} [{3}/{4}] {5}{6}", now - t0, a, MolakVfx.ChapterCover, vis, d != null ? d.textInfo.characterCount : 0, Short(txt), mark));
+            int cc = MolakTheme.ChoiceCount;
+            if (txt != lastTxt || Mathf.Abs(a - lastAlpha) > 0.3f || mark.Length > 0 || cc != lastCc)
+                Log.AppendLine(string.Format("{0,6:0.00} 보임{1:0.0} 덮개{2:0.0} 선택지{7} 극장{8} [{3}/{4}] {5}{6}", now - t0, a, MolakVfx.ChapterCover, vis, d != null ? d.textInfo.characterCount : 0, Short(txt), mark, cc, MolakTheme.TheaterNow ? 1 : 0));
+            lastCc = cc;
             lastTxt = txt; lastAlpha = a; lastVis = vis;
             if (now >= nextTap)
             {

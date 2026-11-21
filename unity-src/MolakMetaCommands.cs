@@ -101,7 +101,7 @@ public class DayTickCommand : Command
             if (MolakStats.Get("taint") > 0) MolakStatLog.Why("hp", MolakStats.Get("taintkind") == 1f ? "몸에 든 독이 하루치 살을 깎는다" : "곪은 상처가 하루치 살을 깎는다");
             if (MolakStats.Get("taint") > 0)                                                 // 독·곪은 상처: 날마다 몸을 깎는다
                 MolakStats.Add("hp", MolakStats.Get("taint") >= MolakRules.TaintHeavy ? -MolakRules.TaintHpHeavy : -MolakRules.TaintHpLight);
-            float lodg = day >= MolakRules.LodgeLateDay ? MolakRules.LodgeLate : MolakRules.LodgeBase;
+            float lodg = MolakRules.LodgeOn(day);
             if (MolakStats.Get("f_hajinfree") > 0) lodg = 0f;                          // 하진무가 방값을 안 받기로 함
             if (MolakStats.Get("f_hajincold") > 0) lodg += MolakRules.LodgeColdExtra;  // 징세조 앞에서 외면한 뒤로 방값 패가 바뀌었다
             if (MolakStats.Get("f_hajindead") > 0) lodg = MolakRules.LodgeNoHajin;     // 하진무가 없는 객잔: 새 주인은 빈칸을 모른다

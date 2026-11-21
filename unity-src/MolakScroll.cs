@@ -285,14 +285,20 @@ public class MolakScroll : MonoBehaviour
                 if (cc > 0 && thPrevChoices == 0) { thHold = true; thHoldText = curTx; }
                 // 0.4.91 붙든 글과 '내용'으로 견준다(예전엔 문자열 참조로 견줘, 선택지가 뜬 직후 같은 글이 다시 대입되기만 해도(빨리 모드에서 드러내기가 끝날 때 등)
                 //   요약을 걷고 옛 본문을 선택지 뒤에 다시 비췄다 — 언메이커: 빨리로 볼 때 글이 남아 있거나 안 보이던 글이 갑자기 나온다).
+                //   0.4.91 다시: 선택지가 떠 있는 동안에는 글이 어떻게 바뀌든(한 프레임 다른 글이 대입됐다 돌아오는 일이 있었다) 붙든 채로 두고,
+                //   선택지가 걷힌 뒤에만 '새 글이 찍혔나(내용이 다르다) / 2초가 지났나'로 놓는다. 빨리 모드 점검에서 선택지가 뜬 지 0.02초 만에 본문이 다시 보이던 것.
                 bool same = string.Equals(curTx, thHoldText);
-                if (cc > 0 && thHold && same) thHoldT = Time.unscaledTime;
-                if (thHold && (!same || Time.unscaledTime - thHoldT > 2f)) thHold = false;
+                if (cc > 0 && thHold) thHoldT = Time.unscaledTime;
+                if (thHold && cc == 0 && (!same || Time.unscaledTime - thHoldT > 2f)) thHold = false;
                 thPrevChoices = cc;
                 if (thHold) a = 0f;
             }
             else thHold = false;
             a *= 1f - MolakVfx.StampCover;   // 0.4.91 인장이 뜨면 글을 걷는다(덮개판 대신)
+            {   // 0.4.91 기준: 쪽이 바뀌면 새 쪽이 짧게 떠오른다(언메이커: 갑자기 넘어가는 느낌 — 빨리 모드는 한 쪽이 통째로 툭 바뀌었다).
+                float pf = (Time.unscaledTime - pageAt) / (MolakPlayMode.Fast ? PageFadeFast : PageFade);
+                if (pf < 1f) a *= Mathf.SmoothStep(0.5f, 1f, Mathf.Clamp01(pf));   // 반쯤 비친 데서 시작(가려진 채 글이 찍히지 않게)
+            }
             BodyAlpha = a;
             if (cineCg != null && Mathf.Abs(cineCg.alpha - a) > 0.002f) cineCg.alpha = a;
             if (vpCg != null && Mathf.Abs(vpCg.alpha - a) > 0.002f) vpCg.alpha = a;
@@ -365,6 +371,10 @@ public class MolakScroll : MonoBehaviour
     public static Rect TheaterTextGui;
     /// <summary>점검용: 본문이 지금 얼마나 보이나(0 이면 가려졌다)</summary>
     public static float BodyAlpha = 1f;
+    /// <summary>0.4.91 새 쪽이 떠오르는 시간(초). 보통 0.2 · 빨리 0.28(쪽이 통째로 찍히니 조금 더).</summary>
+    public const float PageFade = 0.2f, PageFadeFast = 0.28f;
+    static float pageAt = -9f;
+    public static void NewPage () { pageAt = Time.unscaledTime; }
     static bool thHold; static int thPrevChoices; static string thHoldText; static float thHoldT; static float thSumTopC = 800f;
     void LayoutTheater (float canvasW, float canvasH)
     {

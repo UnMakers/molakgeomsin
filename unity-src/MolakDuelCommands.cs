@@ -309,7 +309,8 @@ public class DuelCommand : Command, IMolakMoment
             bool tierUp = false;
             if (odds < 45f && MolakStats.Get("practice") < 1f) MolakRealm.Gain("넘기 힘든 판을 넘었다 — " + (foe.Name ?? "상대"));
             float dmg = Random.Range(0, Mathf.Max(1, (int)hpRisk - 1));
-            float reward = kind == "unju" ? 3f : kind == "hochi" ? 8f : kind == "cheolsan" ? 100f : kind == "back" ? 3f : 1f;
+            float dday = MolakStats.Get("day");
+            float reward = kind == "hochi" ? 8f : kind == "cheolsan" ? 100f : MolakRules.DuelPrize(dday, kind == "unju" || kind == "back");   // 0.4.91 상금은 그날 방값 사흘치(큰 판은 두 배)
             MolakStats.Set("rank", newRank);
             string fn = foe.Name ?? "상대";
             MolakStatLog.Why("hp", "비무에서 이겼으나 " + fn + "의 칼에 스쳤다");

@@ -54,6 +54,12 @@ public static class MolakRules
     // ---- 숙식 ----
     /// <summary>객잔 방값: 처음엔 하루 1냥, 스물다섯째 날부터 2냥. 하진무가 차갑게 돌아서면 +1, 하진무가 없으면 3냥.</summary>
     public const float LodgeBase = 1f, LodgeLate = 2f, LodgeLateDay = 25f, LodgeColdExtra = 1f, LodgeNoHajin = 3f;
+    /// <summary>그날의 기본 방값(사람 사정 — 하진무가 안 받음·차가워짐·없음 — 은 빼고).</summary>
+    public static float LodgeOn (float day) { return day >= LodgeLateDay ? LodgeLate : LodgeBase; }
+    /// <summary>0.4.91 비무 상금 기준(언메이커: 돈벌기가 빡세다 — 이긴 비무가 1냥이라 수련하는 밤마다 은자가 빠지기만 했다):
+    /// 이긴 보통 비무 한 판 = 그날 방값 사흘치(밤 한 번이 사흘). 뒷골목·운주처럼 판이 큰 곳은 그 두 배. 이름난 판(호치·철산도)은 따로.</summary>
+    public const float DuelPrizeNights = 3f, DuelPrizeBigMul = 2f;
+    public static float DuelPrize (float day, bool big) { return LodgeOn(day) * DuelPrizeNights * (big ? DuelPrizeBigMul : 1f); }
     /// <summary>다리 밑의 솥(개방의 인연): 굶는 날 한 그릇을 얻는 간격(날).</summary>
     public const float GaeRiceGap = 4f;
     /// <summary>방값을 못 내면 굶는다 — 하루짜리 마감은 체력 -2, 며칠 마감은 -1(날마다).</summary>

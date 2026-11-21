@@ -176,7 +176,11 @@ public class MolakTitle : MonoBehaviour
 
         if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; Showing = false; AtTitle = false; return; }
         float day = G("day");
-        AtTitle = !sp.Playing && day < 1f;
+        // 0.4.91 대본이 멈춘 것(선택지 대기·@stop)만으로는 첫 화면이 아니다 — 첫 화면 대본(Title)에 있거나 아무 대본도 없을 때만.
+        //   서장 앞(아직 첫날 전)에 선택지에서 멈추면 첫 화면으로 잘못 알고 극장판 선택지 요약을 지우던 것(점검 중 찾음).
+        var spot = sp.MainTrack != null ? sp.MainTrack.PlaybackSpot : default(PlaybackSpot);
+        string scr = spot.ScriptPath ?? "";
+        AtTitle = !sp.Playing && day < 1f && (scr.Length == 0 || scr == "Title");
         bool show = AtTitle && !AnyUIVisible(ui);
         Showing = show;
         if (!show) { shownAt = -1f; return; }

@@ -230,7 +230,7 @@ public class MolakFlow : MonoBehaviour
         bool unread = reset && hadText && !afterChoice && !isBridge && !lastFinalWait && lastPressAt <= lastPrintAt + 0.05f;
         var spk = player; bool skipping = MolakPlayMode.SkipAll || (spk != null && spk.Skipping);
         if (unread && !skipping) { gatePending = true; gateTurn = true; }
-        else if (reset && hadText) MolakPageTurn.Play();   // 글이 있던 쪽을 넘긴다
+        else if (reset && hadText) { MolakPageTurn.Play(); if (!skipping) MolakScroll.NewPage(); }   // 글이 있던 쪽을 넘긴다(0.4.91 새 쪽은 잠깐 떠오른다)
         if (reset && MolakPlayMode.Fast && !skipping && !unread) MolakInputGuard.MuteFor(0.35f);
         MolakScroll.ResetToBottom();
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
@@ -312,7 +312,7 @@ public class MolakFlow : MonoBehaviour
         inst.gateStart = -1f;
         if (inst.Trace0()) Trace.AppendLine("  (문 열림 " + (Time.unscaledTime - start).ToString("0.00") + "초)");
         MolakInputGuard.MuteFor(0.3f);
-        if (inst.gateTurn) { inst.gateTurn = false; MolakPageTurn.Play(); }
+        if (inst.gateTurn) { inst.gateTurn = false; MolakPageTurn.Play(); MolakScroll.NewPage(); }
     }
     bool Trace0 () { return Trace != null; }
 

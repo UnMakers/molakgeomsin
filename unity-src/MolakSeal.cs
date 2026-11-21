@@ -83,18 +83,24 @@ public static class MolakSeal
         // ① 먹 원: 붓머리에서 굵고 끝으로 갈수록 가늘고 옅게, 끝에서 먹이 튄다
         float p = Mathf.Clamp01(t / 0.5f);
         float R = S * 0.36f, start = -2.2f + Hash(seed, 1) * 0.3f, len = (broken ? 1.55f : 1.88f) * Mathf.PI * p;
-        const int Dabs = 150;
+        // 0.4.91 흰 붓(먹빛 바탕)은 깔끔하게(언메이커: 흰 붓이 덜 깔끔하다): 붓 자국을 촘촘히(겹친 반투명 점이 구슬처럼 보이지 않게) 거의 불투명하게,
+        //   흔들림을 줄이고, 끝에서 먹이 튀지 않는다. 마른 붓 맛은 끝 15%에서 가늘어지는 것만 남긴다. 종이 바탕의 검은 먹은 예전 그대로.
+        bool clean = !paper;
+        int Dabs = clean ? 360 : 150;
         int nD = Mathf.CeilToInt(Dabs * p);
         // 먹빛 바탕에선 검은 먹 원이 바탕에 묻혀 안 보였다(언메이커) → 제목 화면의 원상처럼 흰 붓으로. 종이 바탕은 검은 먹.
-        var ink = paper ? new Color(0.09f, 0.07f, 0.06f, 1f) : new Color(0.82f, 0.78f, 0.70f, 1f);
+        var ink = paper ? new Color(0.09f, 0.07f, 0.06f, 1f) : new Color(0.88f, 0.85f, 0.79f, 1f);
         for (int k = 0; k < nD; k++)
         {
             float tk = k / (float)(Dabs - 1), ang = start + (broken ? 1.55f : 1.88f) * Mathf.PI * tk;
-            float wid = S * (0.055f * Mathf.Sin(Mathf.PI * Mathf.Min(1f, tk * 1.15f)) + 0.012f);
-            float x = c.x + Mathf.Cos(ang) * R * (1f + 0.03f * Mathf.Sin(tk * 9f)), y = c.y + Mathf.Sin(ang) * R * (1f + 0.03f * Mathf.Cos(tk * 7f));
-            GUI.color = new Color(ink.r, ink.g, ink.b, (paper ? 0.92f - 0.25f * tk : 0.78f - 0.38f * tk) * alpha);   // 흰 붓은 끝으로 갈수록 마른다
+            float wid = clean ? S * (0.040f * Mathf.Sin(Mathf.PI * Mathf.Min(1f, tk * 1.08f)) + 0.010f)
+                              : S * (0.055f * Mathf.Sin(Mathf.PI * Mathf.Min(1f, tk * 1.15f)) + 0.012f);
+            float wob = clean ? 0.008f : 0.03f;
+            float x = c.x + Mathf.Cos(ang) * R * (1f + wob * Mathf.Sin(tk * 9f)), y = c.y + Mathf.Sin(ang) * R * (1f + wob * Mathf.Cos(tk * 7f));
+            float ia = paper ? 0.92f - 0.25f * tk : 0.95f * (tk > 0.85f ? Mathf.Lerp(1f, 0.55f, (tk - 0.85f) / 0.15f) : 1f);
+            GUI.color = new Color(ink.r, ink.g, ink.b, ia * alpha);
             GUI.DrawTexture(new Rect(x - wid, y - wid, wid * 2f, wid * 2f), Dot);
-            if (tk > 0.75f && (k & 1) == 0)
+            if (!clean && tk > 0.75f && (k & 1) == 0)
                 for (int q = 0; q < 2; q++)
                 {
                     float r0 = wid * 0.28f * Hash(seed, k * 7 + q), ox = (Hash(seed, k * 3 + q) - 0.5f) * wid * 3f, oy = (Hash(seed, k * 5 + q) - 0.5f) * wid * 3f;
@@ -119,7 +125,7 @@ public static class MolakSeal
             MolakGui.Ink(sGlyph, new Color(col.r, col.g, col.b, ga));
             GUI.Label(gr, hanja, sGlyph);
             // 인주 빠짐: 글자 위에 바탕빛 얼룩(글자 밖은 바탕과 같은 빛이라 보이지 않는다)
-            GUI.color = new Color(back.r, back.g, back.b, 0.85f * ga);
+            GUI.color = new Color(back.r, back.g, back.b, (paper ? 0.85f : 0.45f) * ga);   // 0.4.91 먹빛 바탕은 인주 빠짐을 옅게(덜 지저분하게)
             float off = Hash(seed, 9);
             GUI.DrawTextureWithTexCoords(new Rect(c.x - S * 0.26f, c.y - S * 0.26f, S * 0.52f, S * 0.52f), Speck, new Rect(off, off * 0.7f, 0.9f, 0.9f));
             GUI.matrix = m;
