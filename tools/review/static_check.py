@@ -15,6 +15,7 @@
   ⑧ 한자 글꼴(0.4.92): 게임이 쓰는 한자·인장 글자가 unity-font 의 MolakHanja·MolakSeal 안에 있는가(없으면 기기 글꼴로 빠진다).
      빠졌으면 python3 tools/font_subset.py 로 다시 뽑는다.
   ⑨ 본문 기호(0.4.93): 대본에 쓴 기호가 본문 글꼴(고운바탕)에 있는가 — 없으면 네모(□)로 나온다(gowun_symbols.txt).
+  ⑩ 사건 길목(0.4.94): MolakEventDefs 의 사건마다 Molak02 # RunEvent 에 @gosub 줄이 있는가 — 없으면 뽑혀도 돌지 않는다.
 """
 import io, os, re, sys, glob, collections
 
@@ -254,7 +255,22 @@ for s, L in scripts.items():
             if (0x2000 <= u <= 0x2BFF or 0x3000 <= u <= 0x303F or 0xFF00 <= u <= 0xFFEF) and c not in _gs:
                 rep('본문 기호', s, i, '본문 글꼴에 없는 기호 %s (U+%04X)' % (c, u))
 
-order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝', '글꼴', '본문 기호']
+# ⑩ 0.4.94 사건 길목: 사건 26개가 뽑히고(seen_) 돌지 않았다. 기준: 정의된 사건은 모두 RunEvent 에서 부른다.
+_defp = os.path.join(SRC, 'MolakEventDefs.cs')
+if os.path.exists(_defp) and 'Molak02' in scripts:
+    _defs = re.findall(r'new Def\("(E_\w+)"', io.open(_defp, encoding='utf-8-sig').read())
+    _L = scripts['Molak02']; _a = labels['Molak02'].get('RunEvent')
+    _have = set()
+    if _a is not None:
+        for _l in _L[_a + 1:]:
+            if _l.startswith('#'): break
+            _m = re.match(r'@gosub MolakEvents#(E_\w+) if:nextevent=="(E_\w+)"', _l)
+            if _m and _m.group(1) == _m.group(2): _have.add(_m.group(1))
+    for _d in _defs:
+        if _d not in _have: out['사건 길목'].append('Molak02 # RunEvent 에 %s 가 없다' % _d)
+        if _d not in labels.get('MolakEvents', {}): out['사건 길목'].append('MolakEvents 에 # %s 라벨이 없다' % _d)
+
+order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝', '글꼴', '본문 기호', '사건 길목']
 total = 0
 for k in order:
     v = out.get(k, [])
