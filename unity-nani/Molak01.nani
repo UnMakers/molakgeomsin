@@ -756,6 +756,7 @@
 @set ms_d35=0
 @set ms_d50=0
 @set ng=0
+@set ngbar=0
 @set nmul=0
 @set nrand=0
 @set nx_amh=0

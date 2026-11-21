@@ -95,6 +95,7 @@ public class DayTickCommand : Command
             if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - MolakRules.TeaCurseCut); // 청심차 비방: 매일 반 김
             if (root > 0f) MolakStatLog.Why("curse", MolakStats.Get("f_tea") > 0 ? "하룻밤 새 문양이 자란다(청심차로 반은 눌렀다)" : "하룻밤 새 문양이 뿌리를 뻗는다");
             MolakStats.Add("curse", root);
+            MolakStats.Set("ngbar", MolakRules.Bar("ng", day));   // 0.4.94 그날 내공의 격 — 대본이 「기가 넉넉한 몸」(ng>=ngbar+3)을 묻는다
             if (MolakStats.Get("f_ringclosed") > 0) MolakStats.Add("f_ringclosed", -1f); // 비무판 폐쇄 일수
             if (MolakStats.Get("injury") > 0) MolakStats.Add("injury", -1f);                 // 부상: 사흘이면 아문다
             if (MolakStory.On) MolakStats.Set("taint", 0f);

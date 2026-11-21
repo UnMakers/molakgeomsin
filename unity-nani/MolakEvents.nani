@@ -737,12 +737,18 @@
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
 # E_SimmaGo
 @goto #E_Simma_auT if:f_talisman2>0
+@goto #E_Simma_auN if:ng>=ngbar+3
 @goto #E_Simma_au1 if:curse>=60
 @goto #E_Simma_au1 if:hp<=hpmax/3
 @goto #E_Simma_au2 if:vow==1
 @goto #E_Simma_au0 if:vow==2
 @goto #E_Simma_au1 if:vow==3
 @goto #E_Simma_au0
+# E_Simma_auN
+기를 세 바퀴 돌린다. 첫 바퀴에 손끝의 열이, 둘째 바퀴에 가슴의 시원함이 단전 밑으로 가라앉는다.
+셋째 바퀴에서야 칼을 쥐던 감각이 손에서 떨어진다.
+@fx sl:-3 why:"기를 돌려 살기를 단전 밑에 가라앉혔다"
+@return
 # E_Simma_auT
 품에서 부적 한 장을 꺼낸다. 부적 장수가 사과로 건넨, 제 손으로 쓴 부적이다.
 등잔불에 귀퉁이를 댄다. 종이가 타며 낯선 향이 오른다. 시원하던 자리가 조금씩 식는다.
@@ -1999,6 +2005,7 @@
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
 # E_EchoesGo
 @goto #E_Echoes_au2 if:f_bilok>0
+@goto #E_Echoes_auN if:ng>=ngbar+3
 @goto #E_Echoes_au1 if:curse>=60
 @goto #E_Echoes_au0 if:hp<=hpmax/3
 @goto #E_Echoes_au0 if:vow==1
@@ -2011,6 +2018,12 @@
 # E_Echoes_au1
 호흡으로 밀어낸다.
 @goto #E_EchoesC1
+# E_Echoes_auN
+기를 혈도마다 세워 둔다. 흘러드는 결이 혈도를 타지 못하고 살갗 아래에서 맴돈다.
+맴도는 결의 모양만 눈으로 따라간다. 받아 적지 않고, 보기만 한다.
+'획은 봤다. 쥐지는 않았다.'
+@fx sw:1 curse:1 why:"문양의 검결을 받아 적지 않고 보기만 했다"
+@return
 # E_Echoes_au2
 @goto #E_EchoesX
 # E_EchoesC0
@@ -4963,6 +4976,7 @@
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
 # E_EclipseGo
 @goto #E_Eclipse_au2 if:f_incense>0
+@goto #E_Eclipse_auN if:ng>=ngbar+3
 @goto #E_Eclipse_au1 if:curse>=60
 @goto #E_Eclipse_au1 if:hp<=hpmax/3
 @goto #E_Eclipse_au3 if:vow==1&&curse>=40
@@ -4979,6 +4993,13 @@
 # E_Eclipse_au3
 붉은 달을 마주하고 가부좌를 튼다.
 @goto #E_EclipseY
+# E_Eclipse_auN
+; 0.4.94 기가 넉넉한 몸(그날 내공의 격보다 셋 위)은 문양의 열을 되밀어 낸다
+마당에 가부좌를 튼다. 단전에서 끌어올린 기를 가슴으로 보낸다.
+달빛에 답하던 문양의 열이 기에 밀려 한 치씩 물러난다. 물러난 자리가 얼음처럼 차다.
+붉은 달이 기울 때까지 버틴다. 일어서니 무릎이 굳어 있다.
+@fx hp:-1 curse:-3 why:"기가 문양의 열을 되밀었다"
+@return
 # E_Eclipse_au2
 안식향을 사르고 창을 가린다.
 @goto #E_EclipseX
