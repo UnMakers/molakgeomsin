@@ -14,6 +14,9 @@ public class MolakTitle : MonoBehaviour
     static MolakTitle instance;
     /// <summary>0.4.66 첫 화면이 떠 있는가(환경 설정의 '모든 생의 기억 지우기'는 여기서만).</summary>
     public static bool Showing;
+    /// <summary>0.4.89 첫 화면 자리인가 — 대본이 돌지 않고 아직 첫날 전. 환경 설정 같은 창이 제목을 덮고 있어도 참이다
+    /// (Showing 은 창이 뜨면 거짓이 되므로, 환경 설정의 '초기화'를 Showing 으로 가리면 영영 안 보였다).</summary>
+    public static bool AtTitle;
     static Texture2D dot, disk;
     Texture2D night, enso, silSoa, silJin, silOld, silMourn;
     Font gowun, hanjaFont;
@@ -171,9 +174,10 @@ public class MolakTitle : MonoBehaviour
         var defTitle = ui.GetUI<Naninovel.UI.ITitleUI>() as Naninovel.UI.IManagedUI;
         if (defTitle != null && defTitle.Visible) defTitle.ChangeVisibility(false, 0f);
 
-        if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; Showing = false; return; }
+        if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; Showing = false; AtTitle = false; return; }
         float day = G("day");
-        bool show = !sp.Playing && day < 1f && !AnyUIVisible(ui);
+        AtTitle = !sp.Playing && day < 1f;
+        bool show = AtTitle && !AnyUIVisible(ui);
         Showing = show;
         if (!show) { shownAt = -1f; return; }
 

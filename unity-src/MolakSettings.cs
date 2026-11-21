@@ -187,19 +187,21 @@ public class MolakSettings : MonoBehaviour
 
         // 닫기 — 창마다 하나뿐인 먹색 단추. 자리가 남으면 아래쪽에 붙인다.
         var br = MolakPaper.BottomButton(w, h, u);
-        float tail = MolakTitle.Showing ? 160 * u : 90 * u;
+        float tail = 160 * u;   // 0.4.89 제작 정보 아래 초기화 줄 자리(첫 화면이 아니면 안내 한 줄)
         if (br.y - tail < y) br.y = y; else br.y -= tail;
         if (MolakPaper.InkButton(br, "닫는다", u)) { MolakSfx.Confirm(); Close(); }
         var cr = new Rect(cx + cw * 0.3f, br.yMax + 14 * u, cw * 0.4f, 64 * u);
         GUI.Label(cr, "<u>제작 정보</u>", sHint);
         if (GUI.Button(cr, GUIContent.none, GUIStyle.none)) { MolakSfx.Confirm(); credits = true; }
         // 0.4.66 모든 생의 기억 지우기(언메이커: 처음부터 다시 했는데 '지난 생엔…'이 나온다) — 첫 화면에서만, 두 번 눌러야
-        if (MolakTitle.Showing)
+        //  0.4.89 기준을 Showing(창이 뜨면 거짓) → AtTitle(첫 화면 자리)로. 생 도중엔 누를 수 없고 어디서 하는지만 알린다.
+        var wr = new Rect(cx + cw * 0.1f, cr.yMax + 10 * u, cw * 0.8f, 64 * u);
+        if (!MolakTitle.AtTitle) GUI.Label(wr, "<color=#" + ColorUtility.ToHtmlStringRGB(MolakPaper.Sub) + ">기록 초기화는 첫 화면의 환경 설정에서</color>", sHint);
+        else
         {
             bool armed = Time.unscaledTime - wipeArm < 4f;
-            var wr = new Rect(cx + cw * 0.1f, cr.yMax + 10 * u, cw * 0.8f, 64 * u);
             string wl = wipeDone > 0f && Time.unscaledTime - wipeDone < 3f ? "모든 생의 기억을 지웠다. 처음부터 시작한다."
-                      : armed ? "<color=#" + ColorUtility.ToHtmlStringRGB(MolakPaper.Accent) + ">한 번 더 누르면 모든 생의 기억(앎·말로·업보)이 사라진다</color>" : "<u>모든 생의 기억 지우기</u>";
+                      : armed ? "<color=#" + ColorUtility.ToHtmlStringRGB(MolakPaper.Accent) + ">한 번 더 누르면 모든 생의 기억(앎·말로·업보)이 사라진다</color>" : "<u>기록 초기화 · 모든 생의 기억 지우기</u>";
             GUI.Label(wr, wl, sHint);
             if (GUI.Button(wr, GUIContent.none, GUIStyle.none))
             {
