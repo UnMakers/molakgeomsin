@@ -15,14 +15,14 @@ public static class MolakTeaser
 
     static readonly T[] Table = {
         new T { Id = "capture", When = d => d >= 57 && d < 60 && G("b_capture") < 1, Text = d => "북쪽 관도로 교의 수레가 내려온다는 말이 돈다. 운락까지 " + Num(60 - d) + "." },
-        new T { Id = "debt",    When = d => G("debt") > 0 && d >= G("debtday"), Text = d => "징세조가 내일 아침 장부를 들고 온다. 장부의 빚은 " + G("debt").ToString("0") + "냥." },
+        new T { Id = "debt",    When = d => G("debt") > 0 && d >= G("debtday"), Text = d => "징세조가 내일 아침 빚을 받으러 온다. 남은 빚은 " + G("debt").ToString("0") + "냥." },
         new T { Id = "grudge",  When = d => G("grudge") > 0 && d >= G("grudgeday"), Text = d => "누가 객잔 앞을 두 번 지나갔다. 걸음이 낯익다. 기다리는 걸음이다." },
         new T { Id = "hunt",    When = d => d >= 4 && G("b_hunt") < 1, Text = d => G("g_hunt_won") > 0 || G("g_know_scout") > 0
                                         ? "아래층에서 말발굽이 멎는다. 북쪽 말투 둘. <color=#C9A227>그 밤이다.</color>"
                                         : "아래층에서 말발굽이 멎는다. 북쪽 말투 둘이 빈방이 몇이냐고 묻는다." },
         new T { Id = "raid",    When = d => G("raidday") > 0 && G("raidday") - d >= 0 && G("raidday") - d <= 3, Text = RaidLine },
         new T { Id = "soa",     When = d => d >= 3 && G("f_soamet") < 1 && G("b_soa") < 1, Text = d => "저자 쪽에서 쇳소리가 짧게 두 번 났다. 한 호흡에 두 번." },
-        new T { Id = "hajin",   When = d => d >= 5 && G("b_hajin") < 1, Text = d => "하진무가 장부를 덮었다가 다시 편다. 내일은 무슨 말을 꺼낼 얼굴이다." },
+        new T { Id = "hajin",   When = d => d >= 5 && G("b_hajin") < 1, Text = d => "하진무가 주판을 밀었다가 다시 당긴다. 내일은 무슨 말을 꺼낼 얼굴이다." },
         new T { Id = "plate",   When = d => d >= 7 && G("b_plate") < 1, Text = d => "서열각 앞에 새 쇠패를 다는 망치 소리가 늦게까지 난다." },
         new T { Id = "wanted",  When = d => d >= 8 && G("b_wanted") < 1, Text = d => "관아 담벼락 밑에 풀 솥이 놓였다. 아침이면 방이 붙을 것이다." },
         new T { Id = "jang",    When = d => d >= 11 && G("b_jang") < 1, Text = d => "뒷문 쪽에서 누가 오래 서 있다 간다. 신발 끄는 소리가 가볍다." },

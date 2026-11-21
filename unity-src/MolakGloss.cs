@@ -36,7 +36,7 @@ public class MolakGloss : MonoBehaviour
         new G { Term = "구결", Han = "口訣", Text = "무공의 요령을 외우기 쉽게 적은 글귀" },
         new G { Term = "경지", Han = "境地", Text = "무공의 높이. 이류 → 일류 → 절정 → 초절정 순으로 오른다" },
         new G { Term = "비무", Han = "比武", Text = "무공을 겨루는 공개 대련. 이기면 강호 서열이 오른다" },
-        new G { Term = "서열록", Han = "序列錄", Text = "강호 무인들의 순위를 적은 장부. 이름이 오를수록 알려진다" },
+        new G { Term = "서열록", Han = "序列錄", Text = "강호 무인들의 순위를 적은 명부. 이름이 오를수록 알려진다" },
         new G { Term = "하오문", Han = "下午門", Text = "거지·장사꾼·기생 같은 밑바닥 사람들의 소식 장사 조직" },
         new G { Term = "혈마교", Han = "血魔敎", Text = "십 년 전 무림맹을 무너뜨린 사교(邪敎). 이 땅을 쥐고 있다" },
         new G { Term = "경공", Han = "輕功", Text = "몸을 가볍게 하여 빨리 달리고 높이 뛰는 무공" },

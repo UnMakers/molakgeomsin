@@ -190,7 +190,7 @@
 @choice "남쪽으로 간다 — 혼자, 칼을 묻고" goto:#EveSouthAlone
 @choice "암향과 함께, 문양을 재우러 간다 — 끄지 말고 재운다" if:g_long_amh>0&&f_herbtrue>0&&f_amhdead<1&&f_amheve>0||g_long_amh>0&&f_herbtrue>0&&f_amhdead<1&&f_amhally>0 goto:Molak22#TrueAmh
 @choice "사저와 함께, 불탄 산문으로 간다 — 위패를 산문 안에" if:g_long_cm>0&&g_oldlid>0&&f_cmeve>0||g_long_cm>0&&g_oldlid>0&&f_cmally>0 goto:Molak22#TrueCm
-@choice "참새와 함께, 하오문 원장부를 펼친다 — 내 이름을 누가 샀나" if:g_long_cham>0&&f_chamally>0&&f_chamledger>0&&f_chamgone<1 goto:Molak22#TrueCham
+@choice "참새와 함께, 하오문 매명첩(賣名帖)을 펼친다 — 내 이름을 누가 샀나" if:g_long_cham>0&&f_chamally>0&&f_chamledger>0&&f_chamgone<1 goto:Molak22#TrueCham
 @choice "운락으로 돌아간다 — 그물이 닫히는 밤을 여기서 막는다" goto:Molak21#Stay
 @stop
 # EveNorth
