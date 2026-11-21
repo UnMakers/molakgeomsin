@@ -209,16 +209,3 @@ public class MolakBgm : MonoBehaviour
         src.volume = Mathf.MoveTowards(src.volume, v, Time.unscaledDeltaTime * 2f);
     }
 }
-
-/// <summary>0.4.94 @bgm mood:boss|true|sorrow|tension|soa|…|hush|auto — 그 장면 안에서 곡을 쥔다(MolakBgm.Hold). hush 는 소리를 거둔다, auto 는 놓는다.</summary>
-[Naninovel.Alias("bgm")]
-public class BgmCommand : Naninovel.Command
-{
-    public Naninovel.StringParameter Mood;
-#pragma warning disable CS1998
-    public override async Awaitable Execute (Naninovel.ExecutionContext ctx)
-#pragma warning restore CS1998
-    {
-        MolakBgm.Hold(Assigned(Mood) ? Mood.Value : "auto");
-    }
-}
