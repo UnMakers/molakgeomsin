@@ -262,11 +262,12 @@
 @choice "맹의 칼 셋이 진의 눈에 든다 — 그 틈으로" if:f_maenglord>0 goto:#Ld1M
 @choice "벼랑의 새끼 매듭을 따라간다 — 거지들의 샛길" if:rep_gae>=3&&f_gaesold<1 goto:#Ld1G
 @choice "늑대 가죽의 아이가 손짓하는 쪽으로 간다" if:f_wolfboy>0 goto:#Ld1W
-@choice "진을 돌아간다 — 대전 뒷길, 보름마다 쌀자루가 지나는 길" if:g_know_backpath>0 goto:#Ld1B
+@choice "진을 돌아간다 — 대전 뒷길, 보름마다 쌀자루가 지나는 길" if:g_know_backpath>0||f_freedpath>0 goto:#Ld1B
 @stop
 # Ld1B
-; 0.4.85 교의 칼이 된 생에서 대사형이 알려 준 길(g_know_backpath)
-'<color=#9A70C4>교의 옷을 입고 이 길로 사람을 들였다. 그 생엔 늦었다.</color>'
+; 0.4.85 교의 칼이 된 생에서 대사형이 알려 준 길(g_know_backpath) · 0.4.94 관도에서 풀어 준 청년이 알려 준 길(f_freedpath, 이번 생만)
+@print "'<color=#9A70C4>교의 옷을 입고 이 길로 사람을 들였다. 그 생엔 늦었다.</color>'" if:g_know_backpath>0
+@print "밧줄 자국이 남은 청년이 그려 준 길이다. 그는 이 길로 끌려갔다." if:g_know_backpath<1
 진 옆 벼랑, 칡넝쿨 뒤로 사람 하나 지날 틈이 있다.
 쌀알 몇 개가 흙에 박혀 있다.
 진을 한 걸음도 밟지 않고 대전 뒤 돌계단에 닿는다. 숨이 고르다.
