@@ -19,6 +19,7 @@
   - 배제어에 붙인다: `cropped, cut off, out of frame, head out of frame, cropped arms, cropped hands, cropped weapon, close-up, wide pose`.
   - 뽑은 뒤 `python3 tools/art/edge_check.py 그림.png`: 인물이 위 24px 안(머리), 좌우 16px 안(팔·소매·무기)에 닿으면 「잘림」. 아래는 허벅지에서 끊는 구도라 봐주지 않는다. 잘림이면 쓰지 않고 다시 뽑는다(다섯 번까지). 다섯 번 다 잘리면 그 그림은 넘기고 목록에 적는다.
   - 2026-11-21 v19 상황 그림 11장을 검사하니 일곱 장이 잘렸다(곽산 숙임·하진무 무릎·호치 무릎·쥐눈이 장 겁·진백 손 뻗음·교주 노여움·소아 피투성이).
+- **이미 쓰는 그림이 잘렸을 때는 새로 뽑지 않고 바깥을 그린다(0.4.93)**: 그림을 판 안에 82%쯤으로 앉히고, 잘린 가장자리(좌·우·위 90px 띠 안에 인물이 닿은 자리)와 그 바깥만 가림판으로 열어 다시 그린다(`VNArt/mcp-workflows/_edit_outpaint.json` — VAEEncode → SetLatentNoiseMask → 변화 0.9). 얼굴·몸은 그대로라 같은 사람이 남는다. 잠깐 edit.json 자리에 끼우고, 끝나면 표정 작업 흐름(_edit_expression.json)으로 되돌린다. 표정만 다른 짝 그림은 새 바탕에 원래 얼굴(달라진 화소)을 다시 앉힌다. 뒤에 post_v21(회색+붉은 점) → fit_portrait → edge_check. 검은 머리칼 사이 흰 틈이 남으면 투명 바탕에서 흰 화소로만 번져 지운다.
 - 장마다 최대 다섯 번, 안 되면 다음으로. 장 사이 1분 30초 쉼. 1.5배 고해상 다시 그리기(edit) 방식은 쓰지 않는다.
 - 프롬프트 함정: aura 같은 말은 물결처럼 깨지고, wings는 날개가 돋는다. 산적·광부 등은 왜색(카타나·오비) 배제어를 붙인다.
 - 원본 보관: `unity-art-v16/`(v16 후처리분), `unity-art-v17/`(표정), `unity-art-v18/`(조연 13장).

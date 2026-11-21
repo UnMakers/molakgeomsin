@@ -1133,7 +1133,22 @@
 "…그 늙은이의 사술이로구나."
 교주가 피 묻은 이로 웃는다.
 "본좌도 한때 그자의 바둑돌이었느니라. 몇 번이고 죽고, 몇 번이고 돌아왔지. …너는, 몇 번이냐."
+@choice "대답하지 않는다" goto:#VictoryQ0
+@choice "\"세지 않소.\"" goto:#VictoryQ1
+@choice "\"이번이 마지막이오.\"" goto:#VictoryQ2
+@stop
+# VictoryQ0
 대답하지 않는다. 세기를 그만둔 지 오래다.
+@goto #VictoryQ
+# VictoryQ1
+<align=right>"세지 않소. 세면 지는 판이라."</align>
+교주가 피 섞인 웃음을 흘린다. "……본좌는 셌느니라. 그래서 졌구나."
+@goto #VictoryQ
+# VictoryQ2
+<align=right>"이번이 마지막이오."</align>
+교주의 눈이 당신 가슴의 문양으로 내려간다. "그자도 그리 말했느니라. 마지막이라고."
+@goto #VictoryQ
+# VictoryQ
 @print "골짜기 어귀에서 칼 소리가 하나둘 멎는다. 따라온 이들이 아직 서 있다는 소리다." if:f_rally>0
 @print "진 한가운데 무릎 꿇었던 백리휘가 왼손 엄지를 세운 채로 걸어 들어온다. 맹이 치른 값은 비명 둘이었다." if:f_maengcost>0
 \[ 終 \] — 혈마교의 깃발이 내려간다.
