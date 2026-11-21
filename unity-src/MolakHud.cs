@@ -266,6 +266,8 @@ public class MolakHud : MonoBehaviour
                 if (Mathf.Round(r.d) == 0f) whyRows.RemoveAt(i); else whyRows[i] = r;
                 return;
             }
+        // 0.4.87 한 쪽지에 함께 뜬 줄은 함께 걷힌다 — 새 줄이 붙으면 앞줄들의 시계도 지금으로 맞춘다(줄마다 따로 빠지면 쪽지가 들쭉날쭉 줄어든다)
+        for (int i = 0; i < whyRows.Count; i++) { var r0 = whyRows[i]; r0.t0 = now; whyRows[i] = r0; }
         whyRows.Add(new WhyRow { key = key, d = d, why = why, t0 = now });
         while (whyRows.Count > 6) whyRows.RemoveAt(0);
     }

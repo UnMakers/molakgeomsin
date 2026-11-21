@@ -1,4 +1,4 @@
-# Soa1
+﻿# Soa1
 @art scene:innhall
 @art char:soa
 @goto #Soa1K if:g_fac_jeok>0&&g_runs>0
@@ -157,7 +157,7 @@
 # Soa2X
 젓가락 끝이 한 치 물러난다.
 "저잣거리 이야기꾼이 떠드는 소리를 어디서 주워들었지?"
-<align=right>"잡소리가 아니오. 그분은 그런 사람이었소. 그 산문이 내 집이었고."</align>
+<align=right>"잡소리가 아니오. 그분은 칼보다 몸으로 문을 막는 분이었소. 그 산문이 내 집이었고."</align>
 외눈이 당신 얼굴에 오래 머물다, 젓가락이 내려진다.
 @set aff=aff+1
 @fx curse:-1

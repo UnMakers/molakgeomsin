@@ -51,6 +51,17 @@ public static class MolakStatLog
         s = s.Trim();
         if (s.Length < 1) return;
         lastPick = s; lastPickT = Time.unscaledTime;
+        // 0.4.87 나니노벨의 단추 처리가 우리 것보다 먼저 돌아, 고른 뒤 바로 오는 @fx 가 '고른 일'보다 먼저 까닭을 붙잡았다
+        //   (그래서 선택지 앞의 서술 — 「남은 은자 {mn}냥」 — 이 까닭으로 찍혔다). 방금(0.25초 안) 붙잡은 까닭 가운데
+        //   따로 적어 준 까닭(Why)이 아닌 것은 이 선택지로 고쳐 쓴다.
+        var keys = new List<string>(snap.Keys);
+        foreach (var k in keys)
+        {
+            var v = snap[k];
+            if (Time.unscaledTime - v.t > 0.25f) continue;
+            bool told = (pend.TryGetValue(k, out var p0) && p0.why == v.why) || (pend.TryGetValue("*", out var p1) && p1.why == v.why);
+            if (!told) snap[k] = (Short(s, 30), v.t);
+        }
     }
 
     static readonly Dictionary<string, (string why, float t)> snap = new Dictionary<string, (string, float)>();
