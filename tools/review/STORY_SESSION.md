@@ -39,6 +39,8 @@
 - 수치: `@fx hp:3 sw:1 sl:-1 mn:-2 curse:-2 ng:1 why:"까닭"`. 변수: `@set aff=aff+1`.
 - 변수 머리: `f_`(이번 생 사실) · `g_`(회귀해도 남는 앎) · `b_`(이번 생에 본 마디, 생마다 초기화) · `seen_E_…`(사건을 본 적).
 - 연출: `@art scene:… char:…` · `@chapter text:"마디 이름" sub:"장소"`(이야기 모드 장 고르기 책갈피도 이걸로 생긴다) · `@page`(새 쪽) · `@black`(먹 화면) · `@mark`(갈림길 인장) · `@risk`(승부수).
+- 곡(0.4.94): `@bgm mood:boss|true|sorrow|tension|soa|…` 는 그 장면 안에서 곡을 쥔다(그림이 바뀌어도 곡은 그대로). `@bgm mood:hush` 는 소리를 거둔다. 날이 바뀌거나 새 마디(@chapter)·말로(@ending)에서 저절로 풀리고, `@bgm mood:auto` 로 직접 놓는다. 큰 장면의 고비에만 쓴다(싸움 내내 결전 곡 → 쓰러지는 줄에서 hush → 뒷날은 슬픔).
+- 인연별 이야기 모드(0.4.94): 선택지를 고치거나 더하면 `python3 tools/story_picks.py`도 돌린다(이야기 모드가 고르는 기준표). 이야기 모드에서만 건너뛸 자리는 `@goto #… if:storyauto>0`, 편마다 다른 히로인 마디는 BeatCheck 의 `&&nx_amh<1` 꼴로 닫는다.
 - 지난 생에 본 장면: 첫 본문 앞에 `@deja text:"그 장면 전용 한 줄"` + `{dejapre}`. 다시 겪는 장면은 새 줄을 쓴다.
 - 이야기 마디 붙이는 법(Molak02): `BeatCheck`에 `@goto #BXxx if:조건&&b_xxx<1`, 그 라벨에서 `@chapter` → `@set b_xxx=1` → `@gosub #S_Xxx` → `@goto #Daytime`.
 
@@ -47,6 +49,7 @@
 cd molakgeomsin
 python3 tools/vgen.py      # 라벨·goto·choice·fx 형식 검사 + Molak01 변수 선초기화 다시 만들기. 마지막 줄이 OK 여야 한다
 python3 tools/varlist.py   # 새 변수를 썼을 때만. unity-src/MolakVarList.cs 를 다시 만든다(코드 파일이지만 자동 생성이라 이 세션이 돌려도 된다)
+python3 tools/story_picks.py   # 선택지를 고치거나 더했을 때. 인연별 이야기 모드의 선택 기준표(unity-data/MolakData/storypicks.txt)
 ```
 - `vgen.py`가 Molak01을 고친다. 커밋에 같이 넣는다.
 - `vars N new: [...]`에 새 변수가 보이면 `varlist.py`도 돌린다.
