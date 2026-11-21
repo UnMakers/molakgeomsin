@@ -3931,10 +3931,10 @@
 2	MolakEvents	-0.2	눈을 돌린다	
 3	MolakEvents	-0.2	눈을 돌린다	
 4	MolakEvents	-0.2	눈을 돌린다	
-1	MolakEvents	0.35	"거두기 전에 뽑겠다."	
-2	MolakEvents	0.35	"거두기 전에 뽑겠다."	
-3	MolakEvents	0.35	"거두기 전에 뽑겠다."	
-4	MolakEvents	0.35	"거두기 전에 뽑겠다."	
+1	MolakEvents	3.6	"거두기 전에 뽑겠다."	
+2	MolakEvents	3.6	"거두기 전에 뽑겠다."	
+3	MolakEvents	3.6	"거두기 전에 뽑겠다."	
+4	MolakEvents	3.6	"거두기 전에 뽑겠다."	
 1	MolakEvents	-0.4	아무 말도 하지 않는다	
 2	MolakEvents	-0.4	아무 말도 하지 않는다	
 3	MolakEvents	-0.4	아무 말도 하지 않는다	
