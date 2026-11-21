@@ -1,1 +1,1 @@
-MolakHanja.otf is a subset of Noto Serif KR (c) Google LLC / Adobe, licensed under the SIL Open Font License 1.1 (https://openfontlicense.org). Reserved Font Name: none used.
+MolakHanja.otf is a subset of Noto Serif CJK KR Regular and MolakSeal.otf is a subset of Noto Serif CJK KR Bold (c) Google LLC / Adobe, licensed under the SIL Open Font License 1.1 (https://openfontlicense.org). Reserved Font Name: none used. Rebuilt with tools/font_subset.py.

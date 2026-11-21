@@ -54,11 +54,13 @@ public static class MolakGui
         return tx;
     }
 
-    static Font gowun, hanja;
+    static Font gowun, hanja, seal;
     /// <summary>본문·UI 글꼴(고운바탕).</summary>
     public static Font Gowun { get { if (gowun == null) gowun = Resources.Load<Font>("GowunBatang"); return gowun; } }
     /// <summary>제목·인장 한자 글꼴.</summary>
     public static Font Hanja { get { if (hanja == null) hanja = Resources.Load<Font>("MolakHanja"); return hanja; } }
+    /// <summary>0.4.92 인장 글자 글꼴(Noto Serif CJK KR Bold 부분집합, tools/font_subset.py). 진짜 굵은 획이라 가짜 굵게를 쓰지 않는다.</summary>
+    public static Font SealFont { get { if (seal == null) seal = Resources.Load<Font>("MolakSeal"); return seal; } }
 
     /// <summary>손가락(또는 마우스 왼쪽)이 눌려 있나 + 그 위치(화면 좌표, 아래가 0). 행낭·본문 끌기·입력 보호가 같이 쓴다.</summary>
     public static bool PointerScreen (out Vector2 pos)

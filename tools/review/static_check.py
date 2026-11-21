@@ -12,6 +12,8 @@
      첫 생에도 열리는 자리(들어오는 길에 회귀·앎 조건이 하나도 없는 라벨)에 있는가.
   ⑤ 따옴표·색 태그 짝.
   ⑥ 쪽 넘김 뒤 장면 · ⑦ 쪽 넘김 뒤 인물(0.4.91: @page 뒤 그림 없이 앞 인물이 이어 말하면).
+  ⑧ 한자 글꼴(0.4.92): 게임이 쓰는 한자·인장 글자가 unity-font 의 MolakHanja·MolakSeal 안에 있는가(없으면 기기 글꼴로 빠진다).
+     빠졌으면 python3 tools/font_subset.py 로 다시 뽑는다.
 """
 import io, os, re, sys, glob, collections
 
@@ -229,7 +231,19 @@ for s, L in scripts.items():
         if pc and pc != 'none':
             rep('쪽 넘김 인물', s, i, '@page 뒤 그림 없이 대사 — 앞 인물 %s: %s' % (pc, talk[:30]))
 
-order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝']
+# ⑧ 0.4.92 한자 글꼴: 인장 通 이 기기 고딕으로 찍히던 것(통·실·억·성·관·기·세·선이 글꼴에 없었다). 기준: 쓰는 한자는 전부 글꼴 안에.
+try:
+    sys.path.insert(0, os.path.join(ROOT, 'tools'))
+    import font_subset as _fs
+    _mh, _ms = _fs.cmap(os.path.join(ROOT, 'unity-font', 'MolakHanja.otf')), _fs.cmap(os.path.join(ROOT, 'unity-font', 'MolakSeal.otf'))
+    _miss = sorted(c for c in _fs.used_hanja() if ord(c) not in _mh)
+    if _miss: out['글꼴'].append('MolakHanja 에 없는 한자 %d: %s → python3 tools/font_subset.py' % (len(_miss), ''.join(_miss)))
+    _miss = sorted(c for c in _fs.seal_hanja() if ord(c) not in _ms)
+    if _miss: out['글꼴'].append('MolakSeal 에 없는 인장 글자 %d: %s → python3 tools/font_subset.py' % (len(_miss), ''.join(_miss)))
+except ImportError as e:
+    out['글꼴'].append('fontTools 없음 — 글꼴 검사 건너뜀 (%s)' % e)
+
+order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝', '글꼴']
 total = 0
 for k in order:
     v = out.get(k, [])

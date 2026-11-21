@@ -232,7 +232,7 @@ public class MolakSettings : MonoBehaviour
             "<color=#C9A44C>엔진</color>\nUnity · Naninovel\n\n" +
             "<color=#C9A44C>그림</color>\n삽화·인물·타이틀 그림은 생성형 AI(animagine-xl 4.0, ComfyUI)로 만든 뒤 손질했다.\n\n" +
             "<color=#C9A44C>소리</color>\n효과음은 코드로 합성했다. 배경음은 시험용이며 정식 출시 전 교체한다.\n\n" +
-            "<color=#C9A44C>글꼴</color>\n고운바탕(Google Fonts, SIL Open Font License)\n\n" +
+            "<color=#C9A44C>글꼴</color>\n고운바탕 · 송명 · Noto Serif CJK KR(한자·인장)\nGoogle Fonts, SIL Open Font License\n\n" +
             "<color=#C9A44C>플레이 기록</color>\n생마다 한 줄씩 이 기기에만 남는다. 다른 곳으로 보내지 않는다.\n<size=" + Mathf.RoundToInt(20 * u) + ">" + MolakAutoSave.LogPath + "</size>";
         float th = body.CalcHeight(new GUIContent(txt), cw);
         var br = MolakPaper.BottomButton(w, h, u);

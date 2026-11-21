@@ -5,6 +5,9 @@ using UnityEngine;
 /// 붓으로 원(원상 — 먹빛 바탕에선 흰 붓, 종이 바탕에선 검은 먹)을 먼저 긋고(0.5초), 그 안에 한 글자가 찍힌다(0.45초, 크게 → 제자리). 글자는 인주가 덜 묻은 듯 군데군데 빈다.
 /// 빛: 좋은 판정(通·破·勢·先·勝) 주홍, 나쁜 판정(失·傷·敗) 검붉게 식고 원이 끊기며 글자 아래로 핏물이 흐른다(시안 4에서), 앎(憶·醒) 보랏빛, 초식(觀·步·落·絶) 금빛, 경지(境) 금빛, 갈림(岐) 주홍.
 /// IMGUI 에서 쓴다: Draw(box, 글자, 지난 시간, 투명도, 글꼴, 바탕빛).
+/// 0.4.92 인장 손질(언메이커): 글자는 늘 인장 글꼴(MolakGui.SealFont — 명조 굵은 획)로 찍는다. 0.4.91까지는 通·失·憶·醒·觀·岐·勢·先 이 한자 글꼴에 없어
+///   기기 글꼴(고딕)로 빠졌고, 그 위에 가짜 굵게를 얹어 뭉툭했다(같은 인장이 境 은 명조, 通 은 고딕). 글자는 원 안쪽에 들어앉게 조금 작게.
+///   먹빛 바탕에선 사방에 튀던 인주 점을 걷고(색종이 조각처럼 보였다), 나쁜 판정의 핏물은 네모 막대 → 끝으로 가늘어지다 방울이 맺히는 줄기로.
 /// </summary>
 public static class MolakSeal
 {
@@ -24,7 +27,7 @@ public static class MolakSeal
     {
         switch (k)
         {
-            case Kind.Bad: return new Color(0.66f, 0.09f, 0.09f, 1f);    // 식은 피(먹빛 바탕에서도 읽히게)
+            case Kind.Bad: return new Color(0.72f, 0.11f, 0.10f, 1f);    // 식은 피(먹빛 바탕에서도 읽히게) · 0.4.92 명조 획이 가늘어 조금 밝게
             case Kind.Know: return new Color(0.62f, 0.42f, 0.86f, 1f);   // 지난 생의 앎(보랏빛)
             case Kind.Skill: return new Color(0.86f, 0.68f, 0.30f, 1f);  // 금빛
             default: return new Color(0.80f, 0.22f, 0.15f, 1f);          // 주홍
@@ -111,12 +114,13 @@ public static class MolakSeal
         float qg = Mathf.Clamp01((t - 0.45f) / 0.45f);
         if (qg > 0f)
         {
-            int fs = Mathf.RoundToInt(S * 0.46f);
-            if (sGlyph == null || glyphSize != fs || glyphFont != font)
+            var gf = MolakGui.SealFont; bool realBold = gf != null; if (!realBold) gf = font;
+            int fs = Mathf.RoundToInt(S * (realBold ? 0.42f : 0.46f));
+            if (sGlyph == null || glyphSize != fs || glyphFont != gf)
             {
-                glyphSize = fs; glyphFont = font;
-                sGlyph = new GUIStyle(GUI.skin.label) { fontSize = fs, alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, clipping = TextClipping.Overflow };
-                if (font != null) sGlyph.font = font;
+                glyphSize = fs; glyphFont = gf;
+                sGlyph = new GUIStyle(GUI.skin.label) { fontSize = fs, alignment = TextAnchor.MiddleCenter, fontStyle = realBold ? FontStyle.Normal : FontStyle.Bold, clipping = TextClipping.Overflow };
+                if (gf != null) sGlyph.font = gf;
             }
             float e = 1f + 0.35f * Mathf.Pow(1f - qg, 3f), ga = Mathf.Min(1f, qg * 2.2f) * alpha;
             var m = GUI.matrix; GUIUtility.ScaleAroundPivot(new Vector2(e, e), c); GUIUtility.RotateAroundPivot(-2.5f, c);
@@ -125,12 +129,12 @@ public static class MolakSeal
             MolakGui.Ink(sGlyph, new Color(col.r, col.g, col.b, ga));
             GUI.Label(gr, hanja, sGlyph);
             // 인주 빠짐: 글자 위에 바탕빛 얼룩(글자 밖은 바탕과 같은 빛이라 보이지 않는다)
-            GUI.color = new Color(back.r, back.g, back.b, (paper ? 0.85f : 0.45f) * ga);   // 0.4.91 먹빛 바탕은 인주 빠짐을 옅게(덜 지저분하게)
+            GUI.color = new Color(back.r, back.g, back.b, (paper ? 0.8f : 0.28f) * ga);   // 0.4.91 먹빛 바탕은 인주 빠짐을 옅게(덜 지저분하게) · 0.4.92 더 옅게
             float off = Hash(seed, 9);
             GUI.DrawTextureWithTexCoords(new Rect(c.x - S * 0.26f, c.y - S * 0.26f, S * 0.52f, S * 0.52f), Speck, new Rect(off, off * 0.7f, 0.9f, 0.9f));
             GUI.matrix = m;
-            // 찍히는 순간 인주가 튄다
-            if (qg >= 1f || t > 0.9f)
+            // 찍히는 순간 인주가 튄다 — 종이 바탕에서만(0.4.92 먹빛 바탕에선 색종이 조각처럼 보였다)
+            if (paper && (qg >= 1f || t > 0.9f))
             {
                 GUI.color = new Color(col.r, col.g, col.b, 0.7f * alpha);
                 for (int i = 0; i < 9; i++)
@@ -144,14 +148,20 @@ public static class MolakSeal
         if (kind == Kind.Bad && t > 0.9f)
         {
             float gr = Mathf.Clamp01((t - 0.9f) / 0.9f); gr = 1f - (1f - gr) * (1f - gr);
-            float[] xs = { -0.14f, 0.02f, 0.13f }, ls = { 1f, 0.6f, 0.8f };
-            float y0 = c.y + S * 0.17f, wd = S * 0.022f;
-            GUI.color = new Color(col.r * 0.9f, col.g * 0.9f, col.b * 0.9f, 0.92f * alpha);
-            for (int i = 0; i < 3; i++)
+            // 0.4.92 획 아래에서 굵게 떨어져 가늘어지고, 끝에 눈물방울처럼 다시 불룩해진다(점을 촘촘히 이어 끊김 없이). 네모 막대와 따로 노는 둥근 방울은 「!」처럼 읽혔다.
+            float[] xs = { -0.11f, 0.12f }, ls = { 1f, 0.62f };
+            float y0 = c.y + S * 0.12f, wd = S * 0.034f;
+            GUI.color = new Color(col.r * 0.92f, col.g * 0.92f, col.b * 0.92f, 0.94f * alpha);
+            for (int i = 0; i < xs.Length; i++)
             {
-                float hgt = S * (0.06f + 0.11f * ls[i]) * gr, x = c.x + S * xs[i] + (Hash(seed, 90 + i) - 0.5f) * S * 0.03f;
-                GUI.DrawTexture(new Rect(x - wd / 2f, y0, wd, hgt), Texture2D.whiteTexture);
-                GUI.DrawTexture(new Rect(x - wd * 0.75f, y0 + hgt - wd * 0.75f, wd * 1.5f, wd * 1.5f), Dot);   // 맺힌 방울
+                float hgt = S * (0.07f + 0.12f * ls[i]) * gr, x = c.x + S * xs[i] + (Hash(seed, 90 + i) - 0.5f) * S * 0.03f;
+                int n = Mathf.Max(3, Mathf.CeilToInt(hgt / (wd * 0.15f)));
+                for (int k = 0; k <= n; k++)
+                {
+                    float f = k / (float)n;
+                    float r = wd * 0.5f * (f < 0.78f ? Mathf.Lerp(1f, 0.42f, f / 0.78f) : Mathf.Lerp(0.42f, 0.78f, Mathf.Sin((f - 0.78f) / 0.22f * Mathf.PI * 0.5f)));
+                    GUI.DrawTexture(new Rect(x - r, y0 + hgt * f - r, r * 2f, r * 2f), Dot);
+                }
             }
         }
         GUI.color = g0;
