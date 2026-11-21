@@ -45,10 +45,11 @@ public class MolakStoryAuto : MonoBehaviour
         }
     }
 
-    /// <summary>대본의 글귀 → 화면 글귀와 맞출 틀. {변수}는 아무 글자, 꺾쇠 태그는 걷는다.</summary>
+    /// <summary>대본의 글귀 → 화면 글귀와 맞출 틀. {변수}는 아무 글자, 꺾쇠 태그·승부수 표시는 걷는다.</summary>
     static Regex Pattern (string t)
     {
         t = Regex.Replace(t, "<[^>]+>", "");
+        t = MolakChoiceMeta.StripRisk(t);   // 승부수 표시 〔검술+2〕 는 화면 글귀에서 빠져 주석으로 간다(MolakChoiceMeta.StripRisk) — 대본 글귀에서도 뺀다
         var parts = Regex.Split(t, @"\{[^}]*\}");
         return new Regex("^" + string.Join(".*?", parts.Select(p => Regex.Escape(p.Trim())).ToArray()), RegexOptions.CultureInvariant);
     }
