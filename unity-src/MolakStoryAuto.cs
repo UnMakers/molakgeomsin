@@ -58,6 +58,9 @@ public class MolakStoryAuto : MonoBehaviour
     Naninovel.UI.ChoiceHandlerButton picked;
     readonly List<CanvasGroup> hidden = new List<CanvasGroup>();
     public static string LastPick = "";
+    /// <summary>편마다 맺는 끝(MolakEnd 의 id): 소아 합벽 · 암향 면향 · 청묘 운해 · 참새 명가.</summary>
+    public static readonly string[] RouteEnd = { "", "hapbyeok", "myeonhyang", "unhae", "myeongga" };
+    bool closing;
     /// <summary>같은 날 같은 글귀를 다시 고를 때마다 빼는 값.</summary>
     public const float RepeatCost = 12f;
     readonly Dictionary<string, int> picks = new Dictionary<string, int>();
@@ -91,6 +94,13 @@ public class MolakStoryAuto : MonoBehaviour
         try { var ps = player.MainTrack.PlayedScript; if (ps != null) script = ps.Path ?? ""; } catch { }
         int slash = script.LastIndexOf('/'); if (slash >= 0) script = script.Substring(slash + 1);
         int route = MolakStory.Route;
+        // 그 편의 진짜 끝을 보고 나면 이야기는 거기서 맺는다 — 다음 생으로 넘기지 않고 제목 화면으로
+        if (script == "MolakOver" && MolakStats.Str("g_lastend", "") == RouteEnd[Mathf.Clamp(route, 0, 4)])
+        {
+            if (!closing) { closing = true; Unhide(); var st = Engine.GetService<IStateManager>(); if (st != null) st.ResetState(); }
+            return;
+        }
+        closing = false;
         float day = MolakStats.Get("day");
         if (day != pickDay) { pickDay = day; picks.Clear(); }
         Naninovel.UI.ChoiceHandlerButton best = null; float bestSc = float.MinValue; string bestLabel = "";

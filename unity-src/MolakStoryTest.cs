@@ -53,7 +53,7 @@ public class MolakStoryTest : MonoBehaviour
             float day = MolakStats.Get("day");
             if (day != lastDay) { lastDay = day; W("— 날 " + day + "  검" + MolakStats.Get("sw") + " 기" + MolakStats.Get("ng") + " 사술" + MolakStats.Get("curse") + " 정" + MolakStats.Get("aff") + "/" + MolakStats.Get("amhaff") + "/" + MolakStats.Get("cmaff") + "/" + MolakStats.Get("chamaff")); }
             if (MolakStoryAuto.LastPick != lastPick) { lastPick = MolakStoryAuto.LastPick; W("   ▸ " + lastPick); lastMove = Time.realtimeSinceStartup; }
-            if (MolakStats.Get("g_trueclear") > 0f) { W("== 진짜 끝 · " + MolakStats.Str("deathcause")); Status = "true:" + MolakStats.Str("deathcause"); break; }
+            if (MolakStats.Str("g_lastend", "") == MolakStoryAuto.RouteEnd[route]) { W("== 그 편의 끝 · " + MolakStats.Str("deathcause") + " (생 " + MolakStats.Get("g_runs") + ")"); Status = "true:" + MolakStats.Str("deathcause"); break; }
             if (Time.realtimeSinceStartup - lastMove > 25f)
             {
                 var cmd = tr.PlayedCommand;
