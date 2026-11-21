@@ -113,8 +113,9 @@ public class MolakFrenzy : MonoBehaviour
 
 /// <summary>@frenzy words:"늦었다|소아|왜" center:"소아" level:g_gr_soa — 광란 연출이 끝날 때까지 기다린다. level 은 전역 횟수 변수 이름(1회째 = 0단).</summary>
 [Alias("frenzy")]
-public class FrenzyCommand : Command
+public class FrenzyCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     [RequiredParameter] public StringParameter Words;
     public StringParameter Center;
     public StringParameter Level;

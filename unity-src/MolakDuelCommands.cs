@@ -191,8 +191,9 @@ public class DuelInfoCommand : Command
 
 /// <summary>@duel style:front|killer|guard|curse — 판정. 결과 변수: duelwin, oldrank, newrank(표시용 문자열), tierup, tiername, dmg, reward</summary>
 [Alias("duel")]
-public class DuelCommand : Command
+public class DuelCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     /// <summary>이야기 속 이름 있는 상대(비무판 잡졸이 아닌 판).</summary>
     public static readonly HashSet<string> BossKinds = new HashSet<string> { "soa", "wolf", "lord", "jinbaek", "hochi", "kyona", "hunt3", "cheolsan", "rival", "chainmob", "hunt1", "hunt2", "namgung" };
     /// <summary>지난 생에 진 적이 있으면 첫 수를 기억해 경고해 주는 상대.</summary>

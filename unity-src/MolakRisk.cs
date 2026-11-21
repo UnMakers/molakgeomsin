@@ -8,8 +8,9 @@ using UnityEngine;
 /// need 가 "+2"/"-1"/"0" 꼴이면 그날의 강호의 격(MolakRules.Bar)에 더한 값, "12" 꼴이면 그 수 그대로.
 /// </summary>
 [Alias("risk")]
-public class RiskCommand : Command
+public class RiskCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     [Alias("on")] public StringParameter On;
     public StringParameter Need;
     /// <summary>0.4.85 지난 생에 본 수로 연 판정: 승산이 RiskKnowFloor 아래로 내려가지 않고, 빗나가면 「몸이 늦었다」.</summary>

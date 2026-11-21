@@ -202,8 +202,9 @@ public class MolakName : MonoBehaviour
 
 /// <summary>@pname — 이름이 없을 때만(또는 again:true면 다시) 이름을 받는다. 받을 때까지 대본을 멈춘다.</summary>
 [Alias("pname")]
-public class PnameCommand : Command
+public class PnameCommand : Command, IMolakMoment
 {
+    public bool CoversText => !MolakName.HasName || (Assigned(Again) && Again.Value);   // 0.4.90 이름 화면이 뜰 때만 덮는다(IMolakMoment)
     public BooleanParameter Again;
     public override async Awaitable Execute (ExecutionContext ctx)
     {

@@ -3,6 +3,12 @@ using Naninovel;
 using Naninovel.Commands;
 using UnityEngine;
 
+/// <summary>0.4.90 글자리를 덮거나 화면을 가리는 연출 명령(인장·기연 판·먹 화면·판이 바뀌는 날 카드·광란·이름 화면·비무 판).
+/// 기준: 이런 명령 바로 앞의 글은 읽을 틈을 준 뒤(한 번 누른 뒤)에 연출이 뜬다 — 대본 흐름(MolakFlow.NextIsText·NextBreaksPage)이 단락 끝으로 센다.
+/// 예전엔 연출 명령을 지나쳐 보고 그 뒤에 또 글이 있으면 기다리지 않아, 「단전에서 열이 터진다.」 같은 한 줄이 찍히자마자 기연 판·인장에 덮였다
+/// (언메이커: 선택지 고른 직후 한 줄짜리가 읽기 전에 사라진다). CoversText 가 거짓이면(그때그때 덮지 않는 종류) 지나쳐 본다.</summary>
+public interface IMolakMoment { bool CoversText { get; } }
+
 /// <summary>
 /// 대사 흐름 — 같은 맥락(같은 스크립트·인접 행)의 문장은 지우지 않고 아래로 쌓고,
 /// 맥락이 끊길 때(스크립트/라벨 점프, 장면 전환, 선택 직후, 분량 초과)만 비운다.
@@ -339,6 +345,7 @@ public class MolakFlow : MonoBehaviour
             if (Skipped(c)) continue;   // 0.4.80 조건이 거짓이라 건너뛸 명령(@print … if:)은 다음 글로 치지 않는다
             if (c is PrintText) return true;
             if (c is AddChoice) return false;           // 0.4.8: 마지막 글을 다 읽고 한 번 더 눌러야 선택지가 뜬다(선택지가 글을 가리지 않게)
+            if (c is IMolakMoment mm && mm.CoversText) return false;   // 0.4.90 인장·기연 판·먹 화면 앞에서는 글을 읽게 한다
             var n = c.GetType().Name;
             // 흐름을 끊는 명령 = 단락 경계
             if (c is Gosub || c is Return || c is Stop || c is Wait) return false;
@@ -368,6 +375,7 @@ public class MolakFlow : MonoBehaviour
             { bool ok = true; try { ok = Naninovel.ExpressionEvaluator.Evaluate<bool>(c.ConditionalExpression.Value); } catch { } if (!ok) continue; }
             if (c is PrintText) return false;
             if (c is AddChoice || c is Gosub || c is Return || c is Stop) return true;
+            if (c is IMolakMoment mm && mm.CoversText) return true;    // 0.4.90 덮는 연출 앞은 쪽 끝(빨리여도 거기서 기다린다)
             if (c is Wait) continue;
             var n = c.GetType().Name;
             if (n == "SceneCommand" || n.Contains("Ending") || n == "DayTickCommand" || n == "InitRunCommand" || n == "PageCommand") return true;

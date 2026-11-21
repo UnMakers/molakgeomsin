@@ -10,8 +10,9 @@ using UnityEngine;
 ///  · '빨리'·넘기기 중에도 뜬다(보상은 놓치면 안 된다) — 그때는 2.6초 보이고 저절로 닫힌다. '자동'이면 4.2초.
 /// </summary>
 [Alias("giyeon")]
-public class GiyeonCommand : Command
+public class GiyeonCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     [RequiredParameter] public StringParameter Name;
     public StringParameter Hanja;
     public StringParameter Kicker;

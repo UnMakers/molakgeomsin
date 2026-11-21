@@ -240,8 +240,9 @@ public class MolakBlackout : MonoBehaviour
 /// hold:2.2 줄마다 머무는 초(기본 1.8), red:true 핏빛 먹. 끝날 때까지 대본을 멈춘다.
 /// turn:"아직, 쓰러질 수 없다." — 마지막 줄이 머문 뒤 지직이며 이 문장으로 뒤집힌다(되감기지 않는 죽음 화면).</summary>
 [Alias("black")]
-public class BlackCommand : Command
+public class BlackCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     public StringParameter Text;
     public DecimalParameter Hold;
     public BooleanParameter Red;

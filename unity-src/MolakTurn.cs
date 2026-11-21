@@ -176,8 +176,9 @@ public class MolakTurnCard : MonoBehaviour
 
 /// <summary>@turn kicker:"판이 바뀌었다" title:"열흘째 밤" lines:"a|b" — 닫힐 때까지 기다린다. '빨리' 중에는 띄우지 않는다.</summary>
 [Alias("turn")]
-public class TurnCommand : Command
+public class TurnCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     public StringParameter Kicker;
     [RequiredParameter] public StringParameter Title;
     public StringParameter Lines;

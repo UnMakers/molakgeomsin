@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Naninovel;
 using UnityEngine;
 
@@ -260,8 +260,9 @@ public static class MolakStance
 
 /// <summary>@stance do:init|pre|boost|unboost|gwan|end  /  @stance act:1~6</summary>
 [Alias("stance")]
-public class StanceCommand : Command
+public class StanceCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     public StringParameter Do;
     public IntegerParameter Act;
 

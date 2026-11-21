@@ -1,10 +1,12 @@
-﻿using Naninovel;
+using Naninovel;
 using UnityEngine;
 
 [Alias("vfx")]
-public class VfxCommand : Command
+public class VfxCommand : Command, IMolakMoment
 {
     public StringParameter Kind;
+    /// <summary>0.4.90 인장이 찍히는 종류(경지 돌파 tier · 경지의 밤 bt_*)만 글자리를 덮는다. 빛·흔들림·날씨는 글 위에 얹힐 뿐이라 지나친다.</summary>
+    public bool CoversText { get { var k = Assigned(Kind) ? Kind.Value : ""; return k == "tier" || k.StartsWith("bt_"); } }
     public override async Awaitable Execute (ExecutionContext ctx)
     {
         var k = Assigned(Kind) ? Kind.Value : "none";
@@ -136,8 +138,9 @@ public class SpeakerCommand : Command
 }
 
 [Alias("chapter")]
-public class ChapterCommand : Command
+public class ChapterCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     public StringParameter Text;
     public StringParameter Sub;
     /// <summary>0.4.82 그림 화면의 마디 이름 아래 회색 작은 글씨 한 줄(없으면 비운다).</summary>

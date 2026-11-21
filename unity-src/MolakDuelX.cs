@@ -595,8 +595,9 @@ public static class MolakDuelX
 
 /// <summary>@duelx do:init|tell|pre|keepcheck|keep|fall  /  @duelx act:1(정면)|2(받아치기)|3(흔들기)|4(관 — 눈으로 본다)</summary>
 [Alias("duelx")]
-public class DuelXCommand : Command
+public class DuelXCommand : Command, IMolakMoment
 {
+    public bool CoversText => true;   // 0.4.90 글자리를 덮는다(IMolakMoment)
     public StringParameter Do;
     public IntegerParameter Act;
     public IntegerParameter Put;
