@@ -101,7 +101,7 @@ public class MolakVfx : MonoBehaviour
     public static void Stamp (string hanja, string line, bool big)
     {
         if (instance == null) return;
-        instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; instance.stampOutAt = -1f; MolakSfx.Stamp();
+        instance.stampHanja = hanja; instance.stampLine = line; instance.stampBig = big; instance.stampT = 0f; instance.stampOutAt = -1f; MolakSfx.Seal(hanja, big);
         var sp = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null;
         bool skipping = sp != null && sp.Skipping;
         instance.stampHold = Engine.Initialized && !MolakTitle.Showing;
@@ -495,8 +495,6 @@ public class MolakVfx : MonoBehaviour
                 }
                 float a = stampT < 0.12f ? stampT / 0.12f : 1f;
                 if (!stampHold && stampOutAt >= 0f) a = Mathf.Clamp01(1f - (stampT - stampOutAt) / Out);
-                bool ok = stampHanja == "通" || stampHanja == "破" || stampHanja == "勢" || stampHanja == "先" || stampHanja == "境";
-                var col = ok ? new Color(0.62f, 0.45f, 0.1f, 1f) : new Color(0.62f, 0.12f, 0.08f, 1f);
                 var ta = TextArea();
                 // 글자리를 빈 종이로: 아래 글이 비치지 않게
                 bool dk = DarkSlip;   // 0.4.82 그림 화면: 옻칠 판 그대로 덮는다

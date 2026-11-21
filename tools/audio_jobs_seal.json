@@ -1,0 +1,44 @@
+[
+ {
+  "kind": "sfx",
+  "name": "seal_brush",
+  "prompt": "Quick calligraphy ink brush stroke swept in one circle across rice paper, soft bristle swish, close-up foley, dry, short",
+  "sec": 1.6
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_thud",
+  "prompt": "Heavy carved stone seal pressed hard onto paper on a wooden desk, single deep solid thud, close-up foley, short",
+  "sec": 1.2
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_t_good",
+  "prompt": "Single bright small Chinese bronze temple bell strike, clear shimmering ring, long clean decay",
+  "sec": 4.0
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_t_bad",
+  "prompt": "Single low muffled war drum hit with a dark rumbling sub tail, ominous, slow decay",
+  "sec": 3.5
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_t_know",
+  "prompt": "Soft ethereal crystal chime shimmer, mystical glass bells, dreamy airy reverb tail",
+  "sec": 4.0
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_t_skill",
+  "prompt": "Tibetan singing bowl struck once, warm metallic resonance with golden shimmering overtones, long decay",
+  "sec": 4.0
+ },
+ {
+  "kind": "sfx",
+  "name": "seal_t_fork",
+  "prompt": "Single deep Chinese gong hit, low resonant swell, long decay",
+  "sec": 4.0
+ }
+]

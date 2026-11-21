@@ -107,6 +107,6 @@ public class MarkCommand : Command
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp != null && sp.Skipping) return;
         MolakMark.Show(Text.Value, Assigned(Note) ? Note.Value : null);
-        MolakSfx.Stamp();
+        MolakSfx.Seal("岐");   // 0.4.89 갈림 인장 소리(붓 원 → 찍힘 → 낮은 징)
     }
 }
