@@ -404,7 +404,7 @@
 다음 생 — 검술 <color=#C9A227>{nx_sw}</color> · 내공 <color=#C9A227>{nx_ng}</color> · 체력 <color=#C9A227>{nx_hp}</color>로 깨어난다.<br><color=#8A7A66>남은 기억 {knowc} · 청운검결 {formc}/4 · 회귀 {g_runs}회</color>
 @goto #ShopGo if:tr_c<1||rm_done<1
 @page
-<color=#C9A227>풀다 만 실마리</color> <color=#8A7A66>— 메뉴(☰)의 「그 밤의 진실」에 적혀 있다</color>
+<color=#C9A227>풀다 만 실마리</color> <color=#8A7A66>— 오른쪽 위 메뉴의 「그 밤의 진실」에 적혀 있다</color>
 @print "{tr_1}" if:tr_c>=1
 @print "{tr_2}" if:tr_c>=2
 # ShopGo

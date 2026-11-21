@@ -14,6 +14,7 @@
   ⑥ 쪽 넘김 뒤 장면 · ⑦ 쪽 넘김 뒤 인물(0.4.91: @page 뒤 그림 없이 앞 인물이 이어 말하면).
   ⑧ 한자 글꼴(0.4.92): 게임이 쓰는 한자·인장 글자가 unity-font 의 MolakHanja·MolakSeal 안에 있는가(없으면 기기 글꼴로 빠진다).
      빠졌으면 python3 tools/font_subset.py 로 다시 뽑는다.
+  ⑨ 본문 기호(0.4.93): 대본에 쓴 기호가 본문 글꼴(고운바탕)에 있는가 — 없으면 네모(□)로 나온다(gowun_symbols.txt).
 """
 import io, os, re, sys, glob, collections
 
@@ -243,7 +244,17 @@ try:
 except ImportError as e:
     out['글꼴'].append('fontTools 없음 — 글꼴 검사 건너뜀 (%s)' % e)
 
-order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝', '글꼴']
+# ⑨ 0.4.93 본문 기호: 「메뉴(☰)」가 네모로 나왔다. 기준: 대본의 기호는 본문 글꼴에 있는 것만.
+_gs = set(io.open(os.path.join(HERE, 'gowun_symbols.txt'), encoding='utf-8').read().split('\n', 1)[1])
+for s, L in scripts.items():
+    for i, l in enumerate(L):
+        if l.startswith(';'): continue
+        for c in set(re.sub(r'<[^>]+>', '', l)):
+            u = ord(c)
+            if (0x2000 <= u <= 0x2BFF or 0x3000 <= u <= 0x303F or 0xFF00 <= u <= 0xFFEF) and c not in _gs:
+                rep('본문 기호', s, i, '본문 글꼴에 없는 기호 %s (U+%04X)' % (c, u))
+
+order = ['이동', '그림', '변수', '앎(켜기만 함)', '생 수 말', '쪽 넘김 장면', '쪽 넘김 인물', '짝', '글꼴', '본문 기호']
 total = 0
 for k in order:
     v = out.get(k, [])

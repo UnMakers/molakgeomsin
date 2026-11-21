@@ -556,6 +556,7 @@
 @set f_namgungdead=0
 @set f_namgungdoor=0
 @set f_namgungspared=0
+@set f_netslip=0
 @set f_newrobe=0
 @set f_nightmarketgone=0
 @set f_noplate=0

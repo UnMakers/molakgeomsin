@@ -32,7 +32,7 @@ public static class MolakEventDefs
             // 0.4.12 히로인의 일상
             new Def("E_SoaWhet", 10, 45, 'd', "f_soamet&!f_soadead", null, 0, 22),
             new Def("E_SoaBowl", 6, 50, 'd', "f_soamet&!f_soadead", null, 0, 22),
-            new Def("E_AmhShop", 8, 26, 'd', null, null, 0, 14),
+            new Def("E_AmhShop", 8, 26, 'd', "!f_amhdead", null, 0, 14),
             // 0.4.50 참새의 일상
             new Def("E_ChamRoof", 8, 48, 'n', "b_ch1&!f_chamgone", null, 0, 18),
             new Def("E_ChamTab", 9, 40, 'd', "b_ch1&!f_chamgone&!f_hajindead", "E_ChamRoof", 2, 16),
@@ -73,8 +73,8 @@ public static class MolakEventDefs
             new Def("E_JinSister", 20, 40, 'd', "g_jbtruth&!f_jinbaekdead&!f_jbsister", null, 0, 30),
             new Def("E_HajinNight", 24, 40, 'n', "!f_hajindead&!f_hajinbond", null, 0, 22),
             new Def("E_Flood", 6, 40, 'd', null, null, 0, 9),
-            new Def("E_Maeng1", 16, 28, 'd', "f_unjudone", null, 0, 40),
-            new Def("E_Maeng2", 30, 41, 'n', "f_maengcontact&!f_maengsold", "E_Maeng1", 6, 34),
+            new Def("E_Maeng1", 16, 28, 'd', "f_unjudone&!f_baekridead", null, 0, 40),
+            new Def("E_Maeng2", 30, 41, 'n', "f_maengcontact&!f_maengsold&!f_baekridead", "E_Maeng1", 6, 34),
             new Def("E_Maeng3", 45, 58, 'd', "f_maengcontact&!f_maengsold&!f_baekridead", "E_Maeng1", 10, 40),
             new Def("E_Namgung", 24, 44, 'd', "rank>0&rank<=30000", null, 0, 26),
             new Def("E_Gaebang1", 10, 26, 'd', "f_gaekid", null, 0, 30),
@@ -104,7 +104,7 @@ public static class MolakEventDefs
             new Def("E_Simma", 1, 0, 'a', "sl>=7", null, 0, 12),
             new Def("E_Dream", 6, 0, 'n', "curse>=30", null, 0, 10),
             new Def("E_Echoes", 20, 0, 'n', "curse>=50", null, 0, 10),
-            new Def("E_Herb", 1, 12, 'd', null, null, 0, 30),
+            new Def("E_Herb", 1, 12, 'd', "!f_herbdead", null, 0, 30),
             new Def("E_Herb2x", 7, 0, 'd', "!f_herbdead", "E_Herb", 4, 14),
             new Def("E_Herb4", 16, 0, 'd', "curse>=35&!f_herbdead", "E_Herb2x", 5, 14),
             new Def("E_Herb5", 30, 0, 'd', "curse>=55&!f_herbdead", "E_Herb4", 6, 16),
@@ -114,8 +114,8 @@ public static class MolakEventDefs
             new Def("E_Duelist", 2, 14, 'd', null, null, 0, 12),
             new Def("E_Duelist2", 10, 0, 'd', null, "E_Duelist", 5, 12),
             new Def("E_Duelist3", 22, 0, 'd', "rank>0", "E_Duelist2", 6, 12),
-            new Def("E_Spar", 5, 16, 'd', null, null, 0, 12),
-            new Def("E_Spar2", 13, 0, 'd', null, "E_Spar", 5, 12),
+            new Def("E_Spar", 5, 16, 'd', "!f_hyeokdead", null, 0, 12),
+            new Def("E_Spar2", 13, 0, 'd', "!f_hyeokdead", "E_Spar", 5, 12),
             new Def("E_Spar3", 26, 0, 'd', "!f_hyeoksafe", "E_Spar2", 7, 14),
             // 0.4.70 염혁 — 문 닫은 표국의 아들(고개를 넘어 산 생에만)
             new Def("E_Hyeok1", 22, 0, 'd', "f_hyeoksafe&!f_hyeokdead", "E_Spar2", 6, 30),
@@ -123,7 +123,7 @@ public static class MolakEventDefs
             new Def("E_Hyeok3", 33, 0, 'n', "f_hyeoksafe&!f_hyeokdead&b_s8<1", "E_Hyeok2", 2, 40),
             new Def("E_Hyeok4", 36, 0, 'd', "f_hyeoksafe&!f_hyeokdead&b_s8>0", "E_Hyeok2", 1, 40),
             // 0.4.70 단목결 — 서열각의 칼, 청운 다섯째 사형(서열패의 날에 본 생에만)
-            new Def("E_Gyeol1", 9, 24, 'n', "f_gyeolseen", null, 0, 40),
+            new Def("E_Gyeol1", 9, 24, 'n', "f_gyeolseen&!f_gyeoldead", null, 0, 40),
             new Def("E_Gyeol2", 18, 0, 'd', "f_gyeolmet&rank>0&!f_gyeoldead", "E_Gyeol1", 5, 30),
             new Def("E_Gyeol3", 26, 0, 'n', "f_gyeolmet&!f_gyeoldead&!f_gyeolally", "E_Gyeol2", 4, 30),
             new Def("E_Gyeol4", 40, 0, 'n', "f_gyeolmet&!f_gyeoldead&!f_gyeolally", "E_Gyeol1", 6, 30),

@@ -26,7 +26,8 @@
 # BeatCheck
 @goto Molak12#Eve if:f_wolfdown>0&&rank>0&&rank<=10||f_wolfdown>0&&f_hapbyeok>0&&rank>0&&rank<=30
 @goto Molak06#Ripe1 if:curse>=88&&f_oldseen>0&&b_ripe<1
-@goto Molak06#Capture if:day>=60&&b_capture<1
+@goto Molak06#NetSlip if:day>=60&&b_capture<1&&f_chamnews>0&&f_chamgone<1&&f_netslip<1
+@goto Molak06#Capture if:day>=60+f_netslip*3&&b_capture<1
 @goto #KDebt if:debt>0&&day>=debtday
 @goto #KGrudge if:grudge>0&&day>=grudgeday
 @goto #ChWolf if:rank>0&&rank<=100&&f_wolfdown<1&&f_wolfinvite<1
@@ -3083,13 +3084,16 @@
 ; 0.4.48 선택지를 걷었다(일상 사건은 글로 흐른다). 앎·물건이 있으면 그것을 쓰고, 다음은 몸(문양·체력), 그다음은 이번 생의 뜻을 따른다.
 @goto #S_WM_au0 if:curse>=60
 @goto #S_WM_au0 if:hp<=hpmax/3
-@goto #S_WM_au0 if:vow==1
+@goto #S_WM_au1 if:vow==1
 @goto #S_WM_au2 if:vow==2
 @goto #S_WM_au0 if:vow==3
 @goto #S_WM_au0
 # S_WM_au0
 구경꾼 틈에 섞여 제 수배서를 흉본다.
 @goto #S_WantedC0
+# S_WM_au1
+그 자리에선 지나치고, 밤에 몰래 찢으러 온다.
+@goto #S_WantedC1
 # S_WM_au2
 고개를 숙이고 지나간다.
 @goto #S_WantedC2
