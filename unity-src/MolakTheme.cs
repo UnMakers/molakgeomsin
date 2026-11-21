@@ -414,7 +414,9 @@ public class MolakTheme : MonoBehaviour
             }
             clickT = -1f;
         }
-        ChoiceCount = choiceCount;   // 선택지가 떠 있으면 MolakScroll 이 본문 창 아래 한계를 선택지 위로 올린다
+        // 0.4.94 이야기 모드(저절로 읽기)는 선택지 단추를 감추고 고른 말을 본문 끝에 적는다 — 감춘 선택지는 세지 않는다.
+        //   (세면 극장판이 본문을 걷고 선택지 위 요약만 비춰, 본문에 적은 고른 말이 보이지 않았다)
+        ChoiceCount = MolakStory.Auto && !MolakPractice.Active ? 0 : choiceCount;   // 선택지가 떠 있으면 MolakScroll 이 본문 창 아래 한계를 선택지 위로 올린다
         // 선택지 잠금: 선택지가 뜬 뒤 ChoiceLock 초 동안은 카드가 흐리게 떠오르며 눌리지 않는다(그 사이 시작한 터치는 무시).
         // 주의: ButtonList 자체의 CanvasGroup 은 나니노벨이 선택지 창을 보이고 감추는 데 쓴다(고르면 alpha 0).
         //       예전에는 여기서 그 값을 매 프레임 1 로 되돌려 놓아, 고른 선택지가 다음 묶음이 올 때까지 남아 있었다.
