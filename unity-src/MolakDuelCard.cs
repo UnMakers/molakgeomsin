@@ -20,6 +20,8 @@ public class MolakDuelCard : MonoBehaviour
     }
 
     public static bool Visible => cT >= 0f;
+    /// <summary>점검 도구가 누름 대신 쓴다(누른 것과 같이 걷힌다).</summary>
+    public static void Dismiss () { if (instance != null && cT >= 0f && instance.outAt < 0f) { instance.outAt = cT; MolakInputGuard.MuteFor(0.2f); } }
 
     public static void Show (bool win, string foe, string line, string sub)
     {
