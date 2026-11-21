@@ -128,8 +128,8 @@ public class MolakVfx : MonoBehaviour
     /// <summary>쪽지를 먹빛(그림 화면)으로 그리나.</summary>
     /// <summary>0.4.91 인장이 글자리의 글을 걷는 정도(0~1). MolakScroll 이 본문 알파에 곱한다.</summary>
     public static float StampCover;
-    /// <summary>0.4.91 언메이커 시험: 그림·극장 화면에서도 인장 원을 검은 붓으로.</summary>
-    public static bool InkBlack = true;
+    /// <summary>0.4.91 언메이커 시험: 그림·극장 화면에서도 인장 원을 검은 붓으로 — 옻칠 바닥에 묻혀 안 보여 흰 붓으로 둔다(언메이커: 흰색으로 해야겠다, 인장 손질은 나중에).</summary>
+    public static bool InkBlack = false;
     /// <summary>0.4.91 시험: 인장 자리에만 한지 한 장을 깐다.</summary>
     public static bool SealCard = false;
     public static bool DarkSlip { get { return (MolakTheme.CinemaNow && MolakScroll.CinemaPanelGui.width > 1f) || (MolakTheme.TheaterNow && MolakScroll.TheaterTextGui.width > 1f); } }
@@ -519,7 +519,7 @@ public class MolakVfx : MonoBehaviour
                     var gc = GUI.color; GUI.color = new Color(0.94f, 0.91f, 0.84f, 0.97f * a); GUI.DrawTexture(card, Px); GUI.color = gc;
                     backC = new Color(0.94f, 0.91f, 0.84f, 1f);
                 }
-                MolakSeal.Draw(box, stampHanja, stampT, a, MolakGui.Hanja, backC, InkBlack || !dk);   // 0.4.91 시험: 검은 붓(InkBlack)
+                MolakSeal.Draw(box, stampHanja, stampT, a, MolakGui.Hanja, backC, InkBlack || SealCard || !dk);   // 0.4.91 옻칠 바닥이면 흰 붓, 한지(종이 화면·SealCard)면 검은 붓
                 MolakGui.Ink(sStampLine, dk ? new Color(0.92f, 0.88f, 0.82f, a) : new Color(0.16f, 0.13f, 0.1f, a));
                 GUI.Label(new Rect(ta.x + 20f * u, piv.y + (stampBig ? 180f : 160f) * u, ta.width - 40f * u, 90f * u), stampLine, sStampLine);
                 if (stampHold && stampAuto < 0f && stampT > 0.6f)

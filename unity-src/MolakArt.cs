@@ -201,6 +201,10 @@ public class MolakArt : MonoBehaviour
     {
         if (string.IsNullOrEmpty(key)) return IsNight ? "night" : "day";
         if (key.StartsWith("duel")) return BossDuel ? "boss" : "duel";
+        // 0.4.91 기준: 불길이 이어지는 동안(inferno·불티 날씨 — @vfx fireon)은 장면이 바뀌어도 곡도 불이다.
+        //   서장에서 불타는 산장을 등지고 뒷산으로 달아나면(숲, 불길은 이어짐) 낮 곡이 흐르던 것(언메이커: 도망친다를 고르면 이상한 곡).
+        var wk = MolakVfx.WeatherKind;
+        if (wk == "inferno" || wk == "embers") return "fire";
         string m;
         if (SceneMood.TryGetValue(key, out m))
         {
