@@ -102,13 +102,15 @@ public class ArtCommand : Command
         var sp = Engine.GetService<IScriptPlayer>();
         bool skip = (sp != null && sp.Skipping) || MolakBlackout.Auto;
         // 0.4.85 바로 다음 줄도 @art 면(@art scene:morning → @art char:hajinmu) 기다리지 않는다 — 기다리는 동안 번짐이 바탕 그림으로 한 번, 인물 자리 그림으로 또 한 번 따로 돌았다
-        try { var tr = sp != null ? sp.MainTrack : null; var pl = tr != null ? tr.Playlist : null; int ni = tr != null ? tr.PlayedIndex + 1 : -1; if (pl != null && ni >= 0 && ni < pl.Count && pl[ni] is ArtCommand) skip = true; } catch { }
+        bool nextArt = false;
+        try { var tr = sp != null ? sp.MainTrack : null; var pl = tr != null ? tr.Playlist : null; int ni = tr != null ? tr.PlayedIndex + 1 : -1; if (pl != null && ni >= 0 && ni < pl.Count && pl[ni] is ArtCommand) { skip = true; nextArt = true; } } catch { }
         float until = Time.realtimeSinceStartup + 0.3f;
         while (!skip && MolakArt.Settling && Time.realtimeSinceStartup < until)
             await Awaitable.NextFrameAsync();
         // 0.4.85 장면이 바뀌는 쪽(@page 뒤 새 장면): 먹이 걷힐 때까지(최대 0.6초) 첫 글을 붙든다 — 앞 장면 끝 대사에서 바로 넘어가지 않게
-        until = Time.realtimeSinceStartup + 0.6f;
-        while (!skip && MolakArt.Dipping && Time.realtimeSinceStartup < until)
+        until = Time.realtimeSinceStartup + 0.7f;
+        bool skipDip = (sp != null && sp.Skipping) || nextArt;   // 0.4.86 덮개 기다림은 자동 시험 중에도 한다(시험이 실제와 같게)
+        while (!skipDip && MolakArt.Dipping && Time.realtimeSinceStartup < until)
             await Awaitable.NextFrameAsync();
     }
 }

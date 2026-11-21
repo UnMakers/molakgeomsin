@@ -153,7 +153,10 @@ public class MolakArt : MonoBehaviour
     public static bool InkOn = true;
     public static void Dip () { if (inst != null) inst.dipAt = Time.frameCount; }   // 0.4.85 바로 뒤에 장면이 바뀌면(번짐) 암전은 하지 않는다 — 몇 프레임 기다려 본다
     int dipAt = -1;
-    public static bool Dipping { get { return inst != null && (inst.dipT < 0.5f || inst.inkT < 0.25f); } }
+    /// <summary>0.4.86 쪽 넘김 먹 덮개가 아직 글을 가리는가 — 시간(0.5초)이 아니라 덮개 농도로 본다(0.5초에도 덮개가 50% 남아 글이 덮인 채 찍혔다).
+    /// 덮개를 기다리는 몇 프레임(Dip 요청 뒤 번짐이 오는지 보는 동안)도 덮개로 친다.</summary>
+    public static bool Dipping { get { return inst != null && (inst.dipAt >= 0 || DipAlpha > 0.35f || inst.inkT < 0.25f); } }
+    static float DipAlpha { get { if (inst == null || inst.dipT >= 0.8f) return 0f; float t = inst.dipT; return t < 0.2f ? 1f : 1f - Mathf.SmoothStep(0f, 1f, (t - 0.2f) / 0.6f); } }
     public static string KeyFor (string sub) { string id; return !string.IsNullOrEmpty(sub) && KeyArt.TryGetValue(sub.Trim(), out id) ? id : ""; }
 
     public static void Scene (string id)
