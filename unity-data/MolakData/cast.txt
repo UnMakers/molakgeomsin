@@ -1,0 +1,62 @@
+# 인물 표(0.4.88) — 그림 id 하나에 한 줄. 새 인물·새 표정 그림을 넣으면 여기에 한 줄만 더한다.
+# 형식: id = 이름 | 낮 자리 그림 | 밤 자리 그림 | 갈래
+#   이름: 이름 인장·인연 문장에 쓴다. 비우면 표정 그림(soa_smile 등)은 밑줄 앞 사람 이름을 따른다.
+#   자리 그림: 배경이 morning/night/rain 처럼 일반일 때 이 사람이 서면 바뀌는 장면(scene_<값>). 비우면 사람(밑줄 앞) 것을 따른다.
+#   갈래: 주연 = 인연 문장(「○○의 눈빛이…」)에 이름이 오르는 사람. 조연 = 이름 인장만.
+
+abbot = 주지 | temple | temple | 조연
+amhyang = 암향 | teahouse | teahouse | 주연
+amhyang_pain = 암향 | teahouse | teahouse | 주연
+amhyang_soft = 암향 | ferry | ferry | 주연
+baekri = 백리휘 | teahouse | roofmoon | 조연
+beggarmonk = 거지 중 | crossroad | alley | 조연
+chamsae = 참새 | innhall | roofmoon | 주연
+chamsae_serious = 참새 | rain | rain | 주연
+cheongmyo = 청묘 | temple |  | 주연
+cheongmyo_robe = 청묘 | temple |  | 주연
+cultist = 교도 | market | night | 조연
+ferryman = 사공 | ferry | ferry | 조연
+ggoji = 꼬지 |  |  | 주연
+granny = 백초 할멈 | herbshop | herbshop | 주연
+granny_grave = 백초 할멈 | herbshop | herbshop | 조연
+gwaksan = 곽산 | market | alley | 주연
+gwaksan_grief = 곽산 | market | alley | 조연
+gyeol = 단목결 | alley | roofmoon | 조연
+gyeol_angry = 단목결 | alley | roofmoon | 조연
+hajinmu = 하진무 | innhall | innhall | 주연
+hajinmu_grave = 하진무 | innhall | innhall | 조연
+hochi = 호치 | alley | alley | 조연
+hyeok = 염혁 | yard | alley | 조연
+hyeok_grim = 염혁 | yard | alley | 조연
+inspector = 감찰사 | gate | gate | 조연
+ironmaster = 철검 노인 |  |  | 조연
+jang = 쥐눈이 장 | alley | alley | 주연
+jeomsoi = 점소이 | innhall | innhall | 조연
+jinbaek = 진백 | gate | alley | 주연
+jinbaek_sorrow = 진백 | gate | alley | 조연
+kyona = 견아 | valley |  | 조연
+lawlord = 집법전주 | gate | gate | 조연
+lord = 교주 |  |  | 조연
+lord_wrath = 교주 | lordhall | lordhall | 조연
+machung =  | yard | yard | 조연
+mugo = 무고 | smithy | smithy | 조연
+ochi = 오치 | valley |  | 조연
+odam = 오담 | village | village | 조연
+oldman = 노인 | night | night | 주연
+panju = 판주 | alley | nightmarket | 조연
+porter = 지게꾼 | ferry | ferry | 조연
+prophet = 승천 도인 | market |  | 조연
+scout =  | alley | night | 조연
+soa = 소아 | innhall | roofmoon | 주연
+soa_fierce = 소아 | alley | alley | 주연
+soa_grief = 소아 | rain | rain | 주연
+soa_smile = 소아 | market | roofmoon | 주연
+storyteller = 이야기꾼 | market | nightmarket | 조연
+taxman = 징세조 | market | alley | 조연
+wangsam = 왕삼 | pawn | pawn | 조연
+yeomga = 염가 | yard | yard | 조연
+yonggae = 용개 | crossroad | alley | 주연
+cheolsan = 철산도 |  |  | 조연
+mourner = 도길의 맏아들 |  |  | 조연
+namgung = 남궁현 |  |  | 조연
+ungeom = 운검 |  |  | 조연

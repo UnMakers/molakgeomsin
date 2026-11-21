@@ -1,4 +1,4 @@
-using Naninovel;
+﻿using Naninovel;
 using UnityEngine;
 
 [Alias("vfx")]
@@ -75,12 +75,15 @@ public class ArtCommand : Command
 {
     [Alias("scene")] public StringParameter SceneId;
     [Alias("char")] public StringParameter CharId;
+    /// <summary>0.4.88 곁에 함께 세울 사람(두 사람 세우기). none 이면 혼자.</summary>
+    [Alias("with")] public StringParameter WithId;
     [Alias("off")] public BooleanParameter Off;
     public override async Awaitable Execute (ExecutionContext ctx)
     {
         if (Assigned(Off) && Off.Value) MolakArt.Clear();
         if (Assigned(SceneId)) MolakArt.Scene(SceneId.Value);
         if (Assigned(CharId)) MolakArt.Char(CharId.Value);
+        if (Assigned(WithId)) MolakArt.With(WithId.Value);
         // 0.4.85 바로 이어지는 @art 도 지금 함께 세운다(@art scene:morning → @art char:hajinmu). 둘 사이에서 쪽 넘김 탭을 기다리면
         //   번짐이 바탕 그림으로 한 번, 탭 뒤에 인물 자리 그림으로 또 한 번 돌았다. 뒤의 @art 가 실행될 땐 이미 같은 그림이라 아무것도 안 한다.
         try
@@ -93,6 +96,7 @@ public class ArtCommand : Command
                 if (nx.Off != null && nx.Off.HasValue && nx.Off.Value) break;
                 if (nx.SceneId != null && nx.SceneId.HasValue && !nx.SceneId.DynamicValue) MolakArt.Scene(nx.SceneId.Value);
                 if (nx.CharId != null && nx.CharId.HasValue && !nx.CharId.DynamicValue) MolakArt.Char(nx.CharId.Value);
+                if (nx.WithId != null && nx.WithId.HasValue && !nx.WithId.DynamicValue) MolakArt.With(nx.WithId.Value);
             }
         }
         catch { }

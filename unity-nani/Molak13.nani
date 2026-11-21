@@ -146,7 +146,7 @@
 # Old25
 @scene id:night
 @art scene:shrine
-@art char:oldman
+@art char:oldman_calm
 @deja text:"사당 문간의 백발. 지난 생에도 이 밤 노인은 위패 자리 앞에 앉아 있었다. 누구의 향을 피우는지 안다."
 {dejapre}
 @goto #Old25Re if:g_bt_old25>0&&f_bt_old25<1
@@ -201,7 +201,7 @@
 # Old25Tail
 @page
 @art scene:shrine
-@art char:oldman
+@art char:oldman_face
 노인이 문간에서 멈춘다. 복면을 다시 쓰지 않는다.
 "다음 보름이 지나고 술상을 차리마. 그때는 노부가 묻고, 네가 대답하거라. 익었는지 아닌지는, 네 대답이 정하느니라."
 그가 나간다. 발소리가 없다. 사당 안에 쓰고 마른 향 냄새만 오래 남는다.
@@ -227,7 +227,7 @@
 백발이 문간에 들어서다 향을 본다. 복면을 벗으려던 손이 멎는다.
 "……노부가 오늘은 손님 노릇을 하려 했더니, 주인이 먼저 와 있구나."
 <align=right>"그 옆에 놓으시오. 둘이면 덜 쓸쓸하오."</align>
-@art char:oldman
+@art char:oldman_face
 노인이 복면을 벗어 무릎에 얹는다. 쓰고 마른 향이 침향 옆에서 탄다.
 "덜 익은 열매가 나무 노릇을 하는구나. ……여기 위패의 주인이 누군지 아느냐."
 @goto #Old25Ch

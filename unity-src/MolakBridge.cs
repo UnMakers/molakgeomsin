@@ -55,18 +55,11 @@ public static class MolakBridge
     static readonly string[] VowSurvive = { "살아남는 쪽으로만 발을 옮긴다.", "그물이 닿지 않는 길을 셈해 본다." };
     static readonly string[] Plain = { "", "", "걸음을 옮긴다.", "생각을 접고 걷는다." };
 
-    static readonly Dictionary<string, string> CharName = new Dictionary<string, string> {
-        {"soa","소아"},{"soa_smile","소아"},{"soa_fierce","소아"},{"soa_grief","소아"},{"hajinmu","하진무"},{"granny","백초 할멈"},
-        {"yonggae","용개"},{"gwaksan","곽산"},{"amhyang","암향"},{"amhyang_soft","암향"},{"amhyang_pain","암향"},{"cheongmyo","청묘"},
-        {"cheongmyo_robe","청묘"},{"jang","쥐눈이 장"},{"ggoji","꼬지"},{"jinbaek","진백"},{"oldman","노인"},{"chamsae","참새"},{"chamsae_serious","참새"},
-    };
+    // 0.4.88 인물 표는 Resources/MolakData/cast.txt 에서 읽는다(새 인물은 그 파일에 한 줄). 주연 = 인연 문장에 이름이 오르는 사람.
+    static Dictionary<string, string> CharName => MolakCast.MainNames;
 
     // 0.4.82 그림 화면의 이름 인장 — 대본에 화자 정보가 없어 '지금 그림에 서 있는 사람'의 이름을 쓴다. 모르는 얼굴은 인장 없이.
-    static readonly Dictionary<string, string> SealName = new Dictionary<string, string> {
-        {"hajinmu_grave","하진무"},{"mugo","무고"},{"jeomsoi","점소이"},{"panju","판주"},{"storyteller","이야기꾼"},{"porter","지게꾼"},{"yeomga","염가"},{"taxman","징세조"},{"abbot","주지"},{"beggarmonk","거지 중"},{"ferryman","사공"},{"inspector","감찰사"},{"cultist","교도"},{"odam","오담"},{"granny_grave","백초 할멈"},{"jinbaek_sorrow","진백"},{"wangsam","왕삼"},{"baekri","백리휘"},
-        {"gyeol","단목결"},{"lawlord","집법전주"},{"ochi","오치"},{"hochi","호치"},
-        {"gyeol_angry","단목결"},{"hyeok","염혁"},{"hyeok_grim","염혁"},{"gwaksan_grief","곽산"},{"lord","교주"},{"lord_wrath","교주"},   // 0.4.84 새 입상·표정
-    };
+    static Dictionary<string, string> SealName => MolakCast.OtherNames;
     public static string NameOf (string charId)
     {
         if (string.IsNullOrEmpty(charId)) return null;

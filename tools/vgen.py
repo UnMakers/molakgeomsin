@@ -3,7 +3,7 @@
 import io, re, glob, os, sys
 C = os.environ.get('MOLAK_CANON', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'unity-nani'))  # 기본: 저장소의 unity-nani 를 바로 고친다
 files = sorted(glob.glob(os.path.join(C, '*.nani')))
-outs = {os.path.basename(f)[:-5]: io.open(f, encoding='utf-8').read() for f in files}
+outs = {os.path.basename(f)[:-5]: io.open(f, encoding='utf-8-sig').read() for f in files}   # 0.4.88 BOM 있는 대본(Molak03)의 첫 라벨을 못 읽던 것
 idset = set()
 for s in outs.values():
     s = re.sub(r'; \(자동 생성\) 변수 선초기화[\s\S]*?(?=@initrun)', '', s)

@@ -1,4 +1,4 @@
-﻿; ===== 몰락검신 — 서장: 붉은 달 =====
+; ===== 몰락검신 — 서장: 붉은 달 =====
 # RunStart
 ; (자동 생성) 변수 선초기화
 @set aff=0
@@ -175,6 +175,7 @@
 @set f_amhwarn=0
 @set f_amhyangknown=0
 @set f_antidote=0
+@set f_ascendask=0
 @set f_baekridead=0
 @set f_beggarnet=0
 @set f_bilok=0
@@ -267,6 +268,7 @@
 @set f_ev_amhletter=0
 @set f_ev_amhshop=0
 @set f_ev_amhspill=0
+@set f_ev_ascend=0
 @set f_ev_beggar=0
 @set f_ev_beggar3=0
 @set f_ev_beggar4=0
@@ -741,6 +743,7 @@
 @set odds10=0
 @set oldhit=0
 @set pass=0
+@set pjan=0
 @set practice=0
 @set pw=0
 @set r=0
@@ -760,15 +763,22 @@
 @set rp_tok=0
 @set rp_want=0
 @set sackind=0
+@set sbroken=0
+@set scharge=0
 @set seen_E_Childplay=0
 @set seen_E_Gamble=0
 @set seen_E_Rival=0
 @set seen_E_Spar2=0
 @set seenday_E_Gamble=0
+@set send=0
+@set sgwan=0
 @set sl=0
 @set soaseal=0
 @set spared=0
+@set sread=0
+@set sres=0
 @set starved=0
+@set stell=0
 @set storymode=0
 @set sv=0
 @set sw=0
@@ -950,7 +960,9 @@
 하진무의 그 목소리.
 @goto #RbHj0 if:g_sac_hajin!=1
 그의 손목부터 본다. 성하다. 당연하다. 이번 생엔 아무도 그 손목을 비틀지 않았다.
-하진무가 당신 눈길을 따라 제 손목을 내려다본다. "……손목이 왜 그러시오?" 아무것도 아니라고 한다. 아무것도 아니게 된 일이니까.
+하진무가 당신 눈길을 따라 제 손목을 내려다본다.
+"……손목이 왜 그러시오?"
+아무것도 아니라고 한다. 아무것도 아니게 된 일이니까.
 @set g_sac_hajin=2
 # RbHj0
 @set tr=random(1,3)
@@ -1112,14 +1124,15 @@
 @set f_proknot=1
 @goto #Pro2
 # Pro1B
-대추를 소매에 넣는다. 사저가 하나를 더 얹어 준다. "밤에 먹을 거면 둘은 있어야죠."
+대추를 소매에 넣는다. 사저가 하나를 더 얹어 준다.
+"밤에 먹을 거면 둘은 있어야죠."
 그날 밤 그 대추는 끝내 먹지 못한다.
 @set f_projujube=1
 @goto #Pro2
 # Pro2
 @page
 @art scene:gate
-@art char:oldman
+@art char:oldman_calm
 해 질 녘. 마당을 다시 쓰는데, 산문 앞에 손님이 서 있다.
 복면을 썼고, 머리가 하얗다.
 사부가 직접 나간다. 장문인이 손님을 맞으러 산문까지 나가는 것은 삼 년 동안 처음 본다.
@@ -1162,7 +1175,7 @@
 @vfx kind:fireon
 숲의 어둠이 등을 받아 준다. 가지에 긁히고, 뿌리에 걸려 구르고, 그래도 달린다.
 얼마나 달렸을까. 다리가 꺾여 주저앉은 자리에, 누군가 서 있다.
-@art char:oldman
+@art char:oldman_calm
 복면 위로 드러난 백발. 불타는 산장을 등지고, 노인은 처음부터 거기서 기다렸다는 듯 서 있다.
 "도망치는 발소리치고는 제법 질기구나."
 @goto #P2
@@ -1185,7 +1198,7 @@
 그 온기가 끔찍해 이를 악물고 숨을 죽인다.
 발소리들이 지나간다. 하나. 둘. 셋. 마지막 발소리가 머리맡에서 멈춘다.
 "죽은 척을 하려면 숨소리부터 죽여야 하느니라. 다 들린다."
-@art char:oldman
+@art char:oldman_calm
 올려다본다. 복면 위로 드러난 백발. 노인이 불길을 등지고 당신을 내려다본다.
 @fx curse:2
 @goto #P2
@@ -1223,7 +1236,8 @@
 '두 달. 그 안에 끝을 보든지, 빠져나가든지.'
 가슴이 욱신거린다. 옷깃 아래에 낙인 같은 <color=#9A70C4>문양</color>이 새겨져 있다.
 그날 밤은 꿈이 아니었다.
-손바닥을 대 보니 문양이 미지근하다. 하진무가 혼잣말처럼 덧붙인다. "누워 계신 일 년 내내 얼음장이더니, 엊저녁부터 열이 오릅디다."
+손바닥을 대 보니 문양이 미지근하다. 하진무가 혼잣말처럼 덧붙인다.
+"누워 계신 일 년 내내 얼음장이더니, 엊저녁부터 열이 오릅디다."
 @goto #P3K0 if:f_proknot<1&&f_projujube<1
 "쓰러져 계실 때 손에 꼭 쥐고 계시던 거요. 버리지 않았소."
 @goto #P3K1 if:f_proknot<1
@@ -1485,7 +1499,8 @@
 "……남의 진맥 값을 떼먹으려 드는 놈은 사십 년에 둘째로구먼."
 <align=right>"<color=#9A70C4>첫째는 누구였소.</color>"</align>
 "알 것 없네."
-금창약을 내밀며 노파가 당신 손끝 냄새를 맡는다. "쇳독은 모르는구먼. 그건 내가 일러 주지."
+금창약을 내밀며 노파가 당신 손끝 냄새를 맡는다.
+"쇳독은 모르는구먼. 그건 내가 일러 주지."
 # MkSalveGo
 @fx mn:-5 hp:2
 @set f_salve=1
@@ -1672,7 +1687,10 @@
 "손님, 그걸 먼저 말해 버리면 내 밥줄이……."
 청중이 웃는다. 이야기꾼이 부채로 제 이마를 친다. 당신은 웃지 않는다.
 그 대목은 웃으라고 하는 말이 아니다.
-이야기꾼이 판을 접고 당신 앞에 와 앉는다. "……손님, 청운 사람이오?" 대답하지 않자 그가 두 냥을 도로 밀어 놓는다. "그럼 이 이야기는 손님 거요. 값 못 받소."
+이야기꾼이 판을 접고 당신 앞에 와 앉는다.
+"……손님, 청운 사람이오?"
+대답하지 않자 그가 두 냥을 도로 밀어 놓는다.
+"그럼 이 이야기는 손님 거요. 값 못 받소."
 @fx mn:2
 # MkStoryGo
 @set f_storylore=1

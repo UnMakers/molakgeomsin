@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Naninovel;
 using UnityEngine;
 
@@ -80,6 +80,10 @@ public class MolakArt : MonoBehaviour
     };
 
     SpriteRenderer sceneR, charR, shadeR; Sprite shadeV, shadeH;
+    // 0.4.88 두 사람 세우기: 말하는 사람(charR)과 곁에서 듣는 사람(partR). 그림 화면·극장판에서만 둘을 좌우에 세운다.
+    //   말하는 쪽은 밝게 앞으로, 듣는 쪽은 어둡게 조금 뒤로. 사람마다 선 자리(왼/오)는 바뀌지 않고, 말하는 사람이 바뀌면 밝기만 바뀐다.
+    SpriteRenderer partR; Sprite partCur, showPart; string partId = "", showPartId = ""; float partT = 1f, partSlideT = 1f; static Material matPart;
+    string leftPerson = "";
     SpriteMask mask;
     Sprite sceneCur, charCur;          // 대본이 정한 그림(곧바로 바뀐다)
     // 0.4.85 기준: 그림은 글과 함께 바뀐다. 대본이 그림을 몇 번 바꾸든(@art scene → @page 의 바탕 되돌리기 → @art char → 인물 자리 그림 …)
@@ -219,24 +223,8 @@ public class MolakArt : MonoBehaviour
 
     // 0.4.9: 인물이 나오면 그 사람이 있을 법한 자리를 뒤에 깐다(지금 장면이 하루의 기본 풍경일 때만 — 대본이 고른 장면은 그대로 둔다)
     static readonly HashSet<string> Generic = new HashSet<string> { "", "morning", "night", "rain" };
-    static readonly Dictionary<string, string> HomeDay = new Dictionary<string, string>
-    {
-        {"granny","herbshop"},{"chamsae","innhall"},{"chamsae_serious","rain"},{"hajinmu","innhall"},{"gwaksan","market"},{"yonggae","crossroad"},{"amhyang","teahouse"},
-        {"soa","innhall"},{"soa_smile","market"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},{"kyona","valley"},
-        {"jinbaek","gate"},{"lawlord","gate"},{"oldman","night"},{"ochi","valley"},{"cheongmyo","temple"},
-        {"cheongmyo_robe","temple"},{"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},{"jang","alley"},
-        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","gate"},{"mugo","smithy"},{"jeomsoi","innhall"},{"panju","alley"},{"storyteller","market"},{"porter","ferry"},{"yeomga","yard"},{"taxman","market"},{"abbot","temple"},{"beggarmonk","crossroad"},{"ferryman","ferry"},{"inspector","gate"},{"cultist","market"},{"odam","village"},{"wangsam","pawn"},{"machung","yard"},{"baekri","teahouse"},{"scout","alley"},{"hyeok","yard"},{"gyeol","alley"},
-        {"hyeok_grim","yard"},{"gyeol_angry","alley"},{"gwaksan_grief","market"},{"lord_wrath","lordhall"},
-    };
-    static readonly Dictionary<string, string> HomeNight = new Dictionary<string, string>
-    {
-        {"granny","herbshop"},{"chamsae","roofmoon"},{"chamsae_serious","rain"},{"hajinmu","innhall"},{"gwaksan","alley"},{"yonggae","alley"},{"amhyang","teahouse"},
-        {"soa","roofmoon"},{"soa_smile","roofmoon"},{"soa_grief","rain"},{"soa_fierce","alley"},{"hochi","alley"},
-        {"jinbaek","alley"},{"lawlord","gate"},{"oldman","night"},{"jang","alley"},
-        {"amhyang_pain","teahouse"},{"amhyang_soft","ferry"},
-        {"hajinmu_grave","innhall"},{"granny_grave","herbshop"},{"jinbaek_sorrow","alley"},{"mugo","smithy"},{"jeomsoi","innhall"},{"panju","nightmarket"},{"storyteller","nightmarket"},{"porter","ferry"},{"yeomga","yard"},{"taxman","alley"},{"abbot","temple"},{"beggarmonk","alley"},{"ferryman","ferry"},{"inspector","gate"},{"cultist","night"},{"odam","village"},{"wangsam","pawn"},{"machung","yard"},{"baekri","roofmoon"},{"scout","night"},{"hyeok","alley"},{"gyeol","roofmoon"},
-        {"hyeok_grim","alley"},{"gyeol_angry","roofmoon"},{"gwaksan_grief","alley"},{"lord_wrath","lordhall"},
-    };
+    static Dictionary<string, string> HomeDay => MolakCast.HomeDay;   // 0.4.88 cast.txt
+    static Dictionary<string, string> HomeNight => MolakCast.HomeNight;
     public static bool IsNight;
     static readonly Dictionary<string, string> SceneWeather = new Dictionary<string, string>
     {
@@ -246,8 +234,16 @@ public class MolakArt : MonoBehaviour
     public static void Char (string id)
     {
         if (inst == null) return;
-        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); if (!inst.sceneId.StartsWith("duel")) MolakBgm.Mood(CurrentMood()); return; }
+        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetChar(null, ""); inst.SetPart(null, ""); if (!inst.sceneId.StartsWith("duel")) MolakBgm.Mood(CurrentMood()); return; }
         if (inst.charId == id) return;
+        // 0.4.88 곁에 선 사람이 입을 열면 두 사람의 역할만 바꾼다(그 자리에 그대로 선 채 밝기만 바뀐다)
+        if (inst.partCur != null && Person(id) == Person(inst.partId))
+        {
+            var oldSp = inst.charCur; var oldId = inst.charId;
+            var nsp = Load("MolakArt/char_" + id);
+            if (nsp != null) { inst.SetChar(nsp, id); inst.SetPart(oldSp, oldId); return; }
+        }
+        else if (inst.partCur != null && Person(id) != Person(inst.charId)) inst.SetPart(null, "");   // 셋째 사람이 오면 혼자 선다
         if (Generic.Contains(inst.sceneId) && !inst.sceneId.StartsWith("duel"))
         {
             string home;
@@ -304,7 +300,27 @@ public class MolakArt : MonoBehaviour
         Scene(IsNight ? "night" : "morning");
     }
 
-    public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); inst.noInkOnce = true; inst.DoCommit(); }
+    public static void Clear () { if (inst == null) return; inst.SetScene(null, ""); inst.SetChar(null, ""); inst.SetPart(null, ""); inst.noInkOnce = true; inst.DoCommit(); }
+
+    /// <summary>0.4.88 @art char:말하는사람 with:곁에선사람 — 두 사람을 함께 세운다. with:none 이면 혼자.</summary>
+    public static void With (string id)
+    {
+        if (inst == null) return;
+        if (string.IsNullOrEmpty(id) || id == "none" || id == "off") { inst.SetPart(null, ""); return; }
+        if (inst.charCur == null || Person(id) == Person(inst.charId)) return;
+        if (Person(id) == Person(inst.partId) && inst.partId == id) return;
+        var sp = Load("MolakArt/char_" + id);
+        if (sp == null) return;
+        if (inst.partCur == null) inst.leftPerson = Person(id);   // 나중에 온 사람(곁에 선 사람)이 왼쪽
+        inst.SetPart(sp, id);
+    }
+    void SetPart (Sprite s, string id)
+    {
+        partCur = s; partId = s != null ? (id ?? "") : "";
+        if (s == null) leftPerson = "";
+        if (!restoring) MolakStats.SetStr("artwith", partId);
+        MarkDirty();
+    }
     // 0.4.85 언메이커: 불러오기 하면 그림이 안 뜬다 — 그림 상태는 나니노벨 저장에 들지 않아서, 다음 @art 까지 빈 창이었다.
     //   장면·인물 이름을 이번 생 변수(artscene/artchar)에 적어 두고, 불러오기가 끝나면 그대로 다시 세운다.
     static bool restoring;
@@ -317,6 +333,8 @@ public class MolakArt : MonoBehaviour
         inst.sceneId = "\u0001"; inst.charId = "\u0001"; inst.charCur = null;
         if (string.IsNullOrEmpty(sc)) Scene(IsNight ? "night" : "morning"); else Scene(sc);
         if (!string.IsNullOrEmpty(ch)) Char(ch);
+        string wi = MolakStats.Str("artwith", ""); inst.partCur = null; inst.partId = "";
+        if (!string.IsNullOrEmpty(wi) && wi != "none") With(wi);
         MolakStats.SetStr("artscene", inst.sceneId ?? ""); MolakStats.SetStr("artchar", inst.charId ?? "");
         inst.noInkOnce = true; inst.DoCommit();   // 불러온 그림은 번지지 않고 바로
     }
@@ -393,6 +411,7 @@ public class MolakArt : MonoBehaviour
         sceneCur = s; sceneId = id;
         if (!restoring) MolakStats.SetStr("artscene", id ?? "");   // 불러오기 때 그림을 되살리려고 저장 상태에 적어 둔다
         if (s != null && charCur != null) SetChar(null, "");       // 새 장면은 서 있던 인물을 내린다
+        if (s != null && partCur != null) SetPart(null, "");
         MarkDirty();
     }
     void MarkDirty () { if (!dirty) dirtyAt = Time.unscaledTime; dirty = true; }
@@ -403,9 +422,14 @@ public class MolakArt : MonoBehaviour
     {
         if (!dirty || sceneR == null) return;
         dirty = false;
-        bool sceneChanged = showScene != sceneCur, charChanged = showChar != charCur;
+        bool sceneChanged = showScene != sceneCur, charChanged = showChar != charCur, partChanged = showPart != partCur;
+        // 0.4.88 두 사람이 역할만 바꿨다(말하던 사람 ↔ 곁의 사람): 미끄러져 들어오거나 다시 떠오르지 않는다
+        bool swapped = charCur != null && partCur != null && showChar != null && showPart != null && Person(charId) == Person(showPartId) && Person(partId) == Person(showCharId);
+        if (partChanged && !swapped) { partT = partCur != null && showPart == null ? 0f : 1f; if (partCur != null && showPart == null) partSlideT = 0f; }
+        showPart = partCur; showPartId = partId ?? "";
         bool noInk = noInkOnce; noInkOnce = false;
         if (!sceneChanged && !charChanged) return;
+        if (swapped && !sceneChanged) { showChar = charCur; showCharId = charId ?? ""; charR.sprite = charCur; return; }
         ChangedAt = Time.unscaledTime;
         string sid = sceneId ?? "";
         bool ink = !noInk && InkOn && sceneChanged && sceneCur != null && oldSceneR != null && (sceneR.sprite != null || charR.sprite != null)
@@ -510,6 +534,9 @@ public class MolakArt : MonoBehaviour
         sceneR = sg.AddComponent<SpriteRenderer>(); sceneR.sharedMaterial = matScene; sceneR.sortingOrder = 10;
         sceneR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
 
+        var pg = new GameObject("Partner"); pg.transform.SetParent(band.transform, false); pg.layer = 30;
+        partR = pg.AddComponent<SpriteRenderer>(); partR.sortingOrder = 11; partR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; partR.enabled = false;
+        if (matPart == null && matCine != null && matCine != matScene) { matPart = new Material(matCine); matPart.SetFloat("_Quiet", 1f); }
         var cg = new GameObject("Char"); cg.transform.SetParent(band.transform, false); cg.layer = 30;
         charR = cg.AddComponent<SpriteRenderer>(); charR.sharedMaterial = mat; charR.sortingOrder = 11;
         charR.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
@@ -775,8 +802,35 @@ public class MolakArt : MonoBehaviour
             slideT = Mathf.Min(1f, slideT + Time.unscaledDeltaTime / 0.45f);
             if (slideT < 1f) x += (1f - (1f - Mathf.Pow(1f - slideT, 3f))) * camW * 0.55f;
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
-            if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
+            bool duo = (cine || thr) && partR != null && showPart != null;
+            if (duo) x += (Person(showCharId) == leftPerson ? -1f : 1f) * camW * 0.21f;   // 0.4.88 두 사람: 제 자리(왼/오)에 선다
+            else if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
             charR.transform.position = new Vector3(x, y + gy, z);
+        }
+        // 0.4.88 곁에서 듣는 사람: 말하는 사람보다 조금 작고 낮게, 뒤에, 어둡게. 처음 설 때는 제 쪽 화면 밖에서 미끄러져 들어온다.
+        if (partR != null)
+        {
+            bool duo2 = (cine || thr) && showPart != null && charR.sprite != null && !hide;
+            partR.enabled = duo2;
+            if (duo2)
+            {
+                if (partR.sprite != showPart) partR.sprite = showPart;
+                var pm = matPart != null ? matPart : wantMat; if (partR.sharedMaterial != pm) partR.sharedMaterial = pm;
+                partT = Mathf.Min(1f, partT + fdt);
+                partSlideT = Mathf.Min(1f, partSlideT + Time.unscaledDeltaTime / 0.45f);
+                var psp = partR.sprite; float psw = psp.texture.width / 100f, psh = psp.texture.height / 100f;
+                float pk = cine ? Mathf.Min(camH * 0.62f / psh, camW * 1.05f / psw) : Mathf.Min(bandH * 1.27f / psh, camW * 1.05f / psw);
+                pk *= 0.92f * (1f + 0.006f * Mathf.Sin(Time.time * 1.15f + 1.7f));
+                if (thr) pk = Mathf.Max(pk, (bandH - 20f * unit) / psh);   // 아랫변이 창 안으로 올라오지 않게
+                partR.transform.localScale = new Vector3(pk, pk, 1f);
+                float side = Person(showPartId) == leftPerson ? -1f : 1f;
+                float ppx = cx + side * camW * 0.21f;
+                if (partSlideT < 1f) ppx += side * (1f - (1f - Mathf.Pow(1f - partSlideT, 3f))) * camW * 0.55f;
+                float ppy = cine ? top - camH * 0.105f - psh * pk * 0.5f - 30f * unit : bandCy + bandH * 0.5f - 58f * unit - psh * pk * 0.5f;
+                partR.transform.position = new Vector3(ppx, ppy, z + 0.02f);
+                float pa = Mathf.Lerp(FadeFrom, 1f, partT) * colT;
+                partR.color = new Color(0.82f, 0.82f, 0.82f, pa);
+            }
         }
         // 장면 전환 암전: 바로 먹으로 덮고 0.2초 머문 뒤 0.6초에 걷히며 새 장면이 떠오른다
         if (dipAt >= 0 && Time.frameCount - dipAt >= 6) { dipAt = -1; if (inkT >= InkDur && !dirty) dipT = 0f; }

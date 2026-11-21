@@ -533,11 +533,13 @@
 "피라미는 아니로군?"
 여우 가죽이 이죽인다.
 운검류는 본디 받아내는 검이다. 날랜 상대를 붙잡으려면 계책이 필요하다.
-@choice "담벼락을 타고 올라 위에서 친다" goto:#HmFightC0
+@choice "담벼락을 타고 올라 위에서 친다 〔검술+1〕" goto:#HmFightC0
 @choice "공격을 기다려 받아친다" goto:#HmFightC1
 @choice "설익은 청운검법 하단 4식을 꺼낸다" goto:#HmFightC2
 @stop
 # HmFightC0
+@risk on:sw need:+1
+@goto #HmF1L if:pass==0
 @goto #HmF1
 # HmFightC1
 @goto #HmF2
@@ -560,6 +562,17 @@
 # HmNokE
 @set g_fac_dok=1
 @fx hp:-2 sw:2 sl:1
+@set f_dokad=1
+@goto #Hm3
+
+# HmF1L
+좌우 담벼락을 번갈아 차며 뛰어오른다. 두 번째 발이 이끼를 밟는다.
+위에서 내리찍을 검이 허공을 가르고, 몸이 등부터 떨어진다.
+여우 가죽의 칼등이 손목을 치고, 곰 가죽의 발이 옆구리에 박힌다.
+"담 타는 건 원숭이한테 배웠냐."
+숨이 돌아올 무렵 놈들은 이미 골목 끝이다. 웃음소리만 담벼락을 타고 넘어온다.
+'오르는 것까지는 배웠다. 떨어지는 법을 안 배웠다.'
+@fx hp:-3 sw:1
 @set f_dokad=1
 @goto #Hm3
 

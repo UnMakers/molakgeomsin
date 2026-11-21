@@ -17,6 +17,15 @@ import io, os, re, sys, glob, collections
 NANI, SRC = (sys.argv[1], sys.argv[2]) if len(sys.argv) > 2 else ('unity-nani', 'unity-src')
 HERE = os.path.dirname(os.path.abspath(__file__))
 ART = set(io.open(os.path.join(HERE, 'art_names.txt'), encoding='utf-8').read().strip().split(','))
+CAST = set()
+_cp = os.path.join(os.path.dirname(os.path.dirname(HERE)), 'unity-data', 'MolakData', 'cast.txt')
+if os.path.exists(_cp):
+    for _l in io.open(_cp, encoding='utf-8'):
+        if '=' in _l and not _l.startswith('#'): CAST.add(_l.split('=')[0].strip())
+# 0.4.88 저장소의 그림 원본(unity-art-*/)도 이름으로 센다 — 새 그림을 넣을 때 목록을 손으로 고치지 않게
+ROOT = os.path.dirname(os.path.dirname(HERE))
+for _p in glob.glob(os.path.join(ROOT, 'unity-art-*', '*.png')):
+    ART.add(os.path.splitext(os.path.basename(_p))[0])
 
 scripts = {}
 for p in sorted(glob.glob(os.path.join(NANI, '*.nani'))):
@@ -53,7 +62,12 @@ for s, L in scripts.items():
             if sc not in scripts: rep('이동', s, i, '없는 대본 ' + t)
             elif lb and lb not in labels[sc]: rep('이동', s, i, '없는 라벨 ' + t)
         if st.startswith('@art'):
-            for k, pre in (('scene', 'scene_'), ('char', 'char_')):
+            # 0.4.88 새 인물은 인물 표(unity-data/MolakData/cast.txt)에 한 줄 — 이름 인장·자리 그림이 거기서 온다
+            for k in ('char', 'with'):
+                m = re.search(r'\b' + k + r':([a-z_0-9]+)', st)
+                if m and m.group(1) not in ('none', 'off') and m.group(1) not in CAST and m.group(1).split('_')[0] not in CAST:
+                    rep('인물표', s, i, '인물 표에 없는 그림 ' + m.group(1))
+            for k, pre in (('scene', 'scene_'), ('char', 'char_'), ('with', 'char_')):
                 m = re.search(r'\b' + k + r':(\S+)', st)
                 if m and m.group(1) not in ('none', 'off') and pre + m.group(1) not in ART:
                     rep('그림', s, i, '없는 그림 ' + pre + m.group(1))
