@@ -248,6 +248,8 @@ public class PickEventCommand : Command
             cands.Add(d);
         }
         if (cands.Count == 0) { SetNext("none"); return; }
+        // 0.4.94 인연별 이야기 모드: 그 편의 줄기 사건이 열려 있으면 그것부터(무작위에 밀려 마감 날을 넘기지 않게 — 암향 편의 금침의 밤)
+        if (MolakStory.Auto) { var key = cands.Where(c => MolakStory.RouteWeight(c.Id) > 1f).ToList(); if (key.Count > 0) cands = key; }
 
         float dry = MolakStats.Get("evdry");
         int chance = Assigned(Chance) ? Chance.Value : 100;
