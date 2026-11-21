@@ -702,7 +702,7 @@
 @choice "變 흔든다 — 웅크려 받을 때" goto:#StA2
 @choice "斬 정면으로 벤다 — 허초일 때" goto:#StA3
 @choice "雲步 — 큰 수가 오는 자리를 비켜선다" if:scharge==1 goto:#StA4
-@choice "觀 — 지금과 다음을 읽는다 · 막마다 한 번 (내공 2)" if:sread<1&&sgwan>0&&ng>=2 goto:#StGwan
+@choice "觀 — 지금과 다음을 읽는다 · 막마다 한 번" if:sread<1&&sgwan>0&&ng>=2 goto:#StGwan
 @choice "落 — 무너진 자리에 떨어지는 칼 · 저주 +4" if:sbroken>0 goto:#StA6
 @stop
 # StGwan
