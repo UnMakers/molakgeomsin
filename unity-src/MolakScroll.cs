@@ -1,4 +1,4 @@
-using Naninovel;
+﻿using Naninovel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -364,7 +364,9 @@ public class MolakScroll : MonoBehaviour
     static bool thHold; static int thPrevChoices; static string thHoldText; static float thHoldT; static float thSumTopC = 800f;
     void LayoutTheater (float canvasW, float canvasH)
     {
-        float side = Mathf.Max(MolakLayout.ThTextSide, (canvasW - MolakLayout.Canvas.x) / 2f + MolakLayout.ThTextSide);
+        // 0.4.87 글 칸 폭: 넓은 화면(폴드·태블릿)에서 900 기준 칸에 묶어 두면 좌우가 휑하다. 그림 창은 화면 폭을 다 쓰니
+        //   글도 화면 폭을 따르되, 한 줄이 너무 길어 눈이 길을 잃지 않게 ThTextMaxW 에서 멈춘다(폰 900 폭에선 예전과 같다).
+        float side = Mathf.Max(MolakLayout.ThTextSide, (canvasW - MolakLayout.ThTextMaxW) / 2f);
         float top = MolakLayout.ThTextTop + MolakLayout.DuelStrip, bot = MolakLayout.ThBottomBand + 20f;   // 비무의 간파 판이 떠 있으면 글을 그만큼 내린다
         var wantMin = new Vector2(side, bot); var wantMax = new Vector2(-side, -top);
         if ((viewport.offsetMin - wantMin).sqrMagnitude > 0.01f) viewport.offsetMin = wantMin;

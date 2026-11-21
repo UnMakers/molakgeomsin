@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// 화면 배치 수치를 한곳에 모은다. 캔버스 단위(900×1600 세로 기준)로 적는다.
@@ -47,6 +47,8 @@ public static class MolakLayout
     /// 0.4.83 극장판을 기본으로(언메이커: 위 공백이 너무 크다, 소제목이 나오면 체력 줄이 내려간다) — 위 띠는 수치 한 줄로 고정, 그림을 위로.
     ///   마디 이름은 그림 창 왼쪽 위에 얹는다. 휴대폰 노치·제스처 바 자리(안전 영역)만큼 위·아래 띠가 자란다.
     public const float ThTopBandH = 136f, ThArtGap = 6f, ThArtH = 660f, ThTextGap = 36f, ThBottomBandH = 116f, ThTextSide = 60f;
+    /// <summary>0.4.87 극장판 글 칸의 가장 넓은 폭(캔버스 단위). 폰(900)은 780 그대로, 폴드처럼 넓으면 여기까지 넓힌다.</summary>
+    public const float ThTextMaxW = 1080f;
     /// <summary>위 띠 안 두 줄의 가운데(안전 영역 아래에서 잰 캔버스 단위): 마디 이름 줄(위) · 수치 줄(아래, 금줄에 붙인다). 둘 다 고정.</summary>
     public const float ThPinLineY = 40f, ThStatLineY = 108f;
     public static float ThInsetTop { get { var sa = Screen.safeArea; return Mathf.Max(0f, (Screen.height - sa.yMax) / CanvasPx); } }

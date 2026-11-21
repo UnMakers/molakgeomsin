@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Naninovel;
 using UnityEngine;
@@ -70,7 +70,7 @@ public class MolakGloss : MonoBehaviour
     static readonly List<(G g, float t0)> showing = new List<(G, float)>();
     static MolakGloss inst;
     const string Pref = "molak.gloss";
-    const float Life = 7.5f;
+    const float Life = 11.25f;   // 0.4.87 7.5 → ×1.5
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot ()

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Naninovel;
 using UnityEngine;
@@ -24,6 +24,8 @@ public static class MolakStatLog
     static float lastRecT = -99f;
 
     static readonly Regex Tag = new Regex("<[^>]+>|\\{[^}]*\\}");
+    // 0.4.87 {변수}가 든 줄은 실행 전엔 번역 표지(|#~7359bf1a|)로만 읽힌다 — 까닭에 그 표지가 그대로 찍혔다. 표지는 지운다(남는 글이 없으면 그 줄은 까닭으로 쓰지 않는다).
+    static readonly Regex L10n = new Regex("\\|#~?[0-9A-Za-z_\\-]+\\|");
 
     /// <summary>바로 뒤에 올 그 수치의 변화에 붙일 이유. key 가 "*" 이면 모든 수치.</summary>
     public static void Why (string key, string why)
@@ -142,7 +144,7 @@ public static class MolakStatLog
     static string Clean (string s)
     {
         if (string.IsNullOrEmpty(s)) return "";
-        s = Tag.Replace(s, "").Replace("\n", " ").Replace("\r", " ").Replace("​", "");
+        s = L10n.Replace(Tag.Replace(s, ""), "").Replace("\n", " ").Replace("\r", " ").Replace("​", "");
         return Regex.Replace(s, "\\s+", " ").Trim();
     }
 

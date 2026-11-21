@@ -1,4 +1,4 @@
-using Naninovel;
+﻿using Naninovel;
 using UnityEngine;
 
 /// <summary>HUD v5 — 서울2033식 미니멀: 최상단 저주 스트립 + 한 줄 상태(한자 라벨) + 서열 연출.</summary>
@@ -196,11 +196,13 @@ public class MolakHud : MonoBehaviour
         }
         // 0.4.70 그림 위에 검은 패를 띄우지 않는다(언메이커: 그림 위로 수치가 뜨는 건 아니다).
         //   바뀐 수치와 까닭은 글자리 맨 아래 종이 쪽지 한 장에(낱말 풀이 쪽지와 같은 모양), 수치마다 한 줄.
+        // 0.4.87 쪽지는 시간으로만 걷는다(글을 넘겨도 남는다). 선택지·멈춤 장면·비무 패가 떠 있는 동안은 접어 두고 시간을 멈춘다 —
+        //   0.4.80 엔 선택지가 뜨면 걷어 버려서, 누르자마자 사라지는 것처럼 보였다(낱말 쪽지와 같은 기준으로).
+        bool foldWhy = MolakTheme.ChoiceCount > 0 || MolakVfx.Holding || MolakDuelCard.Visible || MolakGiyeonCard.Showing;
+        if (foldWhy) { for (int i = 0; i < whyRows.Count; i++) { var r0 = whyRows[i]; r0.t0 += dt; whyRows[i] = r0; } }
         for (int i = whyRows.Count - 1; i >= 0; i--) if (Time.unscaledTime - whyRows[i].t0 > WhyLife) whyRows.RemoveAt(i);
-        // 0.4.80 선택지가 뜨면 쪽지를 걷는다 — 글자리 맨 아래에 붙어 있어 아래 선택지 카드를 가렸다(0.4.79 검토). 지나간 까닭은 능력치 기록에 남는다.
-        if (MolakTheme.ChoiceCount > 0 && whyRows.Count > 0) whyRows.Clear();
         SlipH = 0f;
-        if (whyRows.Count > 0 && !MolakVfx.Holding && !MolakDuelCard.Visible && !MolakGiyeonCard.Showing)
+        if (whyRows.Count > 0 && !foldWhy)
         {
             if (sWhy == null || !Mathf.Approximately(whyU, u)) { whyU = u; sWhy = MolakGui.Label(28, u, TextAnchor.UpperLeft, true); sWhy.richText = true; }
             var ta = MolakVfx.SlipArea();   // 0.4.82 그림 화면이면 글자리 위 — 글자리를 가리지 않는다
@@ -247,7 +249,7 @@ public class MolakHud : MonoBehaviour
         }
         GUI.color = Color.white;
     }
-    const float ChipLife = 3.2f, WhyLife = 5.5f;
+    const float ChipLife = 3.2f, WhyLife = 8.25f;   // 0.4.87 5.5 → ×1.5
     /// <summary>글자리 아래 수치 쪽지의 높이(낱말 풀이 쪽지가 그 위로 올라간다).</summary>
     public static float SlipH;
     GUIStyle sWhy; float whyU = -1f;

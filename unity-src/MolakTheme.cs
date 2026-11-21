@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Naninovel;
 using UnityEngine;
@@ -605,7 +605,7 @@ public class MolakTheme : MonoBehaviour
             if (ub != null && ub.interactable == lockedCard) ub.interactable = !lockedCard;   // 잠긴 카드는 눌리지 않는다
             var le = btn.GetComponent<UnityEngine.UI.LayoutElement>();
             if (le == null) le = btn.gameObject.AddComponent<UnityEngine.UI.LayoutElement>();
-            float baseH = th ? 88f : tier.CardH;   // 0.4.82 극장판: 시안 DE4 의 얇은 띠(44px)
+            float baseH = th ? 76f : tier.CardH;   // 0.4.82 극장판: 시안 DE4 의 얇은 띠 — 0.4.87 88→76(네 줄이면 요약이 그림 위로 밀려 올라갔다)
             float wantH = lockedCard ? Mathf.Round(baseH * 0.7f) : baseH;
             float cardW = CardWidth(btn);
             if (Mathf.Abs(le.minHeight - wantH) > 0.5f || Mathf.Abs(le.minWidth - cardW) > 0.5f || le.flexibleWidth != 0f) { le.minHeight = wantH; le.minWidth = cardW; le.preferredWidth = cardW; le.flexibleWidth = 0f; }
@@ -621,7 +621,8 @@ public class MolakTheme : MonoBehaviour
                 if (tx.textWrappingMode != TMPro.TextWrappingModes.Normal) tx.textWrappingMode = TMPro.TextWrappingModes.Normal;
                 { var ta = cine ? TMPro.TextAlignmentOptions.Midline : TMPro.TextAlignmentOptions.MidlineLeft; if (tx.alignment != ta) tx.alignment = ta; }
                 if (tx.overflowMode != TMPro.TextOverflowModes.Overflow) tx.overflowMode = TMPro.TextOverflowModes.Overflow;
-                float need = tx.preferredHeight + (lockedCard ? tier.TextPad * 0.4f : tier.TextPad);
+                float tpad = th ? 22f : tier.TextPad;   // 0.4.87 극장판 띠는 위아래 여백을 줄인다(두 줄 선택지가 불필요하게 두꺼웠다)
+                float need = tx.preferredHeight + (lockedCard ? tpad * 0.4f : tpad);
                 if (need > le.minHeight + 1f) le.minHeight = need;
             }
         }
@@ -646,7 +647,7 @@ public class MolakTheme : MonoBehaviour
             foreach (var vlg in blGo.GetComponentsInChildren<UnityEngine.UI.VerticalLayoutGroup>(true))
             {
                 if (vlg.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
-                { float gp = TheaterNow ? 16f : tier.Gap; if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
+                { float gp = TheaterNow ? 12f : tier.Gap; if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
                 if (vlg.childForceExpandWidth) vlg.childForceExpandWidth = false;   // 카드 폭 820 — 마스크(860) 안쪽으로
                 var ca = vlg.childAlignment == TextAnchor.UpperLeft ? TextAnchor.UpperCenter : (vlg.childAlignment == TextAnchor.MiddleLeft ? TextAnchor.MiddleCenter : (vlg.childAlignment == TextAnchor.LowerLeft ? TextAnchor.LowerCenter : vlg.childAlignment));
                 if (vlg.childAlignment != ca) vlg.childAlignment = ca;
