@@ -83,6 +83,13 @@ public class MolakStory : MonoBehaviour
         if (day > 30) Max("amhaff", Mathf.Min(6f, Mathf.Floor((day - 30f) / 2f)));
         if (day > 24) Max("cmaff", Mathf.Min(6f, Mathf.Floor((day - 24f) / 3f)));
         if (day > 12) Max("chamaff", Mathf.Min(6f, Mathf.Floor((day - 12f) / 4f)));
+        // 0.4.94 인연별 이야기 모드: 문양은 적어도 뿌리만으로 자란 만큼은 익는다(68에서 멎는다) — 사술이 익어야 오는 대목(할멈의 금침·재우는 약, 문양의 속삭임)이
+        //   보호하는 선택에 밀려 오지 않던 것(암향 편 시험). 사술은 이 이야기의 시계다.
+        if (Auto)
+        {
+            float c = 0f; for (int d = 1; d <= Mathf.RoundToInt(day); d++) c += MolakRules.CurseRoot(d);
+            Max("curse", Mathf.Min(68f, c));
+        }
         MolakRealm.StoryFill(day);   // 0.4.72 경지도 날짜에 맞춰(서열이 벽에 막혀 이야기가 멈추지 않게)
         MolakStats.GrowBody();
         MolakStats.Set("hp", MolakStats.Get("hpmax"));

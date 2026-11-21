@@ -11,7 +11,7 @@
   · 사람이 죽는 깃발(…dead): −8, 소아 −15.
   · 끝(@ending): 그 편의 진짜 끝(Molak22 True○○2, 소아 편은 합벽의 TrueBoardE) +60, 합벽 없이 교주를 꺾은 끝(EpiBoardE) +30, 다른 편의 진짜 끝 +15,
     그 편 히로인과 「도망쳐 산 생」(LongTail○○, g_long_○○ 를 남긴다 — 다음 생에 진짜 끝을 여는 열쇠) +30, 그 밖의 끝 −20, 죽음 −50.
-  · 되감기(StoryFold): +25. 「처음 화면」: −100.
+  · 되감기(StoryFold, 소아의 구결을 품고 다음 생으로): 소아 편 +25 · 히로인 편 −10(그 생을 끝까지 걸어 떠나기 전 밤에 닿아야 한다). 「처음 화면」: −100.
   · 사술 +1 −0.2, 체력 −1 −0.05, 살기 +1 −0.05, 검술·내공 +1 +0.1.
   · 앎(g_)은 생을 넘어 남는다. 이미 가진 앎을 또 얻는 값은 쳐 주지 않도록, 갈래가 얻는 g_ 깃발과 그 몫을 함께 적는다(게임이 지금 가진 것은 뺀다).
 줄 형식: 편<TAB>대본<TAB>점수<TAB>글귀<TAB>g_깃발:몫,…
@@ -164,7 +164,7 @@ def walk(s, i, her, depth, stack, known=()):
             ts, tl = target(s, m.group(2))
             if ts == 'MolakOver' and s != 'MolakOver':
                 if not cond:
-                    sc += 25 if tl == 'StoryFold' else -50
+                    sc += (25 if her == 'soa' else -10) if tl == 'StoryFold' else -50
                     break
             elif (ts, tl) in HUB:
                 if not cond and m.group(1) == 'goto': break
@@ -185,7 +185,7 @@ def choice_value(s, j, m, her, depth, stack, known=()):
     g = re.search(r'goto:(\S+)', m.group(2))
     if not g: return (0.0, {})
     ts, tl = target(s, g.group(1))
-    if ts == 'MolakOver' and s != 'MolakOver': return (25.0 if tl == 'StoryFold' else -50.0, {})
+    if ts == 'MolakOver' and s != 'MolakOver': return ((25.0 if her == 'soa' else -10.0) if tl == 'StoryFold' else -50.0, {})
     if (ts, tl) not in labels or (ts, tl) in HUB: return (0.0, {})
     return walk(ts, labels[(ts, tl)] + 1, her, depth, stack, known)
 
