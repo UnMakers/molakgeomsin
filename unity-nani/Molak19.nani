@@ -3,6 +3,14 @@
 ; 히로인마다 여섯 장면이 차례로 나온다(vs_*). 다 보고 나면 짧은 한 장면이 되풀이된다.
 ; 진입: Molak02#NightChoice → #Visit. 끝나면 Molak02#NightEnd.
 
+# StoryVisit
+; 0.4.94 인연별 이야기 모드: 그 편 히로인의 여섯 밤을 날짜에 고르게 편다(엿새쯤에 한 번). 볼 밤이 아니면 그냥 잔다.
+@goto #V_soa if:g_storyroute==1&&f_soamet>0&&f_soadead<1&&f_leftwithsoa<1&&vs_soa<6&&day>=6+vs_soa*7
+@goto #V_amh if:g_storyroute==2&&f_amhyangknown>0&&f_amhdead<1&&f_amhgone<1&&vs_amh<6&&day>=14+vs_amh*6
+@goto #V_cm if:g_storyroute==3&&f_jbsister>0&&vs_cm<6&&day>=16+vs_cm*6
+@goto #V_cham if:g_storyroute==4&&b_ch1>0&&f_chamgone<1&&vs_cham<6&&day>=8+vs_cham*7
+@goto Molak02#NightEnd
+
 # Visit
 @choice "소아의 방문을 두드린다" if:f_soamet>0&&f_soadead<1&&f_leftwithsoa<1 goto:#V_soa
 @choice "암향루 뒷문으로 간다" if:f_amhyangknown>0&&f_amhdead<1&&f_amhgone<1 goto:#V_amh

@@ -9,7 +9,7 @@
   · 사실·앎(f_·g_): 대본 전체 조건에서 「있으면 열린다(>0)」 수와 「없어야 열린다(<1)」 수의 차(±6에서 자름)×0.5.
     진엔딩 대목(Molak04 True·Epi·LdHap·OldFight, Molak22)이 「있으면」으로 보는 깃발은 +3. 그 편 히로인 이름이 든 깃발 ×2, 다른 히로인 ×0.3.
   · 사람이 죽는 깃발(…dead): −8, 소아 −15.
-  · 끝(@ending): 그 편의 진짜 끝(Molak22 True○○2, 소아 편은 합벽의 TrueBoardE·EpiBoardE) +60, 다른 편의 진짜 끝 +15,
+  · 끝(@ending): 그 편의 진짜 끝(Molak22 True○○2, 소아 편은 합벽의 TrueBoardE) +60, 합벽 없이 교주를 꺾은 끝(EpiBoardE) +30, 다른 편의 진짜 끝 +15,
     그 편 히로인과 「도망쳐 산 생」(LongTail○○, g_long_○○ 를 남긴다 — 다음 생에 진짜 끝을 여는 열쇠) +30, 그 밖의 끝 −20, 죽음 −50.
   · 되감기(StoryFold): +25. 「처음 화면」: −100.
   · 사술 +1 −0.2, 체력 −1 −0.05, 살기 +1 −0.05, 검술·내공 +1 +0.1.
@@ -27,7 +27,8 @@ OUT = os.path.join(ROOT, 'unity-data', 'MolakData', 'storypicks.txt')
 ROUTES = {1: 'soa', 2: 'amh', 3: 'cm', 4: 'cham'}
 HER_KEYS = {'soa': ['soa', 'yeon'], 'amh': ['amh'], 'cm': ['cm', 'jbsister'], 'cham': ['cham']}
 AFFS = {'aff': 'soa', 'amhaff': 'amh', 'cmaff': 'cm', 'chamaff': 'cham'}
-TRUE_LABEL = {'TrueAmh2': 'amh', 'TrueCm2': 'cm', 'TrueCham2': 'cham', 'TrueBoardE': 'soa', 'EpiBoardE': 'soa'}
+TRUE_LABEL = {'TrueAmh2': 'amh', 'TrueCm2': 'cm', 'TrueCham2': 'cham', 'TrueBoardE': 'soa'}
+WIN_LABEL = {'EpiBoardE'}   # 합벽 없이 교주를 꺾은 끝 — 진엔딩의 문턱
 LONG_LABEL = {'LongTailSoa': 'soa', 'LongTailAmh': 'amh', 'LongTailCm': 'cm', 'LongTailCham': 'cham'}
 DEATH_END = {'VictoryCurse', 'RipeAW', 'CultDie', 'DeadM0', 'E_Maeng3JE'}
 HUB = {('Molak02', x) for x in ('Daytime', 'AfterChapter', 'DayLoop', 'Night', 'NightEnd', 'BeatCheck', 'RunEvent')}
@@ -126,6 +127,7 @@ def walk(s, i, her, depth, stack, known=()):
         if l.startswith('@ending'):
             lab = label_at[(s, i)]
             if lab in TRUE_LABEL: sc += 60 if TRUE_LABEL[lab] == her else 15
+            elif lab in WIN_LABEL: sc += 30
             elif lab in LONG_LABEL: pass   # 몫은 g_long_ 깃발이 진다
             elif lab in DEATH_END: sc -= 50
             else: sc -= 20

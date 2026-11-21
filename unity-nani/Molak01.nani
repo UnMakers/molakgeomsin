@@ -1348,6 +1348,8 @@
 @fx mn:8 why:"쥐눈이 장에게 보름의 운주 들판을 팔았다"
 @goto #P4Go
 # P4b
+; 0.4.94 인연별 이야기 모드는 첫날 장보기를 건너뛴다(소설에 장바구니는 없다)
+@goto #P4e if:storyauto>0
 @art scene:marketday
 @art char:none
 @goto #P4bR if:mkv>0
