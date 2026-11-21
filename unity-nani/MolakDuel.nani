@@ -1,4 +1,4 @@
-; ===== 공용 비무 =====
+﻿; ===== 공용 비무 =====
 ; 판의 형편(dsit): 0 없음 1 빗속 2 외나무다리 3 구경꾼 4 독 바른 칼 5 판돈 6 제자를 데려온 상대 7 생사결
 ; 지는 것이 곧 죽음인 판(dlethal)은 이야기의 결전·업보의 칼·생사결뿐. 그 밖의 판은 져도 목은 붙어 있고, 대신 몸·전낭·체면이 값을 치른다.
 # Run
@@ -603,6 +603,7 @@
 @choice "돌아간다" goto:#PracFoe
 @stop
 # PracG2
+@choice "호치 — 체세 시험판 · 새 비무(체세·파세·잔상)" goto:#PF_hochiS
 @choice "독아단 아장 호치 — 필살 「독아쇄」" goto:#PF_hochi
 @choice "창잡이 곽산 — 당신이 낸 수를 따라 한다 · 필살 「회마창」" goto:#PF_rival
 @choice "철산도 — 무거운 칼로 버틴다 · 필살 「철산고」" goto:#PF_cheolsan
@@ -676,6 +677,63 @@
 # PracResW
 <color=#C9A227>이겼다.</color> {foename}의 칼이 땅에 떨어진다.
 @return
+# PF_hochiS
+@set dkind="hochi"
+@practice do:heal
+체세 시험판 — 호치와 겨룬다. <color=#8A7A66>상성을 맞히면 체세가 깨지고, 다 깨면 파세. 무너진 상대는 한 차례 쉬고, 그 차례엔 두 배로 들어간다.</color>
+@choice "처음 보는 상대로" goto:#StJan0
+@choice "지난 생에 이 도끼에 죽어 본 몸으로 — 잔상이 보인다" goto:#StJan1
+@stop
+# StJan0
+@set pjan=0
+@goto #StRun
+# StJan1
+@set pjan=1
+# StRun
+@art scene:duel
+@art char:hochi
+@stance do:init
+{stell}
+# StTurn
+@stance do:pre
+{stell}
+# StMenu
+@choice "受 받아친다 — 찌르러 올 때" goto:#StA1
+@choice "變 흔든다 — 웅크려 받을 때" goto:#StA2
+@choice "斬 정면으로 벤다 — 허초일 때" goto:#StA3
+@choice "雲步 — 큰 수가 오는 자리를 비켜선다" if:scharge==1 goto:#StA4
+@choice "觀 — 지금과 다음을 읽는다 · 막마다 한 번 (내공 2)" if:sread<1&&sgwan>0&&ng>=2 goto:#StGwan
+@choice "落 — 무너진 자리에 떨어지는 칼 · 저주 +4" if:sbroken>0 goto:#StA6
+@stop
+# StGwan
+@stance do:gwan
+{stell}
+@goto #StMenu
+# StA1
+@stance act:1
+@goto #StAfter
+# StA2
+@stance act:2
+@goto #StAfter
+# StA3
+@stance act:3
+@goto #StAfter
+# StA4
+@stance act:4
+@goto #StAfter
+# StA6
+@stance act:6
+# StAfter
+{sres}
+@goto #StTurn if:send<1
+@stance do:end
+@art char:none
+@goto #StAgain
+# StAgain
+@choice "같은 판을 다시" goto:#PF_hochiS
+@choice "상대를 바꾼다" goto:#PracFoe
+@choice "연습을 마친다" goto:#PracEnd
+@stop
 # PracEnd
 @practice do:end
 @stop

@@ -125,7 +125,9 @@ for s, L in scripts.items():
 # 회귀 뒤에만 오는 라벨(회귀 아침 Rb·Rg, 잃은 사람의 아침 Gr, 회귀한 생 갈래 …K·…Re·…R2) — 코드가 회귀 뒤에만 부른다
 REBIRTH = re.compile(r'^(Rb|Rg|Gr|P4R|P4AL)|K\d*$|Re[A-Z]?\d*$|R\d$')
 # 진말로(합벽) 길: 검보(g_hapbo)는 지난 생의 적운 구결로만 열려 첫 생엔 닿지 않는다
-ALLOW = {('Molak04', l) for l in ('TrueEpi', 'OldFight', 'OldF1A', 'OldF1B', 'OldF1C', 'OldF1Miss', 'OldF2', 'OldF2A', 'OldF2B', 'OldF2Miss', 'OldF2C', 'OldF3', 'OldF3Go', 'OldF3Weak', 'OldF3End')}
+# 비무 연습(타이틀)은 이야기 밖 — 지난 생을 고르는 선택지가 있다
+ALLOW_EXTRA = {('MolakDuel', 'PF_hochiS')}
+ALLOW = ALLOW_EXTRA | {('Molak04', l) for l in ('TrueEpi', 'OldFight', 'OldF1A', 'OldF1B', 'OldF1C', 'OldF1Miss', 'OldF2', 'OldF2A', 'OldF2B', 'OldF2Miss', 'OldF2C', 'OldF3', 'OldF3Go', 'OldF3Weak', 'OldF3End')}
 memo = {}
 def gated(s, lb, depth=0):
     key = (s, lb)
