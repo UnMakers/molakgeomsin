@@ -146,6 +146,13 @@ public static class MolakEventDefs
             // 0.4.88 백일승천교 둘째(종이옷의 뒷면 — 왕삼·혈쇄문·참새) · 셋째(이차 승천 — 교의 그릇 수레, 감찰사·용개·하진무)
             new Def("E_Ascend2", 9, 50, 'd', null, "E_Ascend", 3, 18),
             new Def("E_Ascend3", 20, 56, 'n', "!f_ascendsaved&!f_ascendlost", "E_Ascend2", 4, 22),
+            // 0.4.91 맡은 일(부탁 → 수락 → 다음에 올 때 이어진다). 이어지는 쪽은 받은 깃발이 서 있고 끝나지 않았을 때만, 무게를 높여 '다음에 왔을 때' 잘 뜨게.
+            new Def("E_QMugo1", 6, 40, 'd', "!f_qmugo", null, 0, 14),
+            new Def("E_QMugo2", 8, 58, 'd', "f_qmugo&!f_qmugodone", "E_QMugo1", 3, 30),
+            new Def("E_QGgoji1", 7, 42, 'd', "!f_qggoji", null, 0, 14),
+            new Def("E_QGgoji2", 9, 58, 'a', "f_qggoji&!f_qggojidone", "E_QGgoji1", 3, 30),
+            new Def("E_QStory1", 8, 42, 'n', "!f_qstory", null, 0, 14),
+            new Def("E_QStory2", 10, 58, 'n', "f_qstory&!f_qstorydone", "E_QStory1", 2, 30),
             new Def("E_Sutra", 6, 18, 'd', null, null, 0, 10),
             new Def("E_Sutra2", 16, 0, 'd', null, "E_Sutra", 5, 12),
             new Def("E_Sutra3", 30, 0, 'd', "!f_herbdead", "E_Sutra2", 7, 12),

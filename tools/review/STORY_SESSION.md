@@ -127,4 +127,5 @@ python3 tools/varlist.py   # 새 변수를 썼을 때만. unity-src/MolakVarList
 - **붉은 눈**: 선한 쪽 민간인·아군은 눈동자를 붉게 두지 않는다(`tools/art/eye_gray.py`). 교·사술·악역만.
 - **이름 없는 패거리와의 싸움**: 결과를 대본에 박지 않는다. 〔검술〕 등 승부수(`@risk on:sw need:0`)로 굴리고 진 갈래를 쓴다. 이야기가 반드시 이어져야 하는 싸움은 「빗나가면 값을 치르고 이긴다」.
 - **일상 사건 꼴**: `@deja` + `{dejapre}` + 회귀 갈래(`g_ev_*`/`f_ev_*`, 상대 말을 먼저 한다) + `MolakEventDefs.cs`에 한 줄. 변수는 `python3 tools/vgen.py` → `python3 tools/varlist.py`로 선초기화·목록을 다시 만든다.
+- **맡은 일(부탁 → 다음에 올 때)**: 사건 둘. 부탁하는 쪽에서 받으면 `f_q<id>=1`, 이어지는 쪽은 `MolakEventDefs`에 `조건 "f_q<id>&!f_q<id>done"`, `after "<부탁 사건>"`, `gap` 며칠로 걸고 끝에 `f_q<id>done=1`. `unity-data/MolakData/quests.txt`에 한 줄(`q<id> = 제목 | f_q<id> | f_q<id>done | 지금 할 일 | 맡긴 사람 | 끝 날`)이면 행낭 「맡은 일」 칸에 뜨고 끝나면 빠진다. 두 사건 다 위 일상 사건 꼴 그대로.
 - 고친 뒤: `static_check.py`가 합계 0, `vgen.py`가 OK.

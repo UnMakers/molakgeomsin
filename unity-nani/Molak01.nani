@@ -363,6 +363,12 @@
 @set f_ev_peddler3=0
 @set f_ev_peddler4=0
 @set f_ev_pilgrim=0
+@set f_ev_qggoji1=0
+@set f_ev_qggoji2=0
+@set f_ev_qmugo1=0
+@set f_ev_qmugo2=0
+@set f_ev_qstory1=0
+@set f_ev_qstory2=0
 @set f_ev_rain=0
 @set f_ev_rain2=0
 @set f_ev_rain3=0
@@ -574,6 +580,12 @@
 @set f_poisonswap=0
 @set f_projujube=0
 @set f_proknot=0
+@set f_qggoji=0
+@set f_qggojidone=0
+@set f_qmugo=0
+@set f_qmugodone=0
+@set f_qstory=0
+@set f_qstorydone=0
 @set f_r2shrine=0
 @set f_r2soa=0
 @set f_r3truth=0

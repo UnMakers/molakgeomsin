@@ -225,7 +225,7 @@ public class MolakBag : MonoBehaviour
 
     Entry? Find (string flag)
     {
-        foreach (var t in new[]{ Items, Lore, Bonds }) foreach (var e in t) if (e.Flag == flag) return e;
+        foreach (var t in new[]{ Items, Lore, Bonds, MolakQuest.Entries }) foreach (var e in t) if (e.Flag == flag) return e;
         return null;
     }
 
@@ -280,10 +280,10 @@ public class MolakBag : MonoBehaviour
         if (pollT <= 0f && Engine.Initialized)
         {
             pollT = 0.25f; haveFrame = -1; stripKey = null;
-            foreach (var t in new[]{ Items, Lore, Bonds })
+            foreach (var t in new[]{ Items, Lore, Bonds, MolakQuest.Entries })
                 foreach (var e in t)
                 {
-                    bool now = Get(e.Flag) > 0f;
+                    bool now = Has(t, e);
                     bool before; had.TryGetValue(e.Flag, out before);
                     if (now && !before) { order.Remove(e.Flag); order.Add(e.Flag); }
                     if (!now && before) order.Remove(e.Flag);
@@ -316,10 +316,10 @@ public class MolakBag : MonoBehaviour
             Box(new Rect(0, by0, w, Mathf.Max(1f, 2*u)), night ? new Color(0.45f,0.40f,0.35f,0.9f) : new Color(0.55f,0.48f,0.40f,0.7f));
             Box(new Rect(w/2f - 56*u, by0 + 12*u, 112*u, 7*u), night ? new Color(0.7f,0.65f,0.58f,0.9f) : new Color(0.35f,0.30f,0.25f,0.75f));
             RefreshHave();
-            int nI = haveC[0].Count, nL = haveC[1].Count, nB = haveC[2].Count;
+            int nI = haveC[0].Count, nL = haveC[1].Count, nB = haveC[2].Count, nQ = haveC[3].Count;
             // 0.4.28: 띠가 커진 만큼 채운다 — ① 제목과 개수 ② 최근에 얻은 셋(아직 지닌 것만) ③ 이번 생의 날과 뜻
             int sz = Mathf.RoundToInt(28*u);
-            GUI.Label(new Rect(0, by0 + 26*u, w, 58*u), "<b>행낭</b>   <size=" + sz + "><color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + "</color></size>", sHintName);
+            GUI.Label(new Rect(0, by0 + 26*u, w, 58*u), "<b>행낭</b>   <size=" + sz + "><color=" + subCol + ">물건 " + nI + "  ·  비방·소식 " + nL + "  ·  인연 " + nB + (nQ > 0 ? "  ·  맡은 일 " + nQ : "") + "</color></size>", sHintName);
             var recent = new List<Entry>(); var recentKind = new List<int>();
             for (int i = order.Count - 1; i >= 0 && recent.Count < 3; i--)
             {
@@ -392,15 +392,14 @@ public class MolakBag : MonoBehaviour
 
         float cx = Mathf.Max(36*u, (w - Mathf.Min(w*0.92f, 960*u))/2f), cw = w - 2*cx;
         // ---- 탭 ----
-        var sections = new[] { "물건", "비방 · 소식", "인연" };
-        var tables = new[] { Items, Lore, Bonds };
-        var accents = new[] { MolakPaper.Accent, MolakPaper.Blue, MolakTheme.Gold };
+        var sections = new[] { "물건", "비방 · 소식", "인연", "맡은 일" };   // 0.4.91 맡은 일(MolakQuest)
+        var accents = new[] { MolakPaper.Accent, MolakPaper.Blue, MolakTheme.Gold, new Color(0.30f, 0.52f, 0.36f, 1f) };
         RefreshHave();
         var have = haveC; int newest = newestC;
-        if (tab < 0 || have[tab].Count == 0) { tab = newest >= 0 ? newest : 0; if (have[tab].Count == 0) for (int s = 0; s < 3; s++) if (have[s].Count > 0) { tab = s; break; } }
-        float ty = y + 108*u, th = 78*u, tw = cw / 3f;
+        if (tab < 0 || tab >= Tabs || have[tab].Count == 0) { tab = newest >= 0 ? newest : 0; if (have[tab].Count == 0) for (int s = 0; s < Tabs; s++) if (have[s].Count > 0) { tab = s; break; } }
+        float ty = y + 108*u, th = 78*u, tw = cw / Tabs;
         Box(new Rect(cx, ty + th, cw, Mathf.Max(1f, 2*u)), new Color(ink3.r, ink3.g, ink3.b, 0.3f));
-        for (int s = 0; s < 3; s++)
+        for (int s = 0; s < Tabs; s++)
         {
             var tr = new Rect(cx + tw*s, ty, tw, th);
             bool on = s == tab, empty = have[s].Count == 0;
@@ -474,21 +473,25 @@ public class MolakBag : MonoBehaviour
     // 0.4.81 프레임: 줄 높이(CalcHeight)를 매 OnGUI(한 프레임에 여러 번)마다 다시 재던 것을 기억해 둔다
     readonly Dictionary<string, float> rowCache = new Dictionary<string, float>(); float rowCw = -1f, rowU = -1f;
     GUIStyle sX; float xU = -1f;
-    readonly List<Entry>[] haveC = { new List<Entry>(), new List<Entry>(), new List<Entry>() };
+    readonly List<Entry>[] haveC = { new List<Entry>(), new List<Entry>(), new List<Entry>(), new List<Entry>() };
     readonly Dictionary<string, int> orderIdx = new Dictionary<string, int>();
     int haveFrame = -1, newestC = -1; string stripKey;
     /// <summary>지닌 것 목록(탭별, 최근이 위)을 한 프레임에 한 번만 만든다.</summary>
+    /// <summary>0.4.91 칸마다 '지녔다'의 기준: 물건·비방·인연은 깃발이 섰으면, 맡은 일은 받았고 아직 끝나지 않았으면(MolakQuest.Active).</summary>
+    static bool Has (Entry[] table, Entry e) { return table == MolakQuest.Entries ? MolakQuest.Active(e.Flag) : Get(e.Flag) > 0f; }
+    static Entry[] TableOf (int s) { return s == 0 ? Items : s == 1 ? Lore : s == 2 ? Bonds : MolakQuest.Entries; }
+    const int Tabs = 4;
     void RefreshHave ()
     {
         if (haveFrame == Time.frameCount) return;
         haveFrame = Time.frameCount;
         orderIdx.Clear(); for (int i = 0; i < order.Count; i++) orderIdx[order[i]] = i;
         int newestIdx = -1; newestC = -1;
-        for (int s = 0; s < 3; s++)
+        for (int s = 0; s < Tabs; s++)
         {
-            var tb = s == 0 ? Items : s == 1 ? Lore : Bonds;
+            var tb = TableOf(s);
             var lst = haveC[s]; lst.Clear();
-            foreach (var e in tb) if (Get(e.Flag) > 0f) { lst.Add(e); int oi; if (!orderIdx.TryGetValue(e.Flag, out oi)) oi = -1; if (oi > newestIdx) { newestIdx = oi; newestC = s; } }
+            foreach (var e in tb) if (Has(tb, e)) { lst.Add(e); int oi; if (!orderIdx.TryGetValue(e.Flag, out oi)) oi = -1; if (oi > newestIdx) { newestIdx = oi; newestC = s; } }
             lst.Sort((a, b) => { int ia, ib; if (!orderIdx.TryGetValue(a.Flag, out ia)) ia = -1; if (!orderIdx.TryGetValue(b.Flag, out ib)) ib = -1; return ib.CompareTo(ia); });   // 최근이 위
         }
     }
