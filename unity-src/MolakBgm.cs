@@ -54,11 +54,34 @@ public class MolakBgm : MonoBehaviour
         has[s] = b; return b;
     }
 
+    // ---- 0.4.94 대본이 쥐는 곡(@bgm mood:…) — 언메이커: 중요하고 멋있는 장면 연출, 너무 오바하지 말고 ----
+    /// <summary>대본이 쥔 묶음. 쥐는 동안 그림이 바뀌어도(Commit→Mood) 곡은 그대로다. "hush" 는 소리를 거두고 멎는다.
+    /// 기준: 쥔 곡은 그 장면 안에서만 — 날이 바뀌거나, 새 마디(@chapter)·말로(@ending)·제목 화면이 오면 저절로 풀린다.</summary>
+    public static string Held { get; private set; }
+    static float heldDay = -1f;
+    public static void Hold (string m)
+    {
+        if (inst == null) return;
+        if (string.IsNullOrEmpty(m) || m == "auto") { Release(); return; }
+        Held = m; try { heldDay = MolakStats.Get("day"); } catch { heldDay = -1f; }
+        if (m == "hush") return;
+        string want = Has(m) ? m : Fallback(m);
+        inst.mood = m;
+        if (want != inst.set || inst.pendingSet != null) inst.pendingSet = want;
+    }
+    public static void Release ()
+    {
+        if (Held == null) return;
+        Held = null;
+        if (inst != null) { inst.mood = ""; Mood(MolakArt.CurrentMood()); }
+    }
+
     /// <summary>장면이 바뀔 때. 그 장면 묶음이 있으면 갈아타고, 없으면 기본 묶음을 그대로 둔다.</summary>
     public static void Mood (string m)
     {
         if (inst == null) return;
         m = m ?? "";
+        if (Held != null) return;   // 대본이 곡을 쥐고 있다
         if (inst.mood == m) return;
         inst.mood = m;
         string want = (m.Length > 0 && Has(m)) ? m : Fallback(m);
@@ -153,12 +176,16 @@ public class MolakBgm : MonoBehaviour
         {
             moodT = 0.5f;
             float day = 0f; try { day = MolakStats.Get("day"); } catch { }
+            if (Held != null && (MolakTitle.Showing || day != heldDay)) Release();
+            if (Held != null) { moodT = 0.5f; goto Fading; }
             if (MolakTitle.Showing) { if (mood != "end" && mood != "ending" && mood != "true") Mood("title"); }
             else if (day < 1f) { if (mood == "title" || mood == "") Mood("prologue"); }
             else if (mood == "title" || mood == "end" || mood == "ending" || mood == "true" || mood == "prologue") Mood(MolakArt.CurrentMood());
         }
+        Fading:
         // 묶음 갈아타기: 소리를 내린 뒤 새 묶음의 다음 곡
-        if (pendingSet != null)
+        if (Held == "hush") fade = Mathf.MoveTowards(fade, 0f, Time.unscaledDeltaTime / 2.2f);   // 소리를 천천히 거둔다
+        else if (pendingSet != null)
         {
             fade = Mathf.MoveTowards(fade, 0f, Time.unscaledDeltaTime / 1.2f);
             if (fade <= 0f && !loading)
@@ -180,5 +207,18 @@ public class MolakBgm : MonoBehaviour
         }
         float v = Mathf.Clamp01(am.BgmVolume * am.MasterVolume) * fade * Trim;
         src.volume = Mathf.MoveTowards(src.volume, v, Time.unscaledDeltaTime * 2f);
+    }
+}
+
+/// <summary>0.4.94 @bgm mood:boss|true|sorrow|tension|soa|…|hush|auto — 그 장면 안에서 곡을 쥔다(MolakBgm.Hold). hush 는 소리를 거둔다, auto 는 놓는다.</summary>
+[Naninovel.Alias("bgm")]
+public class BgmCommand : Naninovel.Command
+{
+    public Naninovel.StringParameter Mood;
+#pragma warning disable CS1998
+    public override async Awaitable Execute (Naninovel.ExecutionContext ctx)
+#pragma warning restore CS1998
+    {
+        MolakBgm.Hold(Assigned(Mood) ? Mood.Value : "auto");
     }
 }

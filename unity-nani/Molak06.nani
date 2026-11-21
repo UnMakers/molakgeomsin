@@ -562,6 +562,7 @@
 하진무가 점소이 손을 잡고 그 뒤를 따른다.
 마지막으로 돌아보는 하진무에게 고개를 끄덕인다.
 @page
+@bgm mood:boss
 @art scene:raidnight
 @art char:none
 계단 셋째 칸. 칼을 무릎에 눕히고 앉는다. 발소리가 올라온다. 열넷.
@@ -572,12 +573,14 @@
 @vfx kind:hit
 열하나째의 칼이 옆구리에 들어온다. 열둘째의 칼이 등에.
 그래도 앉아 있다. 계단 셋째 칸은 앉아 있는 사람 하나로 막힌다.
+@bgm mood:hush
 @vfx kind:beat
 이 밤을 그녀는 잊는다. 다음 아침의 그녀는 이 계단에 누가 앉아 있었는지 모른다.
 국밥집에서 내 그릇을 뺏어 먹으며 처음 보는 얼굴을 할 것이다.
 '괜찮다. 내가 기억한다. 죽어서도.'
 @black text:"숨이 멎는다." red:true hold:1.6
 @page
+@bgm mood:sorrow
 @art scene:temple
 @art char:soa_grief
 되감기기 직전, 문양이 한 장면을 보여 준다. 당신이 없는 뒷날이다.
@@ -628,6 +631,7 @@
 "……도망치는 것도 둘이 하니 할 만하군."
 @goto #SoaN8Dawn
 # SoaN8BLost
+@bgm mood:hush
 @art scene:bloodroof
 @vfx kind:bloodrain
 @art char:none
@@ -658,7 +662,7 @@
 @set g_soaname=1
 @set f_soablades=1
 @fx curse:4
-@goto #SoaN8Fold if:storymode>0&&g_hapdone<1
+@goto #SoaN8Fold if:storymode>0&&g_hapdone<1&&f_hapbyeok<1
 @goto Molak02#AfterChapter
 # SoaN8C2
 @vfx kind:curse
@@ -701,6 +705,7 @@
 @fx curse:5
 @goto Molak02#AfterChapter
 # SoaN8Die
+@bgm mood:hush
 @set f_soadead=1
 @set g_soadied=1
 @set g_soalast=1
@@ -728,7 +733,7 @@
 @black text:"……연(蓮)." red:true hold:2
 @fx curse:3
 @set f_soablades=1
-@goto #SoaN8Fold if:storymode>0&&g_hapdone<1
+@goto #SoaN8Fold if:storymode>0&&g_hapdone<1&&f_hapbyeok<1
 @goto Molak02#AfterChapter
 # SoaDieB
 손가락이 차다. 우물물처럼.
@@ -736,7 +741,7 @@
 @black text:"……|손가락이 식는다." red:true hold:1.8
 @fx curse:3 hp:-1
 @set f_soablades=1
-@goto #SoaN8Fold if:storymode>0&&g_hapdone<1
+@goto #SoaN8Fold if:storymode>0&&g_hapdone<1&&f_hapbyeok<1
 @goto Molak02#AfterChapter
 # SoaN8Dawn
 @gosub #SoaN8LateMsg
@@ -761,9 +766,10 @@
 @set g_redverse=1
 @set f_soaverse=1
 @set aff=aff+1
-@goto #SoaN8Fold if:storymode>0&&g_hapdone<1
+@goto #SoaN8Fold if:storymode>0&&g_hapdone<1&&f_hapbyeok<1
 @goto Molak02#AfterChapter
 # SoaN8Fold
+; 0.4.94 기준: 되감기를 권하는 것은 이 생에서 사당의 함을 열지 못했을 때만(f_hapbyeok<1) — 함을 연 생까지 되감으면 같은 생을 끝없이 돌았다(이야기 모드 시험)
 @print "<color=#9A70C4>귀에 열두 줄이 남아 있다. 사당은 탔다. 이 생에서는 그 함을 열 수 없다.</color>"
 @choice "그 열두 줄을 품고 되감긴다 — 다음 생, 사당이 타기 전으로" goto:MolakOver#StoryFold
 @choice "이 생을 끝까지 걷는다" goto:Molak02#AfterChapter

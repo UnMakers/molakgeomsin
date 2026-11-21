@@ -34,6 +34,8 @@ public class RiskCommand : Command, IMolakMoment
 #endif
         MolakStats.Set("pass", pass ? 1f : 0f);
         MolakStats.Set("riskp", p);
+        // 0.4.94 인연별 이야기 모드는 소설처럼 읽는다 — 승산 인장(通·승산 몇 할)은 찍지 않고 칼 소리만 낸다
+        if (MolakStory.Auto) { MolakSfx.Draw(); return; }
         // 판정의 순간을 몸으로: 통하면 칼 소리와 금빛, 빗나가면 둔탁한 북과 흔들림. 낮은 승산을 뚫으면 더 크게.
         if (pass)
         {

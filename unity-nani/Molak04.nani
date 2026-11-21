@@ -647,6 +647,7 @@
 @gosub MolakDuel#Run
 @goto #LordAfter
 # LdHapGo
+@bgm mood:boss
 @art scene:hapbyeok2
 @art char:none
 교주의 검이 단을 내려온다. 멸도(滅道). 검이 지나는 자리마다 공기가 벽처럼 굳는다.
@@ -671,6 +672,7 @@
 교주의 멸도가 둘을 동시에 베려다 한 호흡 늦는다.
 둘이 한 몸처럼 움직였으니까.
 @page
+@bgm mood:hush
 @art scene:lordhall
 @art char:lord_kneel
 혈천마가 무릎을 꿇는다. 가슴의 상처가 십자로 갈라져 있다.
@@ -685,6 +687,7 @@
 
 ; ===== 진(眞)말로: 합벽 =====
 # TrueEpi
+@bgm mood:true
 @art char:oldman
 대전 밖. 깃발이 탄다. 그 불길을 등지고 노인이 서 있다.
 공기가 쥐어진다. 그 밤 산장에서처럼 손가락 하나 움직이지 않는다.

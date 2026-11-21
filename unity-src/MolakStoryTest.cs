@@ -46,6 +46,7 @@ public class MolakStoryTest : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(0.1f);
             if (MolakName.Open) MolakName.AutoFill("연호");
+            if (MolakVfx.Holding) MolakVfx.ReleaseStamp();   // 넘기기가 잠깐 꺼진 사이에 뜬 인장(사람이면 누른다)
             sp.SetAutoPlay(true); sp.SetSkip(true);
             var tr = sp.MainTrack;
             if (tr.PlayedIndex != lastIdx) { lastIdx = tr.PlayedIndex; lastMove = Time.realtimeSinceStartup; }

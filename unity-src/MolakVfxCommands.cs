@@ -150,6 +150,7 @@ public class ChapterCommand : Command, IMolakMoment
 #pragma warning restore CS1998
     {
         MolakStoryBook.Mark(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "", this);   // 0.4.78 이야기 모드 책갈피
+        MolakBgm.Release();   // 0.4.94 새 마디 — 앞 장면이 쥔 곡을 놓는다
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp != null && sp.Skipping) return;
         MolakVfx.Chapter(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "", Assigned(Desc) ? Desc.Value : "");

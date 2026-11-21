@@ -8,6 +8,7 @@ public class EndingCommand : Command
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
     {
+        MolakBgm.Release();   // 0.4.94 대본이 쥔 곡은 말로에서 놓는다
         var id = MolakEnd.Resolve();
         var e = MolakEnd.Find(id);
         // 0.4.70 말로마다 곡: 합벽은 진말로 곡, 살아서 떠나는 말로는 밝은 곡, 나머지는 회귀의 곡
