@@ -43,7 +43,7 @@ public class MolakStory : MonoBehaviour
         new string[0],
         new string[0],
         new[] { "E_Amh", "E_SoaAmh", "E_JangAmh", "E_YongAmh", "E_HajinAmh", "E_Herb" },
-        new[] { "E_Cm", "E_SoaCm", "E_HerbCm", "E_JinSister", "E_TempleBell" },
+        new[] { "E_Cm", "E_SoaCm", "E_HerbCm", "E_JinSister", "E_TempleBell", "E_OldDream" },   // 청묘 편: 노인의 꿈(사태의 함 뚜껑 안쪽 — 운해가 묻는다)
         new[] { "E_Cham" },
     };
     /// <summary>편에 속하지 않는 히로인의 사건(두 히로인이 함께 나오는 것 포함)은 뺀다.</summary>
