@@ -37,7 +37,7 @@ public class MolakStory : MonoBehaviour
     static void Flag (string k, bool on) { float v = on ? 1f : 0f; if (MolakStats.Get(k) != v) MolakStats.Set(k, v); }
 
     /// <summary>0.4.73 이야기 모드에서 뽑는 사건 — 소아와 두 사내(염혁·단목결), 하진무, 쥐눈이 장, 표국, 맹의 줄기만. 나머지 저잣거리 일은 건너뛴다.</summary>
-    static readonly string[] Keep = { "E_Soa", "E_Spar", "E_Hyeok", "E_Gyeol", "E_Hajin", "E_Hostage", "E_Jang", "E_Hao", "E_Guard", "E_Maeng", "E_Rain2" };
+    static readonly string[] Keep = { "E_Soa", "E_Spar", "E_Hyeok", "E_Gyeol", "E_Hajin", "E_Hostage", "E_Jang", "E_Hao", "E_Guard", "E_Maeng", "E_Rain2", "E_OldDream" };   // 0.4.94 노인의 꿈(사태의 함 뚜껑 — 종장의 노인 대목이 묻는다)
     /// <summary>0.4.94 편마다 더 읽는 줄기 — 그 히로인의 사건과, 그 히로인의 진짜 끝을 여는 사람들의 사건(암향 편은 백초 할멈의 재우는 약).</summary>
     static readonly string[][] RouteKeep = {
         new string[0],

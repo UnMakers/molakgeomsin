@@ -91,9 +91,11 @@ public class DayTickCommand : Command
         {
             MolakStats.Add("day", 1f);
             float day = MolakStats.Get("day");
-            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor() * MolakRules.BodyCurseFactor(day, MolakStats.Get("ng"), MolakStats.Get("sl")) * (MolakStory.On ? 0.4f : 1f);   // 0.4.94 내공이 버티고 살기가 먹인다
+            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor() * MolakRules.BodyCurseFactor(day, MolakStats.Get("ng"), MolakStats.Get("sl")) * (MolakStory.On && !MolakStory.Auto ? 0.4f : 1f);   // 0.4.94 내공이 버티고 살기가 먹인다 · 인연별 이야기 모드는 문양이 제 속도로 자란다(사술이 익어야 열리는 할멈의 금침·재우는 약 같은 대목이 오게, 70에서 멎는다)
             if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - MolakRules.TeaCurseCut); // 청심차 비방: 매일 반 김
-            if (root > 0f) MolakStatLog.Why("curse", MolakStats.Get("f_tea") > 0 ? "하룻밤 새 문양이 자란다(청심차로 반은 눌렀다)" : "하룻밤 새 문양이 뿌리를 뻗는다");
+            float bf = MolakRules.BodyCurseFactor(day, MolakStats.Get("ng"), MolakStats.Get("sl"));   // 0.4.94 몸이 뿌리를 얼마나 버텼나 — 까닭 줄에 보인다
+            string bodyWhy = bf <= 0.9f ? " — 내공이 뿌리를 밀어냈다" : bf >= 1.1f ? (MolakStats.Get("sl") > MolakRules.Bar("sl", day) ? " — 살기를 먹고 깊이 뻗었다" : " — 기가 얕아 깊이 뻗었다") : "";
+            if (root > 0f) MolakStatLog.Why("curse", (MolakStats.Get("f_tea") > 0 ? "하룻밤 새 문양이 자란다(청심차로 반은 눌렀다)" : "하룻밤 새 문양이 뿌리를 뻗는다") + bodyWhy);
             MolakStats.Add("curse", root);
             MolakStats.Set("ngbar", MolakRules.Bar("ng", day));   // 0.4.94 그날 내공의 격 — 대본이 「기가 넉넉한 몸」(ng>=ngbar+3)을 묻는다
             if (MolakStats.Get("f_ringclosed") > 0) MolakStats.Add("f_ringclosed", -1f); // 비무판 폐쇄 일수

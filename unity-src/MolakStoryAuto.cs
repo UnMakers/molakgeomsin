@@ -105,7 +105,7 @@ public class MolakStoryAuto : MonoBehaviour
         if (best == null) return;
         { int c0; picks.TryGetValue(bestLabel, out c0); picks[bestLabel] = c0 + 1; }
         LastPick = script + " · " + bestLabel + " (" + bestSc.ToString("0.#") + ")";
-        Echo(bestLabel);
+        if (script != "MolakOver") Echo(bestLabel);   // 생과 생 사이의 고르기(다시 그날로 · 비탄)는 본문에 남기지 않는다
         picked = best; echoAt = Time.unscaledTime;
     }
 
@@ -130,6 +130,7 @@ public class MolakStoryAuto : MonoBehaviour
         int dash = label.IndexOf(" — ", System.StringComparison.Ordinal);
         if (dash >= 0) { head = label.Substring(0, dash); tail = label.Substring(dash + 3); }
         head = Cost.Replace(head, " ").Trim(); tail = Cost.Replace(tail, " ").Trim();
+        if (Regex.IsMatch(head, @"^(\S )+\S$")) head = head.Replace(" ", "");   // 「다 시 그 날 로」처럼 글자를 띄워 쓴 글귀
         string line;
         bool talk = head.StartsWith("\"") || head.StartsWith("“") || head.StartsWith("「");
         if (talk)
