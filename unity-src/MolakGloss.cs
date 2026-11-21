@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Naninovel;
 using UnityEngine;
@@ -28,13 +28,13 @@ public class MolakGloss : MonoBehaviour
         new G { Term = "표사", Han = "鏢師", Text = "표국에 고용되어 표물을 지키는 무사" },
         new G { Term = "표두", Han = "鏢頭", Text = "표사들을 이끄는 우두머리" },
         new G { Term = "표물", Han = "鏢物", Text = "표국이 맡아 지켜 나르는 짐" },
-        new G { Term = "내공", Han = "內功", Text = "몸 안에 쌓는 기운. 높을수록 오래 버티고 칼에 힘이 실린다" },
+        new G { Term = "내공", Han = "內功", Text = "몸 안에 쌓는 기운. 높을수록 오래 버티고 칼에 힘이 실린다. 가슴의 문양이 뿌리를 뻗는 것도 밀어낸다" },
         new G { Term = "단전", Han = "丹田", Text = "배꼽 아래, 내공이 모이는 자리" },
         new G { Term = "혈도", Han = "穴道", Text = "기운이 흐르는 몸의 길목. 막히면 기가 돌지 않는다" },
         new G { Term = "운기조식", Han = "運氣調息", Text = "앉아서 숨을 고르며 내공을 몸에 돌리는 수련" },
         new G { Term = "초식", Han = "招式", Text = "이름이 붙은 칼의 한 수. 정해진 움직임의 묶음" },
         new G { Term = "구결", Han = "口訣", Text = "무공의 요령을 외우기 쉽게 적은 글귀" },
-        new G { Term = "경지", Han = "境地", Text = "무공의 높이. 이류 → 일류 → 절정 → 초절정 순으로 오른다" },
+        new G { Term = "경지", Han = "境地", Text = "무공의 높이. 이류 → 일류 → 절정 → 초절정 순으로 오른다. 검과 기가 문턱에 닿고, 사람에게 배우고 넘어지며 얻은 깨달음이 차야 벽 앞에 앉는다" },
         new G { Term = "비무", Han = "比武", Text = "무공을 겨루는 공개 대련. 이기면 강호 서열이 오른다" },
         new G { Term = "서열록", Han = "序列錄", Text = "강호 무인들의 순위를 적은 명부. 이름이 오를수록 알려진다" },
         new G { Term = "하오문", Han = "下午門", Text = "거지·장사꾼·기생 같은 밑바닥 사람들의 소식 장사 조직" },

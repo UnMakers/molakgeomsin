@@ -65,6 +65,21 @@ public static class MolakRealm
         MolakStats.SetStr("insightlog", string.Join("|", parts.ToArray()));
     }
 
+    /// <summary>0.4.94 깨달음은 배운 날에만 온다(언메이커: 좋은 아이템 먹으면 경지가 막 오른다).
+    /// 기준: 검·기가 한꺼번에 자란 그 장면에 가르칠 수 있는 사람(인물 표의 주연, 또는 Teachers)이 서 있어야 한다 — 영약·기연은 몸만 키운다.
+    /// 깨달음의 다른 길(진 판, 넘기 힘든 판, 넘지 못한 벽, 대본의 @realm do:gain)은 그대로다.</summary>
+    public static readonly string[] Teachers = { "gyeol", "hyeok", "ungeom", "yeomga", "abbot", "beggarmonk" };
+    public static void Taught (string why)
+    {
+        string id = MolakArt.CharId ?? "";
+        if (id.Length == 0) return;
+        string baseId = id.Split('_')[0];
+        bool teacher = MolakCast.MainNames.ContainsKey(id) || MolakCast.MainNames.ContainsKey(baseId) || System.Array.IndexOf(Teachers, baseId) >= 0;
+        if (!teacher) return;
+        string who = MolakCast.MainNames.ContainsKey(id) ? MolakCast.MainNames[id] : MolakCast.OtherNames.ContainsKey(id) ? MolakCast.OtherNames[id] : "";
+        Gain(who.Length > 0 ? who + "에게서 — " + why : why, true);
+    }
+
     public struct Part { public string Label; public float V; }
 
     /// <summary>폐관의 승산과 그 셈(무엇이 얼마를 보탰는지).</summary>
@@ -72,10 +87,12 @@ public static class MolakRealm
     {
         float G (string k) => MolakStats.Get(k);
         void P (string l, float v) { if (!string.IsNullOrEmpty(l) && Mathf.Abs(v) >= 0.5f) parts?.Add(new Part { Label = l, V = Mathf.Round(v) }); }
-        float sum = 45f;
-        P("벽 앞에 앉는 몸", 45f);
-        P("문턱을 넘친 검", Mathf.Min(15f, (G("sw") - NeedSw) * 3f));
-        P("문턱을 넘친 기", Mathf.Min(15f, (G("ng") - NeedNg) * 3f));
+        // 0.4.94 기준: 경지는 「먹은 것」보다 「배운 것·넘어진 것·곁의 사람」으로 넘는다. 넘친 검·기는 몫을 줄이고(각 8), 품은 물건은 가르침만(10),
+        //   등을 맡긴 사람(18)과 실패에서 본 벽(24)을 크게 친다.
+        float sum = 40f;
+        P("벽 앞에 앉는 몸", 40f);
+        P("문턱을 넘친 검", Mathf.Min(8f, (G("sw") - NeedSw) * 2f));
+        P("문턱을 넘친 기", Mathf.Min(8f, (G("ng") - NeedNg) * 2f));
         P("남는 깨달음", Mathf.Min(18f, (Insight - NeedIns) * 6f));
         float hy = G("f_hyeop");
         P("협(俠) — 남을 위해 칼을 든 날들", hy >= 7 ? 12f : hy >= 4 ? 8f : hy >= 2 ? 4f : 0f);
@@ -83,20 +100,17 @@ public static class MolakRealm
         P(guard == "soa" ? "호법 — 담 위의 소아" : guard == "hajin" ? "호법 — 문 앞의 하진무" : guard == "town" ? "호법 — 골목 사람들의 등불" : "",
           guard == "soa" ? 12f : guard == "hajin" ? 9f : guard == "town" ? 9f : 0f);
         float people = 0f;
-        if (G("f_gyeolally") > 0 && G("f_gyeoldead") < 1) people += 6f;      // 다섯째 사형이 막힌 자리를 짚는다
-        if ((G("f_hyeokally") > 0 || G("f_sparfriend") > 0) && G("f_hyeokdead") < 1) people += 4f;   // 염혁과 맞춘 합
-        if (G("f_jinally") > 0 && G("f_jinbaekdead") < 1) people += 5f;      // 대사형의 북두
-        if (G("f_gyeolfight") > 0) people += 2f;
-        P("등을 맡긴 사람들의 수", Mathf.Min(12f, people));
-        float items = 0f;
-        if (G("f_biloklearn") > 0) items += 8f; else if (G("f_bilokhalf") > 0) items += 4f;
-        if (G("f_cmform") > 0) items += 5f;
-        if (G("f_herbrecipe") > 0) items += 5f;
-        if (G("f_acupgone") > 0) items += 5f;
-        if (G("f_incense") > 0) items += 4f;
-        if (G("f_sutrashard") > 0) items += 3f;
-        if (G("f_relicpae") > 0) items += 3f;
-        P("품은 것 — 비록·처방·향", Mathf.Min(20f, items));
+        if (G("f_gyeolally") > 0 && G("f_gyeoldead") < 1) people += 9f;      // 다섯째 사형이 막힌 자리를 짚는다
+        if ((G("f_hyeokally") > 0 || G("f_sparfriend") > 0) && G("f_hyeokdead") < 1) people += 6f;   // 염혁과 맞춘 합
+        if (G("f_jinally") > 0 && G("f_jinbaekdead") < 1) people += 8f;      // 대사형의 북두
+        if (G("f_soabond") > 0 && G("f_soadead") < 1) people += 6f;          // 소아와 맞춘 합벽의 걸음
+        if (G("f_gyeolfight") > 0) people += 3f;
+        P("등을 맡긴 사람들의 수", Mathf.Min(18f, people));
+        float items = 0f;   // 가르침이 적힌 것만 — 약·향·부적은 몸을 돕지 벽을 넘겨 주지 않는다
+        if (G("f_biloklearn") > 0) items += 7f; else if (G("f_bilokhalf") > 0) items += 3f;
+        if (G("f_cmform") > 0) items += 4f;
+        if (G("f_sutrashard") > 0) items += 2f;
+        P("품은 가르침 — 비록·검보·경판", Mathf.Min(10f, items));
         P("지난 생에 넘어 본 벽", G("g_realmbest") >= Next ? 10f : 0f);
         P("넘지 못한 밤에 본 벽의 모양", Mathf.Min(24f, G("btfail") * 8f));
         P("가슴의 문양 — 운기가 열을 깨운다", -Mathf.Min(20f, G("curse") / 4f));

@@ -28,6 +28,7 @@ public class RiskCommand : Command, IMolakMoment
         bool know = Assigned(Know) && Know.Value;
         if (know) p = Mathf.Max(p, MolakRules.RiskKnowFloor);
         bool pass = Random.Range(0, 100) < p;
+        if (MolakStory.Auto) pass = true;   // 0.4.94 인연별 이야기 모드: 승부수는 통한다(이야기의 갈래가 주사위에 끊기지 않게)
 #if UNITY_EDITOR
         { float f = MolakStats.Get("riskforce"); if (f > 0) pass = f == 1f; }   // 시험용: 1 통과 2 실패
 #endif

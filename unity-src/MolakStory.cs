@@ -11,6 +11,10 @@ using UnityEngine;
 public class MolakStory : MonoBehaviour
 {
     public static bool On => MolakStats.Get("storymode") > 0f;
+    /// <summary>0.4.94 인연별 이야기 모드: 1 소아 편 · 2 암향 편 · 3 청묘 편 · 4 참새 편(g_storyroute, 장 고르기에서 고른다). 0 이면 예전처럼 직접 고른다.</summary>
+    public static int Route => On ? Mathf.Clamp(Mathf.RoundToInt(MolakStats.Get("g_storyroute")), 0, 4) : 0;
+    /// <summary>선택지·비무·승부수를 알아서 넘기는가(MolakStoryAuto).</summary>
+    public static bool Auto => Route > 0;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Boot ()
@@ -23,12 +27,35 @@ public class MolakStory : MonoBehaviour
         if (!Naninovel.Engine.Initialized || !On) return;
         if (MolakStats.Get("day") >= 1f && MolakStats.Get("hp") < 1f) MolakStats.Set("hp", 1f);
         if (MolakStats.Get("curse") > 70f) MolakStats.Set("curse", 70f);
+        // 0.4.94 편마다 다른 히로인의 마디는 닫는다(Molak02 BeatCheck 의 nx_*). 대본의 storyauto 는 비무를 한 장면으로 줄인다(MolakDuel#StoryCut).
+        int r = Route;
+        Flag("storyauto", r > 0);
+        Flag("nx_amh", r > 0 && r != 2);
+        Flag("nx_cm", r > 0 && r != 3);
+        Flag("nx_cham", r > 0 && r != 4);
     }
+    static void Flag (string k, bool on) { float v = on ? 1f : 0f; if (MolakStats.Get(k) != v) MolakStats.Set(k, v); }
 
     /// <summary>0.4.73 이야기 모드에서 뽑는 사건 — 소아와 두 사내(염혁·단목결), 하진무, 쥐눈이 장, 표국, 맹의 줄기만. 나머지 저잣거리 일은 건너뛴다.</summary>
     static readonly string[] Keep = { "E_Soa", "E_Spar", "E_Hyeok", "E_Gyeol", "E_Hajin", "E_Hostage", "E_Jang", "E_Hao", "E_Guard", "E_Maeng", "E_Rain2" };
+    /// <summary>0.4.94 편마다 더 읽는 줄기 — 그 히로인의 사건과, 그 히로인의 진짜 끝을 여는 사람들의 사건(암향 편은 백초 할멈의 재우는 약).</summary>
+    static readonly string[][] RouteKeep = {
+        new string[0],
+        new string[0],
+        new[] { "E_Amh", "E_SoaAmh", "E_JangAmh", "E_YongAmh", "E_HajinAmh", "E_Herb" },
+        new[] { "E_Cm", "E_SoaCm", "E_HerbCm", "E_JinSister", "E_TempleBell" },
+        new[] { "E_Cham" },
+    };
+    /// <summary>편에 속하지 않는 히로인의 사건(두 히로인이 함께 나오는 것 포함)은 뺀다.</summary>
+    static readonly string[][] Heroine = { new[] { "E_Amh", "E_SoaAmh", "E_JangAmh", "E_YongAmh", "E_HajinAmh" }, new[] { "E_Cm", "E_SoaCm", "E_HerbCm", "E_JinSister", "E_TempleBell" }, new[] { "E_Cham" } };
     public static bool EventAllowed (string id)
     {
+        int r = Route;
+        if (r > 0)
+        {
+            for (int h = 0; h < 3; h++) if (h + 2 != r) foreach (var k in Heroine[h]) if (id.StartsWith(k)) return false;
+            foreach (var k in RouteKeep[r]) if (id.StartsWith(k)) return true;
+        }
         foreach (var k in Keep) if (id.StartsWith(k)) return true;
         return false;
     }

@@ -91,7 +91,7 @@ public class DayTickCommand : Command
         {
             MolakStats.Add("day", 1f);
             float day = MolakStats.Get("day");
-            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor() * (MolakStory.On ? 0.4f : 1f);
+            float root = MolakRules.CurseRoot(day) * MolakStats.CurseFactor() * MolakRules.BodyCurseFactor(day, MolakStats.Get("ng"), MolakStats.Get("sl")) * (MolakStory.On ? 0.4f : 1f);   // 0.4.94 내공이 버티고 살기가 먹인다
             if (MolakStats.Get("f_tea") > 0) root = Mathf.Max(0f, root - MolakRules.TeaCurseCut); // 청심차 비방: 매일 반 김
             if (root > 0f) MolakStatLog.Why("curse", MolakStats.Get("f_tea") > 0 ? "하룻밤 새 문양이 자란다(청심차로 반은 눌렀다)" : "하룻밤 새 문양이 뿌리를 뻗는다");
             MolakStats.Add("curse", root);

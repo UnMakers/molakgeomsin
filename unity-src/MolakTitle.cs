@@ -343,7 +343,7 @@ public class MolakTitle : MonoBehaviour
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
         bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable || state.AutoLoadAvailable;
-        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { MolakStoryBook.RestoreGlobals(); MolakStats.Set("g_storypick", 0f); Wake(sp, state, t); }
+        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { MolakStoryBook.RestoreGlobals(); MolakStats.Set("g_storypick", 0f); MolakStats.Set("g_storyroute", 0f); Wake(sp, state, t); }
         if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
             // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록

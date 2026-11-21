@@ -8,6 +8,7 @@
 @art scene:duel
 @companion at:duel
 @duelinfo kind:{dkind}
+@goto #StoryCut if:storyauto>0
 @goto #Sit1 if:dsit==1
 @goto #Sit2 if:dsit==2
 @goto #Sit3 if:dsit==3
@@ -41,6 +42,26 @@
 @choice "한칼에 끝낸다 — 합을 나눌 상대가 아니다" if:memwarn<1&&odds10>=8&&dlethal<1 goto:#OneCut
 @choice "합을 나눈다" goto:#ExInit
 @stop
+# StoryCut
+; 0.4.94 인연별 이야기 모드: 수를 고르지 않는다. 한 장면으로 줄이고 판을 끝낸다(승산 100 — MolakDuel.Odds).
+@set donecut=1
+@set wrand=random(1,3)
+@goto #StoryCut2 if:wrand==2
+@goto #StoryCut3 if:wrand==3&&dlethal<1
+<color=#C03434>{foename}</color>의 칼이 먼저 칼집을 떠난다.
+세 합이 오간다. 넷째 합에서 당신의 칼이 먼저 닿는다.
+@goto #StoryCutE
+# StoryCut2
+칼끝 너머로 <color=#C03434>{foename}</color>의 숨이 보인다.
+숨이 바뀌는 자리를 기다린다. 바뀐다. 한 걸음에 들어간다.
+@goto #StoryCutE
+# StoryCut3
+<color=#C03434>{foename}</color>의 칼이 빠르다. 옷깃이 한 번, 소매가 한 번 갈린다.
+셋째로 오는 칼을 비껴 흘리고, 빈 옆구리에 칼등을 넣는다.
+# StoryCutE
+@vfx kind:clash
+@duel style:onecut
+@goto #Result
 # Pre
 @duelx do:pre
 {dx_pretext}

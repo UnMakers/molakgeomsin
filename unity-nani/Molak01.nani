@@ -757,6 +757,9 @@
 @set ng=0
 @set nmul=0
 @set nrand=0
+@set nx_amh=0
+@set nx_cham=0
+@set nx_cm=0
 @set nx_hp=0
 @set nx_ng=0
 @set nx_sw=0
@@ -799,7 +802,9 @@
 @set sres=0
 @set starved=0
 @set stell=0
+@set storyauto=0
 @set storymode=0
+@set storyroute=0
 @set sv=0
 @set sw=0
 @set taint=0
@@ -886,6 +891,7 @@
 @set vowline="none"
 @initrun
 @set storymode=g_storypick
+@set storyroute=g_storyroute
 @goto #Prologue if:g_runs<1
 @goto #Rebirth
 # Rebirth

@@ -62,13 +62,13 @@ public static class MolakDuel
             case "hunt3": return new Foe { Name = "집법전주", Rank = 40, P = 66 + Random.Range(0, 5), Boss = "hunt3" };
             case "cheolsan": return new Foe { Name = "철산도", Rank = 5213, P = 40 + Random.Range(0, 4) };
             // 업보의 칼: 내 힘에 맞춰 오는 상대들 — 질 수도, 이길 수도 있는 판
-            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(MyPower() + Random.Range(-4, 2)) };
+            case "grudge": return new Foe { Name = GrudgeNames[Random.Range(0, GrudgeNames.Length)], Rank = rank > 0 ? Mathf.FloorToInt(baseRank * 1.2f) : 7800000, P = Mathf.Round(SelfFoe() + Random.Range(-4, 2)) };
             case "debt": return new Foe { Name = "고리대 왕삼의 수하들", Rank = 6200000, P = Mathf.Round(16 + MolakStats.Get("day") * 0.5f + Random.Range(0, 4)) };
-            case "assassin": return new Foe { Name = "교의 자객", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.5f)) : 900000, P = Mathf.Round(MyPower() + Random.Range(-1, 3)) };
-            case "soa": return new Foe { Name = "적운검파 소아", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.8f)) : 600000, P = Mathf.Round(MyPower() + Random.Range(0, 4)), Boss = "soa" };
-            case "raid": return new Foe { Name = "혈랑대 야습조", Rank = 2500, P = Mathf.Round(MyPower() + Random.Range(-2, 3)) };
+            case "assassin": return new Foe { Name = "교의 자객", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.5f)) : 900000, P = Mathf.Round(SelfFoe() + Random.Range(-1, 3)) };
+            case "soa": return new Foe { Name = "적운검파 소아", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.8f)) : 600000, P = Mathf.Round(SelfFoe() + Random.Range(0, 4)), Boss = "soa" };
+            case "raid": return new Foe { Name = "혈랑대 야습조", Rank = 2500, P = Mathf.Round(SelfFoe() + Random.Range(-2, 3)) };
             case "tax": return new Foe { Name = "징세조 칼잡이들", Rank = 400000, P = 27 + Random.Range(0, 5) };
-            case "namgung": return new Foe { Name = "남궁세가 소가주 남궁현", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.Min(2140, Mathf.FloorToInt(baseRank * 0.6f))) : 2140, P = Mathf.Round(MyPower() + Random.Range(-1, 3)), Boss = "namgung" };
+            case "namgung": return new Foe { Name = "남궁세가 소가주 남궁현", Rank = rank > 0 ? Mathf.Max(FloorRank(), Mathf.Min(2140, Mathf.FloorToInt(baseRank * 0.6f))) : 2140, P = Mathf.Round(SelfFoe() + Random.Range(-1, 3)), Boss = "namgung" };
             case "back": // 뒷골목 사설 비무판: 더 깊은 서열의 상대, 더 세고, 판돈 셋
             {
                 int t = rank > 0 ? Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * (0.11f + Random.value * 0.11f))) : Random.Range(4500000, 6500001);
@@ -82,9 +82,9 @@ public static class MolakDuel
                 return new Foe { Name = "장풍표국 염혁", Rank = t, P = Mathf.Round(5 + Mathf.Log10(8000001f / t) * 11f + Random.Range(1, 4)) };
             }
             case "gyeolspar": // 0.4.70 단목결 — 서열각의 칼(구백구십구)
-                return new Foe { Name = "서열각의 칼 단목결", Rank = 999, P = Mathf.Round(MyPower() + Random.Range(1, 4)) };
+                return new Foe { Name = "서열각의 칼 단목결", Rank = 999, P = Mathf.Round(SelfFoe() + Random.Range(1, 4)) };
             case "gyeol":     // 0.4.70 숫자를 지우러 온 밤 — 지면 죽는다
-                return new Foe { Name = "다섯째 사형 단목결", Rank = 999, P = Mathf.Round(MyPower() + Random.Range(0, 4)) };
+                return new Foe { Name = "다섯째 사형 단목결", Rank = 999, P = Mathf.Round(SelfFoe() + Random.Range(0, 4)) };
             case "rival":
             {
                 int t = Mathf.Max(FloorRank(), Mathf.FloorToInt(baseRank * 0.75f));
@@ -124,9 +124,12 @@ public static class MolakDuel
             - (MolakStats.Get("injury") > 0 ? 4f : 0f) - (MolakStats.Get("taint") > 0 ? 2f : 0f);
     }
 
+    /// <summary>0.4.94 내 힘에 맞춰 오는 상대의 바탕 힘: 내 힘과 그날 격의 힘(MolakRules.BarPower) 사이. 수련한 만큼의 절반이 승산에 남는다.</summary>
+    static float SelfFoe () { float me = MyPower(); return me * MolakRules.FoeSelfShare + MolakRules.BarPower(MolakStats.Get("day")) * (1f - MolakRules.FoeSelfShare); }
+
     public static float Odds (Foe foe, float bonus)
     {
-        if (MolakStory.On) return 97f;   // 0.4.66 이야기 모드
+        if (MolakStory.On) return MolakStory.Auto ? 100f : 97f;   // 0.4.66 이야기 모드 · 0.4.94 인연별 이야기 모드는 지지 않는다(소설처럼 읽는다)
         bonus += MolakStats.Get("compbonus");   // 0.4.67 동행이 상대의 버릇을 짚어 준다
         return Mathf.Clamp(50f + (MyPower() + bonus - foe.P) * 5f, 5f, 92f);
     }

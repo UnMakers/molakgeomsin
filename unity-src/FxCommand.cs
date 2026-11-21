@@ -33,7 +33,7 @@ public class FxCommand : Command
             if (v <= -2) MolakSfx.Hit();
             if (v <= -4) MolakVfx.Blood();
         }
-        if (Assigned(Ng)) { float v = Ng.Value * k; MolakStats.Add("ng", v); MolakHud.Delta("ng", v); if (Ng.Value >= 2) MolakRealm.Gain("기가 한꺼번에 깊어진 날 — 막힌 마디 하나가 보였다", true); }
+        if (Assigned(Ng)) { float v = Ng.Value * k; MolakStats.Add("ng", v); MolakHud.Delta("ng", v); if (Ng.Value >= 2) MolakRealm.Taught("기를 함께 돌린 날 — 막힌 마디 하나가 보였다"); }
         if (Assigned(Sw))
         {
             float dsw = 0f;
@@ -45,7 +45,7 @@ public class FxCommand : Command
                 dsw += one;
             }
             MolakStats.Add("sw", dsw); MolakHud.Delta("sw", dsw);
-            if (Sw.Value >= 2 && dsw >= 2) MolakRealm.Gain("검이 한꺼번에 자란 날 — 늘 멎던 자리가 보였다", true);   // 0.4.72 깨달음(하루 한 번까지)
+            if (Sw.Value >= 2 && dsw >= 2) MolakRealm.Taught("한 수를 받은 날 — 늘 멎던 자리가 보였다");   // 0.4.72 깨달음(하루 한 번까지) · 0.4.94 사람에게 배운 날만
         }
         if (Assigned(Sl)) { float v = Sl.Value * k; MolakStats.Add("sl", v); MolakHud.Delta("sl", v); }
         if (Assigned(Mn)) { float v = Mn.Value * k; MolakStats.Add("mn", v); MolakHud.Delta("mn", v); if (v >= 10) MolakVfx.Gold(); }

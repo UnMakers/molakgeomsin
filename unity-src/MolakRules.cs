@@ -113,6 +113,26 @@ public static class MolakRules
         return 0f;
     }
 
+    // ---- 0.4.94 몸이 사술을 버틴다(언메이커: 내공이 큰 의미가 있어? · 사용처가 너무 언밸런스) ----
+    /// <summary>기준: 내공은 몸 안에서 문양을 밀어내는 힘, 살기는 문양에 먹이를 주는 힘.
+    /// 그날의 격(Bar)보다 내공이 한 칸 높을 때마다 하룻밤 뿌리가 NgCurseStep 만큼 덜 자라고, 낮으면 더 자란다(±NgCurseCap 에서 자름).
+    /// 살기가 격보다 높으면 한 칸마다 SlCurseStep 만큼 더 자란다(SlCurseCap 까지). 격에 맞춰 자란 몸이면 1배 — 사술 시계(쉰다섯째 날 익음)는 그대로다.</summary>
+    public const float NgCurseStep = 0.03f, NgCurseCap = 0.30f, SlCurseStep = 0.02f, SlCurseCap = 0.20f;
+    public static float BodyCurseFactor (float day, float ng, float sl)
+    {
+        float f = 1f - Mathf.Clamp((ng - Bar("ng", day)) * NgCurseStep, -NgCurseCap, NgCurseCap);
+        f += Mathf.Clamp((sl - Bar("sl", day)) * SlCurseStep, 0f, SlCurseCap);
+        return Mathf.Max(0.5f, f);
+    }
+
+    /// <summary>0.4.94 그날의 격에 맞춰 자란 몸의 비무 힘(MolakDuel.MyPower 와 같은 셈). 내 힘에 맞춰 오던 상대(업보의 칼·자객·소아·남궁현·단목결·야습조)는
+    /// 이것과 내 힘의 가운데(FoeSelfShare)에 선다 — 수련한 만큼의 절반은 승산으로 남는다(예전엔 내 힘을 그대로 따라와 검술·내공이 승산에 남지 않았다).</summary>
+    public const float FoeSelfShare = 0.5f;
+    public static float BarPower (float day)
+    {
+        return Bar("sw", day) * 1.1f + Bar("ng", day) * 1.3f + 3f + (Bar("sl", day) >= 5f ? 2f : 0f);
+    }
+
     /// <summary>승부수의 문턱. spec 이 "+2"/"-1"/"0" 꼴이면 그날의 격에 더하고, "12" 꼴이면 그 수 그대로.</summary>
     public static float RiskNeed (string stat, string spec, float day)
     {

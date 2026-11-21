@@ -166,6 +166,24 @@ public class MolakStoryBook : MonoBehaviour
         File.WriteAllText(BackupPath, sb.ToString(), Encoding.UTF8);
     }
 
+    /// <summary>0.4.94 인연 따라 읽기는 빈 앎에서 시작한다(지난 플레이의 앎이 소설의 순서를 앞지르지 않게: 첫 생에 잃고, 다음 생에 되돌린다).
+    /// 지금 전역은 적어 두었다가 「처음부터」·「서장부터」에서 RestoreGlobals 로 되돌린다. 이름은 그대로 둔다.</summary>
+    static void FreshRoute (int route)
+    {
+        RestoreGlobals();
+        try { BackupGlobals(); } catch (System.Exception ex) { Debug.LogWarning("[MolakStoryBook] 전역 적기 실패: " + ex.Message); return; }
+        var vars = Engine.GetService<ICustomVariableManager>();
+        var clear = new List<(string, CustomVariableValueType)>();
+        foreach (var v in vars.Variables)
+        {
+            if (!v.Name.StartsWith("g_") || v.Name.StartsWith("g_pname")) continue;
+            clear.Add((v.Name, v.Value.Type));
+        }
+        foreach (var (n, ty) in clear) vars.SetVariableValue(n, ty == CustomVariableValueType.String ? new CustomVariableValue("none") : new CustomVariableValue(0f));
+        MolakStats.Set("g_storyroute", route);
+        MarkFreshStart();
+    }
+
     /// <summary>장으로 뛰어들기 전의 전역으로 되돌린다(적어 둔 것이 있을 때만). 「처음부터」·「비무 연습」·「서장부터」에서 부른다.</summary>
     public static void RestoreGlobals ()
     {
@@ -280,7 +298,7 @@ public class MolakStoryBook : MonoBehaviour
         float m = Mathf.Max(48f * u, (W - 980f * u) * 0.5f), cw = W - m * 2f;
         float y = Mathf.Max(90f * u, H * 0.06f);
         GUI.Label(new Rect(m, y, cw, 80 * u), "이야기 모드", sHead); y += 84 * u;
-        GUI.Label(new Rect(m, y, cw, 90 * u), "죽지 않고 이야기를 따라 읽는다. 한 번 읽은 마디는 여기에 남아 그 자리부터 다시 읽을 수 있다.", sSub); y += 96 * u;
+        GUI.Label(new Rect(m, y, cw, 90 * u), "죽지 않고 이야기를 따라 읽는다. 인연을 고르면 갈림길도 비무도 알아서 넘기고 그 사람의 이야기만 읽는다. 한 번 읽은 마디는 여기에 남아 그 자리부터 다시 읽을 수 있다.", sSub); y += 96 * u;
         Box(new Rect(m, y, 120 * u, Mathf.Max(1f, 2f * u)), new Color(0.55f, 0.16f, 0.12f, 0.9f)); y += 18 * u;
 
         // 아래 돌아가기 단추 자리
@@ -289,7 +307,7 @@ public class MolakStoryBook : MonoBehaviour
 
         // 목록 높이
         float rowH = 116 * u, gh = 70 * u, gapR = 14 * u;
-        float total = rowH + gapR + 10 * u;
+        float total = rowH + gapR + 10 * u + gh + Routes.Length * (rowH + gapR) + 10 * u;
         int groups = 0, lastLife = -1;
         foreach (var e in list) if (e.life != lastLife) { groups++; lastLife = e.life; }
         total += groups * gh + list.Count * (rowH + gapR) + 140 * u;
@@ -318,10 +336,25 @@ public class MolakStoryBook : MonoBehaviour
         bool canTap = Time.realtimeSinceStartup - openedAt > 0.35f && !dragging;
         GUI.BeginGroup(view);
         float yy = -scroll;
-        // 서장부터
-        if (Row(new Rect(m, yy, cw, rowH), "서장부터", "청운산장의 새벽 — 처음부터 읽는다", new Color(0.12f, 0.10f, 0.08f, 1f), canTap, u))
+        // 0.4.94 인연 따라 읽기 — 고르지 않고 소설처럼(MolakStoryAuto)
+        GUI.Label(new Rect(m, yy + 10 * u, cw, gh - 10 * u), "인연 따라 읽기 — 고르지 않고, 소설처럼", sGroup);
+        Box(new Rect(m, yy + gh - 6 * u, cw, Mathf.Max(1f, 1f * u)), new Color(0.55f, 0.16f, 0.12f, 0.35f));
+        yy += gh;
+        for (int ri = 0; ri < Routes.Length; ri++)
         {
-            Close(); RestoreGlobals(); MarkFreshStart(); onFresh?.Invoke();
+            if (Row(new Rect(m, yy, cw, rowH), Routes[ri][0], Routes[ri][1], RouteCol[ri], canTap, u))
+            {
+                Close(); FreshRoute(ri + 1);
+                onFresh?.Invoke();
+                GUI.EndGroup(); return;
+            }
+            yy += rowH + gapR;
+        }
+        yy += 10 * u;
+        // 서장부터(직접 고르며 읽는다)
+        if (Row(new Rect(m, yy, cw, rowH), "서장부터", "청운산장의 새벽 — 처음부터, 갈림길은 직접 고르며 읽는다", new Color(0.12f, 0.10f, 0.08f, 1f), canTap, u))
+        {
+            Close(); RestoreGlobals(); MarkFreshStart(); MolakStats.Set("g_storyroute", 0f); onFresh?.Invoke();
         }
         yy += rowH + gapR + 10 * u;
         int curLife = -1;
@@ -356,6 +389,14 @@ public class MolakStoryBook : MonoBehaviour
         if (Time.realtimeSinceStartup - openedAt > 0.35f && GUI.Button(br, GUIContent.none, GUIStyle.none)) Close();
         GUI.color = Color.white;
     }
+
+    static readonly string[][] Routes = {
+        new[] { "소아 편", "외눈의 쌍검. 잃는 생과 되돌리는 생, 합벽까지" },
+        new[] { "암향 편", "암향루의 향. 끄지 않고 재우는 끝까지" },
+        new[] { "청묘 편", "국자를 든 사저. 불탄 산문 안의 끝까지" },
+        new[] { "참새 편", "쥐눈이 장의 제자. 팔린 이름을 되찾는 끝까지" },
+    };
+    static readonly Color[] RouteCol = { new Color(0.55f, 0.16f, 0.12f, 1f), new Color(0.45f, 0.30f, 0.55f, 1f), new Color(0.30f, 0.42f, 0.30f, 1f), new Color(0.55f, 0.42f, 0.18f, 1f) };
 
     static string LifeName (int life)
     {
