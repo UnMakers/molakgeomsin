@@ -6,7 +6,7 @@
     다음 선택지 묶음을 만나면 그중 가장 좋은 갈래의 값을 더한다(앞을 내다본다, 선택 깊이 8).
     하루 흐름으로 돌아가는 자리(Molak02 의 Daytime·AfterChapter·Night·BeatCheck 등)에서 멈춘다.
   · 정: 그 편 히로인의 정 한 칸 +3, 소아의 정은 어느 편이든 +2(본줄기의 끝은 합벽), 다른 히로인 +0.3.
-  · 사실·앎(f_·g_): 대본 전체 조건에서 「있으면 열린다(>0)」 수와 「없어야 열린다(<1)」 수의 차(±6에서 자름)×0.5.
+  · 사실·앎(f_·g_): 대본 전체 조건에서 「있으면 열린다(>0)」 수와 「없어야 열린다(<1)」 수의 차(±6에서 자름)×0.25.
     진엔딩 대목(Molak04 True·Epi·LdHap·OldFight, Molak22)이 「있으면」으로 보는 깃발은 +3. 그 편 히로인 이름이 든 깃발 ×2, 다른 히로인 ×0.3.
   · 사람이 죽는 깃발(…dead): −8, 소아 −15.
   · 끝(@ending): 그 편의 진짜 끝(Molak22 True○○2, 소아 편은 합벽의 TrueBoardE) +60, 합벽 없이 교주를 꺾은 끝(EpiBoardE) +30, 다른 편의 진짜 끝 +15,
@@ -50,7 +50,7 @@ TERM = re.compile(r'\b([fg]_[A-Za-z0-9_]+)\s*(>=|>|<=|<|==|!=)\s*(-?\d+)')
 for s, ls in scripts.items():
     for i, l in enumerate(ls):
         lab = label_at[(s, i)]
-        region = s == 'Molak22' or (s == 'Molak04' and re.match(r'(True|Epi|LdHap|OldFight)', lab or '')) or (s == 'Molak12' and lab == 'EveEnd')
+        region = s in ('Molak04', 'Molak12', 'Molak22')   # 종장(검은 산·교주·합벽·노인 · 떠나기 전 밤 · 히로인의 진짜 끝)이 「있으면」으로 묻는 것은 열쇠다
         for c in re.findall(r'(?:if|lock):(\S+)', l):
             for v, op, n in TERM.findall(c):
                 n = int(n)
@@ -71,7 +71,7 @@ def flag_w(v, her):
         h = v[7:]
         return 30.0 if h == her and her != 'soa' else -20.0   # 소아 편의 진짜 끝은 합벽이라 「도망쳐 산 생」이 열쇠가 아니다
     p, n = pos.get(v, 0), neg.get(v, 0)
-    w = max(-6, min(6, p - n)) * 0.5
+    w = max(-6, min(6, p - n)) * 0.25
     if v in truepos: w += 3
     if v.endswith('dead') or v.endswith('died'):
         w = -15.0 if 'soa' in v else -8.0
