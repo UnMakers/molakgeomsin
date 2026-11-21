@@ -70,7 +70,7 @@ public class MolakStoryAuto : MonoBehaviour
     {
         if (!Engine.Initialized) return;
         if (player == null) player = Engine.GetService<IScriptPlayer>();
-        if (!MolakStory.Auto || MolakPractice.Active) { Unhide(); picked = null; seenAt = -1f; return; }
+        if (!MolakStory.Auto || MolakPractice.Active) { Unhide(); picked = null; seenAt = -1f; rows = null; return; }   // 다음에 켜질 때 기준표를 다시 읽는다(편집기에서 재생을 다시 해도 정적 값이 남는다)
         var bs = Buttons();
         if (bs.Length == 0) { picked = null; seenAt = -1f; echoAt = -1f; return; }
         Hide(bs);

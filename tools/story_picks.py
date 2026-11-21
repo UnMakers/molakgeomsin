@@ -135,13 +135,25 @@ def walk(s, i, her, depth, stack, known=()):
         if mc and mc.group(1) in kn:
             if kn[mc.group(1)] != int(mc.group(2)): i += 1; continue
             cond = False   # 이 길에서 참인 조건
+        # 주사위 갈래: 이 길에서 random() 으로 정한 변수를 묻는 조건 붙은 goto 는 반반으로 친다(될 수도 안 될 수도)
+        mr = re.match(r'@goto\s+(\S+)\s+if:(\S+)', l)
+        if mr and any(re.search(r'\b%s\b' % re.escape(v), mr.group(2)) for v, x in kn.items() if x == 'R'):
+            ts, tl = target(s, mr.group(1))
+            if (ts, tl) in labels and ts != 'MolakOver':
+                kk = tuple(sorted(kn.items(), key=lambda z: z[0]))
+                a = walk(ts, labels[(ts, tl)] + 1, her, depth, stack, kk)
+                b = walk(s, i + 1, her, depth, stack | {(s, i)}, kk)
+                sc += 0.5 * a[0] + 0.5 * b[0]
+                for d_ in (a[1], b[1]):
+                    for k, w in d_.items(): gs[k] = gs.get(k, 0) + 0.5 * w
+                break
         if l.startswith('@choice'):
             best = None
             j = i
             while j < len(ls) and (ls[j].startswith('@choice') or ls[j] == ''):
                 m = CH.match(ls[j])
                 if m:
-                    v = choice_value(s, j, m, her, depth + 1, stack, tuple(sorted(kn.items())))
+                    v = choice_value(s, j, m, her, depth + 1, stack, tuple(sorted(kn.items(), key=lambda z: z[0])))
                     if best is None or v[0] > best[0]: best = v
                 j += 1
             if best:
@@ -172,6 +184,7 @@ def walk(s, i, her, depth, stack, known=()):
             for var, expr in SETS.findall(body):
                 expr = expr.strip()
                 if re.match(r'^-?\d+$', expr): kn[var] = int(expr)
+                elif expr.startswith('random('): kn[var] = 'R'
                 m = re.match(r'%s\s*([+-])\s*(\d+)' % re.escape(var), expr)
                 if var in AFFS and m:
                     d = int(m.group(2)) * (1 if m.group(1) == '+' else -1)
@@ -194,7 +207,7 @@ def walk(s, i, her, depth, stack, known=()):
             elif (ts, tl) in HUB:
                 if not cond and m.group(1) == 'goto': break
             elif not cond and (ts, tl) in labels:
-                v = walk(ts, labels[(ts, tl)] + 1, her, depth, stack, tuple(sorted(kn.items())))
+                v = walk(ts, labels[(ts, tl)] + 1, her, depth, stack, tuple(sorted(kn.items(), key=lambda z: z[0])))
                 sc += v[0]
                 for k, w in v[1].items(): gs[k] = gs.get(k, 0) + w
                 if m.group(1) == 'goto': break

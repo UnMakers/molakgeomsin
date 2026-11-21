@@ -235,10 +235,10 @@
 2	Molak02	0.0	띠를 풀어 품에 넣는다 — 그 이름을 외운다	
 3	Molak02	0.0	띠를 풀어 품에 넣는다 — 그 이름을 외운다	
 4	Molak02	0.0	띠를 풀어 품에 넣는다 — 그 이름을 외운다	
-1	Molak02	0.0	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
-2	Molak02	0.0	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
-3	Molak02	0.0	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
-4	Molak02	0.0	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
+1	Molak02	0.1	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
+2	Molak02	0.1	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
+3	Molak02	0.1	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
+4	Molak02	0.1	"찾아오기 전에 내가 가겠다." — 상가(喪家)를 찾아간다	
 1	Molak02	0.0	은자를 싸서 상가 대문 앞에 둔다 (은자 10)	
 2	Molak02	0.0	은자를 싸서 상가 대문 앞에 둔다 (은자 10)	
 3	Molak02	0.0	은자를 싸서 상가 대문 앞에 둔다 (은자 10)	
@@ -303,22 +303,22 @@
 2	Molak02	3.15	"도길. 마흔하나, 딸이 둘." — 그 이름을 먼저 꺼낸다	
 3	Molak02	3.15	"도길. 마흔하나, 딸이 둘." — 그 이름을 먼저 꺼낸다	
 4	Molak02	3.15	"도길. 마흔하나, 딸이 둘." — 그 이름을 먼저 꺼낸다	
-1	Molak02	0.05	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
-2	Molak02	0.05	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
-3	Molak02	0.05	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
-4	Molak02	0.05	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
-1	Molak02	0.05	검술을 수련한다	
-2	Molak02	0.05	검술을 수련한다	
-3	Molak02	0.05	검술을 수련한다	
-4	Molak02	0.05	검술을 수련한다	
-1	Molak02	-0.38	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
-2	Molak02	-0.38	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
-3	Molak02	-0.38	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
-4	Molak02	-0.38	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
-1	Molak02	-0.38	운기조식으로 내공을 쌓는다	
-2	Molak02	-0.38	운기조식으로 내공을 쌓는다	
-3	Molak02	-0.38	운기조식으로 내공을 쌓는다	
-4	Molak02	-0.38	운기조식으로 내공을 쌓는다	
+1	Molak02	0.51	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
+2	Molak02	0.38	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
+3	Molak02	0.38	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
+4	Molak02	0.38	검술을 수련한다 — 검술이 오른다, 손이 터져 체력 −1	
+1	Molak02	0.51	검술을 수련한다	
+2	Molak02	0.38	검술을 수련한다	
+3	Molak02	0.38	검술을 수련한다	
+4	Molak02	0.38	검술을 수련한다	
+1	Molak02	-0.45	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
+2	Molak02	-0.45	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
+3	Molak02	-0.45	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
+4	Molak02	-0.45	운기조식으로 내공을 쌓는다 — 내공이 오른다. 문양도 조금 자란다	
+1	Molak02	-0.45	운기조식으로 내공을 쌓는다	
+2	Molak02	-0.45	운기조식으로 내공을 쌓는다	
+3	Molak02	-0.45	운기조식으로 내공을 쌓는다	
+4	Molak02	-0.45	운기조식으로 내공을 쌓는다	
 1	Molak02	4.5	저잣거리로 나간다 — 일해서 은자를 벌거나 물건을 산다	
 2	Molak02	4.5	저잣거리로 나간다 — 일해서 은자를 벌거나 물건을 산다	
 3	Molak02	4.5	저잣거리로 나간다 — 일해서 은자를 벌거나 물건을 산다	
@@ -359,22 +359,22 @@
 2	Molak02	-0.05	해독환을 삼킨다	
 3	Molak02	-0.05	해독환을 삼킨다	
 4	Molak02	-0.05	해독환을 삼킨다	
-1	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-2	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-3	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-4	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-1	Molak02	0.04	몸을 쉰다 — 더 버티면 쓰러진다	
-2	Molak02	0.04	몸을 쉰다 — 더 버티면 쓰러진다	
-3	Molak02	0.04	몸을 쉰다 — 더 버티면 쓰러진다	
-4	Molak02	0.04	몸을 쉰다 — 더 버티면 쓰러진다	
-1	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-2	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-3	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-4	Molak02	0.04	몸을 쉰다 — 체력을 되찾는다	
-1	Molak02	-0.05	날품을 판다 — 물지게·장작 일로 은자를 번다	
-2	Molak02	-0.05	날품을 판다 — 물지게·장작 일로 은자를 번다	
-3	Molak02	-0.05	날품을 판다 — 물지게·장작 일로 은자를 번다	
-4	Molak02	-0.05	날품을 판다 — 물지게·장작 일로 은자를 번다	
+1	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+2	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+3	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+4	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+1	Molak02	0.06	몸을 쉰다 — 더 버티면 쓰러진다	
+2	Molak02	0.06	몸을 쉰다 — 더 버티면 쓰러진다	
+3	Molak02	0.06	몸을 쉰다 — 더 버티면 쓰러진다	
+4	Molak02	0.06	몸을 쉰다 — 더 버티면 쓰러진다	
+1	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+2	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+3	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+4	Molak02	0.06	몸을 쉰다 — 체력을 되찾는다	
+1	Molak02	-0.2	날품을 판다 — 물지게·장작 일로 은자를 번다	
+2	Molak02	-0.2	날품을 판다 — 물지게·장작 일로 은자를 번다	
+3	Molak02	-0.2	날품을 판다 — 물지게·장작 일로 은자를 번다	
+4	Molak02	-0.2	날품을 판다 — 물지게·장작 일로 은자를 번다	
 1	Molak02	4.5	투전판에 앉는다 — 노름으로 은자를 걸어 본다	
 2	Molak02	4.5	투전판에 앉는다 — 노름으로 은자를 걸어 본다	
 3	Molak02	4.5	투전판에 앉는다 — 노름으로 은자를 걸어 본다	
@@ -387,10 +387,10 @@
 2	Molak02	0.0	전당포 뒷방 — 고리대 왕삼에게 은자를 빌린다	
 3	Molak02	0.0	전당포 뒷방 — 고리대 왕삼에게 은자를 빌린다	
 4	Molak02	0.0	전당포 뒷방 — 고리대 왕삼에게 은자를 빌린다	
-1	Molak02	0.0	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
-2	Molak02	0.0	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
-3	Molak02	0.0	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
-4	Molak02	0.0	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
+1	Molak02	0.23	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
+2	Molak02	0.23	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
+3	Molak02	0.23	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
+4	Molak02	0.23	왕삼의 빚 문서를 훔치러 전당포 뒷방에 든다	
 1	Molak02	0.0	객잔으로 돌아간다	
 2	Molak02	0.0	객잔으로 돌아간다	
 3	Molak02	0.0	객잔으로 돌아간다	
@@ -987,10 +987,10 @@
 2	Molak03	0.0	허세꾼의 맞상대에게 판돈을 건다 (은자 5)	
 3	Molak03	0.0	허세꾼의 맞상대에게 판돈을 건다 (은자 5)	
 4	Molak03	0.0	허세꾼의 맞상대에게 판돈을 건다 (은자 5)	
-1	Molak03	-0.1	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
-2	Molak03	-0.1	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
-3	Molak03	-0.1	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
-4	Molak03	-0.1	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
+1	Molak03	-0.05	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
+2	Molak03	-0.05	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
+3	Molak03	-0.05	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
+4	Molak03	-0.05	"은자는 없소. 칼집을 걸겠소." — 허세꾼의 맞상대에게	
 1	Molak03	-1.06	등 뒤에서 덮친다	
 2	Molak03	-1.06	등 뒤에서 덮친다	
 3	Molak03	-1.06	등 뒤에서 덮친다	
@@ -1063,10 +1063,10 @@
 2	Molak04	9.72	눈빛으로 눌러 앉힌다	
 3	Molak04	9.72	눈빛으로 눌러 앉힌다	
 4	Molak04	9.72	눈빛으로 눌러 앉힌다	
-1	Molak04	9.75	못 들은 척 잔만 기울인다	
-2	Molak04	9.75	못 들은 척 잔만 기울인다	
-3	Molak04	9.75	못 들은 척 잔만 기울인다	
-4	Molak04	9.75	못 들은 척 잔만 기울인다	
+1	Molak04	7.85	못 들은 척 잔만 기울인다	
+2	Molak04	7.85	못 들은 척 잔만 기울인다	
+3	Molak04	7.85	못 들은 척 잔만 기울인다	
+4	Molak04	7.85	못 들은 척 잔만 기울인다	
 1	Molak04	6.5	칼자국에서 눈을 거두고 주막을 나선다	
 2	Molak04	6.5	칼자국에서 눈을 거두고 주막을 나선다	
 3	Molak04	6.5	칼자국에서 눈을 거두고 주막을 나선다	
@@ -1079,10 +1079,10 @@
 2	Molak04	6.56	"방에 오른 얼굴끼리 한잔하겠소." (은자 2)	
 3	Molak04	6.56	"방에 오른 얼굴끼리 한잔하겠소." (은자 2)	
 4	Molak04	6.56	"방에 오른 얼굴끼리 한잔하겠소." (은자 2)	
-1	Molak04	6.45	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
-2	Molak04	6.45	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
-3	Molak04	6.45	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
-4	Molak04	6.45	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
+1	Molak04	6.38	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
+2	Molak04	6.38	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
+3	Molak04	6.38	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
+4	Molak04	6.38	취객의 귀에 백 냥을 흘린다 — 남의 칼을 빌린다	
 1	Molak04	6.5	칼자국에서 눈을 거두고 주막을 나선다	
 2	Molak04	6.5	칼자국에서 눈을 거두고 주막을 나선다	
 3	Molak04	6.5	칼자국에서 눈을 거두고 주막을 나선다	
@@ -1587,10 +1587,10 @@
 2	Molak06	-50.75	소아와 하진무를 지붕으로 내보내고, 계단에 혼자 남는다 (대신 죽는다)	
 3	Molak06	-50.75	소아와 하진무를 지붕으로 내보내고, 계단에 혼자 남는다 (대신 죽는다)	
 4	Molak06	-50.75	소아와 하진무를 지붕으로 내보내고, 계단에 혼자 남는다 (대신 죽는다)	
-1	Molak06	-43.17	소아의 손목을 잡고 지붕으로 달아난다	
-2	Molak06	-29.05	소아의 손목을 잡고 지붕으로 달아난다	
-3	Molak06	-29.05	소아의 손목을 잡고 지붕으로 달아난다	
-4	Molak06	-29.05	소아의 손목을 잡고 지붕으로 달아난다	
+1	Molak06	-20.09	소아의 손목을 잡고 지붕으로 달아난다	
+2	Molak06	-13.53	소아의 손목을 잡고 지붕으로 달아난다	
+3	Molak06	-13.53	소아의 손목을 잡고 지붕으로 달아난다	
+4	Molak06	-13.53	소아의 손목을 잡고 지붕으로 달아난다	
 1	Molak06	-41.25	문양을 푼다 — 사술에게 이 밤을 맡긴다	g_redverse:1.2,g_soaname:0.8
 2	Molak06	-28.0	문양을 푼다 — 사술에게 이 밤을 맡긴다	g_redverse:1.2
 3	Molak06	-28.0	문양을 푼다 — 사술에게 이 밤을 맡긴다	g_redverse:1.2
@@ -1731,10 +1731,10 @@
 2	Molak06	0.05	성문 수문장에게 은자를 찔러 준다 (은자 3)	
 3	Molak06	0.05	성문 수문장에게 은자를 찔러 준다 (은자 3)	
 4	Molak06	0.05	성문 수문장에게 은자를 찔러 준다 (은자 3)	
-1	Molak06	0.2	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
-2	Molak06	0.2	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
-3	Molak06	0.2	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
-4	Molak06	0.2	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
+1	Molak06	0.1	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
+2	Molak06	0.1	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
+3	Molak06	0.1	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
+4	Molak06	0.1	죽립을 눌러쓰고 장꾼 수레 틈에 섞인다	
 1	Molak06	0.0	내려간다 — 객잔 밖에서 받아준다	
 2	Molak06	0.0	내려간다 — 객잔 밖에서 받아준다	
 3	Molak06	0.0	내려간다 — 객잔 밖에서 받아준다	
@@ -1939,10 +1939,10 @@
 2	Molak07	1.8	그 팔을 붙잡는다 — 오늘은 안 된다	
 3	Molak07	1.8	그 팔을 붙잡는다 — 오늘은 안 된다	
 4	Molak07	1.8	그 팔을 붙잡는다 — 오늘은 안 된다	
-1	Molak07	-3.02	보낸다 — 그녀의 일이다	
-2	Molak07	-2.15	보낸다 — 그녀의 일이다	
-3	Molak07	-2.15	보낸다 — 그녀의 일이다	
-4	Molak07	-2.15	보낸다 — 그녀의 일이다	
+1	Molak07	-24.66	보낸다 — 그녀의 일이다	
+2	Molak07	-16.73	보낸다 — 그녀의 일이다	
+3	Molak07	-16.73	보낸다 — 그녀의 일이다	
+4	Molak07	-16.73	보낸다 — 그녀의 일이다	
 1	Molak07	6.7	사슬잡이 셋을 맡는다 — 소아는 아이들을 〔검술+2〕	
 2	Molak07	4.7	사슬잡이 셋을 맡는다 — 소아는 아이들을 〔검술+2〕	
 3	Molak07	4.7	사슬잡이 셋을 맡는다 — 소아는 아이들을 〔검술+2〕	
@@ -2987,18 +2987,18 @@
 2	MolakDuel	0.0	연습을 마친다	
 3	MolakDuel	0.0	연습을 마친다	
 4	MolakDuel	0.0	연습을 마친다	
-1	MolakEvents	0.3	산다	
-2	MolakEvents	0.3	산다	
-3	MolakEvents	0.3	산다	
-4	MolakEvents	0.3	산다	
-1	MolakEvents	0.3	감별 내기를 받는다	
-2	MolakEvents	0.3	감별 내기를 받는다	
-3	MolakEvents	0.3	감별 내기를 받는다	
-4	MolakEvents	0.3	감별 내기를 받는다	
-1	MolakEvents	0.3	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
-2	MolakEvents	0.3	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
-3	MolakEvents	0.3	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
-4	MolakEvents	0.3	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
+1	MolakEvents	0.31	산다	
+2	MolakEvents	0.31	산다	
+3	MolakEvents	0.31	산다	
+4	MolakEvents	0.31	산다	
+1	MolakEvents	0.15	감별 내기를 받는다	
+2	MolakEvents	0.15	감별 내기를 받는다	
+3	MolakEvents	0.15	감별 내기를 받는다	
+4	MolakEvents	0.15	감별 내기를 받는다	
+1	MolakEvents	0.15	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
+2	MolakEvents	0.15	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
+3	MolakEvents	0.15	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
+4	MolakEvents	0.15	"은자는 없소. 틀리면 반나절 약연을 돌리겠소."	
 1	MolakEvents	1.6	"저주를 누르는 약은 없소?"	
 2	MolakEvents	1.6	"저주를 누르는 약은 없소?"	
 3	MolakEvents	1.6	"저주를 누르는 약은 없소?"	
@@ -3019,14 +3019,14 @@
 2	MolakEvents	0.0	"은자가 모이면 다시 오겠소."	
 3	MolakEvents	0.0	"은자가 모이면 다시 오겠소."	
 4	MolakEvents	0.0	"은자가 모이면 다시 오겠소."	
-1	MolakEvents	0.3	약재를 산다 (은자 4)	
-2	MolakEvents	0.3	약재를 산다 (은자 4)	
-3	MolakEvents	0.3	약재를 산다 (은자 4)	
-4	MolakEvents	0.3	약재를 산다 (은자 4)	
-1	MolakEvents	0.3	싸구려 꾸러미를 뒤진다 (은자 2)	
-2	MolakEvents	0.3	싸구려 꾸러미를 뒤진다 (은자 2)	
-3	MolakEvents	0.3	싸구려 꾸러미를 뒤진다 (은자 2)	
-4	MolakEvents	0.3	싸구려 꾸러미를 뒤진다 (은자 2)	
+1	MolakEvents	0.1	약재를 산다 (은자 4)	
+2	MolakEvents	0.1	약재를 산다 (은자 4)	
+3	MolakEvents	0.1	약재를 산다 (은자 4)	
+4	MolakEvents	0.1	약재를 산다 (은자 4)	
+1	MolakEvents	0.05	싸구려 꾸러미를 뒤진다 (은자 2)	
+2	MolakEvents	0.05	싸구려 꾸러미를 뒤진다 (은자 2)	
+3	MolakEvents	0.05	싸구려 꾸러미를 뒤진다 (은자 2)	
+4	MolakEvents	0.05	싸구려 꾸러미를 뒤진다 (은자 2)	
 1	MolakEvents	-0.5	강호의 소식을 산다 (은자 2)	
 2	MolakEvents	-0.5	강호의 소식을 산다 (은자 2)	
 3	MolakEvents	-0.5	강호의 소식을 산다 (은자 2)	
@@ -3043,10 +3043,10 @@
 2	MolakEvents	-1.2	가슴의 문양으로 사술을 끌어쓴다	
 3	MolakEvents	-1.2	가슴의 문양으로 사술을 끌어쓴다	
 4	MolakEvents	-1.2	가슴의 문양으로 사술을 끌어쓴다	
-1	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
-2	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
-3	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
-4	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+1	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+2	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+3	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+4	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
 1	MolakEvents	3.7	허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다	
 2	MolakEvents	3.7	허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다	
 3	MolakEvents	3.7	허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다	
@@ -3071,10 +3071,10 @@
 2	MolakEvents	-6.0	맨주먹으로 맞선다 〔검술〕	
 3	MolakEvents	-6.0	맨주먹으로 맞선다 〔검술〕	
 4	MolakEvents	-6.0	맨주먹으로 맞선다 〔검술〕	
-1	MolakEvents	0.0	은자 두 냥을 던진다	
-2	MolakEvents	0.0	은자 두 냥을 던진다	
-3	MolakEvents	0.0	은자 두 냥을 던진다	
-4	MolakEvents	0.0	은자 두 냥을 던진다	
+1	MolakEvents	-0.04	은자 두 냥을 던진다	
+2	MolakEvents	-0.04	은자 두 냥을 던진다	
+3	MolakEvents	-0.04	은자 두 냥을 던진다	
+4	MolakEvents	-0.04	은자 두 냥을 던진다	
 1	MolakEvents	-0.05	살기를 드러낸다 〔살기〕	
 2	MolakEvents	-0.05	살기를 드러낸다 〔살기〕	
 3	MolakEvents	-0.05	살기를 드러낸다 〔살기〕	
@@ -3107,10 +3107,10 @@
 2	MolakEvents	0.25	아이 손을 잡고 다리 밑 솥으로 간다	
 3	MolakEvents	0.25	아이 손을 잡고 다리 밑 솥으로 간다	
 4	MolakEvents	0.25	아이 손을 잡고 다리 밑 솥으로 간다	
-1	MolakEvents	0.25	은자를 바가지에 넣는다	
-2	MolakEvents	0.25	은자를 바가지에 넣는다	
-3	MolakEvents	0.25	은자를 바가지에 넣는다	
-4	MolakEvents	0.25	은자를 바가지에 넣는다	
+1	MolakEvents	0.3	은자를 바가지에 넣는다	
+2	MolakEvents	0.3	은자를 바가지에 넣는다	
+3	MolakEvents	0.3	은자를 바가지에 넣는다	
+4	MolakEvents	0.3	은자를 바가지에 넣는다	
 1	MolakEvents	0.0	"스님이 어찌 토납법을 아시오."	
 2	MolakEvents	0.0	"스님이 어찌 토납법을 아시오."	
 3	MolakEvents	0.0	"스님이 어찌 토납법을 아시오."	
@@ -3143,10 +3143,10 @@
 2	MolakEvents	0.05	"저기 털보가 형씨보다 아래라 하오." 싸움을 붙인다	
 3	MolakEvents	0.05	"저기 털보가 형씨보다 아래라 하오." 싸움을 붙인다	
 4	MolakEvents	0.05	"저기 털보가 형씨보다 아래라 하오." 싸움을 붙인다	
-1	MolakEvents	0.0	팔짱을 끼고 구경만 한다	
-2	MolakEvents	0.0	팔짱을 끼고 구경만 한다	
-3	MolakEvents	0.0	팔짱을 끼고 구경만 한다	
-4	MolakEvents	0.0	팔짱을 끼고 구경만 한다	
+1	MolakEvents	0.04	팔짱을 끼고 구경만 한다	
+2	MolakEvents	0.04	팔짱을 끼고 구경만 한다	
+3	MolakEvents	0.04	팔짱을 끼고 구경만 한다	
+4	MolakEvents	0.04	팔짱을 끼고 구경만 한다	
 1	MolakEvents	0.0	먼저 자리를 뜬다	
 2	MolakEvents	0.0	먼저 자리를 뜬다	
 3	MolakEvents	0.0	먼저 자리를 뜬다	
@@ -3199,10 +3199,10 @@
 2	MolakEvents	0.2	책을 덮는다	
 3	MolakEvents	0.2	책을 덮는다	
 4	MolakEvents	0.2	책을 덮는다	
-1	MolakEvents	1.2	시술을 받는다 (은자 5)	
-2	MolakEvents	1.2	시술을 받는다 (은자 5)	
-3	MolakEvents	1.2	시술을 받는다 (은자 5)	
-4	MolakEvents	1.2	시술을 받는다 (은자 5)	
+1	MolakEvents	1.29	시술을 받는다 (은자 5)	
+2	MolakEvents	1.29	시술을 받는다 (은자 5)	
+3	MolakEvents	1.29	시술을 받는다 (은자 5)	
+4	MolakEvents	1.29	시술을 받는다 (은자 5)	
 1	MolakEvents	0.7	"외상은 안 되겠소?"	
 2	MolakEvents	0.7	"외상은 안 되겠소?"	
 3	MolakEvents	0.7	"외상은 안 되겠소?"	
@@ -3223,10 +3223,10 @@
 2	MolakEvents	0.02	손발만 씻고 간다	
 3	MolakEvents	0.02	손발만 씻고 간다	
 4	MolakEvents	0.02	손발만 씻고 간다	
-1	MolakEvents	1.0	깊은 먹선의 것을 고른다 (은자 3)	
-2	MolakEvents	1.0	깊은 먹선의 것을 고른다 (은자 3)	
-3	MolakEvents	1.0	깊은 먹선의 것을 고른다 (은자 3)	
-4	MolakEvents	1.0	깊은 먹선의 것을 고른다 (은자 3)	
+1	MolakEvents	0.5	깊은 먹선의 것을 고른다 (은자 3)	
+2	MolakEvents	0.5	깊은 먹선의 것을 고른다 (은자 3)	
+3	MolakEvents	0.5	깊은 먹선의 것을 고른다 (은자 3)	
+4	MolakEvents	0.5	깊은 먹선의 것을 고른다 (은자 3)	
 1	MolakEvents	1.0	기(氣)로 진품을 가려낸다 (은자 3) 〔내공+1〕	
 2	MolakEvents	1.0	기(氣)로 진품을 가려낸다 (은자 3) 〔내공+1〕	
 3	MolakEvents	1.0	기(氣)로 진품을 가려낸다 (은자 3) 〔내공+1〕	
@@ -3255,10 +3255,10 @@
 2	MolakEvents	0.0	바로 떠난다	
 3	MolakEvents	0.0	바로 떠난다	
 4	MolakEvents	0.0	바로 떠난다	
-1	MolakEvents	0.1	목도를 받아 든다	
-2	MolakEvents	0.1	목도를 받아 든다	
-3	MolakEvents	0.1	목도를 받아 든다	
-4	MolakEvents	0.1	목도를 받아 든다	
+1	MolakEvents	0.09	목도를 받아 든다	
+2	MolakEvents	0.09	목도를 받아 든다	
+3	MolakEvents	0.09	목도를 받아 든다	
+4	MolakEvents	0.09	목도를 받아 든다	
 1	MolakEvents	0.1	"진검으로 하시오." 숫돌에 세운 날을 보인다	
 2	MolakEvents	0.1	"진검으로 하시오." 숫돌에 세운 날을 보인다	
 3	MolakEvents	0.1	"진검으로 하시오." 숫돌에 세운 날을 보인다	
@@ -3283,14 +3283,14 @@
 2	MolakEvents	0.0	패 소리를 등지고 지나친다	
 3	MolakEvents	0.0	패 소리를 등지고 지나친다	
 4	MolakEvents	0.0	패 소리를 등지고 지나친다	
-1	MolakEvents	-0.5	"맡겠소."	
-2	MolakEvents	-0.5	"맡겠소."	
-3	MolakEvents	-0.5	"맡겠소."	
-4	MolakEvents	-0.5	"맡겠소."	
-1	MolakEvents	0.0	"독아단 길이면 여덟 냥은 받아야겠소."	
-2	MolakEvents	0.0	"독아단 길이면 여덟 냥은 받아야겠소."	
-3	MolakEvents	0.0	"독아단 길이면 여덟 냥은 받아야겠소."	
-4	MolakEvents	0.0	"독아단 길이면 여덟 냥은 받아야겠소."	
+1	MolakEvents	-0.06	"맡겠소."	
+2	MolakEvents	-0.06	"맡겠소."	
+3	MolakEvents	-0.06	"맡겠소."	
+4	MolakEvents	-0.06	"맡겠소."	
+1	MolakEvents	-0.08	"독아단 길이면 여덟 냥은 받아야겠소."	
+2	MolakEvents	-0.08	"독아단 길이면 여덟 냥은 받아야겠소."	
+3	MolakEvents	-0.08	"독아단 길이면 여덟 냥은 받아야겠소."	
+4	MolakEvents	-0.08	"독아단 길이면 여덟 냥은 받아야겠소."	
 1	MolakEvents	0.0	고개를 젓고 돌아선다	
 2	MolakEvents	0.0	고개를 젓고 돌아선다	
 3	MolakEvents	0.0	고개를 젓고 돌아선다	
@@ -3335,10 +3335,10 @@
 2	MolakEvents	1.0	"해약은 어디 있소."	
 3	MolakEvents	0.15	"해약은 어디 있소."	
 4	MolakEvents	0.15	"해약은 어디 있소."	
-1	MolakEvents	-3.1	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
-2	MolakEvents	-16.7	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
-3	MolakEvents	-3.1	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
-4	MolakEvents	-3.1	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
+1	MolakEvents	-1.51	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
+2	MolakEvents	-8.1	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
+3	MolakEvents	-1.51	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
+4	MolakEvents	-1.51	그녀의 잔을 쳐 엎고 목을 쥔다 — 독을 판 손이다	
 1	MolakEvents	0.15	"그 술, 한 잔만 마셔 드리겠소. 그대 몫으로."	
 2	MolakEvents	1.0	"그 술, 한 잔만 마셔 드리겠소. 그대 몫으로."	
 3	MolakEvents	0.15	"그 술, 한 잔만 마셔 드리겠소. 그대 몫으로."	
@@ -3387,18 +3387,18 @@
 2	MolakEvents	-0.5	죽인다	
 3	MolakEvents	-0.5	죽인다	
 4	MolakEvents	-0.5	죽인다	
-1	MolakEvents	0.42	한 잔 마신다 (은자 2)	
-2	MolakEvents	0.42	한 잔 마신다 (은자 2)	
-3	MolakEvents	0.42	한 잔 마신다 (은자 2)	
-4	MolakEvents	0.42	한 잔 마신다 (은자 2)	
+1	MolakEvents	0.48	한 잔 마신다 (은자 2)	
+2	MolakEvents	0.48	한 잔 마신다 (은자 2)	
+3	MolakEvents	0.48	한 잔 마신다 (은자 2)	
+4	MolakEvents	0.48	한 잔 마신다 (은자 2)	
 1	MolakEvents	0.0	지나친다	
 2	MolakEvents	0.0	지나친다	
 3	MolakEvents	0.0	지나친다	
 4	MolakEvents	0.0	지나친다	
-1	MolakEvents	0.2	출처 모를 단약을 산다 (은자 3)	
-2	MolakEvents	0.2	출처 모를 단약을 산다 (은자 3)	
-3	MolakEvents	0.2	출처 모를 단약을 산다 (은자 3)	
-4	MolakEvents	0.2	출처 모를 단약을 산다 (은자 3)	
+1	MolakEvents	0.05	출처 모를 단약을 산다 (은자 3)	
+2	MolakEvents	0.05	출처 모를 단약을 산다 (은자 3)	
+3	MolakEvents	0.05	출처 모를 단약을 산다 (은자 3)	
+4	MolakEvents	0.05	출처 모를 단약을 산다 (은자 3)	
 1	MolakEvents	0.1	검집을 산다 (은자 4)	
 2	MolakEvents	0.1	검집을 산다 (은자 4)	
 3	MolakEvents	0.1	검집을 산다 (은자 4)	
@@ -3415,10 +3415,10 @@
 2	MolakEvents	-0.2	고개 돌린 구경꾼 틈에 섞여 지나간다	
 3	MolakEvents	-0.2	고개 돌린 구경꾼 틈에 섞여 지나간다	
 4	MolakEvents	-0.2	고개 돌린 구경꾼 틈에 섞여 지나간다	
-1	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
-2	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
-3	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
-4	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
+1	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
+2	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
+3	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
+4	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
 1	MolakEvents	4.9	구경꾼 사이의 아는 얼굴들에게 눈짓한다	
 2	MolakEvents	4.9	구경꾼 사이의 아는 얼굴들에게 눈짓한다	
 3	MolakEvents	4.9	구경꾼 사이의 아는 얼굴들에게 눈짓한다	
@@ -3543,10 +3543,10 @@
 2	MolakEvents	0.6	말없이 할멈의 손을 잡아 침 꾸러미를 덮는다	
 3	MolakEvents	0.6	말없이 할멈의 손을 잡아 침 꾸러미를 덮는다	
 4	MolakEvents	0.6	말없이 할멈의 손을 잡아 침 꾸러미를 덮는다	
-1	MolakEvents	4.53	은자 셋을 쥐여 준다	
-2	MolakEvents	4.95	은자 셋을 쥐여 준다	
-3	MolakEvents	4.53	은자 셋을 쥐여 준다	
-4	MolakEvents	4.53	은자 셋을 쥐여 준다	
+1	MolakEvents	4.51	은자 셋을 쥐여 준다	
+2	MolakEvents	4.94	은자 셋을 쥐여 준다	
+3	MolakEvents	4.51	은자 셋을 쥐여 준다	
+4	MolakEvents	4.51	은자 셋을 쥐여 준다	
 1	MolakEvents	-0.1	멱살을 잡는다	
 2	MolakEvents	-0.1	멱살을 잡는다	
 3	MolakEvents	-0.1	멱살을 잡는다	
@@ -3571,10 +3571,10 @@
 2	MolakEvents	-0.2	부르는 손을 못 본 척 걷는다	
 3	MolakEvents	-0.2	부르는 손을 못 본 척 걷는다	
 4	MolakEvents	-0.2	부르는 손을 못 본 척 걷는다	
-1	MolakEvents	0.05	술 한 잔 산다	
-2	MolakEvents	0.05	술 한 잔 산다	
-3	MolakEvents	0.05	술 한 잔 산다	
-4	MolakEvents	0.05	술 한 잔 산다	
+1	MolakEvents	0.06	술 한 잔 산다	
+2	MolakEvents	0.06	술 한 잔 산다	
+3	MolakEvents	0.06	술 한 잔 산다	
+4	MolakEvents	0.06	술 한 잔 산다	
 1	MolakEvents	0.1	"다시 올라가시오. 검은 안 녹슬었소."	
 2	MolakEvents	0.1	"다시 올라가시오. 검은 안 녹슬었소."	
 3	MolakEvents	0.1	"다시 올라가시오. 검은 안 녹슬었소."	
@@ -3595,10 +3595,10 @@
 2	MolakEvents	-0.05	살기를 실어 쫓아 보낸다	
 3	MolakEvents	-0.05	살기를 실어 쫓아 보낸다	
 4	MolakEvents	-0.05	살기를 실어 쫓아 보낸다	
-1	MolakEvents	3.35	백 합을 받는다	
-2	MolakEvents	3.35	백 합을 받는다	
-3	MolakEvents	3.35	백 합을 받는다	
-4	MolakEvents	3.35	백 합을 받는다	
+1	MolakEvents	3.38	백 합을 받는다	
+2	MolakEvents	3.38	백 합을 받는다	
+3	MolakEvents	3.38	백 합을 받는다	
+4	MolakEvents	3.38	백 합을 받는다	
 1	MolakEvents	3.27	술로 대신한다	
 2	MolakEvents	3.27	술로 대신한다	
 3	MolakEvents	3.27	술로 대신한다	
@@ -3611,10 +3611,10 @@
 2	MolakEvents	-0.45	"같이 넘읍시다." — 봇짐을 나눠 진다 〔검술〕	
 3	MolakEvents	-0.45	"같이 넘읍시다." — 봇짐을 나눠 진다 〔검술〕	
 4	MolakEvents	-0.45	"같이 넘읍시다." — 봇짐을 나눠 진다 〔검술〕	
-1	MolakEvents	3.35	백 합을 받는다	
-2	MolakEvents	3.35	백 합을 받는다	
-3	MolakEvents	3.35	백 합을 받는다	
-4	MolakEvents	3.35	백 합을 받는다	
+1	MolakEvents	3.38	백 합을 받는다	
+2	MolakEvents	3.38	백 합을 받는다	
+3	MolakEvents	3.38	백 합을 받는다	
+4	MolakEvents	3.38	백 합을 받는다	
 1	MolakEvents	0.05	북쪽 고개 독아단의 버릇을 일러 준다	
 2	MolakEvents	0.05	북쪽 고개 독아단의 버릇을 일러 준다	
 3	MolakEvents	0.05	북쪽 고개 독아단의 버릇을 일러 준다	
@@ -3623,14 +3623,14 @@
 2	MolakEvents	-0.45	"같이 넘읍시다." — 봇짐을 나눠 진다 〔검술〕	
 3	MolakEvents	-0.45	"같이 넘읍시다." — 봇짐을 나눠 진다 〔검술〕	
 4	MolakEvents	-0.45	"같이 넘읍시다." — 봇짐을 나눠 진다 〔검술〕	
-1	MolakEvents	0.25	상여를 따라 걷는다	
-2	MolakEvents	0.25	상여를 따라 걷는다	
-3	MolakEvents	0.25	상여를 따라 걷는다	
-4	MolakEvents	0.25	상여를 따라 걷는다	
-1	MolakEvents	-0.05	표국으로 가 염가를 만난다	
-2	MolakEvents	-0.05	표국으로 가 염가를 만난다	
-3	MolakEvents	-0.05	표국으로 가 염가를 만난다	
-4	MolakEvents	-0.05	표국으로 가 염가를 만난다	
+1	MolakEvents	0.34	상여를 따라 걷는다	
+2	MolakEvents	0.34	상여를 따라 걷는다	
+3	MolakEvents	0.34	상여를 따라 걷는다	
+4	MolakEvents	0.34	상여를 따라 걷는다	
+1	MolakEvents	-0.1	표국으로 가 염가를 만난다	
+2	MolakEvents	-0.1	표국으로 가 염가를 만난다	
+3	MolakEvents	-0.1	표국으로 가 염가를 만난다	
+4	MolakEvents	-0.1	표국으로 가 염가를 만난다	
 1	MolakEvents	-0.2	등을 돌린다	
 2	MolakEvents	-0.2	등을 돌린다	
 3	MolakEvents	-0.2	등을 돌린다	
@@ -3747,14 +3747,14 @@
 2	MolakEvents	-0.25	"취했소. 들어가 주무시오."	
 3	MolakEvents	-0.25	"취했소. 들어가 주무시오."	
 4	MolakEvents	-0.25	"취했소. 들어가 주무시오."	
-1	MolakEvents	-0.1	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
-2	MolakEvents	-0.1	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
-3	MolakEvents	-0.1	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
-4	MolakEvents	-0.1	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
-1	MolakEvents	0.0	"갈 길이 따로 있소." — 사양한다	
-2	MolakEvents	0.0	"갈 길이 따로 있소." — 사양한다	
-3	MolakEvents	0.0	"갈 길이 따로 있소." — 사양한다	
-4	MolakEvents	0.0	"갈 길이 따로 있소." — 사양한다	
+1	MolakEvents	-0.09	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
+2	MolakEvents	-0.09	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
+3	MolakEvents	-0.09	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
+4	MolakEvents	-0.09	"그 고개, 내가 넘겨 드리겠소." 〔검술-1〕	
+1	MolakEvents	0.03	"갈 길이 따로 있소." — 사양한다	
+2	MolakEvents	0.03	"갈 길이 따로 있소." — 사양한다	
+3	MolakEvents	0.03	"갈 길이 따로 있소." — 사양한다	
+4	MolakEvents	0.03	"갈 길이 따로 있소." — 사양한다	
 1	MolakEvents	0.5	"고개를 버리고 소금길로 도시오."	
 2	MolakEvents	0.5	"고개를 버리고 소금길로 도시오."	
 3	MolakEvents	0.5	"고개를 버리고 소금길로 도시오."	
@@ -3771,18 +3771,18 @@
 2	MolakEvents	-0.25	징세조의 은자 길을 귀띔한다	
 3	MolakEvents	-0.25	징세조의 은자 길을 귀띔한다	
 4	MolakEvents	-0.25	징세조의 은자 길을 귀띔한다	
-1	MolakEvents	0.25	그 귀띔을 산다 (은자 3)	
-2	MolakEvents	0.25	그 귀띔을 산다 (은자 3)	
-3	MolakEvents	0.25	그 귀띔을 산다 (은자 3)	
-4	MolakEvents	0.25	그 귀띔을 산다 (은자 3)	
+1	MolakEvents	0.24	그 귀띔을 산다 (은자 3)	
+2	MolakEvents	0.24	그 귀띔을 산다 (은자 3)	
+3	MolakEvents	0.24	그 귀띔을 산다 (은자 3)	
+4	MolakEvents	0.24	그 귀띔을 산다 (은자 3)	
 1	MolakEvents	-0.05	그의 손목을 잡는다	
 2	MolakEvents	-0.05	그의 손목을 잡는다	
 3	MolakEvents	-0.05	그의 손목을 잡는다	
 4	MolakEvents	-0.05	그의 손목을 잡는다	
-1	MolakEvents	0.0	소매를 뿌리치고 돌아선다	
-2	MolakEvents	0.0	소매를 뿌리치고 돌아선다	
-3	MolakEvents	0.0	소매를 뿌리치고 돌아선다	
-4	MolakEvents	0.0	소매를 뿌리치고 돌아선다	
+1	MolakEvents	-0.03	소매를 뿌리치고 돌아선다	
+2	MolakEvents	-0.03	소매를 뿌리치고 돌아선다	
+3	MolakEvents	-0.03	소매를 뿌리치고 돌아선다	
+4	MolakEvents	-0.03	소매를 뿌리치고 돌아선다	
 1	MolakEvents	0.2	"이층 판주 낯을 깎은 게 나요."	
 2	MolakEvents	0.2	"이층 판주 낯을 깎은 게 나요."	
 3	MolakEvents	0.2	"이층 판주 낯을 깎은 게 나요."	
@@ -3799,10 +3799,10 @@
 2	MolakEvents	-0.2	피 웅덩이를 비켜 디딘다	
 3	MolakEvents	-0.2	피 웅덩이를 비켜 디딘다	
 4	MolakEvents	-0.2	피 웅덩이를 비켜 디딘다	
-1	MolakEvents	4.4	값을 치르고 패를 거둔다 (은자 5)	
-2	MolakEvents	4.4	값을 치르고 패를 거둔다 (은자 5)	
-3	MolakEvents	4.4	값을 치르고 패를 거둔다 (은자 5)	
-4	MolakEvents	4.4	값을 치르고 패를 거둔다 (은자 5)	
+1	MolakEvents	4.35	값을 치르고 패를 거둔다 (은자 5)	
+2	MolakEvents	4.35	값을 치르고 패를 거둔다 (은자 5)	
+3	MolakEvents	4.35	값을 치르고 패를 거둔다 (은자 5)	
+4	MolakEvents	4.35	값을 치르고 패를 거둔다 (은자 5)	
 1	MolakEvents	-0.3	말없이 패를 집어 든다	
 2	MolakEvents	-0.3	말없이 패를 집어 든다	
 3	MolakEvents	-0.3	말없이 패를 집어 든다	
@@ -3823,10 +3823,10 @@
 2	MolakEvents	0.8	"산사 경판에서 같은 그림을 봤소."	
 3	MolakEvents	0.8	"산사 경판에서 같은 그림을 봤소."	
 4	MolakEvents	0.8	"산사 경판에서 같은 그림을 봤소."	
-1	MolakEvents	4.85	업고 백초당으로 간다	
-2	MolakEvents	4.85	업고 백초당으로 간다	
-3	MolakEvents	4.85	업고 백초당으로 간다	
-4	MolakEvents	4.85	업고 백초당으로 간다	
+1	MolakEvents	4.95	업고 백초당으로 간다	
+2	MolakEvents	4.95	업고 백초당으로 간다	
+3	MolakEvents	4.95	업고 백초당으로 간다	
+4	MolakEvents	4.95	업고 백초당으로 간다	
 1	MolakEvents	0.15	경판 조각만 받는다	
 2	MolakEvents	0.15	경판 조각만 받는다	
 3	MolakEvents	0.15	경판 조각만 받는다	
@@ -3839,10 +3839,10 @@
 2	MolakEvents	8.1	골목으로 유인해 셋을 눕힌다 〔검술+1〕	
 3	MolakEvents	8.1	골목으로 유인해 셋을 눕힌다 〔검술+1〕	
 4	MolakEvents	8.1	골목으로 유인해 셋을 눕힌다 〔검술+1〕	
-1	MolakEvents	3.9	밤에 뒤를 밟아 어디로 가는지 본다	
-2	MolakEvents	3.9	밤에 뒤를 밟아 어디로 가는지 본다	
-3	MolakEvents	3.9	밤에 뒤를 밟아 어디로 가는지 본다	
-4	MolakEvents	3.9	밤에 뒤를 밟아 어디로 가는지 본다	
+1	MolakEvents	3.86	밤에 뒤를 밟아 어디로 가는지 본다	
+2	MolakEvents	3.86	밤에 뒤를 밟아 어디로 가는지 본다	
+3	MolakEvents	3.86	밤에 뒤를 밟아 어디로 가는지 본다	
+4	MolakEvents	3.86	밤에 뒤를 밟아 어디로 가는지 본다	
 1	MolakEvents	-0.4	눈을 감는다	
 2	MolakEvents	-0.4	눈을 감는다	
 3	MolakEvents	-0.4	눈을 감는다	
@@ -3895,10 +3895,10 @@
 2	MolakEvents	-0.3	지붕으로 오른다	
 3	MolakEvents	-0.3	지붕으로 오른다	
 4	MolakEvents	-0.3	지붕으로 오른다	
-1	MolakEvents	-0.25	"삼백 냥은 먼저 베는 놈 몫이다."	
-2	MolakEvents	-0.25	"삼백 냥은 먼저 베는 놈 몫이다."	
-3	MolakEvents	-0.25	"삼백 냥은 먼저 베는 놈 몫이다."	
-4	MolakEvents	-0.25	"삼백 냥은 먼저 베는 놈 몫이다."	
+1	MolakEvents	-0.28	"삼백 냥은 먼저 베는 놈 몫이다."	
+2	MolakEvents	-0.28	"삼백 냥은 먼저 베는 놈 몫이다."	
+3	MolakEvents	-0.28	"삼백 냥은 먼저 베는 놈 몫이다."	
+4	MolakEvents	-0.28	"삼백 냥은 먼저 베는 놈 몫이다."	
 1	MolakEvents	-0.25	정면으로 뚫는다 〔검술+1〕	
 2	MolakEvents	-0.25	정면으로 뚫는다 〔검술+1〕	
 3	MolakEvents	-0.25	정면으로 뚫는다 〔검술+1〕	
@@ -3991,10 +3991,10 @@
 2	MolakEvents	4.75	백초당에서 약을 사다 준다 (은자 3)	
 3	MolakEvents	4.75	백초당에서 약을 사다 준다 (은자 3)	
 4	MolakEvents	4.75	백초당에서 약을 사다 준다 (은자 3)	
-1	MolakEvents	4.45	물을 떠다 준다	
-2	MolakEvents	4.45	물을 떠다 준다	
-3	MolakEvents	4.45	물을 떠다 준다	
-4	MolakEvents	4.45	물을 떠다 준다	
+1	MolakEvents	4.49	물을 떠다 준다	
+2	MolakEvents	4.49	물을 떠다 준다	
+3	MolakEvents	4.49	물을 떠다 준다	
+4	MolakEvents	4.49	물을 떠다 준다	
 1	MolakEvents	-0.2	숨 세는 소리를 못 들은 척 지나친다	
 2	MolakEvents	-0.2	숨 세는 소리를 못 들은 척 지나친다	
 3	MolakEvents	-0.2	숨 세는 소리를 못 들은 척 지나친다	
@@ -4035,10 +4035,10 @@
 2	MolakEvents	0.45	금창약을 덜어 그 자리에서 싸맨다	
 3	MolakEvents	0.45	금창약을 덜어 그 자리에서 싸맨다	
 4	MolakEvents	0.45	금창약을 덜어 그 자리에서 싸맨다	
-1	MolakEvents	3.55	끝까지 듣는다	
-2	MolakEvents	3.55	끝까지 듣는다	
-3	MolakEvents	3.55	끝까지 듣는다	
-4	MolakEvents	3.55	끝까지 듣는다	
+1	MolakEvents	3.47	끝까지 듣는다	
+2	MolakEvents	3.47	끝까지 듣는다	
+3	MolakEvents	3.47	끝까지 듣는다	
+4	MolakEvents	3.47	끝까지 듣는다	
 1	MolakEvents	-0.05	검을 뽑는다	
 2	MolakEvents	-0.05	검을 뽑는다	
 3	MolakEvents	-0.05	검을 뽑는다	
@@ -4047,10 +4047,10 @@
 2	MolakEvents	0.0	우물만 내려다보며 돌려보낸다	
 3	MolakEvents	0.0	우물만 내려다보며 돌려보낸다	
 4	MolakEvents	0.0	우물만 내려다보며 돌려보낸다	
-1	MolakEvents	1.95	종이를 편다	
-2	MolakEvents	1.95	종이를 편다	
-3	MolakEvents	1.95	종이를 편다	
-4	MolakEvents	1.95	종이를 편다	
+1	MolakEvents	1.93	종이를 편다	
+2	MolakEvents	1.93	종이를 편다	
+3	MolakEvents	1.93	종이를 편다	
+4	MolakEvents	1.93	종이를 편다	
 1	MolakEvents	-0.4	못 본 척 지나간다	
 2	MolakEvents	-0.4	못 본 척 지나간다	
 3	MolakEvents	-0.4	못 본 척 지나간다	
@@ -4075,10 +4075,10 @@
 2	MolakEvents	0.25	아이들을 시켜 방마다 먹칠한다 (은자 1)	
 3	MolakEvents	0.25	아이들을 시켜 방마다 먹칠한다 (은자 1)	
 4	MolakEvents	0.25	아이들을 시켜 방마다 먹칠한다 (은자 1)	
-1	MolakEvents	0.65	재료를 산다 (은자 3)	
-2	MolakEvents	0.65	재료를 산다 (은자 3)	
-3	MolakEvents	0.65	재료를 산다 (은자 3)	
-4	MolakEvents	0.65	재료를 산다 (은자 3)	
+1	MolakEvents	0.64	재료를 산다 (은자 3)	
+2	MolakEvents	0.64	재료를 산다 (은자 3)	
+3	MolakEvents	0.64	재료를 산다 (은자 3)	
+4	MolakEvents	0.64	재료를 산다 (은자 3)	
 1	MolakEvents	0.0	"날마다는 못 하오." — 사양한다	
 2	MolakEvents	0.0	"날마다는 못 하오." — 사양한다	
 3	MolakEvents	0.0	"날마다는 못 하오." — 사양한다	
@@ -4107,14 +4107,14 @@
 2	MolakEvents	0.4	금창약을 발라 준다	
 3	MolakEvents	0.4	금창약을 발라 준다	
 4	MolakEvents	0.4	금창약을 발라 준다	
-1	MolakEvents	0.1	"무슨 초식이었소."	
-2	MolakEvents	0.1	"무슨 초식이었소."	
-3	MolakEvents	0.1	"무슨 초식이었소."	
-4	MolakEvents	0.1	"무슨 초식이었소."	
-1	MolakEvents	0.24	"고맙소."	
-2	MolakEvents	0.24	"고맙소."	
-3	MolakEvents	0.24	"고맙소."	
-4	MolakEvents	0.24	"고맙소."	
+1	MolakEvents	0.12	"무슨 초식이었소."	
+2	MolakEvents	0.12	"무슨 초식이었소."	
+3	MolakEvents	0.12	"무슨 초식이었소."	
+4	MolakEvents	0.12	"무슨 초식이었소."	
+1	MolakEvents	0.2	"고맙소."	
+2	MolakEvents	0.2	"고맙소."	
+3	MolakEvents	0.2	"고맙소."	
+4	MolakEvents	0.2	"고맙소."	
 1	MolakEvents	0.02	말없이 차를 마신다	
 2	MolakEvents	0.02	말없이 차를 마신다	
 3	MolakEvents	0.02	말없이 차를 마신다	
@@ -4291,10 +4291,10 @@
 2	MolakEvents	0.75	모르는 척 방으로 올라간다 — 지난 생처럼	
 3	MolakEvents	0.75	모르는 척 방으로 올라간다 — 지난 생처럼	
 4	MolakEvents	0.75	모르는 척 방으로 올라간다 — 지난 생처럼	
-1	MolakEvents	0.1	옷도 벗지 않고 물에 뛰어든다	
-2	MolakEvents	0.1	옷도 벗지 않고 물에 뛰어든다	
-3	MolakEvents	0.1	옷도 벗지 않고 물에 뛰어든다	
-4	MolakEvents	0.1	옷도 벗지 않고 물에 뛰어든다	
+1	MolakEvents	-37.48	옷도 벗지 않고 물에 뛰어든다	
+2	MolakEvents	-37.48	옷도 벗지 않고 물에 뛰어든다	
+3	MolakEvents	-37.48	옷도 벗지 않고 물에 뛰어든다	
+4	MolakEvents	-37.48	옷도 벗지 않고 물에 뛰어든다	
 1	MolakEvents	0.2	둑의 버드나무 가지를 꺾어 내민다 〔검술+1〕	
 2	MolakEvents	0.2	둑의 버드나무 가지를 꺾어 내민다 〔검술+1〕	
 3	MolakEvents	0.2	둑의 버드나무 가지를 꺾어 내민다 〔검술+1〕	
@@ -4499,10 +4499,10 @@
 2	MolakEvents	1.5	문 옆 벽에 붙어 첫 칼을 기다린다	
 3	MolakEvents	1.5	문 옆 벽에 붙어 첫 칼을 기다린다	
 4	MolakEvents	1.5	문 옆 벽에 붙어 첫 칼을 기다린다	
-1	MolakEvents	1.5	창으로 뛰어 지붕으로 오른다	
-2	MolakEvents	1.5	창으로 뛰어 지붕으로 오른다	
-3	MolakEvents	1.5	창으로 뛰어 지붕으로 오른다	
-4	MolakEvents	1.5	창으로 뛰어 지붕으로 오른다	
+1	MolakEvents	1.45	창으로 뛰어 지붕으로 오른다	
+2	MolakEvents	1.45	창으로 뛰어 지붕으로 오른다	
+3	MolakEvents	1.45	창으로 뛰어 지붕으로 오른다	
+4	MolakEvents	1.45	창으로 뛰어 지붕으로 오른다	
 1	MolakEvents	1.45	거지 아이가 일러 준 낮은 담으로	
 2	MolakEvents	1.45	거지 아이가 일러 준 낮은 담으로	
 3	MolakEvents	1.45	거지 아이가 일러 준 낮은 담으로	
@@ -4567,10 +4567,10 @@
 2	MolakEvents	0.0	아무 말 없이 나온다	
 3	MolakEvents	0.0	아무 말 없이 나온다	
 4	MolakEvents	0.0	아무 말 없이 나온다	
-1	MolakEvents	-16.75	불 속으로 뛰어든다	
-2	MolakEvents	-16.75	불 속으로 뛰어든다	
-3	MolakEvents	-16.75	불 속으로 뛰어든다	
-4	MolakEvents	-16.75	불 속으로 뛰어든다	
+1	MolakEvents	-8.45	불 속으로 뛰어든다	
+2	MolakEvents	-8.45	불 속으로 뛰어든다	
+3	MolakEvents	-8.45	불 속으로 뛰어든다	
+4	MolakEvents	-8.45	불 속으로 뛰어든다	
 1	MolakEvents	-16.6	징세조에게 칼을 뽑는다	
 2	MolakEvents	-16.6	징세조에게 칼을 뽑는다	
 3	MolakEvents	-16.6	징세조에게 칼을 뽑는다	
@@ -5051,10 +5051,10 @@
 2	MolakEvents	0.0	"오늘은 냄새만 맡고 가겠소."	
 3	MolakEvents	0.0	"오늘은 냄새만 맡고 가겠소."	
 4	MolakEvents	0.0	"오늘은 냄새만 맡고 가겠소."	
-1	MolakEvents	0.3	약재를 산다 (은자 4)	
-2	MolakEvents	0.3	약재를 산다 (은자 4)	
-3	MolakEvents	0.3	약재를 산다 (은자 4)	
-4	MolakEvents	0.3	약재를 산다 (은자 4)	
+1	MolakEvents	0.1	약재를 산다 (은자 4)	
+2	MolakEvents	0.1	약재를 산다 (은자 4)	
+3	MolakEvents	0.1	약재를 산다 (은자 4)	
+4	MolakEvents	0.1	약재를 산다 (은자 4)	
 1	MolakEvents	-0.5	강호의 소식을 산다 (은자 2)	
 2	MolakEvents	-0.5	강호의 소식을 산다 (은자 2)	
 3	MolakEvents	-0.5	강호의 소식을 산다 (은자 2)	
@@ -5071,10 +5071,10 @@
 2	MolakEvents	-1.2	가슴의 문양으로 사술을 끌어쓴다	
 3	MolakEvents	-1.2	가슴의 문양으로 사술을 끌어쓴다	
 4	MolakEvents	-1.2	가슴의 문양으로 사술을 끌어쓴다	
-1	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
-2	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
-3	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
-4	MolakEvents	3.7	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+1	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+2	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+3	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
+4	MolakEvents	1.88	죽립 챙을 내린다. "사람을 잘못 보셨소."	
 1	MolakEvents	3.7	허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다	
 2	MolakEvents	3.7	허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다	
 3	MolakEvents	3.7	허리의 쇠패를 내보인다 — 패를 찬 자는 서열각의 것이다	
@@ -5087,10 +5087,10 @@
 2	MolakEvents	0.05	둘이 어리둥절한 틈에 골목을 빠져나간다 〔검술-1 앎〕	
 3	MolakEvents	0.05	둘이 어리둥절한 틈에 골목을 빠져나간다 〔검술-1 앎〕	
 4	MolakEvents	0.05	둘이 어리둥절한 틈에 골목을 빠져나간다 〔검술-1 앎〕	
-1	MolakEvents	0.0	은자 두 냥을 던진다	
-2	MolakEvents	0.0	은자 두 냥을 던진다	
-3	MolakEvents	0.0	은자 두 냥을 던진다	
-4	MolakEvents	0.0	은자 두 냥을 던진다	
+1	MolakEvents	-0.04	은자 두 냥을 던진다	
+2	MolakEvents	-0.04	은자 두 냥을 던진다	
+3	MolakEvents	-0.04	은자 두 냥을 던진다	
+4	MolakEvents	-0.04	은자 두 냥을 던진다	
 1	MolakEvents	-6.0	맨주먹으로 맞선다 〔검술〕	
 2	MolakEvents	-6.0	맨주먹으로 맞선다 〔검술〕	
 3	MolakEvents	-6.0	맨주먹으로 맞선다 〔검술〕	
@@ -5139,10 +5139,10 @@
 2	MolakEvents	0.0	거지 아이가 일러 준 낮은 담으로 뛴다	
 3	MolakEvents	0.0	거지 아이가 일러 준 낮은 담으로 뛴다	
 4	MolakEvents	0.0	거지 아이가 일러 준 낮은 담으로 뛴다	
-1	MolakEvents	1.2	시술을 받는다 (은자 5)	
-2	MolakEvents	1.2	시술을 받는다 (은자 5)	
-3	MolakEvents	1.2	시술을 받는다 (은자 5)	
-4	MolakEvents	1.2	시술을 받는다 (은자 5)	
+1	MolakEvents	1.29	시술을 받는다 (은자 5)	
+2	MolakEvents	1.29	시술을 받는다 (은자 5)	
+3	MolakEvents	1.29	시술을 받는다 (은자 5)	
+4	MolakEvents	1.29	시술을 받는다 (은자 5)	
 1	MolakEvents	0.7	해 지고 뒷문으로 간다	
 2	MolakEvents	0.7	해 지고 뒷문으로 간다	
 3	MolakEvents	0.7	해 지고 뒷문으로 간다	
@@ -5171,10 +5171,10 @@
 2	MolakEvents	0.3	"장문인이 검을 뽑지 않던 대목도 하시오."	
 3	MolakEvents	0.3	"장문인이 검을 뽑지 않던 대목도 하시오."	
 4	MolakEvents	0.3	"장문인이 검을 뽑지 않던 대목도 하시오."	
-1	MolakEvents	0.1	목도를 받아 든다	
-2	MolakEvents	0.1	목도를 받아 든다	
-3	MolakEvents	0.1	목도를 받아 든다	
-4	MolakEvents	0.1	목도를 받아 든다	
+1	MolakEvents	0.09	목도를 받아 든다	
+2	MolakEvents	0.09	목도를 받아 든다	
+3	MolakEvents	0.09	목도를 받아 든다	
+4	MolakEvents	0.09	목도를 받아 든다	
 1	MolakEvents	0.1	"진검으로 하시오." 숫돌에 세운 날을 보인다	
 2	MolakEvents	0.1	"진검으로 하시오." 숫돌에 세운 날을 보인다	
 3	MolakEvents	0.1	"진검으로 하시오." 숫돌에 세운 날을 보인다	
@@ -5231,10 +5231,10 @@
 2	MolakEvents	8.55	골목으로 유인해 둘 다 눕힌다 〔검술+2〕	
 3	MolakEvents	8.55	골목으로 유인해 둘 다 눕힌다 〔검술+2〕	
 4	MolakEvents	8.55	골목으로 유인해 둘 다 눕힌다 〔검술+2〕	
-1	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
-2	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
-3	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
-4	MolakEvents	4.8	몰래 전대 하나를 주인 품에 돌려놓는다	
+1	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
+2	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
+3	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
+4	MolakEvents	4.75	몰래 전대 하나를 주인 품에 돌려놓는다	
 1	MolakEvents	4.9	구경꾼 사이의 아는 얼굴들에게 눈짓한다	
 2	MolakEvents	4.9	구경꾼 사이의 아는 얼굴들에게 눈짓한다	
 3	MolakEvents	4.9	구경꾼 사이의 아는 얼굴들에게 눈짓한다	

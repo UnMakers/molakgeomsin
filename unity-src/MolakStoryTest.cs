@@ -24,6 +24,7 @@ public class MolakStoryTest : MonoBehaviour
         inst.route = route; inst.until = Time.realtimeSinceStartup + minutes * 60f; inst.path = LogPath(route);
         System.IO.File.WriteAllText(inst.path, "# 인연별 이야기 모드 시험 · 편 " + route + "\n", new UTF8Encoding(false));
         Status = "running";
+        typeof(MolakStoryAuto).GetField("rows", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, null);   // 새 기준표
         inst.StartCoroutine(inst.Go());
     }
     public static void Stop () { if (inst != null) { inst.StopAllCoroutines(); Status = "stopped"; var p = Engine.GetService<IScriptPlayer>(); if (p != null) { p.SetSkip(false); p.SetAutoPlay(false); } } }
