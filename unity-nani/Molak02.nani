@@ -850,6 +850,8 @@
 @pname
 @goto #DayLoop if:hp<=0
 @realm do:check
+; 0.4.94 저절로 읽는 이야기에서는 혈쇄문의 초대가 경지의 벽보다 먼저다 — 초대가 쉰다섯째 날께 오면 벽·원수의 밤에 밀려 그물(예순셋째 날께)에 걸렸다
+@goto #NWolf if:storyauto>0&&f_wolfinvite>0&&f_wolfdown<1
 @goto Molak18#Wall if:btready>0&&hp>0&&btwait<day&&btdecl<day&&practice<1
 ; 0.4.94 이야기 모드의 밤: 수련·날품은 건너뛰되, 이야기가 걸린 밤은 지나치지 않는다 — 피할 수 없는 혈쇄문의 초대, 그 편 히로인을 찾아가는 밤(대엿새에 한 번)
 @goto #NWolf if:storymode>0&&f_wolfinvite>0&&f_wolfdown<1
