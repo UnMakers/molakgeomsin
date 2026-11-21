@@ -157,6 +157,8 @@ public class MolakRevealTest : MonoBehaviour
             {
                 yield return new WaitForSecondsRealtime(0.5f);
                 btns = btns.Where(b => b != null && b.isActiveAndEnabled).ToArray();
+                // 0.4.93 Prefer 의 낱말이 든 선택지를 먼저(없으면 첫 번째). 고를 수 있던 선택지도 다 적는다.
+                if (btns.Length > 0) { Log.AppendLine("  [선택지] " + string.Join(" / ", btns.Select(x => Short(x.GetComponentInChildren<TMPro.TMP_Text>().text)))); var pref = btns.FirstOrDefault(x => Prefer.Any(k => x.GetComponentInChildren<TMPro.TMP_Text>().text.Contains(k))); if (pref != null) btns = new[] { pref }.Concat(btns.Where(x => x != pref)).ToArray(); }
                 if (btns.Length > 0) { Log.AppendLine("  [선택] " + Short(btns[0].GetComponentInChildren<TMPro.TMP_Text>().text)); btns[0].GetComponent<UnityEngine.UI.Button>().onClick.Invoke(); pressAt = Time.realtimeSinceStartup; if (CapAfterChoice) { CapAfterChoice = false; StartCoroutine(Cap()); } }
                 yield return new WaitForSecondsRealtime(0.3f);
                 continue;
@@ -179,6 +181,8 @@ public class MolakRevealTest : MonoBehaviour
     }
 
     public static bool CapAfterChoice;
+    /// <summary>0.4.93 고를 선택지의 낱말(앞에 있을수록 먼저).</summary>
+    public static string[] Prefer = new string[0];
     IEnumerator Cap ()
     {
         System.IO.Directory.CreateDirectory("Build/capc");

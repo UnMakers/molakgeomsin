@@ -31,6 +31,8 @@ public class MolakEndTester : MonoBehaviour
     int choicesThisLife; int duelsThisLife; int duelWinsThisLife; float lastDuelWin = -1f;
     static readonly string[] PreferGod = { "혈쇄문의 초대", "비무판", "정면으로 벤다", "산으로", "들어간다", "응한다", "벤다", "싸운다", "막는다" };
     static readonly string[] Avoid = { "처음 화면" };
+    /// <summary>0.4.93 정책 0·2(신중한 봇)는 대본이 이미 경고한 덫(단내 나는 잔)은 피한다 — 첫 선택지만 고르는 봇이 13일째에 몰려 죽어 밸런스 자료가 흐려졌다.</summary>
+    static readonly string[] Warned = { "잔을 받는다" };
     static readonly string[] ShopPref = { "봉인 문양", "잔류 진기", "검흔", "단련된 육신", "청심차", "구르고", "빈칸 방값", "또렷한 기억", "묻어둔 은자", "다 시 그 날 로" };
     static readonly string[] Violent = { "벤다", "검을 뽑", "맞선", "덤빈", "칼", "친다", "꺾는다", "베어", "찌른다", "공터로" };
     static readonly string[] Careful = { "물러", "지나", "피한", "숨", "돌아", "모른 척", "고개를 숙", "쉰다", "거절", "놓아준다", "기다린다" };
@@ -163,6 +165,7 @@ public class MolakEndTester : MonoBehaviour
         // 일반 사건
         var ok = Enumerable.Range(0, labels.Length).Where(i => !Avoid.Any(a => labels[i].Contains(a))).ToArray();
         if (policy == 6 || policy == 7) { var ok2 = ok.Where(i => !DeathChoices.Contains(curPath + "|" + labels[i])).ToArray(); if (ok2.Length > 0) ok = ok2; }
+        if (policy == 0 || policy == 2) { var ok3 = ok.Where(i => !Warned.Any(w => labels[i].Contains(w))).ToArray(); if (ok3.Length > 0) ok = ok3; }
         if (policy == 7)
         {
             // 떠나는 결말(원행·도주)은 피하고, 진엔딩 사슬의 낱말과 전생의 앎으로 열린 선택지를 고른다

@@ -36,10 +36,13 @@ public static class MolakRules
 
     // ---- 저주 ----
     public const float CurseMax = 100f;
-    /// <summary>날마다 자라는 저주 뿌리 = (Base + PerDay × 날) × 가속 × 봉인 보정.</summary>
-    public const float CurseRootBase = 0.7f, CurseRootPerDay = 0.03f;
-    /// <summary>날이 깊어지면 가속: 서른다섯째 날부터 ×1.4, 쉰째 날부터 또 ×1.6.</summary>
-    public const float CurseAccelDay1 = 35f, CurseAccel1 = 1.4f, CurseAccelDay2 = 50f, CurseAccel2 = 1.6f;
+    /// <summary>날마다 자라는 저주 뿌리 = (Base + PerDay × 날) × 가속 × 봉인 보정.
+    /// 0.4.93 기준(출시 점검): 가만히 있어도 익는 속도 — 뿌리만으로는 쉰다섯째 날 무렵 익고(88), 예순 날 그물과 함께 끝난다(100 근처).
+    /// 그보다 이른 사술 폭주는 고른 것(운기·사술·살기)에서 온다. 0.4.92까지는 뿌리만으로 쉰둘째 날에 100을 넘어,
+    /// 아무것도 안 해도 종장(떠나기 전 밤 · 북행) 전에 죽었다(소크 r0492: 13생 중 5생이 사술 폭주, 46~61일).</summary>
+    public const float CurseRootBase = 0.55f, CurseRootPerDay = 0.025f;
+    /// <summary>날이 깊어지면 가속: 서른다섯째 날부터 ×1.3, 쉰째 날부터 또 ×1.5.</summary>
+    public const float CurseAccelDay1 = 35f, CurseAccel1 = 1.3f, CurseAccelDay2 = 50f, CurseAccel2 = 1.5f;
     /// <summary>청심차 비방이 날마다 덜어 주는 양.</summary>
     public const float TeaCurseCut = 0.15f;
     /// <summary>봉인 문양 한 단계당 저주 성장 감소율, 소아의 봉인 배율.</summary>
