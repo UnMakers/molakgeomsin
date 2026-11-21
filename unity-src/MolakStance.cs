@@ -10,7 +10,8 @@ using UnityEngine;
 ///  · 차례 줄: 상대의 '지금'과 '다음'. 지금은 검술로 가끔 읽히고(허초가 찌르기로 보일 수 있다), 잔상(지난 생에 이 상대에게
 ///    죽어 본 몸)은 둘 다를 보랏빛으로 보여 준다 — 잔상은 속지 않는다. 「觀」도 둘 다 보여 준다. 이막이 되면 잔상이 깨진다(상대가 판을 바꾼다).
 ///  · 고를 것은 셋(受·變·斬)이 바탕. 그때그때 하나가 더 뜬다 — 큰 수가 오면 雲步, 읽히지 않으면 觀, 무너뜨리면 落.
-///  · 이막: 기혈이 반 아래로 꺾이면 체세가 하나 늘고 약점 하나가 사라지며, 두 차례 동안 「독아쇄」를 모은다.
+///  · 큰 수: 둘째 차례에 제 큰 수(호치는 「독아쇄」)를 모은다 — 그 차례에 파세를 내거나 雲步로 비켜선다.
+///  · 이막(결전만, UsePhase): 기혈이 반 아래로 꺾이면 체세가 하나 늘고 약점 하나가 사라지며, 곧바로 「독아쇄」를 모은다(한 차례 — 비켜서거나 그 차례에 파세).
 ///    모으는 동안 파세를 내면 끊기고, 못 끊으면 크게 맞는다(운보로 비켜설 수 있다).
 /// 대본: MolakDuel.nani #StRun. 화면: 그림 창 위에 체세·기혈·약점·차례 줄·기를 그린다.
 /// </summary>
@@ -29,7 +30,9 @@ public static class MolakStance
     public static readonly int[] Queue = new int[3];
     // 허초가 찌르기로 보이는 칸(검술로만 본 칸은 속는다 — 잔상·觀은 속지 않는다)
     public static readonly bool[] Fake = new bool[3];
-    static bool lostLast, pendCharge;
+    static bool lostLast, pendCharge, sigDone;
+    /// <summary>이막을 쓰는가 — 결전(교주·노인)만. 이름난 칼잡이는 네댓 차례에 끝나도록 막 없이, 둘째 차례에 제 큰 수 하나.</summary>
+    public static bool UsePhase;
     public static bool GwanUsed;   // 觀은 막마다 한 번
     public static string LastSeal = "";
 
@@ -43,7 +46,8 @@ public static class MolakStance
     public static void Init ()
     {
         Active = true;
-        FoeHpMax = FoeHp = 24; ShieldMax = Shield = 4; Phase = 1; Charge = 0;
+        // 0.4.88 이름난 칼잡이는 네댓 차례 — 결전(교주·노인)만 일고여덟
+        FoeHpMax = FoeHp = 12; ShieldMax = Shield = 3; Phase = 1; Charge = 0; UsePhase = false; sigDone = false;
         WeakJu = true; WeakByeon = true;
         Jansang = V("pjan") > 0 || V("g_died_hochi") > 0;
         KnowJu = Jansang; KnowByeon = false;
@@ -87,11 +91,12 @@ public static class MolakStance
         if (lostLast && Phase < 2) Set(0, Roll(true));   // 밀린 뒤엔 웅크린다 — 차례 줄의 첫 칸이 바뀔 수 있다
         lostLast = false;
         ReadNow = Random.value < Mathf.Clamp01((V("sw") - 6f) / 30f) * 0.7f + 0.1f;
+        if (!sigDone && Charge == 0 && Broken <= 0 && Turn >= 2) Charge = 1;   // 둘째 차례부터: 제 큰 수(무너져 있으면 일어선 뒤)
         if (Charge > 0) { Queue[0] = 1; Fake[0] = false; }                       // 모으는 동안엔 웅크린 채다
         Sync();
         var sb = new StringBuilder();
         if (Broken > 0) sb.Append("<color=#E0553F>호치의 무릎이 꺾여 있다.</color> 이번 차례엔 무엇이든 두 배로 들어간다.");
-        else if (Charge > 0) sb.Append("<color=#C03434>호치가 몸을 웅크리고 도끼날을 혀로 핥는다.</color> 「독아쇄」까지 " + (Charge == 1 ? "한 차례" : "두 차례") + ". 그 전에 체세를 다 깨면 끊긴다.");
+        else if (Charge > 0) sb.Append("<color=#C03434>호치가 몸을 웅크리고 도끼날을 혀로 핥는다.</color> " + (Charge == 1 ? "「독아쇄」가 온다. 이번 차례에 체세를 다 깨거나, 비켜서야 한다." : "「독아쇄」까지 두 차례. 그 전에 체세를 다 깨면 끊긴다.") + (Jansang ? " <color=#9A70C4>지난 생, 바로 이 합에서 목이 떨어졌다.</color>" : ""));
         else if (SeeSlot(0)) sb.Append("호치가 " + StanceWord(Shown(0)) + "." + (PurpleSlot(0) ? " <color=#9A70C4>지난 생에 본 그대로다.</color>" : ""));
         else sb.Append("호치의 어깨가 낮다. 무엇이 올지 아직 읽히지 않는다.");
         T("stell", sb.ToString());
@@ -136,7 +141,7 @@ public static class MolakStance
                 ? "<color=#9AA8F5>雲步</color> — 도끼가 세 번째로 물어뜯는다. <color=#9A70C4>지난 생엔 바로 여기서 목이 떨어졌다.</color> 이번엔 반 걸음 먼저 비켜서 있다. 바닥 돌만 쪼개진다."
                 : "<color=#9AA8F5>雲步</color> — 독아쇄가 방금 서 있던 자리를 물어뜯는다. 바닥 돌이 쪼개진다.");
             else sb.Append("<color=#9AA8F5>雲步</color> — 반 걸음 비켜선다. 도끼가 옷자락만 스친다. 숨이 고르다.");
-            if (foeActs && Charge == 1) Charge = 0;
+            if (foeActs && Charge == 1) { Charge = 0; sigDone = true; }
         }
         else if (act == 6)
         {   // 落: 파세 때만. 크게 벤다. 저주 +4.
@@ -183,13 +188,13 @@ public static class MolakStance
         // 큰 수(독아쇄)가 터지는가
         if (Charge > 0 && act != 4)
         {
-            if (breakNow) { Charge = 0; sb.Append(" <color=#E3C26A>웅크린 자세가 무너지며 독아쇄가 끊긴다.</color>"); }
+            if (breakNow) { Charge = 0; sigDone = true; sb.Append(" <color=#E3C26A>웅크린 자세가 무너지며 독아쇄가 끊긴다.</color>"); }
             else if (Charge == 1 && foeActs)
             {
-                int big = Mathf.RoundToInt(9 * Scale()); MolakStats.Add("hp", -big); S("taint", Mathf.Max(V("taint"), 1f));
+                int big = Mathf.RoundToInt(7 * Scale());   // 한 방에 끝나지는 않게(갓 깨어난 몸도 숨 하나는 남는다) MolakStats.Add("hp", -big); S("taint", Mathf.Max(V("taint"), 1f));
                 MolakVfx.Flash(new Color(0.2f, 0.5f, 0.1f, 1f), 0.5f); MolakVfx.Shake(18f); MolakSfx.Hit();
                 sb.Append(" <color=#C03434>독아쇄</color> — 도끼가 세 번 물어뜯는다. 체력 −" + big + ", 상처에 독이 든다." + (Jansang ? " <color=#9A70C4>같은 자리, 같은 도끼. 또 반 걸음 늦었다.</color>" : ""));
-                Charge = 0;
+                Charge = 0; sigDone = true;
             }
             else Charge--;
         }
@@ -203,17 +208,17 @@ public static class MolakStance
         else if (Broken > 0)
         {
             Broken--;
-            if (Broken == 0) { Shield = ShieldMax; sb.Append(" 호치가 도끼를 짚고 일어선다. 자세가 돌아온다."); if (pendCharge) { pendCharge = false; Charge = 2; } }
+            if (Broken == 0) { Shield = ShieldMax; sb.Append(" 호치가 도끼를 짚고 일어선다. 자세가 돌아온다."); if (pendCharge) { pendCharge = false; Charge = 1; } }
         }
 
         // 이막
-        if (Phase == 1 && FoeHp <= FoeHpMax / 2)
+        if (UsePhase && Phase == 1 && FoeHp <= FoeHpMax / 2)
         {
             FoeHp = FoeHpMax / 2;   // 막이 바뀌는 자리에서 멈춘다 — 이막을 건너뛰고 끝나지 않게
-            Phase = 2; ShieldMax = 5; GwanUsed = false; WeakByeon = false; JansangBroken = Jansang;
-            if (Broken <= 0) { Shield = ShieldMax; Charge = 2; } else pendCharge = true;   // 무너져 있으면 일어선 뒤에 모은다
+            Phase = 2; ShieldMax = 4; GwanUsed = false; WeakByeon = false; JansangBroken = Jansang;
+            if (Broken <= 0) { Shield = ShieldMax; Charge = 1; } else pendCharge = true;   // 무너져 있으면 일어선 뒤에 모은다
             for (int i = 1; i < 3; i++) Set(i, Roll(false));   // 판을 바꾼다 — 줄 서 있던 수도 바뀐다
-            sb.Append("\n<color=#C03434>호치가 웃음을 거둔다.</color> " + (Jansang ? "도끼를 고쳐 쥐는 손이 지난 생엔 본 적 없는 손이다. <color=#9A70C4>보랏빛 줄이 흩어진다.</color>" : "도끼를 고쳐 쥐는 손이 달라졌다.") + " 체세가 다섯으로 늘고, 흔들기는 더 약점이 아니다.");
+            sb.Append("\n<color=#C03434>호치가 웃음을 거둔다.</color> " + (Jansang ? "도끼를 고쳐 쥐는 손이 지난 생엔 본 적 없는 손이다. <color=#9A70C4>보랏빛 줄이 흩어진다.</color>" : "도끼를 고쳐 쥐는 손이 달라졌다.") + " 체세가 넷으로 늘고, 흔들기는 더 약점이 아니다.");
         }
 
         // 차례를 넘긴다
@@ -357,7 +362,7 @@ public class MolakStanceView : MonoBehaviour
             Box(r, ink);
             Frame(r, skip ? dim : chg ? red : pur ? purple : see ? gold : dim, Mathf.Max(1f, 2f * u));
             if (skip) { MolakGui.Ink(sS, dim); GUI.Label(r, "쉰다", sS); continue; }
-            if (chg) { MolakGui.Ink(sS, red); GUI.Label(r, "독아쇄\n" + MolakStance.Charge, sS); continue; }
+            if (chg) { MolakGui.Ink(sS, red); GUI.Label(r, "독아쇄", sS); continue; }
             if (see) { int sh0 = MolakStance.Shown(i); MolakGui.Ink(sH, pur ? purple : sh0 == 0 ? red : paper); GUI.Label(r, MolakStance.StanceName(sh0), sH); }
             else { MolakGui.Ink(sH, dim); GUI.Label(r, "?", sH); }
         }
