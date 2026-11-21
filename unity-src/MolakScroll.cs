@@ -283,8 +283,11 @@ public class MolakScroll : MonoBehaviour
                 //   고른 뒤 첫 문단이 감춰진 채 다 찍혔다가 다음 문단이 올 때 한꺼번에 나타났다(「노점상이 놀라…」).
                 int cc = MolakTheme.ChoiceCount;
                 if (cc > 0 && thPrevChoices == 0) { thHold = true; thHoldText = curTx; }
-                if (cc > 0 && thHold && ReferenceEquals(curTx, thHoldText)) thHoldT = Time.unscaledTime;
-                if (thHold && (!ReferenceEquals(curTx, thHoldText) || Time.unscaledTime - thHoldT > 2f)) thHold = false;
+                // 0.4.91 붙든 글과 '내용'으로 견준다(예전엔 문자열 참조로 견줘, 선택지가 뜬 직후 같은 글이 다시 대입되기만 해도(빨리 모드에서 드러내기가 끝날 때 등)
+                //   요약을 걷고 옛 본문을 선택지 뒤에 다시 비췄다 — 언메이커: 빨리로 볼 때 글이 남아 있거나 안 보이던 글이 갑자기 나온다).
+                bool same = string.Equals(curTx, thHoldText);
+                if (cc > 0 && thHold && same) thHoldT = Time.unscaledTime;
+                if (thHold && (!same || Time.unscaledTime - thHoldT > 2f)) thHold = false;
                 thPrevChoices = cc;
                 if (thHold) a = 0f;
             }
