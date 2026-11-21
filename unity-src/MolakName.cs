@@ -9,9 +9,9 @@ using UnityEngine;
 public class MolakName : MonoBehaviour
 {
     public const int MaxLen = 6;
-    /// <summary>0.4.89 칸에 미리 적혀 있는 이름(언메이커: 기본 이름이 적혀 있으면 좋겠다). 소설판의 주인공 이름과 같다.
+    /// <summary>0.4.90 칸에 미리 적혀 있는 이름(언메이커: 기본 이름이 적혀 있으면 좋겠다 → 「지웅」).
     /// 그대로 「붓을 놓는다」를 누르거나, 지우고 비운 채 누르면 이 이름으로 적힌다.</summary>
-    public const string DefaultName = "한서";
+    public const string DefaultName = "지웅";
     public static bool Open { get; private set; }
 
     static MolakName inst;
