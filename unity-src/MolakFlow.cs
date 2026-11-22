@@ -41,7 +41,7 @@ public class MolakFlow : MonoBehaviour
     {
         get
         {
-            var pr = Printer(); if (pr == null) return false;
+            var pr = Printer(); if (pr == null || !pr.Visible) return false;
             buf.Clear(); pr.CollectMessages(buf); if (buf.Count == 0) return false;
             var dt = DialogueText(); if (dt == null || !dt.isActiveAndEnabled) return false;
             return System.Text.RegularExpressions.Regex.Replace(dt.text ?? "", "<[^>]+>", "").Replace("\u200B", "").Trim().Length > 0;

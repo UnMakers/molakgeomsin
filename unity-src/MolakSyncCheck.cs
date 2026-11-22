@@ -27,7 +27,7 @@ public class MolakSyncCheck : MonoBehaviour
         var sp = Engine.GetService<IScriptPlayer>(); var tr = sp != null ? sp.MainTrack : null;
         if (tr == null || !tr.Playing) { Stopped++; return; }
         if (MolakPlayMode.SkipAll || sp.Skipping) return;
-        if (MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f) return;
+        if (MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f || MolakTurnCard.Showing) return;
         if (!MolakFlow.PageHasText) return;   // 빈 쪽(글이 찍히기 전)이면 옛 글을 읽는 중이 아니다
         string kind = MolakFlow.Gating ? "쪽 붙잡는 중" : tr.AwaitingInput ? "누름 대기" : "글 없이 오래(8초)";
         string page = "";

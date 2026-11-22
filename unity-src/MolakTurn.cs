@@ -117,7 +117,13 @@ public class MolakTurnCard : MonoBehaviour
         MolakSfx.Dawn(); MolakSfx.Stamp(); MolakVfx.Shake(10f);
     }
 
-    void Update () { if (t >= 0f) t += Time.unscaledDeltaTime; }
+    void Update ()
+    {
+        if (t < 0f) return;
+        t += Time.unscaledDeltaTime;
+        // 0.4.95 자동 읽기면 읽을 만큼 띄운 뒤 저절로 닫힌다(기연 카드·인장과 같은 기준). 예전엔 누를 때까지 멈춰 자동으로 읽던 이야기가 열흘째 밤에 섰다.
+        if (MolakPlayMode.Auto && t > 2.6f + 1.1f * lines.Length) { t = -1f; MolakInputGuard.MuteFor(0.25f); }
+    }
 
     GUIStyle sKick, sTitle, sLine, sHint; float builtU = -1f;
     void OnGUI ()

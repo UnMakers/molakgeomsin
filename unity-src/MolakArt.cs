@@ -701,7 +701,7 @@ public class MolakArt : MonoBehaviour
             float idle = Time.unscaledTime - dirtyAt;
             bool awaiting = trc != null && trc.AwaitingInput;
             //   먹 화면·마디 덮개가 글을 가린 동안은 바로 올린다(걷히면 새 그림이 이미 서 있게).
-            bool covered = MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f;
+            bool covered = MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f || MolakTurnCard.Showing;
             bool late = !awaiting && (covered || idle > 8f || idle > 1.5f && !MolakFlow.PageHasText);
             if (MolakPlayMode.SkipAll || !MolakFlow.Gating && (stopped || late)) DoCommit();
         }
