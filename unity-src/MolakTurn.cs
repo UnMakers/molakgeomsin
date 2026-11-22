@@ -46,6 +46,15 @@ public static class MolakTeaser
         "비무판 쪽에서 누가 늦게까지 목검을 휘두른다. 바람 가르는 소리가 고르지 않다.",
     };
 
+    // 0.4.96 귀띔 앞에 잠자리에 드는 한 줄을 깐다(언메이커: 「잠들기 전 —」 한 줄만 빈 쪽에 덩그러니 떠서 뜬금없었다).
+    static readonly string[] Leads = {
+        "방으로 올라와 등잔 심지를 낮춘다.",
+        "칼을 머리맡에 눕히고 자리에 든다.",
+        "창을 닫고 자리에 눕는다. 잠이 쉬 오지 않는다.",
+        "등잔을 끄고 눕는다. 객잔이 조용해진다.",
+    };
+    static string Lead () { return Leads[Random.Range(0, Leads.Length)]; }
+
     static string Num (float n) { int k = Mathf.Max(0, Mathf.RoundToInt(n)); string[] w = { "오늘", "하루", "이틀", "사흘", "나흘", "닷새" }; return k < w.Length ? w[k] : k + "일"; }
 
     static string RaidLine (float d)
@@ -70,9 +79,9 @@ public static class MolakTeaser
             if (seen.Contains(key)) continue;
             seen.Add(key);
             MolakStats.SetStr("tzseen", string.Join("|", new List<string>(seen).ToArray()));
-            return "<color=#8A7A66>잠들기 전 —</color> " + t.Text(d);
+            return Lead() + "\n" + t.Text(d);
         }
-        if (Random.value < 0.45f) return "<color=#8A7A66>잠들기 전 —</color> " + Ambient[Random.Range(0, Ambient.Length)];
+        if (Random.value < 0.45f) return Lead() + "\n" + Ambient[Random.Range(0, Ambient.Length)];
         return "none";
     }
 }

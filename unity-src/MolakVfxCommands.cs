@@ -155,6 +155,8 @@ public class ChapterCommand : Command, IMolakMoment
         var sp = Engine.GetService<IScriptPlayer>();
         if (sp != null && sp.Skipping) return;
         MolakVfx.Chapter(Assigned(Text) ? Text.Value : "", Assigned(Sub) ? Sub.Value : "", Assigned(Desc) ? Desc.Value : "");
+        // 0.4.96 마디 이름이 뜨는 순간 새 쪽을 연다(언메이커: 소제목 뒤에 앞 대사가 남아 있다가 누른 다음에 사라져 잔상처럼 보였다). 앞 쪽 글은 지난 쪽으로 남긴다.
+        if (MolakVfx.ChapterHolding) MolakFlow.ClearPageNow();
         // 0.4.83 마디 이름을 누를 때까지 다음 글을 찍지 않는다 — 전에는 마디 이름 뒤에서 글이 이미 다 나와 있어서, 걷으면 한꺼번에 보였다(언메이커)
         while (MolakVfx.ChapterHolding)
         {

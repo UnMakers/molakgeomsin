@@ -49,6 +49,16 @@ public class MolakFlow : MonoBehaviour
     }
     /// <summary>0.4.95 효과(@vfx)가 터질 때: 읽던 글이 없는 쪽이면 기다리던 그림을 지금 세운다. 글이 떠 있으면 다음 글과 함께.</summary>
     public static void CommitForBeat () { if (!PageHasText) CommitArt(); }
+    /// <summary>0.4.96 지금 쪽을 바로 비우고 다음 글은 새 쪽 맨 위부터(마디 이름이 뜰 때). 비우는 쪽의 글은 지난 쪽 보기에 남긴다.</summary>
+    public static void ClearPageNow ()
+    {
+        if (inst == null) return;
+        var pr = Printer(); if (pr == null) return;
+        buf.Clear(); pr.CollectMessages(buf); if (buf.Count == 0) { inst.breakNext = true; return; }
+        var dt = DialogueText(); if (dt != null) MolakPageBack.Push(dt.text);
+        pr.SetMessages(new List<PrintedMessage>());
+        inst.breakNext = true;
+    }
     public static void Ack () { if (inst != null) inst.lastPressAt = Time.unscaledTime; }
     // 0.4.44 그림도 글처럼: 맥락이 바뀌어(다른 대본으로·하루 흐름 라벨로·날 넘김) 글이 새 쪽이 될 때, 대본이 그림을 따로 정하지 않았으면
     //        하루의 바탕 그림으로 되돌린다. 선택지 직후·쪽이 꽉 차서 넘길 때·같은 대본 안의 처리 루틴(gosub)은 같은 자리라 그대로 둔다.
