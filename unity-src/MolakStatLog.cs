@@ -27,6 +27,8 @@ public static class MolakStatLog
     // 0.4.87 {변수}가 든 줄은 실행 전엔 번역 표지(|#~7359bf1a|)로만 읽힌다 — 까닭에 그 표지가 그대로 찍혔다. 표지는 지운다(남는 글이 없으면 그 줄은 까닭으로 쓰지 않는다).
     static readonly Regex L10n = new Regex("\\|#~?[0-9A-Za-z_\\-]+\\|");
 
+    /// <summary>0.4.96 알림 없이 채우는 변화(이야기 모드가 날짜에 맞춰 몸·서열을 채울 때). 이 까닭이 붙은 변화는 띄우지도 적지도 않는다.</summary>
+    public const string QuietWhy = "\u00A7quiet";
     /// <summary>바로 뒤에 올 그 수치의 변화에 붙일 이유. key 가 "*" 이면 모든 수치.</summary>
     public static void Why (string key, string why)
     {

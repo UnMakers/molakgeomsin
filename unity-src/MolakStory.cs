@@ -74,7 +74,7 @@ public class MolakStory : MonoBehaviour
     public static void Boost (float day)
     {
         if (!On) return;
-        MolakStatLog.Why("*", "이야기 모드 — 이 날짜의 이야기를 볼 수 있게 몸과 서열을 채웠다");
+        MolakStatLog.Why("*", Auto ? MolakStatLog.QuietWhy : "이야기 모드 — 이 날짜의 이야기를 볼 수 있게 몸과 서열을 채웠다");   // 0.4.96 인연별 이야기 모드(소설처럼 읽기)는 조용히
         Max("sw", 4f + day * 0.8f); Max("ng", 2f + day * 0.6f);
         Max("mn", 30f);
         if (day >= 6) RankAtMost(900000f);

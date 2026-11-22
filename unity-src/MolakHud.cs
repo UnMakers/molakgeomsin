@@ -56,9 +56,10 @@ public class MolakHud : MonoBehaviour
             float cur = Mathf.Round(MolakStats.Get(fkeys[k]));
             if (cur == lastV[k]) continue;
             float d = cur - lastV[k]; lastV[k] = cur;
-            flashT[k] = 0f; flashD[k] = d;
             // 0.4.66 능력치 기록: 왜 바뀌었는지 한 줄
             string why = MolakStatLog.Resolve(fkeys[k]);
+            if (why == MolakStatLog.QuietWhy) continue;   // 0.4.96 이야기 모드의 날짜 채우기는 알리지 않는다(읽는 화면에 「이야기 모드 — …」 알림이 줄줄이 떴다)
+            flashT[k] = 0f; flashD[k] = d;
             MolakStatLog.Record(fkeys[k], d, why);
             AddWhy(fkeys[k], d, why);
             bool merged = false;
