@@ -614,8 +614,17 @@ public class MolakFlow : MonoBehaviour
         var m = Measurer(tx);
         if (m == null) return false;
         float h = m.GetPreferredValues(cur + "\n\n" + addition, w, 0f).y;
-        return h > vpH * 0.9f;   // 0.4.54: 어림이 모자라 넘치면 글이 밀려 올라가니 한 줄쯤 여유를 둔다
+        if (OldFit) return h > vpH * 0.9f;
+        // 0.4.98 본문 칸 둘레의 여백(글 칸 위 15·아래 60, 인쇄기 위 10 — 레이아웃 그룹에서 바로 읽는다)을 빼고 잰다.
+        //   옛 어림(칸의 90%)은 이 여백 85px 와 아래 MolakMeasure 가 레이아웃에 끼어 먹던 한 줄(61px)을 다 못 덮어 꽉 찬 쪽이 6~16px 넘쳤고, 글이 그만큼 위로 밀렸다.
+        var panel = tx.transform.parent;
+        float room = vpH - PadV(panel) - PadV(panel != null ? panel.parent : null) - FitSlack;
+        return h > room;
     }
+
+    /// <summary>0.4.98 쪽 끝 여유(어림과 실제 배치의 반올림 차) — 한 줄(56px)보다 훨씬 작게.</summary>
+    const float FitSlack = 12f;
+    static float PadV (Transform t) { var lg = t != null ? t.GetComponent<UnityEngine.UI.LayoutGroup>() : null; return lg != null ? lg.padding.top + lg.padding.bottom : 0f; }
 
     // 본문 칸(DialogueText)으로 GetPreferredValues 를 부르면 그 칸의 글자 정보가 바뀌어 글자 드러내기가 깨진다 → 같은 설정의 보이지 않는 칸으로 잰다
     static TMPro.TextMeshProUGUI measurer;
@@ -627,10 +636,12 @@ public class MolakFlow : MonoBehaviour
             go.transform.SetParent(src.transform.parent, false);
             measurer = go.AddComponent<TMPro.TextMeshProUGUI>();
             measurer.raycastTarget = false;
+            go.AddComponent<UnityEngine.UI.LayoutElement>().ignoreLayout = true;   // 0.4.98 글 칸의 세로 레이아웃에 끼면 빈 한 줄 높이(61px)를 차지해 쪽이 넘쳤다
             measurer.color = new Color(0f, 0f, 0f, 0f);
             measurer.text = "";
         }
         else if (measurer.transform.parent != src.transform.parent) measurer.transform.SetParent(src.transform.parent, false);
+        { var le = measurer.GetComponent<UnityEngine.UI.LayoutElement>(); if (le == null) le = measurer.gameObject.AddComponent<UnityEngine.UI.LayoutElement>(); le.ignoreLayout = !OldFit; }
         measurer.font = src.font; measurer.fontSharedMaterial = src.fontSharedMaterial;
         measurer.fontSize = src.fontSize; measurer.fontStyle = src.fontStyle;
         measurer.lineSpacing = src.lineSpacing; measurer.paragraphSpacing = src.paragraphSpacing;
