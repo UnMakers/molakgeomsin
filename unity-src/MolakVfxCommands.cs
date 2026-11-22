@@ -10,6 +10,7 @@ public class VfxCommand : Command, IMolakMoment
     public override async Awaitable Execute (ExecutionContext ctx)
     {
         var k = Assigned(Kind) ? Kind.Value : "none";
+        MolakFlow.CommitForBeat();   // 0.4.95 빈 쪽에서 그림과 함께 터지는 효과(@art scene:manorfire → @vfx kind:inferno)는 그림을 먼저 세운다
         switch (k)
         {
             case "blood": MolakVfx.Blood(); break;

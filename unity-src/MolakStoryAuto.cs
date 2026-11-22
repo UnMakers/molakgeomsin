@@ -77,6 +77,7 @@ public class MolakStoryAuto : MonoBehaviour
         Hide(bs);
         if (picked != null)
         {
+            if (MolakPageBack.Viewing) { echoAt = Time.unscaledTime; return; }   // 0.4.95 지난 쪽을 보는 동안은 이어 가지 않는다
             // 고른 말을 읽고 누르면(또는 자동 읽기·넘기기면 잠시 뒤) 이어 간다
             bool skipping = MolakPlayMode.SkipAll || (player != null && player.Skipping);
             bool go = skipping || MolakGui.TapDown() && Time.unscaledTime - echoAt > 0.25f || MolakPlayMode.Auto && Time.unscaledTime - echoAt > 1.6f;

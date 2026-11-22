@@ -6,6 +6,7 @@ using UnityEngine;
 /// 0.4.57 지난 쪽 넘겨 보기 — 본문을 왼쪽에서 오른쪽으로 쓸면 앞 쪽, 오른쪽에서 왼쪽으로 쓸면 다시 뒤 쪽.
 ///  · 쪽이 넘어갈 때(MolakFlow 의 쪽 비움) 그 쪽의 글을 적어 둔다. 보기만 한다 — 이야기는 되감기지 않는다.
 ///  · 선택지를 고르면 적어 둔 쪽을 비운다: 고른 뒤로는 고르기 전의 쪽으로 돌아가지 않는다.
+///    0.4.95 인연별 이야기 모드는 비우지 않고 처음 쪽까지 다시 본다. 그 쪽의 그림도 함께 비추고, 보는 동안은 자동 읽기를 멈춘다.
 ///  · 지난 쪽을 보는 동안에는 화면을 눌러도 이야기가 넘어가지 않는다(누르면 지금 쪽으로 돌아온다).
 ///  · 새 글이 찍히거나(자동 진행 등) 상태가 초기화되면 지금 쪽으로 돌아온다.
 /// 그림은 그대로 두고, 본문 칸(DialogueText)을 잠시 숨긴 채 같은 글꼴·같은 자리의 사본 칸에 지난 쪽을 그린다.
@@ -16,7 +17,11 @@ public class MolakPageBack : MonoBehaviour
 {
     static MolakPageBack inst;
     static readonly List<string> pages = new List<string>();
+    static readonly List<string> pageArt = new List<string>();   // 0.4.95 그 쪽이 찍힐 때 떠 있던 그림(장면|인물)
     const int MaxPages = 12;
+    /// <summary>0.4.95 인연별 이야기 모드는 소설처럼 읽는 것이 목적이라 앞 쪽을 책장 넘기듯 처음까지 다시 본다(언메이커). 선택지를 지나도 비우지 않는다.</summary>
+    const int MaxPagesStory = 3000;
+    static int Cap { get { return MolakStory.Auto ? MaxPagesStory : MaxPages; } }
     static int view = -1;                 // 보고 있는 지난 쪽(pages 의 번호), -1 = 지금 쪽
     static TMPro.TextMeshProUGUI past;
     static TMPro.TMP_Text hiddenSrc;
@@ -46,18 +51,18 @@ public class MolakPageBack : MonoBehaviour
     {
         if (string.IsNullOrEmpty(text) || text.Replace("\u200B", "").Trim().Length == 0) return;   // 0.4.80 보이지 않는 한 글자만 있는 쪽은 적지 않는다
         if (pages.Count > 0 && pages[pages.Count - 1] == text) return;
-        pages.Add(text);
-        while (pages.Count > MaxPages) pages.RemoveAt(0);
+        pages.Add(text); pageArt.Add(MolakArt.ShownScene + "|" + MolakArt.ShownChar);
+        while (pages.Count > Cap) { pages.RemoveAt(0); pageArt.RemoveAt(0); }
     }
 
     /// <summary>선택지를 골랐거나 새 생·불러오기: 고르기 전의 쪽으로는 돌아가지 않는다.</summary>
-    public static void Clear () { Close(); pages.Clear(); }
+    public static void Clear () { Close(); pages.Clear(); pageArt.Clear(); }
 
     public static void Back ()
     {
         if (pages.Count == 0) { Hint(MolakTheme.ChoiceCount > 0 || afterPick ? "선택한 뒤에는 앞 쪽으로 돌아갈 수 없다." : "앞 쪽이 없다."); return; }
         int to = view < 0 ? pages.Count - 1 : view - 1;
-        if (to < 0) { Hint("더 앞 쪽은 없다. 마지막으로 선택한 뒤부터 볼 수 있다."); return; }
+        if (to < 0) { Hint(MolakStory.Auto ? "첫 쪽이다." : "더 앞 쪽은 없다. 마지막으로 선택한 뒤부터 볼 수 있다."); return; }
         Show(to);
     }
 
@@ -104,6 +109,7 @@ public class MolakPageBack : MonoBehaviour
         past.textWrappingMode = src.textWrappingMode; past.alignment = src.alignment;
         past.textPreprocessor = MolakTypography.BodyStyler;   // 0.4.59 지난 쪽도 이름 색·대사 먹색 그대로
         past.text = pages[i];
+        if (i < pageArt.Count) { var pa = pageArt[i].Split('|'); MolakArt.Preview(pa[0], pa.Length > 1 ? pa[1] : ""); }   // 0.4.95 그 쪽의 그림도 함께
         past.maxVisibleCharacters = 99999;
         past.gameObject.SetActive(true);
         Hide(src, true);
@@ -117,6 +123,7 @@ public class MolakPageBack : MonoBehaviour
         animLive = false; animT0 = Time.unscaledTime;
         Apply(0f);
         MolakSfx.Page(); MolakSfx.Vibrate();
+        if (Engine.Initialized) { var sp = Engine.GetService<IScriptPlayer>(); if (sp != null && sp.AutoPlaying) sp.SetAutoPlay(false); }   // 0.4.95 지난 쪽을 읽는 동안 이야기가 저절로 넘어가지 않게
     }
 
     public static void Close ()
@@ -124,6 +131,8 @@ public class MolakPageBack : MonoBehaviour
         if (view < 0 && (past == null || !past.gameObject.activeSelf)) return;
         bool wasViewing = view >= 0;
         view = -1;
+        MolakArt.EndPreview();
+        if (MolakPlayMode.Auto && Engine.Initialized) { var sp = Engine.GetService<IScriptPlayer>(); if (sp != null && !sp.AutoPlaying) sp.SetAutoPlay(true); }
         if (past != null) { past.gameObject.SetActive(false); past.rectTransform.anchoredPosition = pastBase; }
         var live = hiddenSrc;
         if (live != null) Hide(live, false);
@@ -209,7 +218,7 @@ public class MolakPageBack : MonoBehaviour
         if (st == null || !Mathf.Approximately(builtU, u)) { builtU = u; st = MolakGui.Label(24, u, TextAnchor.MiddleCenter, false); }
         GUI.depth = MolakGui.DepthVfx - 10;
         var g0 = GUI.color;
-        string msg = view >= 0 ? "지난 쪽 " + (pages.Count - view) + " · 왼쪽으로 밀거나 누르면 지금 쪽으로" : hintMsg;
+        string msg = view >= 0 ? (MolakStory.Auto ? "지난 쪽 " + (view + 1) + " / " + pages.Count + " · 왼쪽으로 밀면 뒤로, 누르면 지금 쪽으로" : "지난 쪽 " + (pages.Count - view) + " · 왼쪽으로 밀거나 누르면 지금 쪽으로") : hintMsg;
         float a = view >= 0 ? 1f : (hintT < 1.4f ? 1f : Mathf.Clamp01(1f - (hintT - 1.4f) / 0.4f));
         var r = new Rect(w / 2f - 330f * u, h * 0.83f, 660f * u, 56f * u);
         GUI.color = new Color(0.08f, 0.06f, 0.05f, 0.82f * a); GUI.DrawTexture(r, MolakGui.Px); GUI.color = Color.white;

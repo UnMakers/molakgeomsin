@@ -36,6 +36,19 @@ public class MolakFlow : MonoBehaviour
     public static bool Gating { get { return inst != null && inst.gateStart >= 0f; } }
     public static System.Text.StringBuilder Trace;
     /// <summary>인장·결과판·기연판처럼 글 위에 뜬 것을 사람이 눌러 걷었다 = 읽을 틈을 줬다.</summary>
+    /// <summary>0.4.95 지금 쪽에 읽을 글이 떠 있는가(인쇄기에 찍힌 글이 있고 보이는 글자가 있다). 글이 떠 있는 동안 그림은 다음 글과 함께 바뀐다(MolakArt).</summary>
+    public static bool PageHasText
+    {
+        get
+        {
+            var pr = Printer(); if (pr == null) return false;
+            buf.Clear(); pr.CollectMessages(buf); if (buf.Count == 0) return false;
+            var dt = DialogueText(); if (dt == null || !dt.isActiveAndEnabled) return false;
+            return System.Text.RegularExpressions.Regex.Replace(dt.text ?? "", "<[^>]+>", "").Replace("\u200B", "").Trim().Length > 0;
+        }
+    }
+    /// <summary>0.4.95 효과(@vfx)가 터질 때: 읽던 글이 없는 쪽이면 기다리던 그림을 지금 세운다. 글이 떠 있으면 다음 글과 함께.</summary>
+    public static void CommitForBeat () { if (!PageHasText) CommitArt(); }
     public static void Ack () { if (inst != null) inst.lastPressAt = Time.unscaledTime; }
     // 0.4.44 그림도 글처럼: 맥락이 바뀌어(다른 대본으로·하루 흐름 라벨로·날 넘김) 글이 새 쪽이 될 때, 대본이 그림을 따로 정하지 않았으면
     //        하루의 바탕 그림으로 되돌린다. 선택지 직후·쪽이 꽉 차서 넘길 때·같은 대본 안의 처리 루틴(gosub)은 같은 자리라 그대로 둔다.
@@ -218,7 +231,8 @@ public class MolakFlow : MonoBehaviour
         MolakPageBack.Close();   // 0.4.57 지난 쪽을 보던 중이면 지금 쪽으로
         if (reset)
         {   // 0.4.57 넘어가는 쪽의 글을 적어 둔다(오른쪽으로 쓸어 다시 본다). 선택지를 고른 뒤의 첫 쪽이면 고르기 전 쪽들은 버린다.
-            if (afterChoice) { MolakPageBack.Clear(); MolakPageBack.MarkPicked(); }
+            if (afterChoice && !MolakStory.Auto) { MolakPageBack.Clear(); MolakPageBack.MarkPicked(); }
+            else if (afterChoice) { var dtq = DialogueText(); if (dtq != null) MolakPageBack.Push(dtq.text); }   // 0.4.95 이야기 모드: 고른 말이 적힌 쪽도 남긴다
             else { var dtp = DialogueText(); if (dtp != null) MolakPageBack.Push(dtp.text); }
         }
         else MolakPageBack.MarkPrinted();

@@ -28,7 +28,8 @@ public class MolakSyncCheck : MonoBehaviour
         if (tr == null || !tr.Playing) { Stopped++; return; }
         if (MolakPlayMode.SkipAll || sp.Skipping) return;
         if (MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f) return;
-        string kind = MolakFlow.Gating ? "쪽 붙잡는 중" : tr.AwaitingInput ? "누름 대기" : "글 없이 1.5초";
+        if (!MolakFlow.PageHasText) return;   // 빈 쪽(글이 찍히기 전)이면 옛 글을 읽는 중이 아니다
+        string kind = MolakFlow.Gating ? "쪽 붙잡는 중" : tr.AwaitingInput ? "누름 대기" : "글 없이 오래(8초)";
         string page = "";
         foreach (var t in Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             if (t.gameObject.name == "DialogueText") { page = System.Text.RegularExpressions.Regex.Replace(t.text ?? "", "<[^>]+>", "").Replace("\n", " ").Trim(); break; }

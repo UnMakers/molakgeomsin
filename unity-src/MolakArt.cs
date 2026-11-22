@@ -433,9 +433,31 @@ public class MolakArt : MonoBehaviour
         MolakBgm.Mood(sid.StartsWith("duel") ? MoodFor(sid) : CurrentMood());
         MolakAmbience.Scene(sid);
     }
+    // 0.4.95 지난 쪽 보기(MolakPageBack): 그 쪽이 찍힐 때 떠 있던 그림을 잠시 비춘다. 지금 그림은 따로 두었다가 돌아오면 되돌린다.
+    bool previewing; Sprite pvScene, pvChar, pvPart; string pvSceneId = "", pvCharId = "", pvPartId = "";
+    public static string ShownScene { get { return inst != null ? (inst.previewing ? inst.pvSceneId : inst.showSceneId) ?? "" : ""; } }
+    public static string ShownChar { get { return inst != null ? (inst.previewing ? inst.pvCharId : inst.showCharId) ?? "" : ""; } }
+    public static void Preview (string scene, string ch)
+    {
+        if (inst == null) return;
+        if (!inst.previewing) { inst.previewing = true; inst.pvScene = inst.showScene; inst.pvChar = inst.showChar; inst.pvPart = inst.showPart; inst.pvSceneId = inst.showSceneId; inst.pvCharId = inst.showCharId; inst.pvPartId = inst.showPartId; }
+        inst.showScene = string.IsNullOrEmpty(scene) ? null : Load("MolakArt/scene_" + scene); inst.showSceneId = scene ?? "";
+        inst.showChar = string.IsNullOrEmpty(ch) ? null : Load("MolakArt/char_" + ch); inst.showCharId = ch ?? "";
+        inst.showPart = null; inst.showPartId = "";
+        inst.sceneT = 1f; inst.charT = 1f;
+    }
+    public static void EndPreview () { if (inst != null) inst.StopPreview(); }
+    void StopPreview ()
+    {
+        if (!previewing) return;
+        previewing = false;
+        showScene = pvScene; showChar = pvChar; showPart = pvPart; showSceneId = pvSceneId; showCharId = pvCharId; showPartId = pvPartId;
+    }
+
     void DoCommit ()
     {
         if (sceneR == null) return;
+        StopPreview();   // 지난 쪽을 보던 중이면 지금 그림으로 돌아온 뒤 올린다
         ApplySound();
         if (!dirty) return;
         dirty = false;
@@ -674,7 +696,14 @@ public class MolakArt : MonoBehaviour
             var spc = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null; var trc = spc != null ? spc.MainTrack : null;
             bool stopped = trc == null || !trc.Playing;
             // 0.4.95 쪽을 붙잡는 동안(MolakFlow.Gating, 옛 쪽 글이 아직 읽히는 중)은 기다린다 — 문이 열릴 때 MolakFlow 가 올린다
-            if (MolakPlayMode.SkipAll || !MolakFlow.Gating && (stopped || (Time.unscaledTime - dirtyAt > 1.5f && !(trc != null && trc.AwaitingInput)))) DoCommit();
+            // 0.4.95 기준: 그림은 글과 함께. 글이 떠 있는 쪽에서는 글 없이 오래 머물러도(효과·기다림) 그림만 먼저 바꾸지 않는다 — 다음 글·선택지·정지에서 올린다.
+            //   글이 없는 빈 쪽이면 1.5초 뒤에, 글이 있어도 8초를 넘기면(멈춘 듯 보이지 않게) 올린다.
+            float idle = Time.unscaledTime - dirtyAt;
+            bool awaiting = trc != null && trc.AwaitingInput;
+            //   먹 화면·마디 덮개가 글을 가린 동안은 바로 올린다(걷히면 새 그림이 이미 서 있게).
+            bool covered = MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f;
+            bool late = !awaiting && (covered || idle > 8f || idle > 1.5f && !MolakFlow.PageHasText);
+            if (MolakPlayMode.SkipAll || !MolakFlow.Gating && (stopped || late)) DoCommit();
         }
         if (showScene != null && sceneR.sprite != showScene) sceneR.sprite = showScene;
         if (showChar != null && charR.sprite != showChar) charR.sprite = showChar;
