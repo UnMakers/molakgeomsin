@@ -49,6 +49,11 @@
   - 실행 파일 `Build\lora\soa\train.bat` — 맨 앞에 `set PYTHONIOENCODING=utf-8` / `set PYTHONUTF8=1` 이 있어야 한다(없으면 진행 줄의 일본어 한자에서 cp949 오류로 멈춘다). 처음 3~4분은 모델을 읽고 fp8로 줄이느라 CPU만 바쁘다.
   - 소아: 초상 5장 × 전신·상반신·얼굴 = 15장(좌우 뒤집기 금지 — 안대), 부름말 `molaksoa`, dim 16 / alpha 8, lr 1e-4, 반복 10 × 8회 = 1200걸음, 걸음당 2.5~3.3초(약 55분). 결과 `ComfyUI-Shared\models\loras\molak_soa_v1(-00000N).safetensors`. 쓸 때 LoraLoader 세기 0.9.
   - 시험(밤 지붕·술잔): 로라를 끼우면 안대 쪽·얼굴형·붉은 머리끈이 초상과 맞게 고정되고, 없으면 얼굴과 머리 모양이 그림마다 흔들린다(`Build\lora\soa\test`).
+  - **입상 전면 교체(2026-11-23, 언메이커: 「충격적이게 훨씬 낫다… 다른 캐릭터들도 이런 식으로, 이미 나온 그림의 각도도 맞춰서」 · 「쉬지 않게, 묻지 말고 계속」)**: 인물마다 로라를 굽고 그 로라 + 지금 입상의 윤곽으로 같은 각도·자세를 다시 그린다.
+    - 공장: `tools/art/lora/lora_factory.py`(PC `Build\lora\`, 띄우기 `run_factory.bat`, 멈추기 `Build\lora\STOP` 파일, 상태 `Build\lora\factory_status.txt`). 인물 42(주요 8 → 표정 여럿인 조연 6 → 한 장짜리 28). 끝난 인물은 `Build\lora\<키>\DONE` — 다시 띄우면 이어서 돈다.
+    - 학습 자료: 입상을 회색(190) 위에 펴 전신·상반신·얼굴. 꼬리표 = 부름말 `molak<키>` + 생김새 + 화풍(`greyscale, monochrome, spot color, red accents, ink sketch, grey background`) + 구도. 생김새가 다른 사람처럼 어긋난 그림(하진무 멱살·무릎, 노인 젊은 날, 할멈 떨림, 장 겁먹음)은 학습에서 빼고 그리기만 한다. 걸음: 주요 1200~1300 · 조연 1000~1200 · 한 장짜리 800.
+    - 그리기: union ControlNet canny(0.3/0.7) 세기 0.55 · 0.6까지, KSampler 28걸음 cfg 5 euler_ancestral, 832×1216, 씨앗 7101·7202·7303·7404, birefnet 누끼. 선한 쪽은 부정어에 `red eyes`. 한 장 50초쯤.
+    - 다듬기: `tools/art/lora/apply_redo.py 뽑은_cut.png 출력.png [--good]` — 바탕 덩어리 걷기(birefnet 가 머리칼 사이에 남긴 고른 회색을 누끼 밖에서 번져 지운다) → post_v21 → 테두리 밝은 띠 걷기 → (선한 쪽) eye_gray → fit_portrait → edge_check. 결과는 `unity-art-v23/`.
 - **배경음 기준 결(2026-11-22 언메이커: 「결전후보4 피아노와현은 확실히 괜찮다, 앞으로도 이 느낌을 참고」)**: 지금 결전_1(`boss_00`). 피아노가 선율을 끌고 옥타브 베이스가 몰아치며 현악이 받쳐 부풀고 북은 낮게, 동양 악기는 한 줌. 악기를 많이 쌓으면 「AI 같고 거칠다」(옛 boss_00·duel_00 — 합창·이중 킥·찌그러진 기타·브라스·바이올린·태고·얼후를 한꺼번에).
   - 태그(그대로 출발점): `piano led battle theme, fast heroic piano melody with driving octave bass, light string section swells, subtle low drums, urgent and determined, dramatic, a hint of guzheng plucks, clear arrangement, clean studio recording, instrumental, no vocals` · bpm 150~160 · D/E minor · 105초 · temperature 0.8 · seed 4301(결전_1).
   - 다음 후보는 이 곡을 본으로 한 변주(소리→소리)부터 시도한다. 고르는 잣대: 8kHz 위 비·스펙트럼 평탄도(잡음기)·5초 단위 소리 크기(중간에 끊기는 곡 거름) — 망한 곡(옛 duel_00)이 평탄도 0.65로 가장 높았다.
