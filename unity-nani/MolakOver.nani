@@ -398,7 +398,7 @@
 @goto #ShopNext
 # ShopNone
 @goto #ShopNext if:rm_done<1
-<color=#8A7A66>이번 생은 몸에 새로 남긴 것이 없다. 같은 길을 같은 걸음으로 걸었다는 뜻이다.</color>
+<color=#8A7A66>이번 생은 몸에 새로 남긴 것이 없다.</color>
 # ShopNext
 @page
 다음 생 — 검술 <color=#C9A227>{nx_sw}</color> · 내공 <color=#C9A227>{nx_ng}</color> · 체력 <color=#C9A227>{nx_hp}</color>로 깨어난다.<br><color=#8A7A66>남은 기억 {knowc} · 청운검결 {formc}/4 · 회귀 {g_runs}회</color>
