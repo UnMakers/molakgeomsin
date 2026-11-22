@@ -166,7 +166,7 @@ public class MolakFlow : MonoBehaviour
         // 새 선택지 묶음이 시작되면 처리되지 않은 옛 선택지를 정리 (뭉탱이 방지)
         if (cmd is AddChoice)
         {
-            MolakArt.Commit();   // 선택지가 뜨기 전에 그림부터
+            CommitArt();   // 선택지가 뜨기 전에 그림부터
             if (!lastWasChoice) { ClearStaleChoices(); MolakChoiceMeta.Reset(); }
             // 0.4.63 잠긴 선택지: 대본을 틀 때 '갖추면 열리는' if: 를 lock:!(조건) 으로 옮겨 두었다(PrepareLocks). 여기서는 원래 조건으로 주석을 단다.
             string cexp; bool lockIt = false;
@@ -232,7 +232,7 @@ public class MolakFlow : MonoBehaviour
         else if (reset && hadText) { MolakPageTurn.Play(); if (!skipping) MolakScroll.NewPage(); }   // 글이 있던 쪽을 넘긴다(0.4.91 새 쪽은 잠깐 떠오른다)
         // 0.4.85 기준: 그림은 글과 함께 — 지난 글 뒤로 바뀐 그림을 이 글 직전에 한 번에 올린다.
         // 0.4.95 읽을 틈 없던 쪽을 붙잡는 동안(FlipGate)은 올리지 않는다 — 빨리로 읽을 때 옛 쪽 글(하진무의 대추)이 남아 있는데 그림이 먼저 장터로 넘어갔다. 문이 열리면 올린다.
-        if (!gatePending) MolakArt.Commit();
+        if (!gatePending) CommitArt();
         if (reset && MolakPlayMode.Fast && !skipping && !unread) MolakInputGuard.MuteFor(0.35f);
         MolakScroll.ResetToBottom();
         // 새 단락 시작(직전 본문이 대기였음) + 화면을 비우지 않을 때 → 빈 줄 하나로 단락 구분
@@ -291,6 +291,9 @@ public class MolakFlow : MonoBehaviour
         Mark(spot);
     }
 
+    /// <summary>0.4.95 글·선택지와 함께 그림을 올린다(MolakSyncCheck 가 이른 그림과 가른다).</summary>
+    static void CommitArt () { MolakSyncCheck.InPrint = true; try { MolakArt.Commit(); } finally { MolakSyncCheck.InPrint = false; } }
+
     static string Short (string t) { t = System.Text.RegularExpressions.Regex.Replace(t ?? "", "<[^>]+>", "").Replace("\n", " "); return t.Length > 28 ? t.Substring(0, 28) + "…" : t; }
 
     /// <summary>0.4.68 읽을 틈이 없던 쪽: 누를 때까지(자동이면 읽을 만큼) 다음 쪽을 찍지 않는다.</summary>
@@ -312,7 +315,7 @@ public class MolakFlow : MonoBehaviour
             await Awaitable.NextFrameAsync();
         }
         inst.gateStart = -1f;
-        MolakArt.Commit();   // 0.4.95 붙잡은 쪽을 넘기는 순간에 새 그림을 올린다
+        CommitArt();   // 0.4.95 붙잡은 쪽을 넘기는 순간에 새 그림을 올린다
         if (inst.Trace0()) Trace.AppendLine("  (문 열림 " + (Time.unscaledTime - start).ToString("0.00") + "초)");
         MolakInputGuard.MuteFor(0.3f);
         if (inst.gateTurn) { inst.gateTurn = false; MolakPageTurn.Play(); MolakScroll.NewPage(); }

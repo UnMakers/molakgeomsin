@@ -446,6 +446,7 @@ public class MolakArt : MonoBehaviour
         showPart = partCur; showPartId = partId ?? "";
         bool noInk = noInkOnce; noInkOnce = false;
         if (!sceneChanged && !charChanged) return;
+        MolakSyncCheck.OnCommit(sceneId, charId, showSceneId, showCharId);   // 0.4.95 옛 쪽을 읽는 중에 그림이 바뀌면 적는다
         if (swapped && !sceneChanged) { showChar = charCur; showCharId = charId ?? ""; charR.sprite = charCur; return; }
         ChangedAt = Time.unscaledTime;
         string sid = sceneId ?? "";

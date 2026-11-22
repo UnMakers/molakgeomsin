@@ -25,6 +25,8 @@ public class MolakEndTester : MonoBehaviour
     string lastEventChoice = "";
     static readonly HashSet<int> clickedSets = new HashSet<int>();   // 이미 고른 선택지 묶음(버튼 인스턴스) — 같은 묶음을 두 번 누르지 않는다
     public static int DoubleSkips;
+    /// <summary>0.4.95 넘기기 없이 자동 읽기로 돈다(그림·글 맞춤 점검 MolakSyncCheck). 빨리/보통은 MolakPlayMode 를 따른다.</summary>
+    public static bool Slow;
     public bool god = true; public int maxLives = 1; public int lives = 0; public int policy = 0; public string runTag = "";
     public bool done;
     float lastProgress; int lastIdx = -1; float lastDay = -1; string lastScript = ""; bool inOver;
@@ -202,7 +204,7 @@ public class MolakEndTester : MonoBehaviour
     IEnumerator Loop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        sp.SetAutoPlay(true); sp.SetSkip(true);
+        sp.SetAutoPlay(true); sp.SetSkip(!Slow);
         lastProgress = Time.realtimeSinceStartup;
         while (!done)
         {
@@ -254,7 +256,7 @@ public class MolakEndTester : MonoBehaviour
                 ResetLifeCounters();
             }
             if (path != "MolakOver") inOver = false;
-            sp.SetAutoPlay(true); sp.SetSkip(true);
+            sp.SetAutoPlay(true); sp.SetSkip(!Slow);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
@@ -285,10 +287,10 @@ public class MolakEndTester : MonoBehaviour
                 if (tr.Playing)
                     foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
-                sp.SetAutoPlay(true); sp.SetSkip(true);
+                sp.SetAutoPlay(true); sp.SetSkip(!Slow);
                 lastProgress = Time.realtimeSinceStartup;
             }
-            if (Time.realtimeSinceStartup - lastProgress > 15f)
+            if (Time.realtimeSinceStartup - lastProgress > (Slow ? 45f : 15f))
             {
                 var cmd = tr.PlayedCommand;
                 string where = "[" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day;
@@ -309,7 +311,7 @@ public class MolakEndTester : MonoBehaviour
     IEnumerator DriveLoop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.realtimeSinceStartup; lastScript = "";
+        sp.SetAutoPlay(true); sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup; lastScript = "";
         while (!done)
         {
             if (MolakName.Open) { MolakName.AutoFill("연호"); }
@@ -321,7 +323,7 @@ public class MolakEndTester : MonoBehaviour
             if (tr.PlayedIndex != lastIdx) { lastProgress = Time.realtimeSinceStartup; lastIdx = tr.PlayedIndex; }
             string dc = "";
             dc = MolakStats.Str("deathcause");
-            sp.SetAutoPlay(true); sp.SetSkip(true);
+            sp.SetAutoPlay(true); sp.SetSkip(!Slow);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
@@ -341,9 +343,9 @@ public class MolakEndTester : MonoBehaviour
                 if (tr.Playing)
                     foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
-                sp.SetAutoPlay(true); sp.SetSkip(true); lastProgress = Time.realtimeSinceStartup;
+                sp.SetAutoPlay(true); sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup;
             }
-            if (Time.realtimeSinceStartup - lastProgress > 15f)
+            if (Time.realtimeSinceStartup - lastProgress > (Slow ? 45f : 15f))
             {
                 var cmd = tr.PlayedCommand;
                 Log.AppendLine("STALL at [" + path + "] idx=" + tr.PlayedIndex + " cmd=" + (cmd != null ? cmd.GetType().Name + "@" + cmd.PlaybackSpot : "null") + " day=" + day + " cause=" + dc);
