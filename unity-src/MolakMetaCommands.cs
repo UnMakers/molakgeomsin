@@ -224,6 +224,17 @@ public class PickEventCommand : Command
     }
     public static float ThemeMul (string id) { return MolakRules.ThemeMul(Mathf.RoundToInt(MolakStats.Get("theme")), id); }
 
+    // 0.4.98 히로인이 연달아 나오는 것 줄이기(언메이커: 히로인 바로 뒤에 히로인이 나올 수는 있지만, 그런 일이 여러 번이다).
+    // 기준: 바로 앞에 본 사건(또는 아침 풍경)이 히로인 장면이고 그게 오늘이나 어제였으면, 이번 추첨에서 히로인 사건은 HerAgain 확률로만 남긴다.
+    // 이야기 모드(인연별)는 그 편의 줄기를 따라가야 하니 건드리지 않는다.
+    public const float HerAgain = 0.2f;
+    static readonly string[] HerKeys = { "Soa", "Amh", "Cm", "Cham", "TempleBell", "JinSister" };
+    public static bool IsHeroine (string id) { foreach (var k in HerKeys) if (id.Contains(k)) return true; return false; }
+    public static bool HerJustNow (float day) { return MolakStats.Get("evlasther") > 0f && day - MolakStats.Get("evlastherday") <= 1f; }
+    /// <summary>점검용 셈: 추첨 수 · 히로인 사건 수 · 그중 히로인 바로 뒤에 나온 수. NoHerGap=true 면 옛 추첨(비교 시험).</summary>
+    public static int Picks, HerPicks, HerBack; public static bool NoHerGap;
+    public static void MarkShown (bool heroine, float day) { MolakStats.Set("evlasther", heroine ? 1f : 0f); if (heroine) MolakStats.Set("evlastherday", day); }
+
 #pragma warning disable CS1998
     public override async Awaitable Execute (ExecutionContext ctx)
 #pragma warning restore CS1998
@@ -250,6 +261,12 @@ public class PickEventCommand : Command
         if (cands.Count == 0) { SetNext("none"); return; }
         // 0.4.94 인연별 이야기 모드: 그 편의 줄기 사건이 열려 있으면 그것부터(무작위에 밀려 마감 날을 넘기지 않게 — 암향 편의 금침의 밤)
         if (MolakStory.Auto) { var key = cands.Where(c => MolakStory.RouteWeight(c.Id) > 1f).ToList(); if (key.Count > 0) cands = key; }
+        bool herJust = HerJustNow(day);
+        if (!MolakStory.Auto && !NoHerGap && herJust && cands.Any(c => IsHeroine(c.Id)) && Random.value > HerAgain)
+        {
+            cands = cands.Where(c => !IsHeroine(c.Id)).ToList();
+            if (cands.Count == 0) { SetNext("none"); return; }   // 히로인 사건만 열려 있으면 이번 칸은 비운다(빈 날 보정 evdry 는 쌓지 않는다)
+        }
 
         float dry = MolakStats.Get("evdry");
         int chance = Assigned(Chance) ? Chance.Value : 100;
@@ -267,6 +284,8 @@ public class PickEventCommand : Command
         MolakStats.Set("g_evl_" + pick.Id, MolakStats.Get("g_runs") + 1f);
         MolakStats.Set("evdry", 0f);
         MolakStats.Add("evcount", 1f);
+        Picks++; if (IsHeroine(pick.Id)) { HerPicks++; if (herJust) HerBack++; }
+        MarkShown(IsHeroine(pick.Id), day);
         SetNext(pick.Id);
     }
 }
@@ -299,7 +318,15 @@ public class PickFlavorCommand : Command
             if (MolakStats.Get(seenPrefix + i) <= 0f) unseen.Add(i);
         }
         var pool = unseen.Count > 0 ? unseen : elig;
+        // 0.4.98 아침 풍경에도 히로인이 나오는 줄이 있다(소아 목도리 등). 바로 앞이 히로인 사건이면 다른 풍경을 먼저.
+        bool Her (int i) => !string.IsNullOrEmpty(table[i].Cond) && table[i].Cond.Contains("soa");
+        if (morning && !MolakStory.Auto && !PickEventCommand.NoHerGap && PickEventCommand.HerJustNow(day))
+        {
+            var other = pool.Where(i => !Her(i)).ToList();
+            if (other.Count > 0 && Random.value > PickEventCommand.HerAgain) pool = other;
+        }
         int idx = pool.Count > 0 ? pool[Random.Range(0, pool.Count)] : 0;
+        if (morning && Her(idx)) PickEventCommand.MarkShown(true, day);
         MolakStats.Set(seenPrefix + idx, 1f);
         MolakStats.Set(outVar, idx + 1);
     }

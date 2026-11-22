@@ -21,6 +21,8 @@ public class MolakFlow : MonoBehaviour
 
     static MolakFlow inst;
     public static string LastDecision = "";
+    /// <summary>0.4.98 시험용: true 면 옛 쪽 넘김 어림(날 {변수}·이음 뒤 안 잼)으로 — 넘침 점검 비교에만 쓴다.</summary>
+    public static bool OldFit;
     /// <summary>다음 문장부터 새 단락(화면 비움) — 장면/날짜 전환 시 호출</summary>
     public static void Break () { if (inst != null && !inst.holdPage) inst.breakNext = true; }
     /// <summary>0.4.41 이음 문장: 다음 본문(이음 문장)을 새 쪽 첫 줄로, 입력 없이 찍고, 그 뒤 사건 첫 글은 같은 쪽에 잇는다.</summary>
@@ -222,7 +224,8 @@ public class MolakFlow : MonoBehaviour
         Overflow();   // 성능상 하드 캡
         // 0.4.47 쪽 단위: 글이 내려가며 움직이면 읽기 흐트러진다(언메이커). 이 글까지 찍으면 한 쪽을 넘치겠으면 글만 비우고 새 쪽 맨 위부터(그림은 그대로).
         bool willReset = breakNext || afterChoice;
-        bool ovf = !willReset && !(holdPage && !bridgePending) && PageWouldOverflow(TextOf(pt));
+        // 0.4.98 이음 문장 바로 뒤의 글도 넘치는지 잰다 — 넘치면 이음 문장을 앞 쪽 끝에 두고 새 쪽(쪽이 꽉 찬 채 글이 위로 밀려 올라가던 것)
+        bool ovf = !willReset && !(OldFit && holdPage && !bridgePending) && PageWouldOverflow(TextOf(pt));
         // 다른 대본에서 넘어와 찍는 첫 글이면 맥락이 바뀐 것
         if (artResetPending) { artResetPending = false; if (!holdPage) MolakArt.ResetToBase(); }
         bool isBridge = bridgePending; bridgePending = false;
@@ -548,11 +551,26 @@ public class MolakFlow : MonoBehaviour
         {
             if (pt == null || pt.Text == null || !pt.Text.HasValue) return "";
             // 0.4.52: 아직 실행 전인 줄의 {변수} 를 미리 풀면 나니노벨이 'Unexpected parameter value part' 오류를 낸다 → 어림에는 날 글을 쓴다
-            if (pt.Text.DynamicValue) return pt.Text.ToString() ?? "";
+            // 0.4.98 그러나 날 글({dejapre} 같은 한 단어)로 재면 실제로 찍힐 한 단락이 빠져 쪽이 넘치고 글이 위로 밀렸다 → 우리 변수로 직접 풀어 잰다(나니노벨은 거치지 않는다)
+            if (pt.Text.DynamicValue) return OldFit ? pt.Text.ToString() ?? "" : ResolveVars(pt.Text.ToString() ?? "");
             var loc = Engine.GetService<ITextLocalizer>();
             return (loc != null ? loc.Resolve(pt.Text.Value) : pt.Text.Value.ToString()) ?? "";
         }
         catch { return ""; }
+    }
+
+    /// <summary>0.4.98 어림용 {변수} 풀기 — 문자열 변수는 값 그대로("none"·보이지 않는 한 글자는 빈 글), 숫자는 정수로. 모르는 이름은 그대로 둔다.</summary>
+    static string ResolveVars (string raw)
+    {
+        if (raw.IndexOf('{') < 0) return raw;
+        return System.Text.RegularExpressions.Regex.Replace(raw, @"\{(\w+)\}", m =>
+        {
+            string n = m.Groups[1].Value;
+            if (!MolakStats.Has(n)) return m.Value;
+            string sv = MolakStats.Str(n, null);
+            if (sv != null) return sv == "none" || sv == "\u200B" ? "" : sv;
+            return Mathf.RoundToInt(MolakStats.Get(n)).ToString();
+        });
     }
 
     /// <summary>다음 '의미 있는' 본문 출력 명령(NextIsText 와 같은 규칙). 없으면 null.</summary>

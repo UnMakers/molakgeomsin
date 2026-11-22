@@ -502,6 +502,12 @@ public class MolakScroll : MonoBehaviour
         float prH = printer.rect.height;
         contentOffset = Mathf.Max(0f, prH - vpH);
         userScroll = Mathf.Clamp(userScroll, 0f, contentOffset);
+        // 0.4.98 점검: 손으로 올리지 않았는데 쪽이 넘쳐 글이 밀려 올라간 자리를 적는다(MolakFlow 의 쪽 넘김 어림이 모자란 곳)
+        if (contentOffset > 0.5f && userScroll < 0.5f && !MolakPageBack.Viewing)
+        {
+            string at = MolakFlow.LastDecision ?? "";
+            if (at != lastOvfAt) { lastOvfAt = at; OverflowCount++; if (OverflowLog.Length < 6000) OverflowLog.AppendLine(Mathf.RoundToInt(contentOffset) + "px · 칸 " + Mathf.RoundToInt(vpH) + " / 어림 " + Mathf.RoundToInt(TargetBodyHeight()) + " · " + at); }
+        }
         float y = contentOffset - userScroll;     // 양수 = 위로 밀어 올림 (맨 아래 정렬)
         // 맨 위 줄이 반쯤 잘려 보이지 않게: 뷰포트 윗변에 걸친 줄은 통째로 위로 밀어 올린다(아래에 한 줄 미만의 빈자리가 남는다)
         // 0.4.54: 줄 잘림 보정은 본문 높이·뷰포트 높이가 바뀔 때만 다시 잰다. 매 프레임 직전 위치를 기준으로 다시 재면
@@ -521,6 +527,7 @@ public class MolakScroll : MonoBehaviour
         }
     }
 
+    public static int OverflowCount; public static readonly System.Text.StringBuilder OverflowLog = new System.Text.StringBuilder(); string lastOvfAt;
     int cutKey = -1; float cutVal;
     TMPro.TMP_Text dlg;
     /// <summary>현재 배치(printer 가 y 만큼 올라간 상태)를 기준으로, 뷰포트 윗변에 걸친 줄을 완전히 가리려면 더 올려야 할 양(캔버스 단위).</summary>
