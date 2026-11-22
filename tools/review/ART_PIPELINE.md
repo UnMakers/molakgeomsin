@@ -45,6 +45,10 @@
 ## 6. 소리
 - 효과음 31·장면 소리 10: Stable Audio Open 1.0(0.4.70).
 - 배경음: ACE-Step 1.5 turbo, 묶음마다 세 곡. 작업 파일 `C:\Users\sjf1t\RuinedSword\Build\bgm2jobs\g_<묶음>_c{0,1,2}.json`, 결과 `Build\bgm2\`, 기록 `Build\bgm2\log.txt`. 곡당 약 5분, 사이 90초 쉼. 태그는 무협 게임 OST(관현악 + 동양 악기, 노래 없음)에 묶음별 분위기.
+- **배경음 기준 결(2026-11-22 언메이커: 「결전후보4 피아노와현은 확실히 괜찮다, 앞으로도 이 느낌을 참고」)**: 지금 결전_1(`boss_00`). 피아노가 선율을 끌고 옥타브 베이스가 몰아치며 현악이 받쳐 부풀고 북은 낮게, 동양 악기는 한 줌. 악기를 많이 쌓으면 「AI 같고 거칠다」(옛 boss_00·duel_00 — 합창·이중 킥·찌그러진 기타·브라스·바이올린·태고·얼후를 한꺼번에).
+  - 태그(그대로 출발점): `piano led battle theme, fast heroic piano melody with driving octave bass, light string section swells, subtle low drums, urgent and determined, dramatic, a hint of guzheng plucks, clear arrangement, clean studio recording, instrumental, no vocals` · bpm 150~160 · D/E minor · 105초 · temperature 0.8 · seed 4301(결전_1).
+  - 다음 후보는 이 곡을 본으로 한 변주(소리→소리)부터 시도한다. 고르는 잣대: 8kHz 위 비·스펙트럼 평탄도(잡음기)·5초 단위 소리 크기(중간에 끊기는 곡 거름) — 망한 곡(옛 duel_00)이 평탄도 0.65로 가장 높았다.
+  - 그나마 쓸 만했던 관현악 록: 비무_1(`duel_00`, seed 3201, `fast martial arts duel theme, orchestral rock, tight live drums, driving cello and violin ostinato, sharp brass stabs, crisp electric guitar riff, short dizi bamboo flute accents, …`).
 - 넣기: `tools/audio_post.py bgm`(RMS −18, 앞뒤 페이드, ogg q4) → `Resources/MolakBgm/<묶음>_NN.ogg`. 묶음이 없으면 가까운 묶음으로 물러난다(MolakBgm). 시험용 `bgm_*`는 새 곡이 들어가면 뺀다.
 
 ## 7. 점검 도구
