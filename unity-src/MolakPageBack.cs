@@ -221,6 +221,8 @@ public class MolakPageBack : MonoBehaviour
         string msg = view >= 0 ? (MolakStory.Auto ? "지난 쪽 " + (view + 1) + " / " + pages.Count + " · 왼쪽으로 밀면 뒤로, 누르면 지금 쪽으로" : "지난 쪽 " + (pages.Count - view) + " · 왼쪽으로 밀거나 누르면 지금 쪽으로") : hintMsg;
         float a = view >= 0 ? 1f : (hintT < 1.4f ? 1f : Mathf.Clamp01(1f - (hintT - 1.4f) / 0.4f));
         var r = new Rect(w / 2f - 330f * u, h * 0.83f, 660f * u, 56f * u);
+        // 0.4.95 극장판: 안내 띠가 본문 아랫줄을 가렸다 — 그림 창 아래 끝에 얹는다
+        if (MolakTheme.TheaterNow) { float s0 = MolakLayout.CanvasPx; r.y = (MolakLayout.ThArtTop + MolakLayout.ThArtH) * s0 - 70f * u; }
         GUI.color = new Color(0.08f, 0.06f, 0.05f, 0.82f * a); GUI.DrawTexture(r, MolakGui.Px); GUI.color = Color.white;
         MolakGui.Ink(st, new Color(0.95f, 0.91f, 0.84f, a)); GUI.Label(r, msg, st);
         GUI.color = g0;
