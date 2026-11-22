@@ -607,6 +607,9 @@ public class MolakFlow : MonoBehaviour
         if (tx == null) return false;
         float vpH = MolakScroll.TargetBodyHeight();
         if (vpH <= 0f) return false;
+        // 0.4.98 비무 띠가 올라와 글 칸이 줄어 있으면(626 → 416) 줄어든 칸으로 잰다 — 비무 중 꽉 찬 쪽이 33px 넘쳤다
+        float vpNow = MolakScroll.ViewportHeight();
+        if (!OldFit && vpNow > 120f && vpNow < vpH) vpH = vpNow;
         string cur = existing ?? tx.text ?? "";
         if (cur.Trim().Length == 0) return false;
         float w = tx.rectTransform.rect.width;

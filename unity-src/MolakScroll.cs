@@ -126,6 +126,9 @@ public class MolakScroll : MonoBehaviour
     /// <summary>새 본문 출력 시작 — 맨 아래로 복귀.</summary>
     public static void ResetToBottom () { if (inst != null) inst.userScroll = 0f; }
 
+    /// <summary>0.4.98 지금 글 칸(뷰포트)의 실제 높이. 없으면 -1. 비무 중에는 비무 띠만큼 줄어 있다.</summary>
+    public static float ViewportHeight () => inst != null && inst.viewport != null ? inst.viewport.rect.height : -1f;
+
     /// <summary>0.4.47: 선택지가 없을 때 본문 한 쪽의 높이(캔버스 단위). 그림 띠가 있으면 그 아래부터. 뷰포트가 아직 없으면 -1.</summary>
     public static float TargetBodyHeight ()
     {
