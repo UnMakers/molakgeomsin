@@ -672,7 +672,8 @@ public class MolakArt : MonoBehaviour
         {
             var spc = Engine.Initialized ? Engine.GetService<IScriptPlayer>() : null; var trc = spc != null ? spc.MainTrack : null;
             bool stopped = trc == null || !trc.Playing;
-            if (stopped || MolakPlayMode.SkipAll || (Time.unscaledTime - dirtyAt > 1.5f && !(trc != null && trc.AwaitingInput))) DoCommit();
+            // 0.4.95 쪽을 붙잡는 동안(MolakFlow.Gating, 옛 쪽 글이 아직 읽히는 중)은 기다린다 — 문이 열릴 때 MolakFlow 가 올린다
+            if (MolakPlayMode.SkipAll || !MolakFlow.Gating && (stopped || (Time.unscaledTime - dirtyAt > 1.5f && !(trc != null && trc.AwaitingInput)))) DoCommit();
         }
         if (showScene != null && sceneR.sprite != showScene) sceneR.sprite = showScene;
         if (showChar != null && charR.sprite != showChar) charR.sprite = showChar;
