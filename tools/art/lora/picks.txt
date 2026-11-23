@@ -39,3 +39,6 @@ char_granny_tremble 7303 --good
 char_gwaksan 7202 --good
 char_gwaksan_bow 7202 --good
 char_gwaksan_grief 7101 --good
+char_jang 7202 --good
+char_jang_fear 7404 --good
+char_jang_uneasy 7303 --good
