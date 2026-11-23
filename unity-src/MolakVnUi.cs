@@ -15,6 +15,20 @@ namespace MolakVn
         public UI.RevealableTextPrinterPanel PrinterPanel;
         public UI.ChoiceHandlerPanel ChoicePanel;
 
+        /// <summary>대본을 미리 읽어 둔다(첫 화면이 떠 있는 동안, 한 프레임에 하나씩) — 판 도중 큰 대본을 처음 읽느라 멈칫하지 않게.</summary>
+        System.Collections.IEnumerator Start ()
+        {
+            yield return null; yield return null;
+            var names = new List<string>();
+#if UNITY_EDITOR
+            string dir = System.IO.Path.Combine(Application.dataPath, "Scenario");
+            if (System.IO.Directory.Exists(dir)) foreach (var f in System.IO.Directory.GetFiles(dir, "*.nani")) names.Add(System.IO.Path.GetFileNameWithoutExtension(f));
+#else
+            foreach (var ta in Resources.LoadAll<TextAsset>("MolakNani")) names.Add(ta.name);
+#endif
+            foreach (var n in names) { if (n == "Title") continue; Script.Get(n); yield return null; }
+        }
+
         static RectTransform Rt (string name, Transform parent, params Type[] comps)
         {
             var go = new GameObject(name, typeof(RectTransform));
