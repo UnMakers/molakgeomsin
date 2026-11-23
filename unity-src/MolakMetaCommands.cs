@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>@initrun — 회차 시작: 일반 변수 전부 리셋 후 몸에 남은 것(MolakMemory)을 반영해 시작치를 정한다.</summary>
@@ -476,11 +476,11 @@ public class DejaCommand : Command
             for (int k = tr.PlayedIndex + 2; k < pl.Count && k <= tr.PlayedIndex + 4; k++)
             {
                 var c = pl[k];
-                if (!(c is Naninovel.Commands.Goto)) { if (c is Naninovel.Commands.PrintText || c is Naninovel.Commands.AddChoice) return false; continue; }
+                if (!(c is MolakVn.Commands.Goto)) { if (c is MolakVn.Commands.PrintText || c is MolakVn.Commands.AddChoice) return false; continue; }
                 if (c.ConditionalExpression == null || !c.ConditionalExpression.HasValue) return false;
                 string ex = c.ConditionalExpression.Value;
                 if (ex == null || (ex.IndexOf("g_ev_", System.StringComparison.Ordinal) < 0 && ex.IndexOf("g_bt_", System.StringComparison.Ordinal) < 0)) continue;
-                return Naninovel.ExpressionEvaluator.Evaluate<bool>(ex);
+                return MolakVn.ExpressionEvaluator.Evaluate<bool>(ex);
             }
         }
         catch { }

@@ -11,7 +11,7 @@ public static class MolakPageTurn
     public static void Play ()
     {
         if (Time.unscaledTime - lastPlay < 0.35f) return;
-        try { var pl = Naninovel.Engine.GetService<Naninovel.IScriptPlayer>(); if (pl != null && pl.Skipping) return; } catch { }
+        try { var pl = MolakVn.Engine.GetService<MolakVn.IScriptPlayer>(); if (pl != null && pl.Skipping) return; } catch { }
         lastPlay = Time.unscaledTime;
         MolakSfx.Page();   // 0.4.70 새로 뽑은 아주 작은 한지 소리(옛 소리는 뺐다)
     }

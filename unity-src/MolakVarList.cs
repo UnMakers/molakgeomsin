@@ -1,5 +1,5 @@
 // (자동 생성: tools2/varlist.py) 회차 변수 목록 — 옛 저장을 불러왔을 때 빠진 변수를 채운다.
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 public static class MolakVarList

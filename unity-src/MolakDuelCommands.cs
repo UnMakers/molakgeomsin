@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>비무 시스템 — 상대 생성/판정. 서사는 전부 .nani가 담당하고 여기는 수치만 계산한다.</summary>

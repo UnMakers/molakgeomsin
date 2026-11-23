@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Text;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -69,7 +69,7 @@ public class MolakProbe : MonoBehaviour
         var st = Engine.GetService<IStateManager>(); var sp = Engine.GetService<IScriptPlayer>();
         bool started = false; returned = false;
         // 0.4.80 앞 작업이 ■ 로 선택지 앞에서 멈췄으면 그 단추가 남아 다음 작업에서 눌리던 것 — 시작 전에 걷는다
-        foreach (var ob in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) if (ob != null) ob.gameObject.SetActive(false);
+        foreach (var ob in FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)) if (ob != null) ob.gameObject.SetActive(false);
         st.ResetState(new string[0], () => {
             foreach (var n in MolakVarList.Nums) MolakStats.EnsureNum(n);
             foreach (var n in MolakVarList.Strings) MolakStats.EnsureStr(n);
@@ -96,7 +96,7 @@ public class MolakProbe : MonoBehaviour
             if (dt != null && dt.text != lastText) { lastText = dt.text; }
             if (cur != script && cur != "" && cur != "MolakDuel") { Log.AppendLine("→ " + cur + " (끝)"); break; }
             if (tr.Playing) { yield return null; continue; }
-            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled).ToArray();
             var lockedLabels = btns.Where(b => b.Choice.Locked).Select(b => "🔒" + (b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").Replace("\n", " ")).ToArray();
             btns = btns.Where(b => !b.Choice.Locked).ToArray();
@@ -104,7 +104,7 @@ public class MolakProbe : MonoBehaviour
             if (btns.Length == 0)
             {
                 yield return new WaitForSecondsRealtime(0.3f);
-                if (!tr.Playing && FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length == 0) { Log.AppendLine("■ 멈춤(끝)"); break; }
+                if (!tr.Playing && FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length == 0) { Log.AppendLine("■ 멈춤(끝)"); break; }
                 continue;
             }
             var labels = btns.Select(b => (b.GetComponentInChildren<TMPro.TMP_Text>(true)?.text ?? "?").Split('\n')[0]).ToArray();
@@ -132,7 +132,7 @@ public class MolakProbe : MonoBehaviour
 
     static TMPro.TMP_Text DialogueText ()
     {
-        foreach (var panel in FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in FindObjectsByType<MolakVn.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if (t0.gameObject.name == "DialogueText") return t0;
         return null;

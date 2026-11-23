@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>엔딩 도달/밸런스/경로 검증용 자동 플레이.
@@ -258,7 +258,7 @@ public class MolakEndTester : MonoBehaviour
             if (path != "MolakOver") inOver = false;
             sp.SetAutoPlay(true); sp.SetSkip(!Slow);
             if (tr.Playing) continue;
-            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
             if (btns.Length > 0)
             {
@@ -285,7 +285,7 @@ public class MolakEndTester : MonoBehaviour
                 Log.AppendLine("d" + day + " hp" + MolakStats.Get("hp").ToString("0") + "/" + MolakStats.Get("hpmax").ToString("0") + (MolakStats.Get("taint") > 0 ? " T" + MolakStats.Get("taint") : "") + (MolakStats.Get("injury") > 0 ? " I" : "") + " [" + path + "#" + at + "] " + labels[k]);
                 if (Log.Length > 200000) Log.Remove(0, 100000);
                 if (tr.Playing)
-                    foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    foreach (var b in FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
                 sp.SetAutoPlay(true); sp.SetSkip(!Slow);
                 lastProgress = Time.realtimeSinceStartup;
@@ -325,7 +325,7 @@ public class MolakEndTester : MonoBehaviour
             dc = MolakStats.Str("deathcause");
             sp.SetAutoPlay(true); sp.SetSkip(!Slow);
             if (tr.Playing) continue;
-            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
             if (btns.Length > 0)
             {
@@ -341,7 +341,7 @@ public class MolakEndTester : MonoBehaviour
                 while (!tr.Playing && Time.realtimeSinceStartup - t0 < 2f) yield return null;
                 if (tr.Playing && matched) PickIdx++;
                 if (tr.Playing)
-                    foreach (var b in FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    foreach (var b in FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
                 sp.SetAutoPlay(true); sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup;
             }

@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections;
 using System.Linq;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -63,7 +63,7 @@ public class MolakFastTest : MonoBehaviour
             if (now >= nextTap)
             {
                 nextTap = now + tapEvery;
-                var btn = MolakTheme.ChoiceCount == 0 ? null : FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                var btn = MolakTheme.ChoiceCount == 0 ? null : FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                     .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>().interactable).OrderBy(b => -b.transform.position.y).FirstOrDefault();
                 Vector2 p;
                 if (btn != null)

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +41,7 @@ public class MolakTheme : MonoBehaviour
     public static Color InkText { get { return Night ? new Color(0.90f, 0.86f, 0.78f, 1f) : new Color(0.16f, 0.13f, 0.10f, 1f); } }
     public static Color InkMid { get { return Night ? new Color(0.66f, 0.62f, 0.55f, 1f) : new Color(0.44f, 0.38f, 0.32f, 1f); } }
     public static Color CardFace { get { return Night ? new Color(0.17f, 0.15f, 0.13f, 1f) : new Color(0.995f, 0.98f, 0.95f, 1f); } }
-    static readonly System.Collections.Generic.List<Naninovel.Choice> choiceBuf = new System.Collections.Generic.List<Naninovel.Choice>();
+    static readonly System.Collections.Generic.List<MolakVn.Choice> choiceBuf = new System.Collections.Generic.List<MolakVn.Choice>();
     static readonly System.Collections.Generic.HashSet<int> sfxHooked = new System.Collections.Generic.HashSet<int>();
 
     /// <summary>지금 떠 있는(아직 고르지 않은) 선택지 수. MolakScroll·MolakArt 가 본문 창과 삽화 띠를 맞춘다.</summary>
@@ -304,7 +304,7 @@ public class MolakTheme : MonoBehaviour
 
     /// <summary>선택지 카드 폭: 배경 종이의 테두리 선(화면 폭의 약 4.5%) 안쪽에 들어오도록 화면 비율에 맞춰 계산</summary>
     readonly Dictionary<int, MolakChoiceMeta.Meta> metaCache = new Dictionary<int, MolakChoiceMeta.Meta>();
-    static string RawLabel (Naninovel.UI.ChoiceHandlerButton btn)
+    static string RawLabel (MolakVn.UI.ChoiceHandlerButton btn)
     {
         TMPro.TMP_Text lblTx = null;
         foreach (var tx0 in btn.GetComponentsInChildren<TMPro.TMP_Text>(true)) if (tx0.gameObject.name != "Num") { lblTx = tx0; break; }
@@ -389,7 +389,7 @@ public class MolakTheme : MonoBehaviour
         EnsureCardSprite();
         int choiceCount = 0;
         {
-            var chm = Naninovel.Engine.GetService<Naninovel.IChoiceHandlerManager>();
+            var chm = MolakVn.Engine.GetService<MolakVn.IChoiceHandlerManager>();
             if (chm != null && !string.IsNullOrEmpty(chm.DefaultHandlerId) && chm.ActorExists(chm.DefaultHandlerId))
             {
                 var act = chm.GetActor(chm.DefaultHandlerId);
@@ -407,7 +407,7 @@ public class MolakTheme : MonoBehaviour
             if (choiceCount > 0 && ChoiceSig() == clickSig)
             {
                 string where = "";
-                try { var plo = Naninovel.Engine.GetService<Naninovel.IScriptPlayer>(); var tr = plo.GetType().GetProperty("MainTrack").GetValue(plo, null) as Naninovel.IScriptTrack; where = tr.PlaybackSpot + " cmd=" + (tr.PlayedCommand != null ? tr.PlayedCommand.GetType().Name : "-") + " exec=" + tr.Executing + " await=" + tr.AwaitingInput; } catch { }
+                try { var plo = MolakVn.Engine.GetService<MolakVn.IScriptPlayer>(); var tr = plo.GetType().GetProperty("MainTrack").GetValue(plo, null) as MolakVn.IScriptTrack; where = tr.PlaybackSpot + " cmd=" + (tr.PlayedCommand != null ? tr.PlayedCommand.GetType().Name : "-") + " exec=" + tr.Executing + " await=" + tr.AwaitingInput; } catch { }
                 Debug.LogWarning("[MolakChoiceStuck] " + choiceCount + "개 그대로 · " + where + " · " + clickSig);
                 StuckCount++;
                 try { System.IO.File.AppendAllText(System.IO.Path.Combine(Application.persistentDataPath, "molak_debug.txt"), System.DateTime.Now.ToString("MM-dd HH:mm:ss") + " 선택지 멈춤 " + where + "\n"); } catch { }
@@ -440,20 +440,20 @@ public class MolakTheme : MonoBehaviour
         var tier = MolakLayout.For(choiceCount);
         // 0.4.70 잠긴 선택지는 작게, 맨 아래로(언메이커). 카드 순서를 바꾸기 전에 원래 순서(나니노벨 실행 순서 = MolakChoiceMeta 의 순서)로 주석을 정해 둔다.
         if (choiceCount == 0 && metaCache.Count > 0) metaCache.Clear();
-        var allBtns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        var allBtns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         foreach (var b0 in allBtns)
         {
             int id0 = b0.GetInstanceID();
             if (metaCache.ContainsKey(id0)) continue;
             int ci0 = 0;
             for (int ci = 0; ci < b0.transform.GetSiblingIndex(); ci++)
-            { var sib = b0.transform.parent.GetChild(ci); if (sib.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null && sib.gameObject.activeSelf) ci0++; }
+            { var sib = b0.transform.parent.GetChild(ci); if (sib.GetComponent<MolakVn.UI.ChoiceHandlerButton>() != null && sib.gameObject.activeSelf) ci0++; }
             var m0 = MolakChoiceMeta.Get(ci0, RawLabel(b0));
             if (b0.Choice.Locked) m0.Locked = true;
             metaCache[id0] = m0;
         }
         {   // 잠긴 카드를 열린 카드 뒤로(잠긴 것끼리는 원래 순서)
-            var lockedList = new List<Naninovel.UI.ChoiceHandlerButton>();
+            var lockedList = new List<MolakVn.UI.ChoiceHandlerButton>();
             foreach (var b0 in allBtns) { MolakChoiceMeta.Meta mm; if (metaCache.TryGetValue(b0.GetInstanceID(), out mm) && mm.Locked) lockedList.Add(b0); }
             if (lockedList.Count > 0 && lockedList.Count < allBtns.Length)
             {
@@ -461,7 +461,7 @@ public class MolakTheme : MonoBehaviour
                 var par0 = lockedList[0].transform.parent;
                 int lastUnlocked = -1;
                 for (int ci = 0; ci < par0.childCount; ci++)
-                { var bb = par0.GetChild(ci).GetComponent<Naninovel.UI.ChoiceHandlerButton>(); MolakChoiceMeta.Meta mm; if (bb != null && bb.gameObject.activeSelf && !(metaCache.TryGetValue(bb.GetInstanceID(), out mm) && mm.Locked)) lastUnlocked = ci; }
+                { var bb = par0.GetChild(ci).GetComponent<MolakVn.UI.ChoiceHandlerButton>(); MolakChoiceMeta.Meta mm; if (bb != null && bb.gameObject.activeSelf && !(metaCache.TryGetValue(bb.GetInstanceID(), out mm) && mm.Locked)) lastUnlocked = ci; }
                 bool misplaced = false; foreach (var lb in lockedList) if (lb.transform.GetSiblingIndex() < lastUnlocked) { misplaced = true; break; }
                 if (misplaced) foreach (var lb in lockedList) lb.transform.SetAsLastSibling();
             }
@@ -471,7 +471,7 @@ public class MolakTheme : MonoBehaviour
             // ---- 선택지 카드: 한지 바탕 + 이중 먹선 테두리 + 왼쪽 주홍 인장(一二三四) ----
             int cidx = 0;
             for (int ci = 0; ci < btn.transform.GetSiblingIndex(); ci++)
-                if (btn.transform.parent.GetChild(ci).GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null && btn.transform.parent.GetChild(ci).gameObject.activeSelf) cidx++;
+                if (btn.transform.parent.GetChild(ci).GetComponent<MolakVn.UI.ChoiceHandlerButton>() != null && btn.transform.parent.GetChild(ci).gameObject.activeSelf) cidx++;
             bool cine = CinemaNow, th = TheaterNow;
             var rootImg = btn.GetComponent<Image>();
             if (rootImg != null)
@@ -634,8 +634,8 @@ public class MolakTheme : MonoBehaviour
         {
             foreach (var img in blGo.GetComponentsInChildren<Image>(true))
             {
-                if (img.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
-                if (img.GetComponentInParent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
+                if (img.GetComponent<MolakVn.UI.ChoiceHandlerButton>() != null) continue;
+                if (img.GetComponentInParent<MolakVn.UI.ChoiceHandlerButton>() != null) continue;
                 var mk = img.GetComponent<UnityEngine.UI.Mask>();
                 if (mk != null)
                 {
@@ -648,7 +648,7 @@ public class MolakTheme : MonoBehaviour
             }
             foreach (var vlg in blGo.GetComponentsInChildren<UnityEngine.UI.VerticalLayoutGroup>(true))
             {
-                if (vlg.GetComponent<Naninovel.UI.ChoiceHandlerButton>() != null) continue;
+                if (vlg.GetComponent<MolakVn.UI.ChoiceHandlerButton>() != null) continue;
                 { float gp = TheaterNow ? 12f : tier.Gap; if (Mathf.Abs(vlg.spacing - gp) > 0.5f) vlg.spacing = gp; }
                 if (vlg.childForceExpandWidth) vlg.childForceExpandWidth = false;   // 카드 폭 820 — 마스크(860) 안쪽으로
                 var ca = vlg.childAlignment == TextAnchor.UpperLeft ? TextAnchor.UpperCenter : (vlg.childAlignment == TextAnchor.MiddleLeft ? TextAnchor.MiddleCenter : (vlg.childAlignment == TextAnchor.LowerLeft ? TextAnchor.LowerCenter : vlg.childAlignment));
@@ -656,7 +656,7 @@ public class MolakTheme : MonoBehaviour
             }
         }
         // 프린터 하단 컨트롤 바 숨김 (모바일)
-        foreach (var panel in FindObjectsByType<Naninovel.UI.UITextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in FindObjectsByType<MolakVn.UI.UITextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             var ctrl = panel.transform.Find("Content/ControlPanel") ?? panel.transform.Find("ControlPanel");
             if (ctrl == null)
@@ -665,7 +665,7 @@ public class MolakTheme : MonoBehaviour
             if (ctrl != null && ctrl.gameObject.activeSelf) ctrl.gameObject.SetActive(false);
         }
         // 프린터 패널 틴트 (배경 이미지)
-        foreach (var panel in FindObjectsByType<Naninovel.UI.UITextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in FindObjectsByType<MolakVn.UI.UITextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             foreach (var img in panel.GetComponentsInChildren<Image>(true))
                 if (img.color.a > 0.001f && !img.gameObject.name.StartsWith("MolakCine")) img.color = new Color(0f,0f,0f,0f); // 상자 없음 — 종이에 바로 쓴다(0.4.82 그림 화면의 옻칠 판은 빼고)

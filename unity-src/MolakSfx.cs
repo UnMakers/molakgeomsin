@@ -45,8 +45,8 @@ public class MolakSfx : MonoBehaviour
     /// <summary>환경 설정 '효과음'·'전체 음량' 슬라이더(나니노벨 SFX·마스터 음량)를 따른다.</summary>
     static float SfxScale ()
     {
-        if (!Naninovel.Engine.Initialized) return 1f;
-        var am = Naninovel.Engine.GetService<Naninovel.IAudioManager>();
+        if (!MolakVn.Engine.Initialized) return 1f;
+        var am = MolakVn.Engine.GetService<MolakVn.IAudioManager>();
         return am != null ? am.SfxVolume * am.MasterVolume : 1f;
     }
 

@@ -1,4 +1,4 @@
-﻿using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>HUD v5 — 서울2033식 미니멀: 최상단 저주 스트립 + 한 줄 상태(한자 라벨) + 서열 연출.</summary>

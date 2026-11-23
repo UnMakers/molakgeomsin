@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 [Alias("vfx")]

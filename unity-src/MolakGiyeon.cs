@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>

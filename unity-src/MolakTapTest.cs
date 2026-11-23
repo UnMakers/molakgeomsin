@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections;
 using System.Linq;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -46,10 +46,10 @@ public class MolakTapTest : MonoBehaviour
         MolakFlow.Trace = new System.Text.StringBuilder();
         var task = ScriptTrackExtensions.LoadAndPlayAtLabel(sp.MainTrack, script, label);
         // 선택지가 뜨고 잠금이 풀릴 때까지
-        float w0 = Time.unscaledTime; Naninovel.UI.ChoiceHandlerButton[] btns = null;
+        float w0 = Time.unscaledTime; MolakVn.UI.ChoiceHandlerButton[] btns = null;
         while (Time.unscaledTime - w0 < 90f)
         {
-            btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+            btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked).OrderBy(b => -b.transform.position.y).ToArray();
             if (btns.Any(b => b.GetComponentInChildren<TMPro.TMP_Text>().text.Contains(pick))) break;
             if (sp.MainTrack.AwaitingInput) { cont.Activate(1f); yield return null; cont.Activate(0f); yield return new WaitForSecondsRealtime(0.15f); continue; }

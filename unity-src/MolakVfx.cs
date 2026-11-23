@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>장면 틴트·화면 이펙트 — @scene / @vfx 명령 + C# 훅.</summary>

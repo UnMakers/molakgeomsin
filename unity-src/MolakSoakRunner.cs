@@ -1,5 +1,5 @@
 using System.Collections;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>정책 행렬 소크: MolakSoakRunner.Matrix(new[]{0,1,2,3,4,5}, 6, "base") — 정책마다 전역 진척을 초기화하고 새 게임부터 N회차.

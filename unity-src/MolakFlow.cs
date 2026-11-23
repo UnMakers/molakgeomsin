@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Naninovel;
-using Naninovel.Commands;
+using MolakVn;
+using MolakVn.Commands;
 using UnityEngine;
 
 /// <summary>0.4.90 글자리를 덮거나 화면을 가리는 연출 명령(인장·기연 판·먹 화면·판이 바뀌는 날 카드·광란·이름 화면·비무 판).
@@ -134,13 +134,6 @@ public class MolakFlow : MonoBehaviour
         var im = Engine.GetService<IInputManager>();
         continueHandle = im != null ? im.GetInput("Continue") : null;
         if (continueHandle != null) continueHandle.OnStart += () => { lastPressAt = Time.unscaledTime; };
-        // 나니노벨 기본 배경 액터(MainBackground)는 쓰지 않는다 — 리소스 없는 placeholder 사각형이 화면 중앙에 그려지는 것을 막는다
-        var bm = Engine.GetService<IBackgroundManager>() as IActorManager;
-        if (bm != null)
-        {
-            if (bm.ActorExists("MainBackground")) bm.GetActor("MainBackground").Visible = false;
-            bm.OnActorAdded += id => { if (bm.ActorExists(id)) bm.GetActor(id).Visible = false; };
-        }
     }
 
     void OnDestroy ()
@@ -196,10 +189,10 @@ public class MolakFlow : MonoBehaviour
             // 0.4.63 잠긴 선택지: 대본을 틀 때 '갖추면 열리는' if: 를 lock:!(조건) 으로 옮겨 두었다(PrepareLocks). 여기서는 원래 조건으로 주석을 단다.
             string cexp; bool lockIt = false;
             if (origCond.TryGetValue(cmd, out cexp))
-            { try { lockIt = !Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { lockIt = false; } }
+            { try { lockIt = !MolakVn.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { lockIt = false; } }
             else cexp = cmd.ConditionalExpression.HasValue ? cmd.ConditionalExpression.Value : "";
             bool shown = true;
-            if (!lockIt && !string.IsNullOrEmpty(cexp)) { try { shown = Naninovel.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
+            if (!lockIt && !string.IsNullOrEmpty(cexp)) { try { shown = MolakVn.ExpressionEvaluator.Evaluate<bool>(cexp); } catch { shown = true; } }
             if (shown || lockIt) MolakChoiceMeta.Push(cexp, ChoiceText(cmd), lockIt);   // 조건이 거짓이라 안 뜨는 선택지는 카드 순서에서 뺀다
             lastWasChoice = true;
             afterChoice = true;   // 선택지 뒤의 첫 본문은 빈 줄로 단락을 나눈다
@@ -365,7 +358,7 @@ public class MolakFlow : MonoBehaviour
         "DayLoop", "Daytime", "Night", "NightChoice", "NightEnd", "Evening", "AfterChapter", "NightTown", "Town", "TownMenu", "Entry", "Rebirth", "Prologue"
     };
     static bool IsHubLabel (string l) { return HubLabels.Contains(l); }
-    static bool Assigned<T> (T p) where T : Naninovel.ICommandParameter { return p != null && p.HasValue; }
+    static bool Assigned<T> (T p) where T : MolakVn.ICommandParameter { return p != null && p.HasValue; }
 
     /// <summary>재생 목록에서 다음 '의미 있는' 명령이 본문 출력인지 (변수 설정·능력치·인물 삽화 명령은 건너뜀)</summary>
     static bool NextIsText (IScriptTrack track)
@@ -405,7 +398,7 @@ public class MolakFlow : MonoBehaviour
         {
             var c = pl[k];
             if (c.ConditionalExpression != null && c.ConditionalExpression.HasValue)
-            { bool ok = true; try { ok = Naninovel.ExpressionEvaluator.Evaluate<bool>(c.ConditionalExpression.Value); } catch { } if (!ok) continue; }
+            { bool ok = true; try { ok = MolakVn.ExpressionEvaluator.Evaluate<bool>(c.ConditionalExpression.Value); } catch { } if (!ok) continue; }
             if (c is PrintText) return false;
             if (c is AddChoice || c is Gosub || c is Return || c is Stop) return true;
             if (c is IMolakMoment mm && mm.CoversText) return true;    // 0.4.90 덮는 연출 앞은 쪽 끝(빨리여도 거기서 기다린다)
@@ -508,9 +501,9 @@ public class MolakFlow : MonoBehaviour
     static void EnsureParagraphBreaks ()
     {
         if (breaksSet) return;
-        foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (var panel in Object.FindObjectsByType<MolakVn.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
-            var f = typeof(Naninovel.UI.RevealableTextPrinterPanel).GetField("autoLineBreaks", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var f = typeof(MolakVn.UI.RevealableTextPrinterPanel).GetField("autoLineBreaks", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (f != null) { f.SetValue(panel, 0); breaksSet = true; }
         }
     }
@@ -530,7 +523,7 @@ public class MolakFlow : MonoBehaviour
         var pr = Printer(); if (pr == null) return;
         buf.Clear(); pr.CollectMessages(buf); if (buf.Count <= 1) return;
         TMPro.TMP_Text tx = null;
-        foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in Object.FindObjectsByType<MolakVn.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if (t0.gameObject.name == "DialogueText") tx = t0;
         if (tx == null) return;
@@ -593,7 +586,7 @@ public class MolakFlow : MonoBehaviour
 
     static TMPro.TMP_Text DialogueText ()
     {
-        foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in Object.FindObjectsByType<MolakVn.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if (t0.gameObject.name == "DialogueText") return t0;
         return null;
@@ -662,7 +655,7 @@ public class MolakFlow : MonoBehaviour
         buf.Clear(); pr.CollectMessages(buf);
         if (buf.Count == 0) return false;
         TMPro.TMP_Text tx = null;
-        foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in Object.FindObjectsByType<MolakVn.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if (t0.gameObject.name == "DialogueText") tx = t0;
         if (tx == null) return buf.Count >= MaxMessages;

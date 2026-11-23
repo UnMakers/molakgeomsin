@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>모바일 한국어 메뉴 — 우상단 ☰ → 자동/스킵/기록/저장/불러오기/설정/처음으로.</summary>
@@ -254,7 +254,7 @@ public class MolakMenu : MonoBehaviour
                     case 0:
                     {
                         open = false; SetProcessInput(true);
-                        var blog = ui != null ? ui.GetUI<Naninovel.UI.IBacklogUI>() as Naninovel.UI.IManagedUI : null;
+                        var blog = ui != null ? ui.GetUI<MolakVn.UI.IBacklogUI>() as MolakVn.UI.IManagedUI : null;
                         if (blog != null) blog.ChangeVisibility(true, 0.15f);
                         break;
                     }
@@ -278,7 +278,7 @@ public class MolakMenu : MonoBehaviour
             if (Tile(new Rect(bx+tw+gap, by, tw, saveH), "저장 · 불러오기", null, MolakPaper.Ink, u))
             {
                 open = false; SetProcessInput(true);
-                var sl = ui != null ? ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI : null;
+                var sl = ui != null ? ui.GetUI<MolakVn.UI.ISaveLoadUI>() as MolakVn.UI.IManagedUI : null;
                 if (sl != null) sl.ChangeVisibility(true, 0.15f);
             }
             by += saveH + gap;

@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -33,7 +33,7 @@ public class MolakBeatWalker : MonoBehaviour
             Status = r;
             var parts = r.Split('#');
             MolakStats.Set("riskforce", (pick % 2) == 0 ? 1f : 2f);   // 승부수: 짝수 회는 통과, 홀수 회는 실패 갈래
-            Naninovel.ScriptTrackExtensions.LoadAndPlayAtLabel(tr, parts[0], parts[1]);
+            MolakVn.ScriptTrackExtensions.LoadAndPlayAtLabel(tr, parts[0], parts[1]);
             yield return new WaitForSecondsRealtime(0.5f);
             int steps = 0, lastIdx = -1, idle = 0, choices = 0;
             string end = "STALL";
@@ -45,7 +45,7 @@ public class MolakBeatWalker : MonoBehaviour
                 if (tr.AwaitingInput) setWait.Invoke(tr, new object[] { false });
                 var bl = GameObject.Find(MolakUi.ChoiceListPath);
                 var btns = new List<UnityEngine.UI.Button>();
-                if (bl != null) foreach (var b in bl.GetComponentsInChildren<Naninovel.UI.ChoiceHandlerButton>()) if (b.gameObject.activeInHierarchy && !b.Choice.Locked) btns.Add(b.GetComponent<UnityEngine.UI.Button>());
+                if (bl != null) foreach (var b in bl.GetComponentsInChildren<MolakVn.UI.ChoiceHandlerButton>()) if (b.gameObject.activeInHierarchy && !b.Choice.Locked) btns.Add(b.GetComponent<UnityEngine.UI.Button>());
                 var cg = bl != null ? bl.GetComponent<CanvasGroup>() : null;
                 if (btns.Count > 0 && cg != null && cg.alpha > 0.5f)
                 {

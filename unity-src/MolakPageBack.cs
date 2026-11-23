@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -79,7 +79,7 @@ public class MolakPageBack : MonoBehaviour
 
     static TMPro.TMP_Text DialogueText ()
     {
-        foreach (var panel in Object.FindObjectsByType<Naninovel.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var panel in Object.FindObjectsByType<MolakVn.UI.RevealableTextPrinterPanel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             foreach (var t0 in panel.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if (t0.gameObject.name == "DialogueText") return t0;
         return null;

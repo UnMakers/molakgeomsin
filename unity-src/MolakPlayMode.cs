@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -91,7 +91,7 @@ public class MolakPlayMode : MonoBehaviour
     /// 나니노벨 순서: OnExecute(MolakFlow 가 바탕 그림을 되돌림) → 실행 전 작업(여기) → 실행. 그래서 같은 줄에서 바뀐 그림도 잡힌다.</summary>
     static async Awaitable FastArtHold (IScriptTrack track)
     {
-        var pt = track != null ? track.PlayedCommand as Naninovel.Commands.PrintText : null;
+        var pt = track != null ? track.PlayedCommand as MolakVn.Commands.PrintText : null;
         if (!Fast || pt == null) return;
         // 비어 있는 {dejapre} 줄은 아무것도 찍지 않는다 — 여기서 기다리면 정작 글 앞에서는 안 기다린다
         if (pt.Text != null && pt.Text.ToString().Trim() == "{dejapre}") { var dv = MolakStats.Str("dejapre"); if (string.IsNullOrEmpty(dv) || dv == "none" || dv == "\u200B") return; }

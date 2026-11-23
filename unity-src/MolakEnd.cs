@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>말로(末路) 시스템 — 사인별 엔딩 판정·연출·영구 기록(말로록).</summary>

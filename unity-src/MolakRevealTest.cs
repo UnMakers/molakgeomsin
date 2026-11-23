@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Text;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -152,7 +152,7 @@ public class MolakRevealTest : MonoBehaviour
                 continue;
             }
             // 선택지
-            var btns = FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
+            var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
             if (btns.Length > 0 && MolakTheme.ChoiceCount > 0)
             {
                 yield return new WaitForSecondsRealtime(0.5f);

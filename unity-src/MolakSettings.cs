@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -229,7 +229,7 @@ public class MolakSettings : MonoBehaviour
         string txt =
             "<b>몰락검신(沒落劍神)</b>  v" + Application.version + "\n" +
             "만든 이 · 언메이커\n\n" +
-            "<color=#C9A44C>엔진</color>\nUnity · Naninovel\n\n" +
+            "<color=#C9A44C>엔진</color>\nUnity\n\n" +
             "<color=#C9A44C>그림</color>\n삽화·인물·타이틀 그림은 생성형 AI(animagine-xl 4.0, ComfyUI)로 만든 뒤 손질했다.\n\n" +
             "<color=#C9A44C>소리</color>\n효과음은 코드로 합성했다. 배경음은 시험용이며 정식 출시 전 교체한다.\n\n" +
             "<color=#C9A44C>글꼴</color>\n고운바탕 · 송명 · Noto Serif CJK KR(한자·인장)\nGoogle Fonts, SIL Open Font License\n\n" +

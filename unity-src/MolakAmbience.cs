@@ -91,8 +91,8 @@ public class MolakAmbience : MonoBehaviour
 
     static float Scale ()
     {
-        if (!Naninovel.Engine.Initialized) return 1f;
-        var am = Naninovel.Engine.GetService<Naninovel.IAudioManager>();
+        if (!MolakVn.Engine.Initialized) return 1f;
+        var am = MolakVn.Engine.GetService<MolakVn.IAudioManager>();
         return am != null ? am.SfxVolume * am.MasterVolume : 1f;
     }
 }

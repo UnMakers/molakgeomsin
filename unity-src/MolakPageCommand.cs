@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>@page — 시간·장소가 크게 건너뛰는 지점. 직전 본문은 탭을 기다리고, 다음 본문은 빈 화면에서 시작한다(MolakFlow가 처리).</summary>

@@ -116,11 +116,11 @@ public static class MolakLayout
     public static string Numeral (int index) { return Numerals[Mathf.Clamp(index, 0, Numerals.Length - 1)]; }
 }
 
-/// <summary>나니노벨 기본 UI 안에서 찾아 쓰는 오브젝트 경로. 나니노벨 판올림으로 경로가 바뀌면 여기만 고친다.</summary>
+/// <summary>무대(MolakVn.Stage)가 지은 글 칸·선택지 묶음의 자리.</summary>
 public static class MolakUi
 {
-    public const string ChoiceListPath = "Naninovel<Runtime>/UI/ChoiceHandler/ButtonList";
-    public const string PrinterPanelPath = "Naninovel<Runtime>/UI/TextPrinter/Dialogue/Content/PrinterPanel";
+    public const string ChoiceListPath = MolakVn.Stage.RootName + "/UI/ChoiceHandler/ButtonList";
+    public const string PrinterPanelPath = MolakVn.Stage.RootName + "/UI/TextPrinter/Dialogue/Content/PrinterPanel";
 
     static GameObject choiceList;
     /// <summary>선택지 버튼 목록. 한 번 찾으면 사라질 때까지 기억해 둔다(매 프레임 GameObject.Find 를 피한다).</summary>

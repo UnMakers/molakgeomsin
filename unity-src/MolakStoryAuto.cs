@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -56,7 +56,7 @@ public class MolakStoryAuto : MonoBehaviour
 
     IScriptPlayer player;
     float seenAt = -1f, echoAt = -1f;
-    Naninovel.UI.ChoiceHandlerButton picked;
+    MolakVn.UI.ChoiceHandlerButton picked;
     readonly List<CanvasGroup> hidden = new List<CanvasGroup>();
     public static string LastPick = "";
     /// <summary>편마다 맺는 끝(MolakEnd 의 id): 소아 합벽 · 암향 면향 · 청묘 운해 · 참새 명가.</summary>
@@ -105,7 +105,7 @@ public class MolakStoryAuto : MonoBehaviour
         closing = false;
         float day = MolakStats.Get("day");
         if (day != pickDay) { pickDay = day; picks.Clear(); }
-        Naninovel.UI.ChoiceHandlerButton best = null; float bestSc = float.MinValue; string bestLabel = "";
+        MolakVn.UI.ChoiceHandlerButton best = null; float bestSc = float.MinValue; string bestLabel = "";
         foreach (var b in open)
         {
             string lab = Label(b);
@@ -168,11 +168,11 @@ public class MolakStoryAuto : MonoBehaviour
     }
 
     // ---------- 단추 ----------
-    static Naninovel.UI.ChoiceHandlerButton[] Buttons ()
+    static MolakVn.UI.ChoiceHandlerButton[] Buttons ()
     {
-        return FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled).ToArray();
+        return FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled).ToArray();
     }
-    static string Label (Naninovel.UI.ChoiceHandlerButton b)
+    static string Label (MolakVn.UI.ChoiceHandlerButton b)
     {
         foreach (var t in b.GetComponentsInChildren<TMPro.TMP_Text>(true))
         {
@@ -182,7 +182,7 @@ public class MolakStoryAuto : MonoBehaviour
         }
         return "";
     }
-    void Hide (Naninovel.UI.ChoiceHandlerButton[] bs)
+    void Hide (MolakVn.UI.ChoiceHandlerButton[] bs)
     {
         foreach (var b in bs)
         {

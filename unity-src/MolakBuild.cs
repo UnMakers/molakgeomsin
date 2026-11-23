@@ -4,8 +4,8 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// 몰락검신 안드로이드 빌드 — 나니노벨 BuildProcessor.Building 플래그를 켠 상태로 전처리/빌드/정리.
-/// (플래그 없이 PreprocessBuild만 부르면 임시 복사본 스크립트 경로가 TEMP_NANINOVEL/... 로 깨져 기기에서 타이틀 복귀 현상)
+/// 몰락검신 빌드 — 대본(Assets/Scenario/*.nani)을 Resources/MolakNani/*.txt 로 묶은 뒤 빌드한다.
+/// (0.5.0 자체 실행기: 기기에서는 대본을 Resources 에서 글 파일로 읽는다. 예전의 나니노벨 빌드 전처리는 없다.)
 /// </summary>
 public static class MolakBuild
 {
@@ -34,6 +34,26 @@ public static class MolakBuild
 
     public static string Android (string version, int code) { return Build(version, code, false); }
 
+    /// <summary>0.5.0 대본을 빌드에 싣는다: Assets/Scenario/*.nani → Assets/Resources/MolakNani/*.txt (바뀐 것만 다시 쓴다, 사라진 대본은 지운다).</summary>
+    public static int SyncScripts ()
+    {
+        string src = Path.Combine(Application.dataPath, "Scenario"), dst = Path.Combine(Application.dataPath, "Resources", "MolakNani");
+        Directory.CreateDirectory(dst);
+        var keep = new System.Collections.Generic.HashSet<string>(); int n = 0; bool changed = false;
+        foreach (var f in Directory.GetFiles(src, "*.nani"))
+        {
+            string name = Path.GetFileNameWithoutExtension(f), to = Path.Combine(dst, name + ".txt");
+            keep.Add(name + ".txt");
+            string text = File.ReadAllText(f, System.Text.Encoding.UTF8);
+            if (!File.Exists(to) || File.ReadAllText(to, System.Text.Encoding.UTF8) != text) { File.WriteAllText(to, text, new System.Text.UTF8Encoding(false)); changed = true; }
+            n++;
+        }
+        foreach (var f in Directory.GetFiles(dst, "*.txt"))
+            if (!keep.Contains(Path.GetFileName(f))) { File.Delete(f); if (File.Exists(f + ".meta")) File.Delete(f + ".meta"); changed = true; }
+        if (changed) AssetDatabase.Refresh();
+        return n;
+    }
+
     /// <summary>0.4.45: 기기에서 그림을 미리 읽어 두도록 Resources/MolakArt 의 그림 이름을 _index.txt 에 적는다(빌드 때마다 다시).</summary>
     public static void WriteArtIndex ()
     {
@@ -54,9 +74,7 @@ public static class MolakBuild
     {
         if (File.Exists(ResultFile)) File.Delete(ResultFile);
         WriteArtIndex();
-        // 보조: .nani 전부 재임포트(커맨드 컴파일 이후 상태 보장)
-        foreach (var f in Directory.GetFiles(Path.Combine(Application.dataPath, "Scenario"), "*.nani"))
-            AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        SyncScripts();
         PlayerSettings.bundleVersion = version;
         PlayerSettings.Android.bundleVersionCode = code;
         Directory.CreateDirectory(Path.GetDirectoryName(Apk));
@@ -68,18 +86,10 @@ public static class MolakBuild
             scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
             locationPathName = aab ? Aab : Apk, target = BuildTarget.Android, options = BuildOptions.None
         };
-        var building = typeof(Naninovel.BuildProcessor).GetProperty("Building");
         var sw = System.Diagnostics.Stopwatch.StartNew();
         string res = "";
         try
         {
-            building.SetValue(null, true, null);
-            Naninovel.BuildProcessor.PreprocessBuild(opts);
-            // 임시 복사본 스크립트 경로 검증
-            var bad = Directory.GetFiles(Path.Combine(Application.dataPath, "TEMP_NANINOVEL/Resources/Naninovel/Scripts"), "*.nani")
-                .Select(f => AssetDatabase.LoadAssetAtPath<Naninovel.Script>("Assets/TEMP_NANINOVEL/Resources/Naninovel/Scripts/" + Path.GetFileName(f)))
-                .Where(sc => sc == null || sc.Path.Contains("/")).ToList();
-            if (bad.Count > 0) throw new System.Exception("TEMP script path broken: " + string.Join(",", bad.Select(b => b ? b.Path : "null")));
             var report = BuildPipeline.BuildPlayer(opts);
             res = "result=" + report.summary.result + " size=" + (report.summary.totalSize / (1024 * 1024)) + "MB errors=" + report.summary.totalErrors + " time=" + (int)sw.Elapsed.TotalSeconds + "s v=" + version;
             if (aab) res += " | aab target=" + (int)PlayerSettings.Android.targetSdkVersion + (PlayerSettings.Android.useCustomKeystore ? " signed=upload" : " signed=DEBUG(스토어 거절)");
@@ -88,8 +98,6 @@ public static class MolakBuild
         catch (System.Exception ex) { res = "EXC " + ex.GetType().Name + ": " + ex.Message; }
         finally
         {
-            try { Naninovel.BuildProcessor.PostprocessBuild(); } catch (System.Exception ex2) { res += " | cleanupEXC " + ex2.Message; }
-            building.SetValue(null, false, null);
             EditorUserBuildSettings.buildAppBundle = prevBundle;
             if (aab) PlayerSettings.Android.targetSdkVersion = prevTarget;
         }
@@ -104,8 +112,7 @@ public static class MolakBuild
     public static string Windows (string version)
     {
         if (File.Exists(WinResultFile)) File.Delete(WinResultFile);
-        foreach (var f in Directory.GetFiles(Path.Combine(Application.dataPath, "Scenario"), "*.nani"))
-            AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        SyncScripts();
         PlayerSettings.bundleVersion = version;
         string outDir = Path.Combine(WinDir, "v" + version);
         if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
@@ -114,13 +121,10 @@ public static class MolakBuild
             scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
             locationPathName = Path.Combine(outDir, "몰락검신.exe"), target = BuildTarget.StandaloneWindows64, options = BuildOptions.None
         };
-        var building = typeof(Naninovel.BuildProcessor).GetProperty("Building");
         var sw = System.Diagnostics.Stopwatch.StartNew();
         string res = "";
         try
         {
-            building.SetValue(null, true, null);
-            Naninovel.BuildProcessor.PreprocessBuild(opts);
             var report = BuildPipeline.BuildPlayer(opts);
             res = "result=" + report.summary.result + " size=" + (report.summary.totalSize / (1024 * 1024)) + "MB errors=" + report.summary.totalErrors + " time=" + (int)sw.Elapsed.TotalSeconds + "s v=" + version;
             if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
@@ -138,8 +142,6 @@ public static class MolakBuild
         catch (System.Exception ex) { res = "EXC " + ex.GetType().Name + ": " + ex.Message; }
         finally
         {
-            try { Naninovel.BuildProcessor.PostprocessBuild(); } catch (System.Exception ex2) { res += " | cleanupEXC " + ex2.Message; }
-            building.SetValue(null, false, null);
         }
         File.WriteAllText(WinResultFile, res + "\n");
         return res;
@@ -185,8 +187,7 @@ public static class MolakBuild
             res = "EXC iOS Build Support 모듈이 설치돼 있지 않다(Unity Hub → 설치 → 모듈 추가)";
             File.WriteAllText(IosResultFile, res + "\n"); return res;
         }
-        foreach (var f in Directory.GetFiles(Path.Combine(Application.dataPath, "Scenario"), "*.nani"))
-            AssetDatabase.ImportAsset("Assets/Scenario/" + Path.GetFileName(f), ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        SyncScripts();
         ApplyIosSettings(version, code);
         string outDir = Path.Combine(IosDir, "v" + version);
         if (Directory.Exists(outDir)) Directory.Delete(outDir, true);
@@ -195,12 +196,9 @@ public static class MolakBuild
             scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray(),
             locationPathName = outDir, target = BuildTarget.iOS, options = BuildOptions.None
         };
-        var building = typeof(Naninovel.BuildProcessor).GetProperty("Building");
         var sw = System.Diagnostics.Stopwatch.StartNew();
         try
         {
-            building.SetValue(null, true, null);
-            Naninovel.BuildProcessor.PreprocessBuild(opts);
             var report = BuildPipeline.BuildPlayer(opts);
             res = "result=" + report.summary.result + " errors=" + report.summary.totalErrors + " warnings=" + report.summary.totalWarnings + " time=" + (int)sw.Elapsed.TotalSeconds + "s v=" + version + " build=" + code;
             if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
@@ -215,8 +213,6 @@ public static class MolakBuild
         catch (System.Exception ex) { res = "EXC " + ex.GetType().Name + ": " + ex.Message; }
         finally
         {
-            try { Naninovel.BuildProcessor.PostprocessBuild(); } catch (System.Exception ex2) { res += " | cleanupEXC " + ex2.Message; }
-            building.SetValue(null, false, null);
         }
         File.WriteAllText(IosResultFile, res + "\n");
         return res;

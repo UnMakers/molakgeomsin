@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Naninovel;
-using Naninovel.Commands;
+using MolakVn;
+using MolakVn.Commands;
 using UnityEngine;
 
 /// <summary>
@@ -298,12 +298,12 @@ public class MolakAutoLife : MonoBehaviour
     }
 
     // ---------- 갈림길 ----------
-    Naninovel.UI.ChoiceHandlerButton[] ChoiceButtons ()
+    MolakVn.UI.ChoiceHandlerButton[] ChoiceButtons ()
     {
-        return FindObjectsByType<Naninovel.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled).ToArray();
+        return FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Where(b => b.isActiveAndEnabled).ToArray();
     }
     static readonly Regex Tags = new Regex("<[^>]+>");
-    static string LabelOf (Naninovel.UI.ChoiceHandlerButton b)
+    static string LabelOf (MolakVn.UI.ChoiceHandlerButton b)
     {
         foreach (var t in b.GetComponentsInChildren<TMPro.TMP_Text>(true))
         {
@@ -313,7 +313,7 @@ public class MolakAutoLife : MonoBehaviour
         }
         return "";
     }
-    static string Sig (IEnumerable<Naninovel.UI.ChoiceHandlerButton> bs) { return string.Join("|", bs.Where(b => !b.Choice.Locked).Select(LabelOf).OrderBy(x => x).ToArray()); }
+    static string Sig (IEnumerable<MolakVn.UI.ChoiceHandlerButton> bs) { return string.Join("|", bs.Where(b => !b.Choice.Locked).Select(LabelOf).OrderBy(x => x).ToArray()); }
 
     void HookButtons ()
     {
@@ -326,7 +326,7 @@ public class MolakAutoLife : MonoBehaviour
             ub.onClick.AddListener(() => Record(me));
         }
     }
-    void Record (Naninovel.UI.ChoiceHandlerButton b)
+    void Record (MolakVn.UI.ChoiceHandlerButton b)
     {
         if (MolakPractice.Active || string.IsNullOrEmpty(batchKey)) return;
         var all = ChoiceButtons();
@@ -453,11 +453,11 @@ public class MolakAutoLife : MonoBehaviour
 
 /// <summary>0.4.72 @autolife do:follow|off — 회귀 첫 저녁의 갈림.</summary>
 [Alias("autolife")]
-public class AutoLifeCommand : Naninovel.Command
+public class AutoLifeCommand : MolakVn.Command
 {
-    public Naninovel.StringParameter Do;
+    public MolakVn.StringParameter Do;
 #pragma warning disable CS1998
-    public override async Awaitable Execute (Naninovel.ExecutionContext ctx)
+    public override async Awaitable Execute (MolakVn.ExecutionContext ctx)
 #pragma warning restore CS1998
     {
         if (Assigned(Do) && Do.Value == "follow") MolakAutoLife.Follow(); else MolakAutoLife.Decline();

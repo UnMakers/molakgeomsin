@@ -24,7 +24,7 @@ public class MolakStory : MonoBehaviour
 
     void Update ()
     {
-        if (!Naninovel.Engine.Initialized || !On) return;
+        if (!MolakVn.Engine.Initialized || !On) return;
         if (MolakStats.Get("day") >= 1f && MolakStats.Get("hp") < 1f) MolakStats.Set("hp", 1f);
         if (MolakStats.Get("curse") > 70f) MolakStats.Set("curse", 70f);
         // 0.4.94 편마다 다른 히로인의 마디는 닫는다(Molak02 BeatCheck 의 nx_*). 대본의 storyauto 는 비무를 한 장면으로 줄인다(MolakDuel#StoryCut).

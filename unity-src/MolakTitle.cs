@@ -1,4 +1,4 @@
-using Naninovel;
+using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -102,9 +102,9 @@ public class MolakTitle : MonoBehaviour
 
     bool AnyUIVisible (IUIManager ui)
     {
-        var a = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
-        var b = ui.GetUI<Naninovel.UI.ISettingsUI>() as Naninovel.UI.IManagedUI;
-        var c = ui.GetUI<Naninovel.UI.IConfirmationUI>() as Naninovel.UI.IManagedUI;
+        var a = ui.GetUI<MolakVn.UI.ISaveLoadUI>() as MolakVn.UI.IManagedUI;
+        var b = ui.GetUI<MolakVn.UI.ISettingsUI>() as MolakVn.UI.IManagedUI;
+        var c = ui.GetUI<MolakVn.UI.IConfirmationUI>() as MolakVn.UI.IManagedUI;
         return (a != null && a.Visible) || (b != null && b.Visible) || (c != null && c.Visible) || MolakSettings.IsOpen;
     }
 
@@ -186,7 +186,7 @@ public class MolakTitle : MonoBehaviour
         var state = Engine.GetService<IStateManager>();
         if (ui == null || sp == null || state == null) return;
 
-        var defTitle = ui.GetUI<Naninovel.UI.ITitleUI>() as Naninovel.UI.IManagedUI;
+        var defTitle = ui.GetUI<MolakVn.UI.ITitleUI>() as MolakVn.UI.IManagedUI;
         if (defTitle != null && defTitle.Visible) defTitle.ChangeVisibility(false, 0f);
 
         if (grace > 0f) { grace -= Time.unscaledDeltaTime; shownAt = -1f; Showing = false; AtTitle = false; return; }
@@ -375,7 +375,7 @@ public class MolakTitle : MonoBehaviour
             // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록
             if (!MolakAutoSave.ContinueLatest())
             {
-                var sl = ui.GetUI<Naninovel.UI.ISaveLoadUI>() as Naninovel.UI.IManagedUI;
+                var sl = ui.GetUI<MolakVn.UI.ISaveLoadUI>() as MolakVn.UI.IManagedUI;
                 if (sl != null) sl.ChangeVisibility(true, 0.15f);
             }
         }
@@ -426,7 +426,7 @@ public class MolakTitle : MonoBehaviour
         MolakBlackout.Play(new[] { "눈을 뜬다." }, 1.8f, false, false, () =>
         {
             wakeFired = true; grace = 6f;
-            state.ResetState(new string[0], () => Naninovel.ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"));
+            state.ResetState(new string[0], () => MolakVn.ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"));
         });
     }
 }

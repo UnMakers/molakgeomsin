@@ -52,7 +52,7 @@ public class MolakDuelCard : MonoBehaviour
         MolakInputGuard.Guard(new Rect(0, 0, Screen.width, Screen.height));
         // 0.4.86 시계·자동 걷힘·닫힘은 프레임마다(예전엔 OnGUI 의 Repaint 에서만 — 화면이 다시 그려지지 않으면 카드가 끝내 안 닫혀 대본이 멈췄다)
         cT += Time.unscaledDeltaTime;
-        var sp = Naninovel.Engine.Initialized ? Naninovel.Engine.GetService<Naninovel.IScriptPlayer>() : null;
+        var sp = MolakVn.Engine.Initialized ? MolakVn.Engine.GetService<MolakVn.IScriptPlayer>() : null;
         float auto = sp != null && sp.Skipping ? 0.6f : MolakPlayMode.Auto ? 2.2f : -1f;
         if (outAt < 0f && auto > 0f && cT > auto) { outAt = cT; MolakInputGuard.MuteFor(0.2f); }
         if (outAt >= 0f && cT - outAt > 0.35f) { cT = -1f; outAt = -1f; }
@@ -92,7 +92,7 @@ public class MolakDuelCard : MonoBehaviour
         GUI.Label(new Rect(ta.x, cy + 262 * u, ta.width, 46 * u), cLine, sLine);
         MolakGui.Ink(sSub, cWin ? MolakPaper.Accent : MolakPaper.Sub);
         if (!string.IsNullOrEmpty(cSub)) GUI.Label(new Rect(ta.x, cy + 306 * u, ta.width, 44 * u), cSub, sSub);
-        var spg = Naninovel.Engine.Initialized ? Naninovel.Engine.GetService<Naninovel.IScriptPlayer>() : null;
+        var spg = MolakVn.Engine.Initialized ? MolakVn.Engine.GetService<MolakVn.IScriptPlayer>() : null;
         bool autoOn = (spg != null && spg.Skipping) || MolakPlayMode.Auto;
         if (!autoOn && outAt < 0f && cT > 0.8f) { var sb = MolakPaper.Sub; MolakGui.Ink(sSub, new Color(sb.r, sb.g, sb.b, Mathf.Clamp01((cT - 0.8f) / 0.4f))); GUI.Label(new Rect(ta.x, ta.yMax - 46f * u, ta.width, 34f * u), "눌러서 넘긴다", sSub); }
         GUI.color = g;

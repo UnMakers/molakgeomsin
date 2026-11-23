@@ -135,14 +135,14 @@ public class MolakBgm : MonoBehaviour
     {
         get
         {
-            if (!Naninovel.Engine.Initialized) return DefaultVolume;
-            var am = Naninovel.Engine.GetService<Naninovel.IAudioManager>();
+            if (!MolakVn.Engine.Initialized) return DefaultVolume;
+            var am = MolakVn.Engine.GetService<MolakVn.IAudioManager>();
             return am != null ? am.BgmVolume : DefaultVolume;
         }
         set
         {
-            if (!Naninovel.Engine.Initialized) return;
-            var am = Naninovel.Engine.GetService<Naninovel.IAudioManager>();
+            if (!MolakVn.Engine.Initialized) return;
+            var am = MolakVn.Engine.GetService<MolakVn.IAudioManager>();
             if (am == null) return;
             am.BgmVolume = Mathf.Clamp01(value);
             SaveSettings();
@@ -151,14 +151,14 @@ public class MolakBgm : MonoBehaviour
 
     static void SaveSettings ()
     {
-        try { var st = Naninovel.Engine.GetService<Naninovel.IStateManager>(); if (st != null) st.SaveSettings(); }
+        try { var st = MolakVn.Engine.GetService<MolakVn.IStateManager>(); if (st != null) st.SaveSettings(); }
         catch (System.Exception) { }
     }
 
     void Update ()
     {
-        if (!Naninovel.Engine.Initialized) return;
-        var am = Naninovel.Engine.GetService<Naninovel.IAudioManager>();
+        if (!MolakVn.Engine.Initialized) return;
+        var am = MolakVn.Engine.GetService<MolakVn.IAudioManager>();
         if (am == null) return;
         if (!settingsReady)
         {
