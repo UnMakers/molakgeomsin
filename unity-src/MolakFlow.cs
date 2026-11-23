@@ -129,7 +129,7 @@ public class MolakFlow : MonoBehaviour
         player = Engine.GetService<IScriptPlayer>();
         if (player == null) return;
         player.OnExecute += OnExecute;
-        player.AddPreExecutionTask(FlipGate);
+        player.AddPreExecutionTask(PrePrint);
         player.OnPlay += PrepareLocks;   // 새 대본을 틀 때 첫 명령보다 먼저
         var im = Engine.GetService<IInputManager>();
         continueHandle = im != null ? im.GetInput("Continue") : null;
@@ -311,8 +311,54 @@ public class MolakFlow : MonoBehaviour
         Mark(spot);
     }
 
-    /// <summary>0.4.95 글·선택지와 함께 그림을 올린다(MolakSyncCheck 가 이른 그림과 가른다).</summary>
-    static void CommitArt () { MolakSyncCheck.InPrint = true; try { MolakArt.Commit(); } finally { MolakSyncCheck.InPrint = false; } }
+    /// <summary>0.4.95 글·선택지와 함께 그림을 올린다(MolakSyncCheck 가 이른 그림과 가른다).
+    /// 0.5.0 먹 화면이 덮여 있으면 그 밑에서 그림을 바꾼 뒤 먹을 걷는다 — 걷히면 새 그림이 이미 서 있다.</summary>
+    static void CommitArt ()
+    {
+        float before = MolakArt.ChangedAt;
+        MolakSyncCheck.InPrint = true; try { MolakArt.Commit(); } finally { MolakSyncCheck.InPrint = false; }
+        if (inst != null && MolakArt.ChangedAt != before) inst.artChanged = true;
+        MolakBlackout.Release();
+    }
+    bool artChanged;
+
+    /// <summary>0.5.0 실행 전 작업: 붙잡은 쪽(FlipGate) → 그림이 먼저(ArtHold).</summary>
+    static async Awaitable PrePrint (IScriptTrack track)
+    {
+        await FlipGate(track);
+        await ArtHold(track);
+    }
+
+    /// <summary>0.5.0 기준: 그림이 바뀌면 그림이 먼저, 글은 그 뒤에(언메이커: 그림이 바뀔 때 글이 먼저 나와 몰입을 해친다).
+    /// 이 글과 함께 그림이 바뀌었거나 먹 화면·마디 덮개가 걷히는 중이면 — 새 쪽이면 옛 글을 먼저 걷고 — 번짐·떠오름·걷힘이 거의 끝날 때까지 글을 붙잡는다.
+    /// 누르면 바로 글로 넘어간다. 넘기기·점검 봇은 붙잡지 않는다.</summary>
+    static async Awaitable ArtHold (IScriptTrack track)
+    {
+        if (inst == null) return;
+        var pt = track != null ? track.PlayedCommand as PrintText : null;
+        if (pt == null) return;
+        bool changed = inst.artChanged; inst.artChanged = false;
+        var sp = inst.player;
+        if (MolakPlayMode.SkipAll || (sp != null && sp.Skipping) || MolakVn.Engine.Turbo) return;
+        bool covered = MolakBlackout.Lifting || MolakVfx.ChapterCover > 0.02f;
+        if (!changed && !covered) return;
+        bool reset = pt.ResetPrinter.HasValue && pt.ResetPrinter.Value;
+        if (reset) { var pr = MolakVn.Engine.Printers.Default; pr.ClearMessages(); }   // 옛 쪽 글이 새 그림 위에 남지 않게
+        float start = Time.unscaledTime, cap = start + (MolakPlayMode.Fast ? 0.7f : 1.8f);
+        while (Time.unscaledTime < cap)
+        {
+            bool busy = MolakBlackout.Lifting || MolakVfx.ChapterCover > 0.02f || MolakArt.InkLeft > HoldInkTail || MolakArt.Busy;
+            if (!busy) break;
+            if (inst.lastPressAt > start + 0.05f && !MolakMenu.IsOpen && !MolakSettings.IsOpen) { MolakInputGuard.BlockCurrentPress(); break; }
+            await Awaitable.NextFrameAsync();
+            if (track.PlayedCommand != pt) return;
+        }
+        float beat = Time.unscaledTime + (MolakPlayMode.Fast ? 0.05f : 0.15f);   // 그림이 선 뒤 한 박자
+        while (Time.unscaledTime < beat) await Awaitable.NextFrameAsync();
+        if (Trace != null) Trace.AppendLine("  (그림 먼저 " + (Time.unscaledTime - start).ToString("0.00") + "초)");
+    }
+    /// <summary>번짐이 이만큼(초) 남았으면 글을 내보낸다 — 새 그림은 이미 거의 다 드러났다.</summary>
+    const float HoldInkTail = 0.25f;
 
     static string Short (string t) { t = System.Text.RegularExpressions.Regex.Replace(t ?? "", "<[^>]+>", "").Replace("\n", " "); return t.Length > 28 ? t.Substring(0, 28) + "…" : t; }
 

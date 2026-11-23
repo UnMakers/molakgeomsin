@@ -467,6 +467,7 @@ public class MolakArt : MonoBehaviour
         if (partChanged && !swapped) { partT = partCur != null && showPart == null ? 0f : 1f; if (partCur != null && showPart == null) partSlideT = 0f; }
         showPart = partCur; showPartId = partId ?? "";
         bool noInk = noInkOnce; noInkOnce = false;
+        bool underBlack = MolakBlackout.Covering;   // 0.5.0 먹 화면 밑: 번지지도 떠오르지도 않고 그 자리에서 바뀐다(걷히면 이미 서 있게)
         if (!sceneChanged && !charChanged) return;
         MolakSyncCheck.OnCommit(sceneId, charId, showSceneId, showCharId);   // 0.4.95 옛 쪽을 읽는 중에 그림이 바뀌면 적는다
         if (swapped && !sceneChanged) { showChar = charCur; showCharId = charId ?? ""; charR.sprite = charCur; return; }
@@ -476,7 +477,12 @@ public class MolakArt : MonoBehaviour
                    && !sid.StartsWith("duel") && !(showSceneId ?? "").StartsWith("duel") && !MolakPlayMode.SkipAll && !(Engine.GetService<IScriptPlayer>()?.Skipping ?? false);
         bool newPerson = charCur != null && Person(charId) != Person(showChar != null ? showCharId : null);
         if (charChanged && newPerson) { pushT = 0f; slideT = 0f; gest = ""; gestT = 9f; sunk = false; }
-        if (ink)
+        if (underBlack)
+        {
+            inkT = InkDur; sceneR.sprite = sceneCur; charR.sprite = charCur; sceneT = 1f; charT = 1f;
+            if (charChanged && newPerson) { pushT = 1f; slideT = 1f; }
+        }
+        else if (ink)
         {
             bool inking = inkT < InkDur && oldSceneR.sprite != null;
             // 번지는 중에 또 넘어가면: 반도 안 번졌으면 옛 그림은 그대로 두고 새 목표로 다시, 반 넘게 번졌으면 지금 그림을 옛 그림 삼아
@@ -527,6 +533,8 @@ public class MolakArt : MonoBehaviour
     public static float ChangedAt = -9f;
     /// <summary>0.4.65 그림이 아직 다 떠오르지 않았다(장면·인물 페이드, 인물 뒤 풍경 눌림까지).</summary>
     public static bool Busy { get { return inst != null && (inst.sceneT < 1f || inst.charT < 1f); } }
+    /// <summary>0.5.0 번짐이 끝나기까지 남은 초(번지는 중이 아니면 0).</summary>
+    public static float InkLeft { get { return inst == null ? 0f : Mathf.Max(0f, InkDur - inst.inkT); } }
     float pushT = 1f, hurtT = -1f, quietK;
     /// <summary>인물이 맞았다: 반 박자 옆으로 흔들린다(장면만 있으면 장면이).</summary>
     public static void Hurt () { if (inst != null) inst.hurtT = 0f; }
@@ -701,7 +709,7 @@ public class MolakArt : MonoBehaviour
             float idle = Time.unscaledTime - dirtyAt;
             bool awaiting = trc != null && trc.AwaitingInput;
             //   먹 화면·마디 덮개가 글을 가린 동안은 바로 올린다(걷히면 새 그림이 이미 서 있게).
-            bool covered = MolakBlackout.Busy || MolakVfx.ChapterCover > 0.5f || MolakTurnCard.Showing;
+            bool covered = MolakBlackout.Busy || MolakBlackout.Covering || MolakVfx.ChapterCover > 0.5f || MolakTurnCard.Showing;
             bool late = !awaiting && (covered || idle > 8f || idle > 1.5f && !MolakFlow.PageHasText);
             if (MolakPlayMode.SkipAll || !MolakFlow.Gating && (stopped || late)) DoCommit();
         }

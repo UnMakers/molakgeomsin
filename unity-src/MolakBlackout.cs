@@ -11,6 +11,14 @@ public class MolakBlackout : MonoBehaviour
 {
     static MolakBlackout inst;
     public static bool Busy { get { return inst != null && inst.busy; } }
+    /// <summary>0.5.0 먹이 화면을 다 덮고 있다(줄이 뜨는 중이거나, 줄이 다 지고 걷히기를 기다리는 중).</summary>
+    public static bool Covering { get { return inst != null && (inst.phase == 5 || inst.busy && inst.phase >= 1); } }
+    /// <summary>0.5.0 먹이 걷히는 중이거나 걷히기를 기다리는 중 — 글은 다 걷힌 뒤에 나온다.</summary>
+    public static bool Lifting { get { return inst != null && (inst.phase == 5 || inst.phase == 3 && inst.CoverNow(Time.realtimeSinceStartup) > 0.02f); } }
+    /// <summary>0.5.0 줄이 다 지면 먹은 덮인 채 대본을 놓아 준다(phase 5). 다음 글·선택지가 그 밑에서 그림을 바꾼 뒤 이것을 불러 걷는다.
+    /// 글이 오지 않으면(정지·긴 명령) 1.2초 뒤 저절로 걷는다.</summary>
+    public static void Release () { if (inst != null && inst.phase == 5) inst.Next(3, Time.realtimeSinceStartup); }
+    float heldAt;
     /// <summary>0.4.27: 줄은 눌러야 넘어간다. 자동 시험(소크·대본 걷기) 중에만 hold 초 뒤 저절로 넘긴다.</summary>
     public static bool Auto;
 
@@ -46,7 +54,7 @@ public class MolakBlackout : MonoBehaviour
         float e = t - phaseT;
         if (phase == 0) return Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(e / 0.9f));
         if (phase == 3) return 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(e / 0.9f));
-        return 1f;
+        return 1f;   // 1·2·4·5: 다 덮였다
     }
 
     static bool Pressed () { return MolakGui.TapDown(); }
@@ -59,7 +67,7 @@ public class MolakBlackout : MonoBehaviour
         {
             case 0: if (e >= 0.9f) { Next(1, t); } break;
             case 1:
-                if (idx >= lines.Length) { Next(3, t); Finish(); break; }
+                if (idx >= lines.Length) { Hold(t); break; }
                 // 홑줄: 떠오른 뒤 눌러야 넘어간다. 쌓기: 고른 것들은 저절로 차례로 쌓이고(누르면 바로 다음), 다 쌓인 뒤엔 눌러야 닫힌다.
                 bool last = !stack || idx >= lines.Length - 1;
                 bool timeUp = e >= 0.6f + hold;
@@ -71,7 +79,10 @@ public class MolakBlackout : MonoBehaviour
                 else if (tap || (auto && timeUp)) Next(2, t);
                 break;
             case 2:
-                if (e >= (stack ? 0.7f : 0.4f)) { idx = stack ? lines.Length : idx + 1; Next(idx < lines.Length ? 1 : 3, t); if (phase == 3) Finish(); }
+                if (e >= (stack ? 0.7f : 0.4f)) { idx = stack ? lines.Length : idx + 1; if (idx < lines.Length) Next(1, t); else Hold(t); }
+                break;
+            case 5:
+                if (e >= 1.2f || !TrackPlaying()) Next(3, t);
                 break;
             case 4:
                 // 다 찢기면 새 문장이 박힌다. 떠오르는 0.6초는 건너뛰고 곧장 다 보인 채로 시작한다.
@@ -81,6 +92,18 @@ public class MolakBlackout : MonoBehaviour
     }
 
     void Next (int p, float t) { phase = p; phaseT = t; }
+
+    /// <summary>줄이 다 졌다: 대본 안에서 쓴 먹이면 덮인 채 놓아 주고(phase 5), 첫 화면의 "눈을 뜬다."처럼 끝에 할 일이 있으면 바로 걷는다.</summary>
+    void Hold (float t)
+    {
+        if (onDone != null || Auto) Next(3, t); else Next(5, t);
+        Finish();
+    }
+
+    static bool TrackPlaying ()
+    {
+        try { var sp = Engine.GetService<IScriptPlayer>(); return sp != null && sp.MainTrack != null && sp.MainTrack.Playing; } catch { return false; }
+    }
 
     void Finish ()
     {
