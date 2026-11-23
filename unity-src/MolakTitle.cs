@@ -164,12 +164,13 @@ public class MolakTitle : MonoBehaviour
     /// <summary>실루엣(발끝 기준) + 물그림자.</summary>
     /// <summary>0.4.98 바탕을 겪은 일에 따라 고른다(언메이커: 다섯 시안을 상황 따라 전부).
     ///  처음 켰을 때·진엔딩 새벽 = 고요한 수면 · 소아를 잃은 뒤 = 붉은 꽃잎 · 끝을 본 뒤 = 눈 · 다섯 생 넘게 헤맬 때 = 비 오는 밤 · 그 밖(죽고 돌아온 뒤) = 불타는 산장.</summary>
-    bool soaTogether;
+    string withWho = "";
     void PickNight (int runs, int clears, bool dawn, bool soaGhost)
     {
         string k = dawn || runs <= 0 ? "still" : soaGhost ? "petals" : clears > 0 ? "snow" : runs >= 5 ? "rain" : "ash";
         // 0.5.0 소아와 함께한 뒤: 둘이 손잡고 선 바탕(언메이커: 따로 선 그림자 말고 더 친근하게 — 1번 시안)
-        if (soaTogether) k = "with_soa";
+        // 다른 히로인도 같은 식으로(언메이커: 나머지도 근처에 있게). 여럿을 봤으면 마지막에 본 끝의 사람, 아니면 소아·암향·청묘·참새 차례.
+        if (withWho.Length > 0) k = "with_" + withWho;
         if (!string.IsNullOrEmpty(ForceNight)) k = ForceNight;
         if (k == nightKey && night != null) return;
         bool couple = k.StartsWith("with_");
@@ -177,7 +178,14 @@ public class MolakTitle : MonoBehaviour
         if (t == null) { if (couple) { couple = false; k = "still"; t = Resources.Load<Texture2D>("MolakTitleNight_still"); } }
         if (t != null) night = t;
         nightKey = k; nightCouple = couple && t != null;
-        if (nightCouple) { nightHorizon = 0.842f; nightFeet = new Vector2(0.33f, 0.876f); }
+        if (nightCouple)
+        {
+            string who = k.Substring(5);
+            if (who == "amhyang") { nightHorizon = 0.835f; nightFeet = new Vector2(0.35f, 0.855f); }
+            else if (who == "cheongmyo") { nightHorizon = 0.85f; nightFeet = new Vector2(0.33f, 0.875f); }
+            else if (who == "chamsae") { nightHorizon = 0.765f; nightFeet = new Vector2(0.245f, 0.80f); }
+            else { nightHorizon = 0.842f; nightFeet = new Vector2(0.33f, 0.876f); }
+        }
         else { nightHorizon = 0.879f; nightFeet = new Vector2(0.312f, 0.879f); }
     }
 
@@ -241,7 +249,13 @@ public class MolakTitle : MonoBehaviour
         bool amhWith = G("g_end_muhyang") > 0 || G("g_end_myeonhyang") > 0;
         bool cmWith = G("g_end_hwansok") > 0 || G("g_end_unhae") > 0;
         bool chamWith = G("g_end_mumyeong") > 0 || G("g_end_myeongga") > 0;
-        soaTogether = soaWith && !soaGhost;
+        {
+            bool soaT = soaWith && !soaGhost;
+            withWho = soaT ? "soa" : amhWith ? "amhyang" : cmWith ? "cheongmyo" : chamWith ? "chamsae" : "";
+            if (amhWith && (lastEnd == "muhyang" || lastEnd == "myeonhyang")) withWho = "amhyang";
+            else if (cmWith && (lastEnd == "hwansok" || lastEnd == "unhae")) withWho = "cheongmyo";
+            else if (chamWith && (lastEnd == "mumyeong" || lastEnd == "myeongga")) withWho = "chamsae";
+        }
         PickNight(runs, clears, dawn, soaGhost);
 
         float fadeIn = Mathf.Clamp01(since / 1.8f);
@@ -308,9 +322,9 @@ public class MolakTitle : MonoBehaviour
         float[] rightSlot = { 0.392f, 0.468f }, leftSlot = { 0.236f, 0.168f };
         int ri = 0, li = 0;
         if ((soaWith || soaGhost) && !nightCouple) Sil(silSoa, X(rightSlot[ri++]), feet, heroH * 0.92f, new Color(0.05f, 0.05f, 0.06f, (soaWith && !soaGhost ? 0.96f : 0.38f) * fadeIn), 0.28f);
-        if (cmWith) Sil(silCm, X(rightSlot[ri++]), feet, heroH * 0.94f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
-        if (amhWith) Sil(silAmh, X(leftSlot[li++]), feet, heroH * 0.90f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
-        if (chamWith) Sil(silCham, X(leftSlot[li++]), feet, heroH * 0.86f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
+        if (cmWith && !nightCouple) Sil(silCm, X(rightSlot[ri++]), feet, heroH * 0.94f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
+        if (amhWith && !nightCouple) Sil(silAmh, X(leftSlot[li++]), feet, heroH * 0.90f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
+        if (chamWith && !nightCouple) Sil(silCham, X(leftSlot[li++]), feet, heroH * 0.86f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
         if (swordInWater)
         {
             float sx = X(0.57f), sy0 = Y(0.905f), sy1 = Y(0.84f);
