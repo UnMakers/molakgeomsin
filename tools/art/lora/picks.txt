@@ -46,3 +46,5 @@ char_yonggae 7101 --good
 # char_yonggae_grave: 넷 다 가슴의 붉은 띠를 빠뜨림 — 옛 입상 그대로 두고 2차에서 다시(꼬리표 red sash over shoulder 를 세게)
 char_hochi 7404
 char_hochi_kneel 7202
+char_hyeok 7404 --good
+char_hyeok_grim 7404 --good
