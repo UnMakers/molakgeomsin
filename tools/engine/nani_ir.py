@@ -29,7 +29,8 @@ KNOWN = {
     'pname': None, 'pickevent': None, 'pickflavor': None, 'nextbody': None, 'companion': None, 'bridge': None, 'autolife': None,
     'teaser': None, 'lifenote': None, 'spk': {'id'}, 'gesture': {'kind'}, 'duelinfo': None, 'initrun': None, 'ensurevars': None,
 }
-ARG = re.compile(r'(\w+):("(?:[^"\\]|\\.)*"|\S+)')
+BARE = r'(?:[^\s"\\]|\\.|"(?:[^"\\]|\\.)*")+'   # 빈칸에서 끝나되 값 안의 "…" 속 빈칸은 값의 일부(if:deathcause!="소아의 검")
+ARG = re.compile(r'(\w+):("(?:[^"\\]|\\.)*"(?=\s|$)|' + BARE + ')')
 
 def parse_args (rest):
     """'@cmd 위치값 이름:값 이름:"값"' → (위치값, {이름:값}). 위치값은 첫 낱말이 이름:값 꼴이 아니면."""
@@ -38,7 +39,7 @@ def parse_args (rest):
         if rest.startswith('"'):
             m = re.match(r'"((?:[^"\\]|\\.)*)"\s*', rest); pos = m.group(1); rest = rest[m.end():]
         else:
-            m = re.match(r'(\S+)\s*', rest); pos = m.group(1); rest = rest[m.end():]
+            m = re.match('(' + BARE + r')\s*', rest); pos = m.group(1); rest = rest[m.end():]
     for k, v in ARG.findall(rest):
         if v.startswith('"'): v = v[1:-1]
         args[k] = v

@@ -13,6 +13,7 @@ public static class MolakStats
 
     public static float Get (string name)
     {
+        if (MolakCore.On) return MolakVars.Num(name);
         var vars = Vars;
         if (vars == null || !vars.VariableExists(name)) return 0f;
         var v = vars.GetVariableValue(name);
@@ -22,12 +23,14 @@ public static class MolakStats
     public static void Set (string name, float value)
     {
         if (Get(name) != value) MolakStatLog.Snap(name);   // 0.4.66 능력치 기록: 바뀌는 순간의 까닭
+        if (MolakCore.On) { MolakVars.Set(name, value); return; }
         Vars?.SetVariableValue(name, new CustomVariableValue(value));
     }
 
     /// <summary>그 이름의 변수가 있는가.</summary>
     public static bool Has (string name)
     {
+        if (MolakCore.On) return MolakVars.Has(name);
         var vars = Vars;
         return vars != null && vars.VariableExists(name);
     }
@@ -35,6 +38,7 @@ public static class MolakStats
     /// <summary>문자열 변수. 없거나 숫자 변수면 fallback.</summary>
     public static string Str (string name, string fallback = "")
     {
+        if (MolakCore.On) return MolakVars.Str(name, fallback);
         var vars = Vars;
         if (vars == null || !vars.VariableExists(name)) return fallback;
         var v = vars.GetVariableValue(name);
@@ -44,6 +48,7 @@ public static class MolakStats
 
     public static void SetStr (string name, string value)
     {
+        if (MolakCore.On) { MolakVars.Set(name, value ?? ""); return; }
         Vars?.SetVariableValue(name, new CustomVariableValue(value ?? ""));
     }
 
