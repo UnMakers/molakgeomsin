@@ -5,7 +5,7 @@ using UnityEngine;
 public class MolakMenu : MonoBehaviour
 {
     static MolakMenu instance;
-    float confirmT;
+    float confirmT, loadT;
     public static bool IsOpen { get { return instance != null && instance.open; } }
     Font gowun;
     GUIStyle sBtn, sBtnOn, sHead, sToast, sBurger;
@@ -254,8 +254,7 @@ public class MolakMenu : MonoBehaviour
                     case 0:
                     {
                         open = false; SetProcessInput(true);
-                        var blog = ui != null ? ui.GetUI<MolakVn.UI.IBacklogUI>() as MolakVn.UI.IManagedUI : null;
-                        if (blog != null) blog.ChangeVisibility(true, 0.15f);
+                        MolakBacklog.Open();   // 0.5.0 지나온 글(우리 기록)
                         break;
                     }
                     case 1: ledger = true; break;
@@ -275,11 +274,13 @@ public class MolakMenu : MonoBehaviour
         {
             float tw = (bw - gap) / 2f;
             if (Tile(new Rect(bx, by, tw, saveH), "빠른 저장", null, MolakPaper.Ink, u) && state != null) { if (MolakPractice.Active) Toast("연습 판은 기록하지 않는다."); else { state.QuickSave(); MolakAutoSave.MarkQuick(); Toast("빠르게 저장했다."); } }
-            if (Tile(new Rect(bx+tw+gap, by, tw, saveH), "저장 · 불러오기", null, MolakPaper.Ink, u))
+            // 0.5.0 저장 칸 창은 없다 — 빠른 저장한 자리로 돌아간다(두 번 눌러 확인)
+            if (loadT > 0f) loadT -= Time.deltaTime;
+            if (Tile(new Rect(bx+tw+gap, by, tw, saveH), loadT > 0f ? "다시 누르면 돌아간다" : "빠른 불러오기", null, loadT > 0f ? MolakPaper.Accent : MolakPaper.Ink, u) && state != null)
             {
-                open = false; SetProcessInput(true);
-                var sl = ui != null ? ui.GetUI<MolakVn.UI.ISaveLoadUI>() as MolakVn.UI.IManagedUI : null;
-                if (sl != null) sl.ChangeVisibility(true, 0.15f);
+                if (!state.QuickLoadAvailable) Toast("빠른 저장한 자리가 없다.");
+                else if (loadT > 0f) { loadT = 0f; open = false; SetProcessInput(true); state.QuickLoad(); }
+                else loadT = 3f;
             }
             by += saveH + gap;
             if (Tile(new Rect(bx, by, tw, saveH), "환경 설정", null, MolakPaper.Ink, u)) { open = false; MolakSettings.Open(); }

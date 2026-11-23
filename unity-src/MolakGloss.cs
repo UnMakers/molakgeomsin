@@ -117,7 +117,7 @@ public class MolakGloss : MonoBehaviour
     GUIStyle sT; float bu = -1f;
     void OnGUI ()
     {
-        if (!Engine.Initialized || MolakMenu.IsOpen || MolakTitle.Showing || MolakBag.IsOpen || MolakSettings.IsOpen || MolakGuide.IsOpen || MolakTruthView.IsOpen || MolakStatLogView.IsOpen) return;   // 0.4.80 창 위로 뜨지 않게
+        if (!Engine.Initialized || MolakMenu.IsOpen || MolakTitle.Showing || MolakBag.IsOpen || MolakSettings.IsOpen || MolakGuide.IsOpen || MolakTruthView.IsOpen || MolakStatLogView.IsOpen || MolakBacklog.IsOpen) return;   // 0.4.80 창 위로 뜨지 않게
         float now = Time.unscaledTime;
         // 0.4.80 선택지가 떠 있는 동안은 쪽지를 접어 두고 시간을 멈춘다(아래 선택지 카드를 가리지 않게). 고르고 나면 남은 만큼 다시 뜬다.
         if (MolakTheme.ChoiceCount > 0)

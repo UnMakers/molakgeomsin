@@ -277,7 +277,8 @@ public class MolakEndTester : MonoBehaviour
                     if (tries == 0 || Time.realtimeSinceStartup - t0 > 0.5f * tries) { btns[k].GetComponent<UnityEngine.UI.Button>().onClick.Invoke(); tries++; }
                     yield return null;
                 }
-                if (!tr.Playing) { DoubleSkips++; continue; }
+                // 0.5.0 고르면 그 단추는 바로 사라진다 — 다음 선택지까지 한 프레임에 달려 다시 멈춰 있어도 고른 것으로 친다
+                if (!tr.Playing && btns[k] != null && btns[k].isActiveAndEnabled) { DoubleSkips++; continue; }
                 ChoiceSeen.Add(path + "|" + labels[k]);
                 if (path != "MolakDuel" && path != "MolakOver" && Find(labels, "몸을 쉰다") < 0) lastEventChoice = path + "|" + labels[k];
                 if (Find(labels, "정면으로 벤다") >= 0) lastDuelWin = 0f;

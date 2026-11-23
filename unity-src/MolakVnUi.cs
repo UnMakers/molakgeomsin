@@ -221,6 +221,7 @@ namespace MolakVn
             int i = choices.FindIndex(c => c.Id == id);
             if (i < 0 || choices[i].Locked) return;
             var c0 = choices[i];
+            MolakBacklog.Pick(c0.Summary);
             Clear();
             Engine.Player.Track.PlayFromChoice(c0);
         }

@@ -414,7 +414,7 @@ public class MolakHud : MonoBehaviour
             "    "+StatName("살기", "sl", StatCol.Sl)+" "+StatNum("sl", MolakStats.Get("sl"), StatCol.Sl);
         GUI.Label(new Rect(X0+W*0.20f, y, W*0.62f, lh), stats, sStat);
         // 0.4.55 몸 상태 줄을 누르면 「몸의 셈」(각 수치가 무엇을 하는지)
-        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 104*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBacklog.IsOpen && GUI.Button(new Rect(X0+W*0.18f, y, W*0.64f, lh + (expanded ? 104*u : 0f)), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 가는 구분선 + 체력 붓 획(0.4.32): 구분선 위로 남은 체력만큼 먹 획이 그어진다. 끝으로 갈수록 가늘고, 바닥이면 붉다.
         float lineW = W-168*u-112*u;
         Box(new Rect(pad, y+lh+4*u, lineW, Mathf.Max(1f,1*u)), new Color(0.55f,0.48f,0.40f,0.45f));
@@ -589,7 +589,7 @@ public class MolakHud : MonoBehaviour
         // 누르면 「몸의 셈」
         var statR = new Rect(x - 10*u, top, maxX - x + 10*u, bH);
         MolakInputGuard.Guard(new Rect(X0, 0, W, top + bH + 20*u));
-        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(statR, GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBacklog.IsOpen && !MolakBag.IsOpen && GUI.Button(statR, GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 체력 선: 2단위 굵기, 연지에서 밝은 연분홍으로. 바닥이면 붉게 맥이 뛴다.
         {
             float lineW = 384*u, ly = rowY + rowH + 10*u, th = Mathf.Max(2f, 4*u);
@@ -738,7 +738,7 @@ public class MolakHud : MonoBehaviour
             GUI.color = hpG;
         }
         MolakInputGuard.Guard(new Rect(0, 0, w, bandB));
-        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBag.IsOpen && GUI.Button(new Rect(x - 10*u, l2 - 40*u, menuR.x - x, 80*u), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
+        if (!MolakMenu.IsOpen && !MolakGuide.IsOpen && !MolakTruthView.IsOpen && !MolakStatLogView.IsOpen && !MolakBacklog.IsOpen && !MolakBag.IsOpen && GUI.Button(new Rect(x - 10*u, l2 - 40*u, menuR.x - x, 80*u), GUIContent.none, GUIStyle.none)) MolakGuide.Read("body");
         // 맨 아래 띠: 왼쪽 「앞 쪽」, 가운데 行囊 + 최근에 얻은 것(누르면 행낭), 오른쪽 「자동」「빨리」(0.4.83 — 메뉴를 열지 않고 바로)
         if (MolakBag.PanelTopPx >= Screen.height - 1f)
         {

@@ -326,6 +326,7 @@ namespace MolakVn.Commands
             string text = Text.Value.ToString();
             if (string.IsNullOrEmpty(text)) return;
             pr.AddMessage(new PrintedMessage(new LocalizableText(text)));
+            MolakBacklog.Line(text);
             float speed = Assigned(RevealSpeed) ? RevealSpeed.Value : 1f;
             float delay = Engine.Player.Skipping ? 0f : Mathf.Lerp(TextPrinterManager.MaxRevealDelay, 0f, Mathf.Clamp01(Engine.Printers.BaseRevealSpeed * speed));
             await pr.Reveal(delay);
