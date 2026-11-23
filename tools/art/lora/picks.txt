@@ -1,0 +1,38 @@
+# 로라로 다시 그린 입상에서 고른 씨앗(id 씨앗 [다듬기 인자]) — tools/art/lora/apply_redo.py 로 다시 만들 수 있다
+# 소아 다섯 장은 시험 판(Build\lora\soa\redo_out\*_cn55_cut) 그대로.
+char_amhyang 7101
+char_amhyang_pain 7303
+char_amhyang_soft 7101
+char_cheongmyo 7101 --good
+char_cheongmyo_robe 7404 --good
+char_cheongmyo_smile 7101 --good
+char_cheongmyo_tears 7202 --good
+char_chamsae 7404 --close 8
+char_chamsae_serious 7101
+char_hajinmu 7101 --good
+char_hajinmu_collar 7101 --good
+char_hajinmu_grave 7303 --good
+char_hajinmu_kneel 7404 --good
+char_hajinmu_laugh 7303 --good
+char_hajinmu_tears 7202 --good
+char_jinbaek 7404
+char_jinbaek_grab 7303
+char_jinbaek_smile 7303
+char_jinbaek_sorrow 7101
+char_oldman 7101 --good
+char_oldman_calm 7303 --good
+char_oldman_face 7101 --good
+char_oldman_face_sorrow 7404 --good
+char_oldman_young 7404 --good
+char_lord 7202
+char_lord_kneel 7101
+char_lord_rage 7202
+char_lord_wrath 7101
+char_gyeol 7202 --good
+char_gyeol_angry 7202 --good
+char_gyeol_pain 7303 --good
+char_granny 7303 --good
+char_granny_grave 7303 --good
+char_granny_kind 7101 --good
+char_granny_scold 7202 --good
+char_granny_tremble 7303 --good

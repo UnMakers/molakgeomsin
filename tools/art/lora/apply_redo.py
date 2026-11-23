@@ -14,7 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ART = os.path.dirname(HERE)
 
 
-def drop_bg (src, dst, tol=9, close=4, orig=None):
+def drop_bg (src, dst, tol=9, close=4, fill=False):
     """누끼를 바탕 빛으로 다시 딴다(birefnet 의 실수 두 가지를 고친다).
     뽑은 그림의 바탕은 한 빛의 고른 회색이다(그림마다 150~220 사이로 다르다 — 누끼 밖 화소의 중앙값으로 잰다).
       · 머리칼 사이에 남은 바탕 덩어리(소아): 바탕 빛이고 바깥과 이어져 있으면 지운다.
@@ -31,14 +31,30 @@ def drop_bg (src, dst, tol=9, close=4, orig=None):
     dist = np.abs(rgb - bg).max(2)
     near = dist <= tol
     closed = ndimage.binary_closing(~near, structure=np.ones((3, 3)), iterations=close)
-    border = np.zeros_like(near); border[0, :] = border[-1, :] = border[:, 0] = border[:, -1] = True
+    # 입상은 아래가 잘려 있어 옷자락이 아래 끝에 닿는다 — 아래 끝에서는 바탕을 번지게 하지 않는다(옷 속이 바닥에서부터 뚫렸다: 할멈)
+    border = np.zeros_like(near); border[0, :] = border[:, 0] = border[:, -1] = True
     reach = ndimage.binary_propagation(border & ~closed, mask=~closed)
-    fig = ~reach
-    fig &= ~(near & ndimage.binary_dilation(reach, iterations=close + 1))
-    fig = ndimage.binary_opening(fig, iterations=1)
+    key = ~reach
+    key &= ~(near & ndimage.binary_dilation(reach, iterations=close + 1))
+    key = ndimage.binary_opening(key, iterations=1)
+    # birefnet 누끼와 합친다: birefnet 이 놓친 옷 속(바탕빛, 먹선으로 닫힘)은 더하고,
+    # birefnet 이 인물로 본 바탕빛 중 '작은 덩어리'(머리칼 틈)만 뺀다. 크거나 아래 끝에 닿는 덩어리는 옷자락이다(할멈 치마가 통째로 뚫렸다).
+    bfg = a > 127
+    cand = bfg & ~key & near
+    lab, k = ndimage.label(cand)
+    drop = np.zeros_like(cand)
+    if k:
+        sizes = ndimage.sum(cand, lab, range(1, k + 1))
+        h = cand.shape[0]
+        low = set(np.unique(lab[int(h * 0.88):])) - {0}
+        lim = 0.02 * cand.size
+        for i, sz in enumerate(sizes, 1):
+            if sz < lim and i not in low: drop |= lab == i
+    fig = ((bfg | key) if fill else bfg) & ~drop   # fill: birefnet 이 놓친 닫힌 옷 속까지 더한다(--close 를 줬을 때만 — 팔과 몸 사이 바탕이 덩어리로 낄 수 있다)
     edge = fig & ndimage.binary_dilation(~fig, iterations=2)
-    alpha = np.where(fig, 255.0, 0.0)
-    alpha[edge] = np.clip(dist[edge] * 255.0 / 60.0, 0, 255)
+    alpha = np.where(fig, np.where(bfg, np.maximum(a, 0).astype(np.float64), 255.0), 0.0)
+    alpha[fig & ~bfg & edge] = np.clip(dist[fig & ~bfg & edge] * 255.0 / 60.0, 0, 255)
+    alpha[drop] = 0
     changed = int(((alpha > 127) != (a > 127)).sum())
     im[..., 3] = alpha.astype(np.uint8)
     Image.fromarray(im, 'RGBA').save(dst)
@@ -66,7 +82,7 @@ def main ():
     t = tempfile.mkdtemp()
     z, a, b, c = os.path.join(t, 'z.png'), os.path.join(t, 'a.png'), os.path.join(t, 'b.png'), os.path.join(t, 'c.png')
     close = int(sys.argv[sys.argv.index('--close') + 1]) if '--close' in sys.argv else 4
-    print('누끼 고침', drop_bg(src, z, close=close))
+    print('누끼 고침', drop_bg(src, z, close=close, fill='--close' in sys.argv))
     subprocess.check_call([sys.executable, os.path.join(ART, 'post_v21.py'), z, a])
     clean_edge(a, b)
     if good:
