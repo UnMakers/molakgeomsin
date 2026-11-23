@@ -204,7 +204,7 @@ public class MolakEndTester : MonoBehaviour
     IEnumerator Loop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        sp.SetAutoPlay(true); sp.SetSkip(!Slow);
+        sp.SetAutoPlay(true); if (!Slow) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(!Slow);
         lastProgress = Time.realtimeSinceStartup;
         while (!done)
         {
@@ -256,7 +256,7 @@ public class MolakEndTester : MonoBehaviour
                 ResetLifeCounters();
             }
             if (path != "MolakOver") inOver = false;
-            sp.SetAutoPlay(true); sp.SetSkip(!Slow);
+            sp.SetAutoPlay(true); if (!Slow) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(!Slow);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
@@ -284,10 +284,7 @@ public class MolakEndTester : MonoBehaviour
                 choicesThisLife++;
                 Log.AppendLine("d" + day + " hp" + MolakStats.Get("hp").ToString("0") + "/" + MolakStats.Get("hpmax").ToString("0") + (MolakStats.Get("taint") > 0 ? " T" + MolakStats.Get("taint") : "") + (MolakStats.Get("injury") > 0 ? " I" : "") + " [" + path + "#" + at + "] " + labels[k]);
                 if (Log.Length > 200000) Log.Remove(0, 100000);
-                if (tr.Playing)
-                    foreach (var b in FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                        if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
-                sp.SetAutoPlay(true); sp.SetSkip(!Slow);
+                sp.SetAutoPlay(true); if (!Slow) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(!Slow);
                 lastProgress = Time.realtimeSinceStartup;
             }
             if (Time.realtimeSinceStartup - lastProgress > (Slow ? 45f : 15f))
@@ -311,7 +308,7 @@ public class MolakEndTester : MonoBehaviour
     IEnumerator DriveLoop ()
     {
         var sp = Engine.GetServiceOrErr<IScriptPlayer>();
-        sp.SetAutoPlay(true); sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup; lastScript = "";
+        sp.SetAutoPlay(true); if (!Slow) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup; lastScript = "";
         while (!done)
         {
             if (MolakName.Open) { MolakName.AutoFill("연호"); }
@@ -323,7 +320,7 @@ public class MolakEndTester : MonoBehaviour
             if (tr.PlayedIndex != lastIdx) { lastProgress = Time.realtimeSinceStartup; lastIdx = tr.PlayedIndex; }
             string dc = "";
             dc = MolakStats.Str("deathcause");
-            sp.SetAutoPlay(true); sp.SetSkip(!Slow);
+            sp.SetAutoPlay(true); if (!Slow) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(!Slow);
             if (tr.Playing) continue;
             var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
                 .Where(b => b.isActiveAndEnabled && !b.Choice.Locked && b.GetComponent<UnityEngine.UI.Button>() != null && b.GetComponent<UnityEngine.UI.Button>().interactable).ToArray();
@@ -340,10 +337,7 @@ public class MolakEndTester : MonoBehaviour
                 float t0 = Time.realtimeSinceStartup;
                 while (!tr.Playing && Time.realtimeSinceStartup - t0 < 2f) yield return null;
                 if (tr.Playing && matched) PickIdx++;
-                if (tr.Playing)
-                    foreach (var b in FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                        if (b != null && b.gameObject != null) b.gameObject.SetActive(false);
-                sp.SetAutoPlay(true); sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup;
+                sp.SetAutoPlay(true); if (!Slow) sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(!Slow); lastProgress = Time.realtimeSinceStartup;
             }
             if (Time.realtimeSinceStartup - lastProgress > (Slow ? 45f : 15f))
             {

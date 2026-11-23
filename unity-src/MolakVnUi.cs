@@ -296,7 +296,7 @@ namespace MolakVn.UI
 {
     public class UITextPrinterPanel : MonoBehaviour { }
 
-    /// <summary>글 칸: 글을 넣고(이미 보이던 글자는 그대로) 새 글자를 차례로 드러낸다.</summary>
+    /// <summary>글 칸: 글을 넣고(이미 보이던 글자는 그대로) 새 글자를 차례로 드러낸다. 막 나온 글자 몇은 옅게 떠오른다.</summary>
     public class RevealableTextPrinterPanel : UITextPrinterPanel
     {
 #pragma warning disable CS0414
@@ -305,35 +305,46 @@ namespace MolakVn.UI
         public TMPro.TMP_Text Text;
         public CanvasGroup Group;
         public bool Shown { get; private set; }
+        /// <summary>아직 드러나지 않은 글자가 있다(누르면 한꺼번에 보인다).</summary>
         public bool Revealing { get; private set; }
-        float shown;     // 드러난 글자 수(소수 — 시간에 따라 는다)
+        /// <summary>막 나온 글자가 또렷해질 때까지의 길이(글자 수).</summary>
+        const float Fade = 5f;
+        float shown;     // 드러난 글자 수(소수 — 시간에 따라 는다). 다 드러난 뒤에도 Fade 만큼 더 가며 꼬리를 또렷하게 한다
         int total;       // 지금 글의 글자 수(꾸밈 태그 빼고)
-        int ticket;
+        int solid;       // 여기까지는 또렷하다(앞서 찍힌 글)
+        int ticket; bool paint;
+
+        void OnEnable () { Canvas.willRenderCanvases += Paint; }
+        void OnDisable () { Canvas.willRenderCanvases -= Paint; }
 
         public void SetVisible (bool v) { Shown = v; if (Group != null) Group.alpha = v ? 1f : 0f; }
 
         public void SetText (string t)
         {
+            shown = Mathf.Min(shown, total);          // 지금까지 드러난 글자는 그대로
+            solid = Mathf.FloorToInt(shown);
             Text.text = t ?? "";
             Text.ForceMeshUpdate();
             total = Text.textInfo != null ? Text.textInfo.characterCount : 0;
             if (shown > total) shown = total;
+            if (solid > total) solid = total;
             Apply();
         }
-        void Apply () { Text.maxVisibleCharacters = shown >= total ? 99999 : Mathf.FloorToInt(shown); }
+        void Apply () { Text.maxVisibleCharacters = shown >= total ? 99999 : Mathf.CeilToInt(shown); paint = true; }
 
         public float Progress
         {
             get { return total <= 0 ? 1f : Mathf.Clamp01(shown / total); }
-            set { ticket++; Revealing = false; shown = Mathf.Clamp01(value) * total; Apply(); }
+            set { ticket++; Revealing = false; shown = Mathf.Clamp01(value) * total; solid = Mathf.FloorToInt(shown); Apply(); }
         }
-        public void Complete () { ticket++; Revealing = false; shown = total; Apply(); }
+        public void Complete () { ticket++; Revealing = false; shown = total; solid = total; Apply(); }
 
-        /// <summary>아직 안 보이는 글자를 delay 초에 하나씩 드러낸다. 중간에 Complete(누름·넘기기)가 오면 바로 끝난다.</summary>
+        /// <summary>아직 안 보이는 글자를 delay 초에 하나씩 드러낸다. 중간에 Complete(누름·넘기기)가 오면 바로 끝난다.
+        /// 마지막 글자가 나오면 끝난 것으로 치고(다음 줄·기다림으로 넘어간다), 꼬리가 또렷해지는 것은 뒤에서 마저 한다.</summary>
         public async Awaitable Reveal (float delay)
         {
             int my = ++ticket;
-            if (delay <= 0.0001f || shown >= total) { shown = total; Revealing = false; Apply(); return; }
+            if (delay <= 0.0001f || shown >= total) { shown = total; solid = total; Revealing = false; Apply(); return; }
             Revealing = true;
             while (my == ticket && shown < total)
             {
@@ -342,7 +353,45 @@ namespace MolakVn.UI
                 shown = Mathf.Min(total, shown + Mathf.Min(Time.unscaledDeltaTime, 0.1f) / delay);
                 Apply();
             }
-            if (my == ticket) Revealing = false;
+            if (my != ticket) return;
+            Revealing = false;
+            _ = Tail(my, delay);
+        }
+        async Awaitable Tail (int my, float delay)
+        {
+            float end = total + Fade;
+            while (my == ticket && shown < end)
+            {
+                await Awaitable.NextFrameAsync();
+                if (my != ticket) return;
+                shown = Mathf.Min(end, shown + Mathf.Min(Time.unscaledDeltaTime, 0.1f) / delay);
+                paint = true;
+            }
+            if (my == ticket) { shown = total; solid = total; paint = true; }
+        }
+
+        /// <summary>글자 빛을 입힌다 — TMP 가 그물을 다시 짠 뒤(같은 프레임)에 불린다. 막 나온 Fade 글자만 옅게.</summary>
+        void Paint ()
+        {
+            if (!paint || Text == null) return;
+            paint = false;
+            var ti = Text.textInfo; if (ti == null || ti.characterInfo == null) return;
+            int n = Mathf.Min(total, ti.characterCount); if (n > ti.characterInfo.Length) n = ti.characterInfo.Length;
+            int from = Mathf.Max(0, Mathf.Min(solid, Mathf.FloorToInt(shown - Fade)) - 1), to = Mathf.Min(n - 1, Mathf.CeilToInt(shown));
+            bool any = false;
+            for (int i = from; i <= to; i++)
+            {
+                var ci = ti.characterInfo[i]; if (!ci.isVisible) continue;
+                float a = i < solid ? 1f : Mathf.Clamp01((shown - i) / Fade);
+                int mi = ci.materialReferenceIndex; if (mi < 0 || mi >= ti.meshInfo.Length) continue;
+                var cols = ti.meshInfo[mi].colors32; int v = ci.vertexIndex;
+                if (cols == null || v + 3 >= cols.Length) continue;
+                byte ba = (byte)Mathf.RoundToInt(ci.color.a * a);
+                if (cols[v].a == ba) continue;
+                cols[v].a = ba; cols[v + 1].a = ba; cols[v + 2].a = ba; cols[v + 3].a = ba;
+                any = true;
+            }
+            if (any) Text.UpdateVertexData(TMPro.TMP_VertexDataUpdateFlags.Colors32);
         }
     }
 
