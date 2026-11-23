@@ -18,7 +18,8 @@ public class MolakTitle : MonoBehaviour
     /// (Showing 은 창이 뜨면 거짓이 되므로, 환경 설정의 '초기화'를 Showing 으로 가리면 영영 안 보였다).</summary>
     public static bool AtTitle;
     static Texture2D dot, disk;
-    Texture2D night, enso, silSoa, silJin, silOld, silMourn;
+    Texture2D night, enso, silSoa, silJin, silOld, silMourn, silAmh, silCm, silCham;
+    string nightKey;
     Font gowun, hanjaFont;
     GUIStyle sHanja, sSub, sItem, sItemDim, sTag, sFoot, sLast, sSeal;
     float builtU = -1f;
@@ -79,6 +80,9 @@ public class MolakTitle : MonoBehaviour
         if (silJin == null) silJin = Resources.Load<Texture2D>("MolakTitleSil_jinbaek");
         if (silOld == null) silOld = Resources.Load<Texture2D>("MolakTitleSil_lawlord");
         if (silMourn == null) silMourn = Resources.Load<Texture2D>("MolakTitleSil_hajinmu");
+        if (silAmh == null) silAmh = Resources.Load<Texture2D>("MolakTitleSil_amhyang");
+        if (silCm == null) silCm = Resources.Load<Texture2D>("MolakTitleSil_cheongmyo");
+        if (silCham == null) silCham = Resources.Load<Texture2D>("MolakTitleSil_chamsae");
         System.Func<int, Color, TextAnchor, GUIStyle> mk = (size, col, an) =>
         {
             var s = new GUIStyle(GUI.skin.label){fontSize=Mathf.RoundToInt(size*u),alignment=an,richText=true,wordWrap=false,clipping=TextClipping.Overflow};
@@ -149,6 +153,17 @@ public class MolakTitle : MonoBehaviour
     static float G (string k) { try { return MolakStats.Get(k); } catch { return 0f; } }
 
     /// <summary>실루엣(발끝 기준) + 물그림자.</summary>
+    /// <summary>0.4.98 바탕을 겪은 일에 따라 고른다(언메이커: 다섯 시안을 상황 따라 전부).
+    ///  처음 켰을 때·진엔딩 새벽 = 고요한 수면 · 소아를 잃은 뒤 = 붉은 꽃잎 · 끝을 본 뒤 = 눈 · 다섯 생 넘게 헤맬 때 = 비 오는 밤 · 그 밖(죽고 돌아온 뒤) = 불타는 산장.</summary>
+    void PickNight (int runs, int clears, bool dawn, bool soaGhost)
+    {
+        string k = dawn || runs <= 0 ? "still" : soaGhost ? "petals" : clears > 0 ? "snow" : runs >= 5 ? "rain" : "ash";
+        if (k == nightKey && night != null) return;
+        var t = Resources.Load<Texture2D>("MolakTitleNight_" + k);
+        if (t != null) night = t;
+        nightKey = k;
+    }
+
     void Sil (Texture2D tex, float fx, float fy, float hgt, Color c, float refl)
     {
         if (tex == null) return;
@@ -205,6 +220,11 @@ public class MolakTitle : MonoBehaviour
         bool swordInWater = G("g_end_ipma") > 0;
         bool oldMan = G("g_end_seongsa") > 0;
         bool moonCut = G("g_end_sicheon") > 0 || G("g_end_sungeom") > 0;
+        // 0.4.98 다른 히로인과 함께한 결말(암향: 무향·면향 · 청묘: 환속·운해 · 참새: 무명·명가) — 검객 곁에 선다
+        bool amhWith = G("g_end_muhyang") > 0 || G("g_end_myeonhyang") > 0;
+        bool cmWith = G("g_end_hwansok") > 0 || G("g_end_unhae") > 0;
+        bool chamWith = G("g_end_mumyeong") > 0 || G("g_end_myeongga") > 0;
+        PickNight(runs, clears, dawn, soaGhost);
 
         float fadeIn = Mathf.Clamp01(since / 1.8f);
         var g0 = GUI.color; GUI.color = Color.white;
@@ -253,7 +273,13 @@ public class MolakTitle : MonoBehaviour
         float feet = Y(0.879f), heroH = ah * 0.183f;
         if (oldMan) Sil(silOld, X(0.16f), feet, heroH * 1.7f, new Color(0.08f, 0.08f, 0.09f, 0.16f * fadeIn), 0f);
         if (jinShore) Sil(silJin, X(0.68f), Y(0.874f), heroH * 0.30f, new Color(0.10f, 0.10f, 0.11f, 0.55f * fadeIn), 0.35f);
-        if (soaWith || soaGhost) Sil(silSoa, X(0.49f), feet, heroH * 0.94f, new Color(0.05f, 0.05f, 0.06f, (soaWith && !soaGhost ? 0.96f : 0.38f) * fadeIn), 0.28f);
+        // 0.4.98 히로인은 검객(그림의 0.312) 바로 곁에 선다(언메이커: 너무 따로 있는 느낌 — 더 친근하게). 오른쪽 자리부터 소아·청묘, 왼쪽 자리부터 암향·참새.
+        float[] rightSlot = { 0.392f, 0.468f }, leftSlot = { 0.236f, 0.168f };
+        int ri = 0, li = 0;
+        if (soaWith || soaGhost) Sil(silSoa, X(rightSlot[ri++]), feet, heroH * 0.92f, new Color(0.05f, 0.05f, 0.06f, (soaWith && !soaGhost ? 0.96f : 0.38f) * fadeIn), 0.28f);
+        if (cmWith) Sil(silCm, X(rightSlot[ri++]), feet, heroH * 0.94f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
+        if (amhWith) Sil(silAmh, X(leftSlot[li++]), feet, heroH * 0.90f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
+        if (chamWith) Sil(silCham, X(leftSlot[li++]), feet, heroH * 0.86f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
         if (swordInWater)
         {
             float sx = X(0.57f), sy0 = Y(0.905f), sy1 = Y(0.84f);
