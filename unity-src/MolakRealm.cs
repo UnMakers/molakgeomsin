@@ -82,9 +82,7 @@ public static class MolakRealm
 
     public struct Part { public string Label; public float V; }
 
-    /// <summary>0.5.0 그 벽 앞에 맨몸으로 앉았을 때의 승산.</summary>
-    public static float BaseOdds (int next) { return 40f - 4f * Mathf.Max(0, next - 1); }
-    /// <summary>0.5.0 벽을 넘은 몸이 자리 잡는 날수 — 그동안은 다음 벽 앞에 앉지 못한다(오른 경지가 높을수록 길다: 이류 6일 … 생사경 12일).</summary>
+    /// <summary>0.5.0 (언메이커: 뚫을 수 있는 시기가 너무 빨리 찾아온다) 벽을 넘은 몸이 자리 잡는 날수 — 그동안은 다음 벽 앞에 앉지 못한다(오른 경지가 높을수록 길다: 이류 6일 … 생사경 12일).</summary>
     public static float SettleDays (int realm) { return 5f + realm; }
     /// <summary>자리 잡기까지 남은 날(없으면 0). 넘지 못한 밤의 이틀도 여기에 든다.</summary>
     public static int WaitLeft { get { return Mathf.Max(0, Mathf.CeilToInt(MolakStats.Get("btwait") - MolakStats.Get("day") + 1f)); } }
@@ -96,11 +94,8 @@ public static class MolakRealm
         void P (string l, float v) { if (!string.IsNullOrEmpty(l) && Mathf.Abs(v) >= 0.5f) parts?.Add(new Part { Label = l, V = Mathf.Round(v) }); }
         // 0.4.94 기준: 경지는 「먹은 것」보다 「배운 것·넘어진 것·곁의 사람」으로 넘는다. 넘친 검·기는 몫을 줄이고(각 8), 품은 물건은 가르침만(10),
         //   등을 맡긴 사람(18)과 실패에서 본 벽(24)을 크게 친다.
-        // 0.5.0 기준(언메이커: 경지 오르는 게 너무 쉽고 빠르다): 높은 벽일수록 맨몸의 몫이 준다 — 이류 40, 그 뒤로 벽마다 4씩(신화경 12).
-        //   높은 벽은 곁의 사람·배운 것·넘어져 본 밤이 받쳐야 넘는다.
-        float baseOdds = BaseOdds(Next);
-        float sum = baseOdds;
-        P("벽 앞에 앉는 몸", baseOdds);
+        float sum = 40f;
+        P("벽 앞에 앉는 몸", 40f);
         P("문턱을 넘친 검", Mathf.Min(8f, (G("sw") - NeedSw) * 2f));
         P("문턱을 넘친 기", Mathf.Min(8f, (G("ng") - NeedNg) * 2f));
         P("남는 깨달음", Mathf.Min(18f, (Insight - NeedIns) * 6f));
@@ -134,7 +129,7 @@ public static class MolakRealm
             var tmp = new List<Part>(); return Odds(tmp);
         }
         if (MolakStory.On) sum = Mathf.Max(sum, 95f);
-        return Mathf.Clamp(Mathf.Round(sum), 10f, 95f);
+        return Mathf.Clamp(Mathf.Round(sum), 20f, 95f);
     }
 
     public static string OddsText (List<Part> parts)
