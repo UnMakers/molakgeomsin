@@ -95,12 +95,13 @@ def graph (pos, neg, seed, prefix, lora=None, lw=0.85, ref=None, cn=0.5, cut=Fal
     return g
 
 
-def main ():
-    while True:
+def main (now=False):
+    while not now:
         try: done = '공장 한 바퀴 끝' in io.open(STATUS, encoding='utf-8').read()
         except Exception: done = False
         if done and idle(): break
         time.sleep(300)
+    while not idle(): time.sleep(20)
     os.makedirs(INPUT, exist_ok=True)
     shutil.copy(os.path.join(RES, 'MolakTitleNight.png'), os.path.join(INPUT, 'ref_title_night.png'))
     n = 0
@@ -119,4 +120,5 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+    import sys
+    main(now='--now' in sys.argv)
