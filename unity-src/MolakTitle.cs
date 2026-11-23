@@ -20,6 +20,15 @@ public class MolakTitle : MonoBehaviour
     static Texture2D dot, disk;
     Texture2D night, enso, silSoa, silJin, silOld, silMourn, silAmh, silCm, silCham;
     string nightKey;
+    /// <summary>0.5.0 점검용: 바탕을 억지로 고른다("with_soa" 등). 비우면 겪은 일에 따라.</summary>
+    public static string ForceNight = "";
+    /// <summary>0.5.0 달 크기 배수(언메이커: 달은 좀 더 커도 된다).</summary>
+    public static float MoonScale = 1.3f;
+    /// <summary>0.5.0 물 일렁임 세기(0 이면 멈춘 그림).</summary>
+    public static float WaterAmp = 1f;
+    Material waterMat; bool waterTried;
+    // 바탕마다 수평선·물에 선 발끝 자리(그림 좌표, 위에서부터). 함께 선 그림은 검객과 그 사람이 한 그림에 있다.
+    float nightHorizon = 0.879f; Vector2 nightFeet = new Vector2(0.312f, 0.879f); bool nightCouple;
     Font gowun, hanjaFont;
     GUIStyle sHanja, sSub, sItem, sItemDim, sTag, sFoot, sLast, sSeal;
     float builtU = -1f;
@@ -155,13 +164,21 @@ public class MolakTitle : MonoBehaviour
     /// <summary>실루엣(발끝 기준) + 물그림자.</summary>
     /// <summary>0.4.98 바탕을 겪은 일에 따라 고른다(언메이커: 다섯 시안을 상황 따라 전부).
     ///  처음 켰을 때·진엔딩 새벽 = 고요한 수면 · 소아를 잃은 뒤 = 붉은 꽃잎 · 끝을 본 뒤 = 눈 · 다섯 생 넘게 헤맬 때 = 비 오는 밤 · 그 밖(죽고 돌아온 뒤) = 불타는 산장.</summary>
+    bool soaTogether;
     void PickNight (int runs, int clears, bool dawn, bool soaGhost)
     {
         string k = dawn || runs <= 0 ? "still" : soaGhost ? "petals" : clears > 0 ? "snow" : runs >= 5 ? "rain" : "ash";
+        // 0.5.0 소아와 함께한 뒤: 둘이 손잡고 선 바탕(언메이커: 따로 선 그림자 말고 더 친근하게 — 1번 시안)
+        if (soaTogether) k = "with_soa";
+        if (!string.IsNullOrEmpty(ForceNight)) k = ForceNight;
         if (k == nightKey && night != null) return;
-        var t = Resources.Load<Texture2D>("MolakTitleNight_" + k);
+        bool couple = k.StartsWith("with_");
+        var t = Resources.Load<Texture2D>(couple ? "MolakTitleWith_" + k.Substring(5) : "MolakTitleNight_" + k);
+        if (t == null) { if (couple) { couple = false; k = "still"; t = Resources.Load<Texture2D>("MolakTitleNight_still"); } }
         if (t != null) night = t;
-        nightKey = k;
+        nightKey = k; nightCouple = couple && t != null;
+        if (nightCouple) { nightHorizon = 0.842f; nightFeet = new Vector2(0.33f, 0.876f); }
+        else { nightHorizon = 0.879f; nightFeet = new Vector2(0.312f, 0.879f); }
     }
 
     void Sil (Texture2D tex, float fx, float fy, float hgt, Color c, float refl)
@@ -224,6 +241,7 @@ public class MolakTitle : MonoBehaviour
         bool amhWith = G("g_end_muhyang") > 0 || G("g_end_myeonhyang") > 0;
         bool cmWith = G("g_end_hwansok") > 0 || G("g_end_unhae") > 0;
         bool chamWith = G("g_end_mumyeong") > 0 || G("g_end_myeongga") > 0;
+        soaTogether = soaWith && !soaGhost;
         PickNight(runs, clears, dawn, soaGhost);
 
         float fadeIn = Mathf.Clamp01(since / 1.8f);
@@ -238,15 +256,28 @@ public class MolakTitle : MonoBehaviour
             ah = h * breathe; aw = ah * night.width / (float)night.height;
             if (aw < w * breathe) { aw = w * breathe; ah = aw * night.height / (float)night.width; }
             ax = (w - aw) * 0.5f;
-            ay = Mathf.Clamp(h * 0.88f - ah * 0.879f, h - ah, 0f);
-            Tex(new Rect(ax, ay, aw, ah), night, new Color(1, 1, 1, fadeIn));
+            ay = Mathf.Clamp(h * 0.88f - ah * nightHorizon, h - ah, 0f);
+            // 0.5.0 물은 일렁인다(수평선 아래만). 셰이더가 없으면 멈춘 그림 그대로.
+            if (!waterTried) { waterTried = true; var sh = Resources.Load<Shader>("MolakTitleWater"); if (sh != null && sh.isSupported) waterMat = new Material(sh); }
+            if (waterMat != null && WaterAmp > 0f)
+            {
+                if (Event.current.type == EventType.Repaint)
+                {
+                    waterMat.SetFloat("_Horizon", nightHorizon); waterMat.SetVector("_Feet", new Vector4(nightFeet.x, nightFeet.y, 0f, 0f));
+                    waterMat.SetFloat("_Phase", Time.unscaledTime % 3600f); waterMat.SetFloat("_Amp", WaterAmp);
+                    waterMat.SetFloat("_Aspect", night.width / (float)night.height);
+                    waterMat.SetColor("_Color", new Color(1f, 1f, 1f, fadeIn));
+                    Graphics.DrawTexture(new Rect(ax, ay, aw, ah), night, waterMat);
+                }
+            }
+            else Tex(new Rect(ax, ay, aw, ah), night, new Color(1, 1, 1, fadeIn));
         }
         System.Func<float, float> X = ix => ax + ix * aw;
         System.Func<float, float> Y = iy => ay + iy * ah;
         if (dawn) Box(new Rect(0, 0, w, h), new Color(1f, 0.78f, 0.45f, 0.13f * fadeIn));
 
         // ---- 달 · 원상 ----
-        float mcx = X(0.494f), mcy = Y(0.1213f), mr = aw * 0.0529f;
+        float mcx = X(0.494f), mcy = Y(0.1213f), mr = aw * 0.0529f * MoonScale;
         Color moonCol = dawn ? new Color(0.98f, 0.80f, 0.45f, 0.95f) : new Color(0.74f, 0.16f, 0.12f, 0.92f);
         Tex(new Rect(mcx - mr * 3.2f, mcy - mr * 3.2f, mr * 6.4f, mr * 6.4f), Dot, new Color(moonCol.r, moonCol.g, moonCol.b, (0.20f + 0.05f * Mathf.Sin(t * 0.6f)) * fadeIn));
         Tex(new Rect(mcx - mr * 1.02f, mcy - mr * 1.02f, mr * 2.04f, mr * 2.04f), Disk, new Color(moonCol.r, moonCol.g, moonCol.b, moonCol.a * fadeIn));
@@ -276,7 +307,7 @@ public class MolakTitle : MonoBehaviour
         // 0.4.98 히로인은 검객(그림의 0.312) 바로 곁에 선다(언메이커: 너무 따로 있는 느낌 — 더 친근하게). 오른쪽 자리부터 소아·청묘, 왼쪽 자리부터 암향·참새.
         float[] rightSlot = { 0.392f, 0.468f }, leftSlot = { 0.236f, 0.168f };
         int ri = 0, li = 0;
-        if (soaWith || soaGhost) Sil(silSoa, X(rightSlot[ri++]), feet, heroH * 0.92f, new Color(0.05f, 0.05f, 0.06f, (soaWith && !soaGhost ? 0.96f : 0.38f) * fadeIn), 0.28f);
+        if ((soaWith || soaGhost) && !nightCouple) Sil(silSoa, X(rightSlot[ri++]), feet, heroH * 0.92f, new Color(0.05f, 0.05f, 0.06f, (soaWith && !soaGhost ? 0.96f : 0.38f) * fadeIn), 0.28f);
         if (cmWith) Sil(silCm, X(rightSlot[ri++]), feet, heroH * 0.94f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
         if (amhWith) Sil(silAmh, X(leftSlot[li++]), feet, heroH * 0.90f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);
         if (chamWith) Sil(silCham, X(leftSlot[li++]), feet, heroH * 0.86f, new Color(0.05f, 0.05f, 0.06f, 0.94f * fadeIn), 0.28f);

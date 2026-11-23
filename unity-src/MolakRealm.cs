@@ -82,6 +82,13 @@ public static class MolakRealm
 
     public struct Part { public string Label; public float V; }
 
+    /// <summary>0.5.0 그 벽 앞에 맨몸으로 앉았을 때의 승산.</summary>
+    public static float BaseOdds (int next) { return 40f - 4f * Mathf.Max(0, next - 1); }
+    /// <summary>0.5.0 벽을 넘은 몸이 자리 잡는 날수 — 그동안은 다음 벽 앞에 앉지 못한다(오른 경지가 높을수록 길다: 이류 6일 … 생사경 12일).</summary>
+    public static float SettleDays (int realm) { return 5f + realm; }
+    /// <summary>자리 잡기까지 남은 날(없으면 0). 넘지 못한 밤의 이틀도 여기에 든다.</summary>
+    public static int WaitLeft { get { return Mathf.Max(0, Mathf.CeilToInt(MolakStats.Get("btwait") - MolakStats.Get("day") + 1f)); } }
+
     /// <summary>폐관의 승산과 그 셈(무엇이 얼마를 보탰는지).</summary>
     public static float Odds (List<Part> parts)
     {
@@ -89,8 +96,11 @@ public static class MolakRealm
         void P (string l, float v) { if (!string.IsNullOrEmpty(l) && Mathf.Abs(v) >= 0.5f) parts?.Add(new Part { Label = l, V = Mathf.Round(v) }); }
         // 0.4.94 기준: 경지는 「먹은 것」보다 「배운 것·넘어진 것·곁의 사람」으로 넘는다. 넘친 검·기는 몫을 줄이고(각 8), 품은 물건은 가르침만(10),
         //   등을 맡긴 사람(18)과 실패에서 본 벽(24)을 크게 친다.
-        float sum = 40f;
-        P("벽 앞에 앉는 몸", 40f);
+        // 0.5.0 기준(언메이커: 경지 오르는 게 너무 쉽고 빠르다): 높은 벽일수록 맨몸의 몫이 준다 — 이류 40, 그 뒤로 벽마다 4씩(신화경 12).
+        //   높은 벽은 곁의 사람·배운 것·넘어져 본 밤이 받쳐야 넘는다.
+        float baseOdds = BaseOdds(Next);
+        float sum = baseOdds;
+        P("벽 앞에 앉는 몸", baseOdds);
         P("문턱을 넘친 검", Mathf.Min(8f, (G("sw") - NeedSw) * 2f));
         P("문턱을 넘친 기", Mathf.Min(8f, (G("ng") - NeedNg) * 2f));
         P("남는 깨달음", Mathf.Min(18f, (Insight - NeedIns) * 6f));
@@ -124,7 +134,7 @@ public static class MolakRealm
             var tmp = new List<Part>(); return Odds(tmp);
         }
         if (MolakStory.On) sum = Mathf.Max(sum, 95f);
-        return Mathf.Clamp(Mathf.Round(sum), 20f, 95f);
+        return Mathf.Clamp(Mathf.Round(sum), 10f, 95f);
     }
 
     public static string OddsText (List<Part> parts)
@@ -145,6 +155,7 @@ public static class MolakRealm
     public static string WallLine ()
     {
         if (Top) return "<color=#C9A227>더 넘을 벽이 없다</color>";
+        if (Ready() && WaitLeft > 0) return "<color=#C9A227>" + Name(Next) + "의 벽 앞</color> — 몸이 자리 잡는 중(" + WaitLeft + "일 뒤)";
         if (Ready()) return "<color=#C9A227>" + Name(Next) + "의 벽 앞 — 밤에 폐관할 수 있다</color>";
         string Mark (float have, int need) => have >= need ? "<color=" + (MolakTheme.Night ? "#7FD08A" : "#2E6E37") + ">" + have.ToString("0") + "/" + need + "</color>" : have.ToString("0") + "/" + need;
         return MolakHud.Tag(Name(Next), MolakHud.StatCol.Realm) + "의 벽 — " + MolakHud.SwordTag("검") + " " + Mark(MolakStats.Get("sw"), NeedSw) + " · " + MolakHud.Tag("기", MolakHud.StatCol.Ng) + " " + Mark(MolakStats.Get("ng"), NeedNg) + " · " + MolakHud.Tag("깨달음", MolakHud.StatCol.Ins) + " " + Mark(Insight, NeedIns);
@@ -208,6 +219,8 @@ public class RealmCommand : Command
                 if (MolakStats.Get("g_realmbest") < r) MolakStats.Set("g_realmbest", r);
                 MolakStats.Set("btfail", 0f);
                 MolakStats.Set("btpen", 0f);
+                // 0.5.0 넘은 벽이 몸에 자리 잡을 때까지 다음 벽은 열리지 않는다(이야기 모드는 날짜에 맞춰 채우므로 뺀다)
+                if (!MolakStory.On) MolakStats.Set("btwait", MolakStats.Get("day") + MolakRealm.SettleDays(r));
                 MolakStatLog.Why("*", "경지의 밤 — " + MolakRealm.Name(r) + "의 벽을 넘었다");
                 break;
             }
