@@ -48,3 +48,5 @@ char_hochi 7404
 char_hochi_kneel 7202
 char_hyeok 7404 --good
 char_hyeok_grim 7404 --good
+char_baekri 7303
+# 한 장짜리 조연: 노승·탁발승·철산은 원본과 거의 같아 적용 안 함(다시 나올 인물만 학습·적용)
