@@ -42,3 +42,5 @@ char_gwaksan_grief 7101 --good
 char_jang 7202 --good
 char_jang_fear 7404 --good
 char_jang_uneasy 7303 --good
+char_yonggae 7101 --good
+# char_yonggae_grave: 넷 다 가슴의 붉은 띠를 빠뜨림 — 옛 입상 그대로 두고 2차에서 다시(꼬리표 red sash over shoulder 를 세게)
