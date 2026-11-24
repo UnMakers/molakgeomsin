@@ -319,10 +319,13 @@ namespace MolakVn
         public bool HasPlayed (string scriptPath, int playlistIndex) { return Played.Has(scriptPath, playlistIndex); }
 
         /// <summary>'계속' 입력: 글이 나오는 중이면 한꺼번에 다 보이고, 기다리는 중이면 다음으로.</summary>
+        /// <summary>글이 찍히는 중에 누르면 다음 몇 줄을 한꺼번에 낸다(탭을 기다리는 자리에서 0으로 돌아간다).</summary>
+        public int InstantLines;
         internal void HandleContinue ()
         {
             var pr = Engine.Printers.Default;
-            if (pr.Revealing) { pr.CompleteReveal(); return; }
+            // 0.5.5 (언메이커: 누르면 조금만 넘어간다 → 지금 줄 + 다음 줄까지) 찍히던 줄을 마치고, 같은 탭에 이어 나올 다음 한 줄도 바로 낸다
+            if (pr.Revealing) { pr.CompleteReveal(); InstantLines = 1; return; }
             if (Track.AwaitingInput) Track.SetAwaitInput(false);
         }
         internal void ResetModes () { Skipping = false; AutoPlaying = false; }

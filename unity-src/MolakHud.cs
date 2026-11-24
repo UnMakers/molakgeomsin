@@ -92,11 +92,13 @@ public class MolakHud : MonoBehaviour
     public static string SwordTag (string label, bool forceDay = false, bool bold = true, bool peak = false)
     {
         bool night = !forceDay && MolakTheme.Night;
-        Color back = night ? new Color(0.50f, 0.58f, 0.66f) : new Color(0.13f, 0.18f, 0.24f);   // 칼등
-        Color edge = night ? new Color(0.86f, 0.91f, 0.95f) : new Color(0.25f, 0.37f, 0.50f);   // 날
-        Color glint = night ? new Color(1f, 1f, 1f) : new Color(0.42f, 0.70f, 0.92f);          // 서슬
-        if (peak) glint = night ? new Color(1f, 0.93f, 0.70f) : new Color(0.80f, 0.58f, 0.12f);   // 극(極): 서슬이 금빛으로, 더 자주
-        float period = peak ? 1.8f : 3.4f, sweep = 0.6f;
+        // 0.5.5 (언메이커: '검' 글자만 이상하게 반짝인다) 칼등(첫 글자)이 너무 어두워 서슬이 지날 때 '검'만 번쩍였다 —
+        //   두 글자의 바탕 빛을 가깝게, 서슬은 옅고 길게(0.6→0.9초) 지나가게.
+        Color back = night ? new Color(0.68f, 0.75f, 0.82f) : new Color(0.19f, 0.27f, 0.36f);   // 칼등
+        Color edge = night ? new Color(0.84f, 0.89f, 0.94f) : new Color(0.24f, 0.35f, 0.47f);   // 날
+        Color glint = night ? new Color(1f, 1f, 1f) : new Color(0.36f, 0.56f, 0.74f);          // 서슬
+        if (peak) glint = night ? new Color(1f, 0.93f, 0.70f) : new Color(0.66f, 0.50f, 0.16f);   // 극(極): 서슬이 금빛으로, 더 자주
+        float period = peak ? 2.4f : 4.2f, sweep = 0.9f;
         float ph = Time.unscaledTime % period;
         float p = ph < sweep ? Mathf.Lerp(-0.6f, 1.6f, ph / sweep) : -9f;
         var sb = new System.Text.StringBuilder();
@@ -105,8 +107,8 @@ public class MolakHud : MonoBehaviour
         {
             float x = n <= 1 ? 0.5f : i / (float)(n - 1);
             var c = Color.Lerp(back, edge, x);
-            float g = Mathf.Exp(-Mathf.Pow((x - p) / 0.38f, 2f));
-            c = Color.Lerp(c, glint, g * 0.92f);
+            float g = Mathf.Exp(-Mathf.Pow((x - p) / 0.45f, 2f));
+            c = Color.Lerp(c, glint, g * 0.55f);
             sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(c)).Append('>').Append(label[i]).Append("</color>");
         }
         return bold ? "<b>" + sb + "</b>" : sb.ToString();

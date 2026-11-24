@@ -321,7 +321,7 @@ namespace MolakVn.Commands
         {
             var track = Engine.Player.Track; int my = track.Session;
             var pr = Engine.Printers.Default;
-            if (!Assigned(ResetPrinter) || ResetPrinter.Value) { pr.ClearMessages(); pr.RevealProgress = 0f; }
+            if (!Assigned(ResetPrinter) || ResetPrinter.Value) { pr.ClearMessages(); pr.RevealProgress = 0f; Engine.Player.InstantLines = 0; }
             pr.Visible = true;
             string text = Text.Value.ToString();
             if (string.IsNullOrEmpty(text)) return;
@@ -329,6 +329,7 @@ namespace MolakVn.Commands
             MolakBacklog.Line(text);
             float speed = Assigned(RevealSpeed) ? RevealSpeed.Value : 1f;
             float delay = Engine.Player.Skipping ? 0f : Mathf.Lerp(TextPrinterManager.MaxRevealDelay, 0f, Mathf.Clamp01(Engine.Printers.BaseRevealSpeed * speed));
+            if (Engine.Player.InstantLines > 0) { Engine.Player.InstantLines--; delay = 0f; }
             await pr.Reveal(delay);
             if (track.Session != my) return;
             if (!Engine.Turbo) { await Awaitable.NextFrameAsync(); if (track.Session != my) return; }
@@ -341,6 +342,7 @@ namespace MolakVn.Commands
                 while (Time.time < until && Engine.Player.AutoPlaying && !Engine.Player.Skipping && track.Session == my) await Awaitable.NextFrameAsync();
                 if (track.Session != my) return;
             }
+            Engine.Player.InstantLines = 0;
             track.SetAwaitInput(true);
         }
     }

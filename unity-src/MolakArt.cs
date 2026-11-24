@@ -529,6 +529,9 @@ public class MolakArt : MonoBehaviour
         }
     }
     float slideT = 1f;
+    const float SlideDur = 0.5f, SlideDist = 0.30f;
+    static float SlideStep () { return Mathf.Min(Time.unscaledDeltaTime, 1f / 40f) / SlideDur; }
+    static float SlideOff (float t) { return Mathf.Pow(1f - Mathf.Clamp01(t), 2.2f) * SlideDist; }
     /// <summary>0.4.65 그림이 마지막으로 바뀐 때(빨리에서 글을 그림 뒤로 반 박자 늦추는 데 쓴다).</summary>
     public static float ChangedAt = -9f;
     /// <summary>0.4.65 그림이 아직 다 떠오르지 않았다(장면·인물 페이드, 인물 뒤 풍경 눌림까지).</summary>
@@ -854,9 +857,11 @@ public class MolakArt : MonoBehaviour
             k *= gk;
             charR.transform.localScale = new Vector3(k, k, 1f);
             float x = cx + jit + gx;   // 홀로 서니 띠 가운데
-            // 새 사람: 오른쪽 화면 밖에서 0.45초에 미끄러져 들어온다(끝에서 부드럽게 선다)
-            slideT = Mathf.Min(1f, slideT + Time.unscaledDeltaTime / 0.45f);
-            if (slideT < 1f) x += (1f - (1f - Mathf.Pow(1f - slideT, 3f))) * camW * 0.55f;
+            // 새 사람: 오른쪽에서 미끄러져 들어온다(끝에서 부드럽게 선다).
+            // 0.5.5 (언메이커: 들어올 때 프레임이 끊겨 보인다) 거리 0.55→0.30 화면 폭, 0.45→0.5초, 첫 출발을 덜 급하게(세제곱 → 2.2제곱),
+            //   그림을 처음 올리는 프레임이 늦어도 한 번에 건너뛰지 않게 한 프레임에 1/40초까지만 나아간다.
+            slideT = Mathf.Min(1f, slideT + SlideStep());
+            if (slideT < 1f) x += SlideOff(slideT) * camW;
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
             bool duo = (cine || thr) && partR != null && showPart != null;
             if (duo) x += (Person(showCharId) == leftPerson ? -1f : 1f) * camW * 0.21f;   // 0.4.88 두 사람: 제 자리(왼/오)에 선다
@@ -873,7 +878,7 @@ public class MolakArt : MonoBehaviour
                 if (partR.sprite != showPart) partR.sprite = showPart;
                 var pm = matPart != null ? matPart : wantMat; if (partR.sharedMaterial != pm) partR.sharedMaterial = pm;
                 partT = Mathf.Min(1f, partT + fdt);
-                partSlideT = Mathf.Min(1f, partSlideT + Time.unscaledDeltaTime / 0.45f);
+                partSlideT = Mathf.Min(1f, partSlideT + SlideStep());
                 var psp = partR.sprite; float psw = psp.texture.width / 100f, psh = psp.texture.height / 100f;
                 float pk = cine ? Mathf.Min(camH * 0.62f / psh, camW * 1.05f / psw) : Mathf.Min(bandH * 1.27f / psh, camW * 1.05f / psw);
                 pk *= 0.92f * (1f + 0.006f * Mathf.Sin(Time.time * 1.15f + 1.7f));
@@ -881,7 +886,7 @@ public class MolakArt : MonoBehaviour
                 partR.transform.localScale = new Vector3(pk, pk, 1f);
                 float side = Person(showPartId) == leftPerson ? -1f : 1f;
                 float ppx = cx + side * camW * 0.21f;
-                if (partSlideT < 1f) ppx += side * (1f - (1f - Mathf.Pow(1f - partSlideT, 3f))) * camW * 0.55f;
+                if (partSlideT < 1f) ppx += side * SlideOff(partSlideT) * camW;
                 float ppy = cine ? top - camH * 0.105f - psh * pk * 0.5f - 30f * unit : bandCy + bandH * 0.5f - 58f * unit - psh * pk * 0.5f;
                 partR.transform.position = new Vector3(ppx, ppy, z + 0.02f);
                 float pa = Mathf.Lerp(FadeFrom, 1f, partT) * colT;
