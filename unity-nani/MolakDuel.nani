@@ -469,7 +469,8 @@
 @goto #FameE
 # FameCall
 @vfx kind:crowd
-"{byeolho}다!" 판 둘레에서 누군가 외친다. 다음 판 상대가 칼을 고쳐 쥔다. 손바닥이 젖어 있다.
+"{byeolho}다!"
+판 둘레에서 누군가 외친다. 다음 판 상대가 칼을 고쳐 쥔다. 손바닥이 젖어 있다.
 # FameE
 @goto #WaS1 if:dstake<1
 @goto #WaS2 if:dstake==2
