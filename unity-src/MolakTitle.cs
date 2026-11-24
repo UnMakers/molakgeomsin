@@ -23,7 +23,7 @@ public class MolakTitle : MonoBehaviour
     /// <summary>0.5.0 점검용: 바탕을 억지로 고른다("with_soa" 등). 비우면 겪은 일에 따라.</summary>
     public static string ForceNight = "";
     /// <summary>0.5.0 달 크기 배수(언메이커: 달은 좀 더 커도 된다).</summary>
-    public static float MoonScale = 1.3f;
+    public static float MoonScale = 1.5f;
     /// <summary>0.5.0 물 일렁임 세기(0 이면 멈춘 그림).</summary>
     public static float WaterAmp = 1f;
     Material waterMat; bool waterTried;
