@@ -25,7 +25,7 @@ public class MolakTitle : MonoBehaviour
     /// <summary>0.5.0 달 크기 배수(언메이커: 달은 좀 더 커도 된다).</summary>
     public static float MoonScale = 1.3f;
     /// <summary>0.5.0 물 일렁임 세기(0 이면 멈춘 그림).</summary>
-    public static float WaterAmp = 1f;
+    public static float WaterAmp = 2.4f;   // 0.5.6 (언메이커: 물결이 없는 것 같다) 1 → 2.4
     Material waterMat; bool waterTried;
     // 바탕마다 수평선·물에 선 발끝 자리(그림 좌표, 위에서부터). 함께 선 그림은 검객과 그 사람이 한 그림에 있다.
     float nightHorizon = 0.879f; Vector2 nightFeet = new Vector2(0.312f, 0.879f); bool nightCouple;
