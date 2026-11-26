@@ -4,6 +4,7 @@
 @art scene:raidnight
 @art char:n_yeoni_sad
 @chapter text:"쉰 번째" sub:"6화" desc:"이번에는 시끄럽게 죽는다"
+@art scene:raidnight
 @bgm mood:sorrow
 등에 박힌 단도는 깊었다.
 단목천은 안다. 찔러도 봤고 찔려도 봤다. 어디에 얼마나 들어가면 사람이 죽는지.
@@ -18,6 +19,7 @@
 @art char:none
 횃불이 산길을 따라 줄지어 내려갔다.
 @page
+@art scene:raidnight
 @art char:n_jinu_sad
 "비켜, 연이야."
 진우 사형이 무릎으로 기어 와서 막내를 안았다. 부은 손으로 막내 등을 눌렀다. 피를 막으려고. 막아지지 않았다.
@@ -69,6 +71,7 @@
 지금은 날 부르는 사람이 셋이다.
 '……그래, 영감. 이 꼴이 좋다.'
 @page
+@art scene:raidnight
 눈앞이 흐려졌다.
 무서운 건 하나였다.
 검신이 되어 죽으면 이 밤으로 돌아왔다. 이번에는 검신이 아니다. 삼류도 못 되는 열다섯 살로 죽는다.

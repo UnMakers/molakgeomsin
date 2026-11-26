@@ -5,6 +5,7 @@
 @art scene:night
 @art char:none
 @chapter text:"이자" sub:"5화" desc:"돼지 값은 비쌌다"
+@art scene:night
 @bgm mood:night
 사부는 그날 밤 산에 없었다.
 해 질 녘에 흑호방에 간다고 내려갔다. 그믐을 한 달만 미뤄 달라고 빌어 보겠다고. 술은 안 마시겠다고.
@@ -54,6 +55,7 @@
 진우 사형이 칼을 들고 뛰었다. 사내 하나가 칼등으로 사형의 손목을 쳤다. 녹슨 칼이 마당에 떨어졌다.
 '똑같다. 늙은 마철구가 술김에 떠벌린 그대로다.'
 @page
+@art scene:raidnight
 @art char:none
 @bgm mood:hush
 "쥐어라."
@@ -74,6 +76,7 @@
 일류의 내공이 팔을 타고 쏟아져 들어왔다. 달았다. 너무 달았다.
 열둘은 오래 걸리지 않았다.
 @page
+@art scene:raidnight
 @art char:n_jinu_sad
 마당이 조용해졌다. 곽두의 팔은 붙어 있었다.
 "……막내야?"
@@ -143,6 +146,7 @@
 맞는 말이었다. 등 뒤가 부엌 벽이었다.
 '눈이 다르다. 몸만 있으면 이길 수 있는데. 몸이 없다.'
 @page
+@art scene:raidnight
 @art char:n_yeoni_angry
 "곽두 오라버니를 놔!"
 부엌에서 연이가 뛰쳐나왔다. 손에 국자를 들고.

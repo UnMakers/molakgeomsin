@@ -4,6 +4,7 @@
 @art scene:well
 @art char:none
 @chapter text:"이백 동" sub:"1화" desc:"천하제일검, 물지게에 지다"
+@art scene:well
 @bgm mood:day
 물 이백 동은 농담이 아니었다.
 우물은 산문 밖으로 백 걸음. 물지게 한 번에 두 동. 백 번만 오가면 된다.
@@ -45,6 +46,7 @@
 @goto #Q3
 # Q3
 @page
+@art scene:well
 @art char:none
 해가 중천에 올랐을 때 서른두 동을 채웠다.
 남은 건 백예순여덟 동. 남은 힘은 없다.

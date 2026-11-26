@@ -11,14 +11,14 @@ public class MolakV2Walker : MonoBehaviour
     public static string Status = "idle";
     public static readonly StringBuilder Log = new StringBuilder();
     static MolakV2Walker inst;
-    List<string> picks; string tag; int shot; bool shootAll;
+    List<string> picks; string runTag; int shot; bool shootAll;
 
-    public static void Run (string pickList, string runTag, bool shootEveryChoice)
+    public static void Run (string pickList, string tagName, bool shootEveryChoice)
     {
         if (inst == null) { var go = new GameObject("MolakV2Walker"); DontDestroyOnLoad(go); inst = go.AddComponent<MolakV2Walker>(); }
         inst.StopAllCoroutines();
         inst.picks = (pickList ?? "").Split('|').Where(s => s.Length > 0).ToList();
-        inst.tag = runTag; inst.shot = 0; inst.shootAll = shootEveryChoice;
+        inst.runTag = tagName; inst.shot = 0; inst.shootAll = shootEveryChoice;
         Log.Length = 0; Status = "run";
         inst.StartCoroutine(inst.Go());
     }
@@ -26,7 +26,7 @@ public class MolakV2Walker : MonoBehaviour
     void Shot (string why)
     {
         System.IO.Directory.CreateDirectory(@"C:\Projects\_train\shots");
-        string p = @"C:\Projects\_train\shots\" + tag + "_" + (shot++).ToString("00") + ".png";
+        string p = @"C:\Projects\_train\shots\" + runTag + "_" + (shot++).ToString("00") + ".png";
         ScreenCapture.CaptureScreenshot(p);
         Log.AppendLine("  shot " + System.IO.Path.GetFileName(p) + " " + why);
     }
@@ -35,16 +35,17 @@ public class MolakV2Walker : MonoBehaviour
     {
         var state = Engine.GetService<IStateManager>(); var sp = Engine.GetService<IScriptPlayer>();
         bool started = false;
-        state.ResetState(new string[0], () => { ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"); started = true; });
+        state.ResetState(new string[0], () => ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"));
         float t0 = Time.realtimeSinceStartup;
-        while (!started && Time.realtimeSinceStartup - t0 < 10f) yield return null;
+        while ((sp.MainTrack.PlaybackSpot.ScriptPath ?? "") == "" && Time.realtimeSinceStartup - t0 < 10f) yield return null;
+        started = true;
         var tr = sp.MainTrack; float last = Time.realtimeSinceStartup; string lastPath = "";
         while (true)
         {
             yield return null;
             var path = tr.PlaybackSpot.ScriptPath ?? "";
             if (path != lastPath) { Log.AppendLine("== " + path); lastPath = path; }
-            if (path == "Title" || (MolakTitle.Showing)) { Status = "done"; Log.AppendLine("END at Title"); yield break; }
+            if (path == "Title" && Time.realtimeSinceStartup - t0 > 5f) { Status = "done"; Log.AppendLine("END at Title"); yield break; }
             sp.SetAutoPlay(true); sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(true);
             if (tr.Playing) { if (Time.realtimeSinceStartup - last > 20f) { Status = "stall-play " + tr.PlaybackSpot; yield break; } continue; }
             var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)

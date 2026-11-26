@@ -8,11 +8,13 @@
 @art scene:lordhall
 @art char:none
 @chapter text:"떡" sub:"0화" desc:"천하제일검의 마지막 간식"
+@art scene:lordhall
 @bgm mood:sorrow
 단목천은 죽었다.
 이번에는 칼이었다.
 지난 생은 떡이었다.
 @page
+@art scene:lordhall
 떡 얘기를 먼저 하자면 이렇다.
 천하제일검, 검신, 살아 있는 전설이 인절미를 먹다가 목에 걸렸다.
 @vfx kind:beat
@@ -130,6 +132,7 @@
 안 쥐면 어떻게 되는지는 모른다. 검신이 못 되고 죽으면 돌아올 수 있는지도.
 상관없었다. 혼자 죽는 것보다는 나을 테니까.
 @page
+@art scene:cellar
 @art char:n_jinu
 등불이 동굴 어귀에 걸렸다. 흙투성이 사형이 숨을 헐떡였다. 무릎에서 피가 났다.
 '세 번 자빠졌군. 이번에도.'

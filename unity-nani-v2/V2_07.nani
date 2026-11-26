@@ -5,6 +5,7 @@
 @art scene:cellar
 @art char:none
 @chapter text:"두 번째 동굴" sub:"7화" desc:"죽어도 남는 것"
+@art scene:cellar
 @bgm mood:rain
 "어째서……?"
 혈검이 다시 말했다. 검날이 떨렸다. 검도 떠는 모양이었다.
@@ -133,6 +134,7 @@
 연이가 주머니를 끌어안았다. 그 얼굴이 웃겨서 웃음이 나왔다.
 "갚을게요. 콩 세 알이랑 같이."
 @page
+@art scene:market
 @art char:n_macheolgu
 마철구가 할멈 멱살을 쥐려던 참이었다. 웬 꼬맹이가 끼어들어 동전 주머니를 내밀었다.
 "자릿세요. 석 달 치."

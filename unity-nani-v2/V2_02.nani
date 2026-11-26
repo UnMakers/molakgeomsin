@@ -4,6 +4,7 @@
 @art scene:yard
 @art char:none
 @chapter text:"청운검법" sub:"2화" desc:"뒤로만 물러서는 삼류 검"
+@art scene:yard
 @bgm mood:day
 @art char:n_jinu_smile
 "오늘부터 검을 배운다."
@@ -41,6 +42,7 @@
 "마흔아홉 번 중에 오늘이 제일 웃기는구나."
 '시끄러워, 영감.'
 @page
+@art scene:yard
 @art char:n_jinu
 "청운검법은 일곱 식이야. 첫 식이 제일 중요해."
 진우 사형이 움직였다.
@@ -63,6 +65,7 @@
 "……글쎄. 사부님이 그렇게 가르쳐 주셨어. 왜인지는 나도 몰라."
 '가르치는 사람도 모르는 검이었다.'
 @page
+@art scene:yard
 @art char:n_jinu
 오전 내내 물러섰다. 반 보 물러서고, 목검을 들고. 또 반 보 물러서고, 목검을 들고.
 팔이 떨렸다. 금 간 목검이 손바닥을 씹었다.
