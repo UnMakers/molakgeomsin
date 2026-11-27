@@ -1,0 +1,153 @@
+; 화면 확인용 (게임에서 쓰지 않음)
+# Start
+@art scene:v2_hall
+@art char:none
+@bgm mood:sorrowv2
+단목천은 죽었다.
+이번에는 칼이었다.
+지난 생은 떡이었다.
+@choice "다음" goto:#A1
+@stop
+# A1
+@page
+@art scene:v2cg_tteok
+떡 얘기를 먼저 하자면 이렇다.
+천하제일검, 검신, 살아 있는 전설이 인절미를 먹다가 목에 걸렸다.
+……컥.
+@choice "다음" goto:#A2
+@stop
+# A2
+@page
+@art scene:v2_hall
+@art char:soa_fierce
+소녀 하나가 서 있었다.
+왼눈에 안대, 왼뺨에 귀까지 이어지는 흉터.
+@choice "다음" goto:#A3
+@stop
+# A3
+@art scene:v2cg_stab
+@art char:none
+쌍검이 가슴으로 들어왔다.
+"…왜 막지 않지."
+@choice "다음" goto:#A4
+@stop
+# A4
+@page
+@art scene:v2cg_oldman
+@art char:none
+@bgm mood:rainv2
+비 냄새가 났다.
+"받아라……."
+노인이 붉은 검을 내밀었다.
+@choice "다음" goto:#A5
+@stop
+# A5
+@page
+@art scene:v2cg_alone
+@art char:none
+넓은 전각에 기둥이 마흔 개.
+그리고 또 혼자 죽었다.
+@choice "다음" goto:#A6
+@stop
+# A6
+@page
+@art scene:v2cg_piggyback
+@bgm mood:nightv2
+사형은 막내를 업고 산을 내려갔다.
+"너 내일 물 백 동이다. 아니, 이백 동."
+@choice "다음" goto:#A7
+@stop
+# A7
+@page
+@art scene:v2_well
+@art char:n_gwakdu_smile
+@bgm mood:homev2
+"너는 물을 긷는 거냐, 마당에 물을 주는 거냐."
+@choice "다음" goto:#A8
+@stop
+# A8
+@page
+@art scene:v2_yard
+@art char:n_yeoni_smile
+"크는 애가 먹어야지."
+@choice "다음" goto:#A9
+@stop
+# A9
+@page
+@art scene:v2_market
+@art char:n_macheolgu_angry
+@bgm mood:gangv2
+"할멈, 자릿세가 석 달 밀렸어."
+@choice "다음" goto:#B1
+@stop
+# B1
+@page
+@art scene:v2cg_pigsoup
+@art char:none
+국물이 사방으로 튀었다. 마철구가 국 속에서 허우적거렸다.
+"돼지가 국에 빠졌다!"
+@choice "다음" goto:#B2
+@stop
+# B2
+@page
+@art scene:v2_raid
+@art char:n_takjin
+마당에 횃불 열둘이 섰다.
+"청운문. 그믐이 조금 당겨졌다."
+@choice "다음" goto:#B3
+@stop
+# B3
+@page
+@art scene:v2_gang
+@art char:n_takjin
+흑호방 본채.
+@choice "다음" goto:#B4
+@stop
+# B4
+@page
+@art scene:v2cg_backtoback
+@art char:none
+@bgm mood:homev2
+막내 등이 사형 등에 닿았다. 딱 맞았다.
+@choice "다음" goto:#B5
+@stop
+# B5
+@page
+@art scene:v2cg_diamond
+@bgm mood:fightv2
+넷이 마름모꼴로 섰다. 등과 등이 닿게.
+@choice "다음" goto:#B6
+@stop
+# B6
+@page
+@art scene:v2cg_beans
+@bgm mood:homev2
+곽두가 국을 뿜었다.
+진우 사형이 웃다가 기침을 했다.
+@choice "다음" goto:#B7
+@stop
+# B7
+@page
+@art scene:v2_snow
+@bgm mood:hush
+그날 밤 첫눈이 왔다.
+@choice "다음" goto:#B8
+@stop
+# B8
+@page
+@art scene:v2cg_baekya
+@bgm mood:soa
+계집아이 하나가 서 있었다.
+머리가 눈보다 하얬다.
+@choice "다음" goto:#B9
+@stop
+# B9
+@page
+@art scene:v2_room
+@art char:none
+@bgm mood:nightv2
+이불 위에 붉은 검이 놓여 있었다.
+@choice "끝" goto:#Z
+@stop
+# Z
+@goto Title
