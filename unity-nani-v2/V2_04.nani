@@ -6,7 +6,7 @@
 @art char:n_macheolgu_angry
 @chapter text:"돼지 이빨" sub:"4화" desc:"아는 것이 힘이다. 문제는 그다음이다"
 @art scene:market
-@bgm mood:tension
+@bgm mood:gangv2
 마철구가 엎어진 국솥을 발로 툭 찼다. 국물이 할멈 치마에 튀었다.
 장터 사람들이 슬금슬금 물러섰다.
 아무도 나서지 않았다. 흑호방이니까.
@@ -148,7 +148,7 @@
 @page
 @art scene:storehouse
 @art char:n_takjin
-@bgm mood:tension
+@bgm mood:gangv2
 흑호방 본채.
 마철구가 국물에 전 옷을 입은 채 마당에 무릎을 꿇고 있었다.
 방주 탁진이 툇마루에서 차를 마셨다.

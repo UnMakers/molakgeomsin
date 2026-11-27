@@ -6,7 +6,7 @@
 @art char:n_takjin
 @chapter text:"그믐" sub:"9화" desc:"넷이서 막는다"
 @art scene:yard
-@bgm mood:tension
+@bgm mood:gangv2
 흑호방 열둘이 쓰러진 대문을 밟고 들어왔다.
 맨 앞에 탁진, 그 옆에 마철구.
 @art char:n_macheolgu
@@ -157,7 +157,7 @@
 @page
 @art scene:cellar
 @art char:oldman
-@bgm mood:rain
+@bgm mood:rainv2
 "받아라……."
 "……이번엔 진짜 이길 수 있었잖느냐."
 혈검이 투덜댔다.
@@ -198,7 +198,7 @@
 "알아. 그러니까 혼자 안 하잖아."
 @page
 @art scene:yard
-@bgm mood:tension
+@bgm mood:tensionv2
 탁진이 다시 자세를 잡았다. 이번엔 진짜로 하려는 얼굴이었다.
 @art char:n_macheolgu_sad
 그때 마철구가 탁진의 소매를 잡았다.

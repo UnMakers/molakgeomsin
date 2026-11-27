@@ -172,7 +172,7 @@
 @page
 @art scene:hut
 @art char:none
-@bgm mood:night
+@bgm mood:nightv2
 밤이 깊었다.
 곽두가 코를 골았다. 저쪽에서 진우 사형이 기침을 했다.
 단목천은 누운 채 제 가슴에 손을 얹었다.
@@ -210,7 +210,7 @@
 "그래? 그럼 이건 어떠냐."
 검날이 한 번 깜빡였다.
 "그믐까지 이레다."
-@bgm mood:tension
+@bgm mood:tensionv2
 그믐. 그 말은 안다.
 어느 삶에서 그의 발을 씻기던 늙은 하인이 있었다.
 흑호방에 있다가 쫓겨난 놈이었다.

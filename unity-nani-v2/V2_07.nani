@@ -6,7 +6,7 @@
 @art char:none
 @chapter text:"두 번째 동굴" sub:"7화" desc:"죽어도 남는 것"
 @art scene:cellar
-@bgm mood:rain
+@bgm mood:rainv2
 "어째서……?"
 혈검이 다시 말했다. 검날이 떨렸다. 검도 떠는 모양이었다.
 "영감. 영감이 건 사술이잖아. 검신이 되어 죽으면 돌아온다며."
@@ -30,7 +30,7 @@
 @art scene:forest
 @art char:n_jinu
 @vfx kind:rainoff
-@bgm mood:night
+@bgm mood:nightv2
 사형 등에 업혀 산을 내려갔다.
 이 사람은 모른다.
 막내를 안고 콧물 흘리며 울었던 걸.
@@ -102,7 +102,7 @@
 @page
 @art scene:market
 @art char:n_macheolgu_angry
-@bgm mood:tension
+@bgm mood:gangv2
 그리고 닷새째, 장터 끝에서 비명이 났다.
 "할멈, 자릿세가 석 달 밀렸어."
 마철구였다. 똑같았다.
@@ -125,7 +125,7 @@
 @page
 @art scene:cellar
 @art char:oldman
-@bgm mood:rain
+@bgm mood:rainv2
 "받아라……."
 "너 바보냐?"
 혈검이 말했다. 진심으로 궁금한 목소리였다.
@@ -134,7 +134,7 @@
 @page
 @art scene:market
 @art char:n_macheolgu_angry
-@bgm mood:tension
+@bgm mood:gangv2
 "할멈, 자릿세가 석 달 밀렸어."
 @goto #Pick
 # P2
@@ -183,7 +183,7 @@
 @page
 @art scene:hut
 @art char:none
-@bgm mood:night
+@bgm mood:nightv2
 밤. 이불 위에서 혈검과 마주 앉았다.
 "잘했다고는 안 하마. 흑호방은 오늘 밤엔 안 온다. 대신 그믐엔 온다. 원래대로. 곽두 팔도 원래대로."
 "알아."

@@ -9,7 +9,7 @@
 @art char:none
 @chapter text:"떡" sub:"0화" desc:"천하제일검의 마지막 간식"
 @art scene:lordhall
-@bgm mood:sorrow
+@bgm mood:sorrowv2
 단목천은 죽었다.
 이번에는 칼이었다.
 지난 생은 떡이었다.
@@ -32,7 +32,7 @@
 @black text:"그리고 이번 생." hold:1.4
 @page
 @art scene:lordhall
-@bgm mood:tension
+@bgm mood:tensionv2
 @vfx kind:clash
 전각 문이 부서지듯 열렸다.
 @art char:soa_fierce
@@ -61,7 +61,7 @@
 @page
 @art scene:cellar
 @art char:none
-@bgm mood:rain
+@bgm mood:rainv2
 @vfx kind:rain
 비 냄새가 났다.
 또 이 동굴이냐.
@@ -140,7 +140,7 @@
 @art scene:forest
 @art char:n_jinu
 @vfx kind:rainoff
-@bgm mood:night
+@bgm mood:nightv2
 사형은 막내를 업고 산을 내려갔다.
 다친 무릎으로 한 번도 안 쉬고 잔소리를 했다.
 "너 내일 물 백 동이다. 아니, 이백 동."

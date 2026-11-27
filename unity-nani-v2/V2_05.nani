@@ -6,7 +6,7 @@
 @art char:none
 @chapter text:"이자" sub:"5화" desc:"돼지 값은 비쌌다"
 @art scene:night
-@bgm mood:night
+@bgm mood:nightv2
 사부는 그날 밤 산에 없었다.
 해 질 녘에 흑호방에 간다고 내려갔다.
 그믐을 한 달만 미뤄 달라고 빌어 보겠다고.
@@ -32,7 +32,7 @@
 @page
 @art scene:raidnight
 @art char:n_takjin
-@bgm mood:fire
+@bgm mood:gangv2
 마당에 횃불 열둘이 섰다.
 한가운데에 가는 손가락의 사내. 탁진이었다.
 "청운문. 그믐이 조금 당겨졌다."
@@ -98,7 +98,7 @@
 @page
 @art scene:cellar
 @art char:oldman
-@bgm mood:rain
+@bgm mood:rainv2
 "받아라……."
 ……그래. 쥐면 그다음이 쉽다. 그렇게 마흔아홉 번이었다.
 이번 판은 안 친다. 다시 그 마당으로.

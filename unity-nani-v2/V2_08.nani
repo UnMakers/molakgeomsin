@@ -50,7 +50,7 @@
 @page
 @art scene:gate
 @art char:n_jinu_angry
-@bgm mood:night
+@bgm mood:nightv2
 그날 저녁, 진우 사형은 기침을 세 번 했다.
 세 번째 기침 뒤에 사형은 제 입을 손으로 막았다.
 네 번째를 억지로 참느라 얼굴이 시뻘게졌다.
@@ -171,7 +171,7 @@
 @page
 @art scene:morning
 @art char:n_gwakdu
-@bgm mood:tension
+@bgm mood:tensionv2
 그믐날 아침. 닭이 울었다.
 옆에서 곽두가 벌써 일어나 주먹을 쥐었다 폈다 하고 있었다.
 "막내야. 먼저 안 뛰쳐나갈게."

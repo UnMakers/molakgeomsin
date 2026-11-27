@@ -5,7 +5,7 @@
 @art char:n_yeoni_sad
 @chapter text:"쉰 번째" sub:"6화" desc:"이번에는 시끄럽게 죽는다"
 @art scene:raidnight
-@bgm mood:sorrow
+@bgm mood:sorrowv2
 등에 박힌 단도는 깊었다.
 단목천은 안다.
 찔러도 봤고 찔려도 봤다.
@@ -112,7 +112,7 @@
 @page
 @art scene:cellar
 @art char:oldman
-@bgm mood:rain
+@bgm mood:rainv2
 @vfx kind:rain
 비 냄새가 났다.
 축축한 바닥. 열다섯 살의 무릎. 앞에서 피를 토하는 노인.
