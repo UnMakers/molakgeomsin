@@ -5,7 +5,7 @@
 @art char:none
 @chapter text:"콩 세 알" sub:"10화" desc:"갚을 게 많다"
 @art scene:yard
-@bgm mood:day
+@bgm mood:homev2
 그믐 다음 날, 청운문은 앓아누웠다.
 곽두는 이마를 꿰맸다. 연이는 어깨에 고약을 붙였다. 진우 사형은 기침이 멎지 않아 하루 종일 누워 있었다.
 막내는 갈비에 금이 갔다. 싸울 때는 멀쩡했는데, 끝나고 곽두가 끌어안는 바람에.
@@ -86,7 +86,7 @@
 @page
 @art scene:yard
 @art char:n_gwakdu_smile
-@bgm mood:day
+@bgm mood:homev2
 보름이 지났다. 갈비가 붙었다. 곽두는 이마에 흉터가 생겼는데, 남자답다고 좋아했다.
 연이는 매일 아침 당귀를 캤다. 막내가 따라갔다. 둘이 캐면 두 배였다.
 @art char:n_macheolgu

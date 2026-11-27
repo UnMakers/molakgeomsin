@@ -5,7 +5,7 @@
 @art char:none
 @chapter text:"이백 동" sub:"1화" desc:"천하제일검, 물지게에 지다"
 @art scene:well
-@bgm mood:day
+@bgm mood:homev2
 물 이백 동은 농담이 아니었다.
 우물은 산문 밖으로 백 걸음. 물지게 한 번에 두 동. 백 번만 오가면 된다.
 @vfx kind:hit

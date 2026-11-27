@@ -6,7 +6,7 @@
 @art char:none
 @chapter text:"같이 쓰는 검" sub:"8화" desc:"등을 맞대면"
 @art scene:yard
-@bgm mood:day
+@bgm mood:homev2
 아침상 앞이었다. 숟가락 네 개가 달그락거렸다.
 '혼자 안 한다. 그럼 말을 해야 한다. 어디까지?'
 @choice "전부 말한다 — 마흔아홉 번 살았다는 것까지" goto:#T1
@@ -98,7 +98,7 @@
 @page
 @art scene:yard
 @art char:n_gwakdu_smile
-@bgm mood:day
+@bgm mood:homev2
 이튿날부터 넷은 짝을 지었다. 진우와 곽두. 막내와 연이.
 잘될 리가 없었다.
 @vfx kind:hit
