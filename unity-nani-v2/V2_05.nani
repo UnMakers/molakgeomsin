@@ -2,10 +2,10 @@
 # Start
 @set v2_ch=5
 @set v2_hurt=0
-@art scene:night
+@art scene:v2_night
 @art char:none
 @chapter text:"이자" sub:"5화" desc:"돼지 값은 비쌌다"
-@art scene:night
+@art scene:v2_night
 @bgm mood:nightv2
 사부는 그날 밤 산에 없었다.
 해 질 녘에 흑호방에 간다고 내려갔다.
@@ -13,7 +13,7 @@
 술은 안 마시겠다고.
 길이 엇갈렸다. 흑호방은 큰길 말고 뒷길로 올라왔다.
 @page
-@art scene:hut
+@art scene:v2_room
 산 아래 마을 개들이 줄줄이 짖었다.
 단목천은 이불 속에서 눈을 떴다.
 "온다. 열둘. 앞장선 놈이 방주 탁진이다. 일류 끝자락쯤 되는 놈이지."
@@ -30,7 +30,7 @@
 @vfx kind:heavy
 대문이 부서졌다.
 @page
-@art scene:raidnight
+@art scene:v2_raid
 @art char:n_takjin
 @bgm mood:gangv2
 마당에 횃불 열둘이 섰다.
@@ -64,7 +64,7 @@
 녹슨 칼이 마당에 떨어졌다.
 똑같다. 늙은 마철구가 술김에 떠벌린 그대로다.
 @page
-@art scene:raidnight
+@art scene:v2_raid
 @art char:none
 @bgm mood:hush
 "쥐어라."
@@ -85,7 +85,7 @@
 일류의 내공이 팔을 타고 쏟아져 들어왔다. 달았다. 너무 달았다.
 열둘은 오래 걸리지 않았다.
 @page
-@art scene:raidnight
+@art scene:v2_raid
 @art char:n_jinu_sad
 마당이 조용해졌다. 곽두의 팔은 붙어 있었다.
 "……막내야?"
@@ -93,18 +93,23 @@
 막내 손에 들린 붉은 검을 봤다.
 그리고 한 걸음 물러섰다.
 겁먹은 눈이었다. 사형이 막내를 그런 눈으로 본 적은 없었다.
-@black text:"그 눈이 싫어서 산을 내려갔다.|하나 베니 둘째는 더 쉬웠다.|일곱 해 뒤, 넓은 전각에 기둥이 마흔 개.|그리고 또 혼자 죽었다." hold:2.4 red:true
+@black text:"그 눈이 싫어서 산을 내려갔다.|하나 베니 둘째는 더 쉬웠다.|일곱 해 뒤, 천하제일검이 되었다." hold:2.4 red:true
+@page
+@art scene:v2cg_alone
+@art char:none
+넓은 전각에 기둥이 마흔 개.
+그리고 또 혼자 죽었다.
 @vfx kind:rewind
 @page
-@art scene:cellar
-@art char:oldman
+@art scene:v2cg_oldman
+@art char:none
 @bgm mood:rainv2
 "받아라……."
 ……그래. 쥐면 그다음이 쉽다. 그렇게 마흔아홉 번이었다.
 이번 판은 안 친다. 다시 그 마당으로.
 @black text:"— 다시, 그 밤의 마당 —" hold:1.4
 @page
-@art scene:raidnight
+@art scene:v2_raid
 @art char:none
 @bgm mood:hush
 "쥐어라."
@@ -161,7 +166,7 @@
 맞는 말이었다. 등 뒤가 부엌 벽이었다.
 눈이 다르다. 몸만 있으면 이길 수 있는데. 몸이 없다.
 @page
-@art scene:raidnight
+@art scene:v2_raid
 @art char:n_yeoni_angry
 "곽두 오라버니를 놔!"
 부엌에서 연이가 뛰쳐나왔다. 손에 국자를 들고.

@@ -5,16 +5,16 @@
 @set v2_aff_jinu=0
 @set v2_aff_yeoni=0
 @set v2_aff_gwak=0
-@art scene:lordhall
+@art scene:v2_hall
 @art char:none
 @chapter text:"떡" sub:"0화" desc:"천하제일검의 마지막 간식"
-@art scene:lordhall
+@art scene:v2_hall
 @bgm mood:sorrowv2
 단목천은 죽었다.
 이번에는 칼이었다.
 지난 생은 떡이었다.
 @page
-@art scene:lordhall
+@art scene:v2cg_tteok
 떡 얘기를 먼저 하자면 이렇다.
 천하제일검, 검신, 살아 있는 전설이 인절미를 먹다가 목에 걸렸다.
 @vfx kind:beat
@@ -31,7 +31,7 @@
 마흔여덟 번 천하제일이 됐고, 마흔여덟 번 혼자 죽었다.
 @black text:"그리고 이번 생." hold:1.4
 @page
-@art scene:lordhall
+@art scene:v2_hall
 @bgm mood:tensionv2
 @vfx kind:clash
 전각 문이 부서지듯 열렸다.
@@ -49,6 +49,8 @@
 그런데 문득 생각했다.
 적어도 이번 생엔 누군가 왔다. 날 죽이러.
 ……그래. 이 정도면 됐다.
+@art scene:v2cg_stab
+@art char:none
 @vfx kind:hit
 쌍검이 가슴으로 들어왔다.
 "…왜 막지 않지."
@@ -59,14 +61,15 @@
 @goto #Cave
 # Cave
 @page
-@art scene:cellar
+@art scene:v2_cave
 @art char:none
 @bgm mood:rainv2
 @vfx kind:rain
 비 냄새가 났다.
 또 이 동굴이냐.
 축축한 바닥. 열다섯 살의 무릎. 앞에서 피를 토하는 노인.
-@art char:oldman
+@art scene:v2cg_oldman
+@art char:none
 "받아라……."
 노인이 붉은 검을 내밀었다.
 "이 검은 사람을 베면 그 내공을 빨아들인다. 십 년이면 천하에 네 위가 없을 것이다."
@@ -76,6 +79,7 @@
 그리고 어떻게 죽든 혼자 죽는다.
 누가 곁에 있다면, 날 죽이러 온 사람이다.
 마흔아홉 번 해 보고 알았다.
+@art scene:v2_cave
 @art char:none
 곧 사형이 온다.
 진우 사형.
@@ -101,15 +105,22 @@
 등불이 동굴 어귀에 걸리고, 사형이 웃으며 들어왔다.
 @vfx kind:heavy
 그다음은 늘 같았다.
-@black text:"사형이 쓰러졌다.|일곱 해 뒤, 천하제일검이 되었다.|넓은 전각에 기둥이 마흔 개.|그리고 또 혼자 죽었다." hold:2.2 red:true
+@black text:"사형이 쓰러졌다.|일곱 해 뒤, 천하제일검이 되었다." hold:2.0 red:true
+@page
+@art scene:v2cg_alone
+@art char:none
+넓은 전각에 기둥이 마흔 개.
+그리고 또 혼자 죽었다.
 @vfx kind:rewind
 @page
-@art scene:cellar
-@art char:oldman
+@art scene:v2_cave
+@art scene:v2cg_oldman
+@art char:none
 "받아라……."
 ……또 이 동굴이냐.
 @print "쉰 번을 해도 똑같다. 이 길은 끝이 혼자다." if:v2_grab<2
 @print "알았다, 알았어. 손아, 제발 좀." if:v2_grab>=2
+@art scene:v2_cave
 @art char:none
 "천아! 단목천!"
 @goto #CaveChoice
@@ -119,7 +130,7 @@
 검신이 못 되고 죽으면 돌아올 수 있는지도.
 상관없었다. 혼자 죽는 것보다는 나을 테니까.
 @page
-@art scene:cellar
+@art scene:v2_cave
 @art char:n_jinu
 등불이 동굴 어귀에 걸렸다.
 흙투성이 사형이 숨을 헐떡였다.
@@ -132,13 +143,14 @@
 "천아, 내 뒤로 와."
 칼끝이 떨렸다.
 단목천은 검을 두고 사형 뒤로 갔다.
-@art char:oldman
+@art scene:v2cg_oldman
+@art char:none
 "어리석은 놈. 그 길로는 평생 가도 일류도 못 된다."
 노인이 피거품을 물고 웃었다.
 알아, 영감. 그쪽 길로는 마흔아홉 번 가 봤다.
 @page
-@art scene:forest
-@art char:n_jinu
+@art scene:v2cg_piggyback
+@art char:none
 @vfx kind:rainoff
 @bgm mood:nightv2
 사형은 막내를 업고 산을 내려갔다.
@@ -166,7 +178,7 @@
 @art char:n_jinu_smile
 "싱거운 놈."
 @page
-@art scene:hut
+@art scene:v2_room
 @art char:none
 그날 밤, 단목천은 제 이불을 걷다가 멈췄다.
 이불 위에 붉은 검이 놓여 있었다.

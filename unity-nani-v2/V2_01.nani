@@ -1,10 +1,10 @@
 ; ===== 1화. 이백 동 =====
 # Start
 @set v2_ch=1
-@art scene:well
+@art scene:v2_well
 @art char:none
 @chapter text:"이백 동" sub:"1화" desc:"천하제일검, 물지게에 지다"
-@art scene:well
+@art scene:v2_well
 @bgm mood:homev2
 물 이백 동은 농담이 아니었다.
 우물은 산문 밖으로 백 걸음.
@@ -50,7 +50,7 @@
 @goto #Q3
 # Q3
 @page
-@art scene:well
+@art scene:v2_well
 @art char:none
 해가 중천에 올랐을 때 서른두 동을 채웠다.
 남은 건 백예순여덟 동. 남은 힘은 없다.
@@ -85,7 +85,7 @@
 @goto #Y3
 # Y3
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_jinu_smile
 점심은 진우 사형이 지었다. 죽이었다. 아침보다 묽었다.
 @art char:n_yeoni
@@ -126,7 +126,7 @@
 "크는 애가 먹어야지."
 콩을 씹었다. 짰다. 콩까지 짰다. 그래도 다 먹었다.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 문제는 혈검이었다.
 @set v2_tossed=0
@@ -170,7 +170,7 @@
 @goto #Toss if:v2_tossed<3
 이놈의 검이 사람을 놀리나.
 @page
-@art scene:hut
+@art scene:v2_room
 @art char:none
 @bgm mood:nightv2
 밤이 깊었다.

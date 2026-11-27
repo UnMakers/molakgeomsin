@@ -2,10 +2,10 @@
 # Start
 @set v2_ch=8
 @set v2_tellall=0
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @chapter text:"같이 쓰는 검" sub:"8화" desc:"등을 맞대면"
-@art scene:yard
+@art scene:v2_yard
 @bgm mood:homev2
 아침상 앞이었다. 숟가락 네 개가 달그락거렸다.
 혼자 안 한다. 그럼 말을 해야 한다. 어디까지?
@@ -48,7 +48,7 @@
 "뭐?"
 "그리고 오늘 밤에 사부님이 돌아오세요. 돈은 없고 술 냄새가 나고요. 들어오자마자 저부터 끌어안으실 거예요."
 @page
-@art scene:gate
+@art scene:v2_gate
 @art char:n_jinu_angry
 @bgm mood:nightv2
 그날 저녁, 진우 사형은 기침을 세 번 했다.
@@ -66,7 +66,7 @@
 막내는 사부 품에 안긴 채 셋을 돌아봤다.
 거봐요.
 @page
-@art scene:templeyard
+@art scene:v2_backyard
 @art char:n_seokun
 그날 밤 다섯이 툇마루에 둘러앉았다.
 막내가 꿈에서 본 그믐을 다시 말했다.
@@ -83,6 +83,8 @@
 @art char:n_jinu
 진우 사형이 영문도 모른 채 막내 뒤로 가서 섰다.
 둘이 동시에 물러섰다. 반 보 뒤로, 몸을 비스듬히, 목검을 가로로.
+@art scene:v2cg_backtoback
+@art char:none
 @vfx kind:gold
 막내 등이 사형 등에 닿았다. 딱 맞았다.
 막내가 올린 목검이 사형의 오른쪽을 덮었다.
@@ -104,7 +106,7 @@
 웃기는 일이었다.
 그런데 웃음이 안 났다.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_gwakdu_smile
 @bgm mood:homev2
 이튿날부터 넷은 짝을 지었다. 진우와 곽두. 막내와 연이.
@@ -146,7 +148,7 @@
 "영감은 맨날 제일 웃기대."
 "매일 경신하니까 그렇지."
 @page
-@art scene:templeyard
+@art scene:v2_backyard
 @art char:n_jinu
 사흘째 되는 날, 막내와 진우 사형이 등을 맞대고 물러섬을 백 번째 했을 때였다.
 @vfx kind:gold
@@ -169,7 +171,7 @@
 "……삼류 검법치고는 별난 짓을 하는구나."
 대답이 반 박자 늦었다. 영감도 몰랐던 거다.
 @page
-@art scene:morning
+@art scene:v2_dawn
 @art char:n_gwakdu
 @bgm mood:tensionv2
 그믐날 아침. 닭이 울었다.

@@ -1,10 +1,10 @@
 ; ===== 10화. 콩 세 알 =====
 # Start
 @set v2_ch=10
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @chapter text:"콩 세 알" sub:"10화" desc:"갚을 게 많다"
-@art scene:yard
+@art scene:v2_yard
 @bgm mood:homev2
 그믐 다음 날, 청운문은 앓아누웠다.
 곽두는 이마를 꿰맸다.
@@ -31,7 +31,7 @@
 @art char:n_jinu_smile
 진우 사형이 이불 속에서 기침인지 웃음인지 모를 소리를 냈다.
 @page
-@art scene:templeyard
+@art scene:v2_backyard
 @art char:n_seokun
 @bgm mood:sorrowv2
 그날 밤 사부가 막내를 툇마루로 불렀다.
@@ -93,7 +93,7 @@
 "……짰다."
 막내는 웃어야 할지 화를 내야 할지 몰라서, 그냥 웃었다.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_gwakdu_smile
 @bgm mood:homev2
 보름이 지났다.
@@ -140,7 +140,7 @@
 @goto #Z3
 # Z3
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_yeoni
 그날 저녁, 막내는 제 그릇의 콩 세 알을 집어 연이 그릇에 옮겼다.
 "뭐야?"
@@ -152,6 +152,8 @@
 "……나눠서 갚을게요."
 "이자는?"
 "사저, 흑호방이에요?"
+@art scene:v2cg_beans
+@art char:none
 @vfx kind:crowd
 곽두가 국을 뿜었다.
 진우 사형이 웃다가 기침을 했다.
@@ -159,7 +161,7 @@
 시끄러웠다.
 막내는 그 소리를 들으며 콩 없는 죽을 떴다. 맛있었다. 짜긴 했다.
 @page
-@art scene:snow
+@art scene:v2_snow
 @art char:none
 @bgm mood:hush
 @vfx kind:petals
@@ -167,9 +169,10 @@
 막내가 마당의 눈을 쓸고 있는데 산문을 누가 두드렸다.
 똑. 똑.
 이 밤에 이 산을 올라올 사람은 없다. 흑호방은 낮에 온다.
-@art scene:gate
+@art scene:v2_gate
 빗자루를 든 채 산문을 열었다.
-@art char:n_baekya
+@art scene:v2cg_baekya
+@art char:none
 @bgm mood:soa
 계집아이 하나가 서 있었다.
 열셋쯤.
@@ -185,6 +188,7 @@
 그런데 이번 삶에서 나는 노예 시장에 간 적이 없다.
 이 아이를 산 적이 없다.
 이 아이가 나를 알 리가 없다.
+@art scene:v2_gate
 @art char:n_baekya_sad
 아이가 막내를 올려다봤다. 회색 눈이 흔들리지 않았다.
 "검신님."

@@ -2,10 +2,10 @@
 # Start
 @set v2_ch=9
 @set v2_hurt=0
-@art scene:yard
+@art scene:v2_yard
 @art char:n_takjin
 @chapter text:"그믐" sub:"9화" desc:"넷이서 막는다"
-@art scene:yard
+@art scene:v2_yard
 @bgm mood:gangv2
 흑호방 열둘이 쓰러진 대문을 밟고 들어왔다.
 맨 앞에 탁진, 그 옆에 마철구.
@@ -14,10 +14,12 @@
 장터에서 자릿세 백오십 닢을 내밀던 꼬맹이를 알아본 얼굴이었다.
 @art char:n_takjin
 "청운문. 그믐이다. 서른 냥."
+@art scene:v2cg_diamond
 @art char:none
 마당 한가운데 넷이 섰다.
 진우 사형은 녹슨 칼, 곽두는 맨주먹, 연이는 빨래 방망이, 막내는 금 간 목검.
 넷이 마름모꼴로 섰다. 등과 등이 닿게.
+@art scene:v2_yard
 @art char:n_takjin
 "……뭐 하자는 거냐."
 @art char:n_jinu_angry
@@ -26,7 +28,7 @@
 @art char:n_takjin
 "그럼 둘 다 가져가지."
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @bgm mood:fightv2
 @vfx kind:clash
@@ -72,7 +74,7 @@
 "셋!"
 지난 삶엔 혼자서 둘이 한계였다. 넷이 하니까 셋이 넘어갔다.
 @page
-@art scene:yard
+@art scene:v2_yard
 "이것들이……!"
 @vfx kind:heavy
 나머지 일곱이 몰려들었다. 마당이 한꺼번에 시끄러워졌다.
@@ -112,7 +114,7 @@
 탁진이 박수를 쳤다. 짝. 짝. 짝.
 "재밌구나."
 @page
-@art scene:yard
+@art scene:v2_yard
 @vfx kind:clash
 탁진이 한 걸음에 마당 반을 건넜다.
 탁진의 손가락이 막내 어깨로 왔다. 물러섰다.
@@ -152,11 +154,16 @@
 진우 사형이 막내 손의 붉은 검을 봤다.
 그리고 한 걸음 물러섰다.
 겁먹은 눈이었다.
-@black text:"등을 맞대던 식구들이,|그날부터 막내 등 뒤에 서지 않았다.|그리고 또 혼자 죽었다." hold:2.2 red:true
+@black text:"등을 맞대던 식구들이,|그날부터 막내 등 뒤에 서지 않았다." hold:2.2 red:true
+@page
+@art scene:v2cg_alone
+@art char:none
+넓은 전각에 기둥이 마흔 개.
+그리고 또 혼자 죽었다.
 @vfx kind:rewind
 @page
-@art scene:cellar
-@art char:oldman
+@art scene:v2cg_oldman
+@art char:none
 @bgm mood:rainv2
 "받아라……."
 "……이번엔 진짜 이길 수 있었잖느냐."
@@ -164,7 +171,7 @@
 이기는 거랑 지키는 건 다르다.
 @black text:"— 다시, 그믐의 마당 —" hold:1.4
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @bgm mood:fightv2
 탁진의 손가락이 진우 사형의 옆구리로 간다.
@@ -197,7 +204,7 @@
 "쥐어라, 검신."
 "알아. 그러니까 혼자 안 하잖아."
 @page
-@art scene:yard
+@art scene:v2_yard
 @bgm mood:tensionv2
 탁진이 다시 자세를 잡았다. 이번엔 진짜로 하려는 얼굴이었다.
 @art char:n_macheolgu_sad
@@ -233,7 +240,7 @@
 "청운검법이요. 삼류예요."
 "삼류 좋아하네."
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_gwakdu_sad
 @bgm mood:ending
 흑호방이 산길을 내려갔다. 마철구가 둘을 한꺼번에 업고 갔다.

@@ -7,10 +7,10 @@
 @set v2_m3=0
 @set v2_m4=0
 @set v2_wrist=0
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @chapter text:"그믐까지 이레" sub:"3화" desc:"천하제일검의 돈벌이"
-@art scene:yard
+@art scene:v2_yard
 @bgm mood:homev2
 @art char:n_yeoni
 빚은 은 서른 냥이었다.
@@ -43,7 +43,7 @@
 # Hub
 @set v2_day=v2_day+1
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @print "<color=#C9B58E>— {v2_day}일째 —</color>"
 오늘은 어디서 벌까.
@@ -54,7 +54,7 @@
 @stop
 # M1
 @set v2_m1=1
-@art scene:falls
+@art scene:v2_falls
 뒷산 폭포. 폭포 뒤 바위틈에 백 년 묵은 산삼이 있다.
 열두 번째 삶에서 마흔 살 무렵에 캐 먹은 놈이다.
 바위틈을 뒤졌다. 있었다. 손톱만 한 싹이.
@@ -68,7 +68,7 @@
 @goto #HubNext
 # M2
 @set v2_m2=1
-@art scene:market
+@art scene:v2_market
 산 아래 장터.
 골동품 좌판에서 비단옷 입은 손님이 청자 항아리를 놓고 흥정 중이었다.
 가짜다.
@@ -86,7 +86,7 @@
 @goto #HubNext
 # M3
 @set v2_m3=1
-@art scene:alley
+@art scene:v2_alley
 뒷골목 투전판.
 패를 어떻게 숨기는지, 주사위에 뭘 넣는지, 누가 신호를 주는지 다 안다.
 문지기가 막내를 내려다봤다.
@@ -101,7 +101,7 @@
 # M4
 @set v2_m4=1
 @set v2_wrist=1
-@art scene:teahouse
+@art scene:v2_tavern
 주막 앞 팔씨름 내기.
 손목을 어느 쪽으로 꺾으면 상대 힘이 새는지 머리가 안다.
 술 취한 짐꾼을 이겼다. 동전 스무 닢.
@@ -111,7 +111,7 @@
 @vfx kind:heavy
 뚝.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_yeoni_angry
 손목에 부목을 댔다. 연이가 대 줬다.
 "바보야. 팔씨름은 왜 해. 너 팔 젓가락이잖아."
@@ -129,7 +129,7 @@
 @goto #Day5
 # Day5
 @page
-@art scene:marketday
+@art scene:v2_market2
 @art char:none
 @print "손목도 성하지 않은 날, 할 수 있는 건 사저 뒤를 따라다니는 것뿐이었다." if:v2_wrist==1
 @print "돈 되는 길은 다 막혔다. 남은 건 사저 뒤를 따라다니는 것뿐이었다." if:v2_wrist==0
@@ -151,7 +151,7 @@
 연이가 코를 찡그리며 웃었다. 그러다 금세 시무룩해졌다.
 "근데 이렇게 해도 서른 냥은 못 모아. 일 년은 해야 돼. 그믐까지 이틀이야."
 @page
-@art scene:market
+@art scene:v2_market
 @art char:none
 @bgm mood:gangv2
 @vfx kind:clash

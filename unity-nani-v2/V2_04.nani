@@ -2,10 +2,10 @@
 # Start
 @set v2_ch=4
 @set v2_pass=0
-@art scene:market
+@art scene:v2_market
 @art char:n_macheolgu_angry
 @chapter text:"돼지 이빨" sub:"4화" desc:"아는 것이 힘이다. 문제는 그다음이다"
-@art scene:market
+@art scene:v2_market
 @bgm mood:gangv2
 마철구가 엎어진 국솥을 발로 툭 찼다. 국물이 할멈 치마에 튀었다.
 장터 사람들이 슬금슬금 물러섰다.
@@ -105,7 +105,8 @@
 @vfx kind:heavy
 덩치가 무너졌다. 엎어진 국솥 위로.
 철퍽.
-@art char:n_macheolgu_sad
+@art scene:v2cg_pigsoup
+@art char:none
 국물이 사방으로 튀었다. 마철구가 국 속에서 허우적거렸다.
 "돼지가 국에 빠졌다!"
 "돼지 국밥이다!"
@@ -115,7 +116,7 @@
 @print "연이가 달려와 막내 손목을 잡아챘다." if:v2_wrist==0
 "뛰어!"
 @page
-@art scene:pass
+@art scene:v2_pass
 @art char:none
 @bgm mood:homev2
 둘은 뛰었다. 산길로 들어설 때까지.
@@ -146,7 +147,7 @@
 @vfx kind:beat
 ……아차.
 @page
-@art scene:storehouse
+@art scene:v2_gang
 @art char:n_takjin
 @bgm mood:gangv2
 흑호방 본채.

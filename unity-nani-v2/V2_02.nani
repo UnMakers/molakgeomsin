@@ -1,10 +1,10 @@
 ; ===== 2화. 청운검법 =====
 # Start
 @set v2_ch=2
-@art scene:yard
+@art scene:v2_yard
 @art char:none
 @chapter text:"청운검법" sub:"2화" desc:"뒤로만 물러서는 삼류 검"
-@art scene:yard
+@art scene:v2_yard
 @bgm mood:homev2
 @art char:n_jinu_smile
 "오늘부터 검을 배운다."
@@ -50,7 +50,7 @@
 "마흔아홉 번 중에 오늘이 제일 웃기는구나."
 시끄러워, 영감.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_jinu
 "청운검법은 일곱 식이야. 첫 식이 제일 중요해."
 진우 사형이 움직였다.
@@ -76,7 +76,7 @@
 "……글쎄. 사부님이 그렇게 가르쳐 주셨어. 왜인지는 나도 몰라."
 가르치는 사람도 모르는 검이었다.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_jinu
 오전 내내 물러섰다.
 반 보 물러서고, 목검을 들고.
@@ -93,7 +93,7 @@
 그가 아는 진우 사형은 동굴 어귀에 등불을 들고 서 있던 얼굴 하나다.
 이 사람이 원래 기침을 달고 사는 줄은 몰랐다.
 @page
-@art scene:templeyard
+@art scene:v2_backyard
 @art char:none
 점심을 먹고 혼자 뒤뜰로 가서 물러섬을 다시 했다. 이번엔 천천히.
 해 볼수록 바보 같은 자세였다.
@@ -109,7 +109,7 @@
 혈검이 꾸벅꾸벅 졸았다.
 검도 조는 모양이었다.
 @page
-@art scene:yard
+@art scene:v2_yard
 @art char:n_jinu
 저녁에 진우 사형에게 물었다.
 "사형. 우리 빚 있어요?"
@@ -126,7 +126,7 @@
 마흔아홉 번 다 그랬을 것이다.
 막내만 모른 채로 그 밤 산을 내려갔다.
 @page
-@art scene:gate
+@art scene:v2_gate
 @art char:n_seokun_smile
 @bgm mood:nightv2
 밤이 되자 사부가 돌아왔다.
@@ -147,7 +147,7 @@
 사부가 막내 머리를 헝클고는 비틀비틀 방으로 들어갔다.
 문지방에 한 번 걸렸다.
 @page
-@art scene:templeyard
+@art scene:v2_backyard
 @art char:none
 그날 밤, 뒤뜰에 다시 섰다.
 물러섬.

@@ -2,10 +2,10 @@
 # Start
 @set v2_ch=7
 @set v2_pig=0
-@art scene:cellar
+@art scene:v2_cave
 @art char:none
 @chapter text:"두 번째 동굴" sub:"7화" desc:"죽어도 남는 것"
-@art scene:cellar
+@art scene:v2_cave
 @bgm mood:rainv2
 "어째서……?"
 혈검이 다시 말했다. 검날이 떨렸다. 검도 떠는 모양이었다.
@@ -27,8 +27,8 @@
 "천아, 내 뒤로 와."
 이번엔 냉큼 사형 뒤로 갔다.
 @page
-@art scene:forest
-@art char:n_jinu
+@art scene:v2cg_piggyback
+@art char:none
 @vfx kind:rainoff
 @bgm mood:nightv2
 사형 등에 업혀 산을 내려갔다.
@@ -43,7 +43,7 @@
 @art char:n_jinu_angry
 "뭐? 이 녀석이 길 잃고 오더니 헛소리를……."
 @page
-@art scene:well
+@art scene:v2_well
 @art char:none
 @bgm mood:homev2
 이백 동을 다시 길었다.
@@ -83,7 +83,7 @@
 그럼 죽을 때마다 조금씩 세진다.
 문제는 죽는 게 엄청 아프다는 거였다.
 @page
-@art scene:marketday
+@art scene:v2_market2
 @art char:n_yeoni_smile
 이번엔 산삼을 캐러 가지 않았다.
 골동품 좌판에서 입을 열지 않았다.
@@ -100,7 +100,7 @@
 지난번엔 이 아이 뒤통수만 봤다. 이번엔 얼굴을 봤다.
 닷새 만에 동전 이백 닢을 모았다. 둘이 하니 두 배였다.
 @page
-@art scene:market
+@art scene:v2_market
 @art char:n_macheolgu_angry
 @bgm mood:gangv2
 그리고 닷새째, 장터 끝에서 비명이 났다.
@@ -123,8 +123,8 @@
 @vfx kind:rewind
 @black text:"그날 밤, 또 대문이 부서졌다.|또 등이 차가웠다.|또 연이가 울었다." hold:2.2 red:true
 @page
-@art scene:cellar
-@art char:oldman
+@art scene:v2cg_oldman
+@art char:none
 @bgm mood:rainv2
 "받아라……."
 "너 바보냐?"
@@ -132,7 +132,7 @@
 ……아는 걸로 이기면 판이 꼬인다. 몸으로 두 번 배웠다.
 @black text:"— 다시, 닷새째 장터 —" hold:1.4
 @page
-@art scene:market
+@art scene:v2_market
 @art char:n_macheolgu_angry
 @bgm mood:gangv2
 "할멈, 자릿세가 석 달 밀렸어."
@@ -150,7 +150,7 @@
 연이가 주머니를 끌어안았다. 그 얼굴이 웃겨서 웃음이 나왔다.
 "갚을게요. 콩 세 알이랑 같이."
 @page
-@art scene:market
+@art scene:v2_market
 @art char:n_macheolgu
 마철구가 할멈 멱살을 쥐려던 참이었다.
 웬 꼬맹이가 끼어들어 동전 주머니를 내밀었다.
@@ -181,7 +181,7 @@
 연이가 한 점을 막내 그릇에 옮겼다.
 "크는 애가 먹어야지."
 @page
-@art scene:hut
+@art scene:v2_room
 @art char:none
 @bgm mood:nightv2
 밤. 이불 위에서 혈검과 마주 앉았다.
