@@ -74,7 +74,9 @@ public class MolakSfx : MonoBehaviour
     public static void Lose ()    { Try("lose_drum", 0.85f); }
     public static void Crowd ()   { Try("crowd_cheer", 0.45f); }
     public static void Frenzy ()  { Try("frenzy_whisper", 0.7f); }
-    public static void Hit ()     { Play("hit_drum", 1f, Random.Range(0.95f, 1.05f)); Vibrate(); }
+    public static void Hit (float vol = 1f) { Play("hit_drum", vol, Random.Range(0.95f, 1.05f)); Vibrate(); }
+    // 대본 @vfx kind:beat — 장이 넘어가는 한 박자. 죽음 북(Death)을 그대로 쓰면 글 넘길 때마다 너무 크다(사용자: "둥 효과음 너무 크다")
+    public static void Beat ()    { Play("death_drum", 0.4f); }
     public static void Bell ()    { Play("bell_rise", 0.8f); }
     public static void Death ()   { Play("death_drum", 1f); Vibrate(); }
     public static void Draw ()     { Play("sword_draw", 0.75f, Random.Range(0.97f, 1.03f)); }
