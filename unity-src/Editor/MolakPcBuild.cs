@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
-/// <summary>PC(Windows) 빌드 — Build/pc_build_request 파일이 있으면 다음 편집기 틱에 한 번 빌드하고, 끝나면 안드로이드로 되돌린다.</summary>
+/// <summary>PC(Windows) 빌드 요청 — Build/pc_build_request 파일이 있으면 다음 편집기 틱에 MolakBuild.Windows(대본 동기화 포함)로 빌드하고, 끝나면 안드로이드로 되돌린다.
+/// 주의: BuildPipeline 을 직접 부르면 Resources/MolakNani(빌드용 대본)가 옛 것으로 남아 옛 스토리가 실린다 — 꼭 MolakBuild 를 거친다.</summary>
 [InitializeOnLoad]
 public static class MolakPcBuild
 {
@@ -19,14 +20,9 @@ public static class MolakPcBuild
         System.IO.File.AppendAllText(Log, "start " + System.DateTime.Now + "\n");
         try
         {
-            var opt = new BuildPlayerOptions();
-            opt.scenes = new[] { "Assets/Scenes/SampleScene.unity" };
-            opt.locationPathName = "C:/Projects/RuinedSword/Build/PC/몰락검신.exe";
-            opt.target = BuildTarget.StandaloneWindows64;
-            opt.targetGroup = BuildTargetGroup.Standalone;
-            opt.options = BuildOptions.None;
-            var s = BuildPipeline.BuildPlayer(opt).summary;
-            System.IO.File.AppendAllText(Log, "result=" + s.result + " size=" + s.totalSize + " time=" + s.totalTime + " errors=" + s.totalErrors + " at " + System.DateTime.Now + "\n");
+            MolakBuild.WriteArtIndex();
+            string res = MolakBuild.Windows(PlayerSettings.bundleVersion);
+            System.IO.File.AppendAllText(Log, res + " at " + System.DateTime.Now + "\n");
         }
         catch (System.Exception e) { System.IO.File.AppendAllText(Log, "EXC " + e + "\n"); }
         bool ok = EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
