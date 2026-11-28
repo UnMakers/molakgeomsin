@@ -2,7 +2,7 @@
 # Start
 @art scene:v2_hall
 @art char:none
-@bgm mood:sorrowv2
+@bgm mood:sorrow
 단목천은 죽었다.
 지난 생은 떡이었다.
 @choice "다음" goto:#A1
