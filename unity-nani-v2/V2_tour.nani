@@ -4,7 +4,6 @@
 @art char:none
 @bgm mood:sorrowv2
 단목천은 죽었다.
-이번에는 칼이었다.
 지난 생은 떡이었다.
 @choice "다음" goto:#A1
 @stop

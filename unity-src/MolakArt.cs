@@ -417,6 +417,12 @@ public class MolakArt : MonoBehaviour
         if (s != null && partCur != null) SetPart(null, "");
         MarkDirty();
     }
+    /// <summary>전신으로 뽑은 그림(소아 등장·공격)은 초상 비율보다 몸이 길어 띠 안에서 작게 보인다(언메이커: 더 확대해야). 정수리는 띠 위에 묶여 있으니 아래가 잘리며 커진다.</summary>
+    static float CharZoom (string id)
+    {
+        switch (id) { case "soa_enter": return 1.55f; case "soa_attack": return 1.55f; }
+        return 1f;
+    }
     void MarkDirty () { if (!dirty) dirtyAt = Time.unscaledTime; dirty = true; }
 
     /// <summary>0.4.85 지금 정해진 그림을 화면에 올린다 — 마지막으로 보이던 그림에서 한 번만 넘어간다. 다음 글 직전·선택지·정지에서 부른다.</summary>
@@ -835,6 +841,7 @@ public class MolakArt : MonoBehaviour
             float want = pose == 1 ? 1.1f : pose == 2 ? 0.94f : 1f;
             poseK = Mathf.Lerp(poseK <= 0f ? 1f : poseK, want, 1f - Mathf.Pow(0.002f, Time.deltaTime));
             k *= poseK;
+            k *= CharZoom(showCharId);   // 전신 그림은 띠 안에서 너무 작다 — 상반신 쪽으로 당겨 본다
             if (pose == 3) jit += Mathf.Sin(Time.time * 9f) * 10f * unit;
             // 0.4.83 잘림 없게(언메이커: 움직임까지 고려해 잘리는 데가 없어야): 극장판은 정수리를 창 위 28단위 아래에 묶고(커지고 숨 쉬어도 머리가 창 밖으로 안 나간다),
             //   어떤 움직임에도 그림 아랫변(허벅지에서 끊긴 자리)이 창 안으로 올라오지 않게 키를 받친다. 좌우는 화면 밖으로 밀려나지 않을 만큼만 비켜 선다.
