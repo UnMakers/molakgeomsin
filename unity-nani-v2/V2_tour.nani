@@ -19,7 +19,7 @@
 # A2
 @page
 @art scene:v2_hall
-@art char:soa_fierce
+@art char:soa_enter
 소녀 하나가 서 있었다.
 왼눈에 안대, 왼뺨에 귀까지 이어지는 흉터.
 @choice "다음" goto:#A3

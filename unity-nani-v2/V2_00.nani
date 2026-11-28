@@ -35,7 +35,7 @@
 @bgm mood:tensionv2
 @vfx kind:clash
 전각 문이 부서지듯 열렸다.
-@art char:soa_fierce
+@art char:soa_enter
 소녀 하나가 서 있었다.
 외관상은 방년 정도일까.
 왼눈에 안대, 왼뺨에 귀까지 이어지는 흉터.
@@ -44,6 +44,7 @@
 생각나지 않았다.
 벤 사람이 너무 많았다.
 흉터를 남기고 지나친 사람은 더 많았다.
+@art char:soa_attack
 소녀가 달려왔다. 쌍검이 그의 가슴을 겨눴다.
 막을 수 있었다.
 그런데 문득 생각했다.
