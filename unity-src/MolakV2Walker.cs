@@ -11,7 +11,7 @@ public class MolakV2Walker : MonoBehaviour
     public static string Status = "idle";
     public static readonly StringBuilder Log = new StringBuilder();
     static MolakV2Walker inst;
-    List<string> picks; string runTag; int shot; bool shootAll;
+    List<string> picks; string runTag; int shot; bool shootAll; public static bool ShootChars; string lastChar="";
 
     public static void Run (string pickList, string tagName, bool shootEveryChoice)
     {
@@ -46,6 +46,22 @@ public class MolakV2Walker : MonoBehaviour
             var path = tr.PlaybackSpot.ScriptPath ?? "";
             if (path != lastPath) { Log.AppendLine("== " + path); lastPath = path; }
             if (path == "Title" && Time.realtimeSinceStartup - t0 > 5f) { Status = "done"; Log.AppendLine("END at Title"); yield break; }
+            if (ShootChars)
+            {
+                var cid = MolakArt.CharId;
+                if (cid != lastChar)
+                {
+                    lastChar = cid;
+                    if (!string.IsNullOrEmpty(cid))
+                    {
+                        sp.SetSkip(false); sp.SetAutoPlay(false);
+                        yield return new WaitForSecondsRealtime(0.9f);
+                        Shot("char " + cid + " @" + path + ":" + tr.PlaybackSpot.LineIndex);
+                        yield return new WaitForSecondsRealtime(0.2f);
+                        last = Time.realtimeSinceStartup;
+                    }
+                }
+            }
             sp.SetAutoPlay(true); sp.SkipMode = PlayerSkipMode.Everything; sp.SetSkip(true);
             if (tr.Playing) { if (Time.realtimeSinceStartup - last > 20f) { Status = "stall-play " + tr.PlaybackSpot; yield break; } continue; }
             var btns = FindObjectsByType<MolakVn.UI.ChoiceHandlerButton>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
