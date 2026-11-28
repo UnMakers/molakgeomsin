@@ -1,6 +1,7 @@
 ; ===== 8화. 같이 쓰는 검 =====
 # Start
 @set v2_ch=8
+@set v2_hp=v2_hpmax
 @set v2_tellall=0
 @art scene:v2_yard
 @art char:none
@@ -64,6 +65,7 @@
 연이는 빨래 바구니를 엎었다.
 진우 사형은 결국 네 번째 기침을 했다.
 막내는 사부 품에 안긴 채 셋을 돌아봤다.
+@set v2_aff_seok=v2_aff_seok+1
 거봐요.
 @page
 @art scene:v2_backyard
@@ -90,6 +92,8 @@
 막내가 올린 목검이 사형의 오른쪽을 덮었다.
 사형이 올린 목검이 막내의 오른쪽을 덮었다.
 혼자 할 때 휑하던 등 뒤가 꽉 찼다.
+@set v2_gae=v2_gae+5
+@set v2_aff_jinu=v2_aff_jinu+1
 @art char:n_jinu_smile
 "……어? 이거, 이게 맞네. 이렇게 하는 거였어?"
 @art char:n_seokun
@@ -120,6 +124,7 @@
 @art char:n_gwakdu_smile
 "살살 했어요, 사형!"
 "그게 살살이야?"
+@set v2_aff_gwak=v2_aff_gwak+1
 @art char:n_yeoni_sad
 연이는 목검을 못 휘둘렀다. 휘두를 때마다 목검이 연이를 휘둘렀다.
 @choice "\"사저, 그냥 빨래 방망이로 해요.\"" goto:#Y1
@@ -143,6 +148,7 @@
 연이가 빨래 방망이를 휙 돌려 봤다. 붕, 바람 소리가 났다.
 @art char:n_yeoni_smile
 "……어머."
+@set v2_aff_yeoni=v2_aff_yeoni+1
 @art char:none
 "검신이 빨래 방망이 검법을 가르치는구나. 마흔아홉 번 중에 오늘이 제일 웃기다."
 "영감은 맨날 오늘이 제일 웃기대."
@@ -161,6 +167,9 @@
 떡 하나 못 넘길 만큼.
 이건 안 걸렸다. 빌렸다가 돌려준 것처럼 부드러웠다.
 혈검은 죽여서 빼앗는다. 이 검은 등을 맞대면 빌려준다.
+@set v2_gae=v2_gae+5
+@set v2_hpmax=v2_hpmax+2
+@set v2_hp=v2_hpmax
 "……사형."
 "응?"
 "아무것도 아니에요."
@@ -175,6 +184,7 @@
 @art char:n_gwakdu
 @bgm mood:tensionv2
 그믐날 아침. 닭이 울었다.
+@set v2_dday=0
 곽두가 벌써 일어나 주먹을 쥐었다 폈다 하고 있었다.
 "막내야. 나 먼저 안 뛰쳐나갈게."
 "네."
@@ -185,6 +195,7 @@
 진우 사형은 녹슨 칼을 숫돌에 갈았다.
 녹이 반쯤 벗겨졌다.
 사부는 툇마루에 앉아 있었다. 손에 술병이 없었다.
+@set v2_aff_seok=v2_aff_seok+1
 산 아래에서 마을 개들이 짖기 시작했다.
 @vfx kind:heavy
 그리고 대문이 안쪽으로 넘어왔다.

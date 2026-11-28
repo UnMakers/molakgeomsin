@@ -246,7 +246,13 @@ namespace MolakVn
         public float SfxVolume { get; set; }
         public AudioManager ()
         {
-            MasterVolume = PlayerPrefs.GetFloat("molak_vol_master", 1f);
+            // 2026-11-28 사용자: 기본 소리가 너무 크다 → 전체 크기 기본값 절반. 이미 저장된 값도 한 번만 절반으로.
+            if (PlayerPrefs.GetInt("molak_vol_half", 0) == 0)
+            {
+                if (PlayerPrefs.HasKey("molak_vol_master")) PlayerPrefs.SetFloat("molak_vol_master", PlayerPrefs.GetFloat("molak_vol_master", 1f) * 0.5f);
+                PlayerPrefs.SetInt("molak_vol_half", 1); PlayerPrefs.Save();
+            }
+            MasterVolume = PlayerPrefs.GetFloat("molak_vol_master", 0.5f);
             BgmVolume = PlayerPrefs.GetFloat("molak_vol_bgm", 0.5f);
             SfxVolume = PlayerPrefs.GetFloat("molak_vol_sfx", 1f);
         }
@@ -341,7 +347,7 @@ public static class MolakVnMigrate
                 Pref(t, "MasterVolume", "molak_vol_master"); Pref(t, "BgmVolume", "molak_vol_bgm"); Pref(t, "SfxVolume", "molak_vol_sfx");
                 Pref(t, "BaseRevealSpeed", "molak_reveal"); Pref(t, "BaseAutoDelay", "molak_autodelay");
                 var am = MolakVn.Engine.GetService<MolakVn.IAudioManager>();
-                if (am != null) { am.MasterVolume = PlayerPrefs.GetFloat("molak_vol_master", 1f); am.BgmVolume = PlayerPrefs.GetFloat("molak_vol_bgm", 0.5f); am.SfxVolume = PlayerPrefs.GetFloat("molak_vol_sfx", 1f); }
+                if (am != null) { am.MasterVolume = PlayerPrefs.GetFloat("molak_vol_master", 0.5f); am.BgmVolume = PlayerPrefs.GetFloat("molak_vol_bgm", 0.5f); am.SfxVolume = PlayerPrefs.GetFloat("molak_vol_sfx", 1f); }
                 MolakVn.Engine.Printers.BaseRevealSpeed = PlayerPrefs.GetFloat("molak_reveal", 0.5f); MolakVn.Engine.Printers.BaseAutoDelay = PlayerPrefs.GetFloat("molak_autodelay", 0.5f);
             }
         }

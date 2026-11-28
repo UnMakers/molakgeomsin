@@ -20,6 +20,7 @@
 @art char:n_takjin
 "쯧. 애를 죽이면 장사가 안 되는데. 가자. 그믐에 다시 온다. 서른 냥 그대로. 오늘 이자는 이걸로 쳐 주지."
 막내 목숨 하나가 이자 열 냥. 싸게도 쳐 준다.
+@set v2_debt=30
 검신 시절 내 목엔 금 만 냥이 걸려 있었는데.
 @art char:none
 횃불이 줄지어 산길을 내려갔다.
@@ -108,6 +109,7 @@
 "막내야……."
 @art char:none
 사형의 목소리가 멀어졌다.
+@set v2_hp=0
 @black text:"캄캄해졌다." hold:1.8 red:true
 @page
 @art scene:v2cg_oldman

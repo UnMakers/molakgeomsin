@@ -1,6 +1,15 @@
 ; ===== 7화. 두 번째 동굴 =====
 # Start
 @set v2_ch=7
+@set v2_coin=0
+@set v2_debt=30
+@set v2_dday=7
+@set v2_hp=10
+@set v2_hpmax=10
+@set v2_aff_jinu=0
+@set v2_aff_gwak=0
+@set v2_aff_yeoni=0
+@set v2_aff_seok=0
 @set v2_pig=0
 @art scene:v2_cave
 @art char:none
@@ -56,6 +65,7 @@
 # W1
 @vfx kind:hit
 무릎이 꺾였다. 지난번이랑 똑같이. 물이 마당으로 쏟아졌다.
+@set v2_hp=v2_hp-2
 ……팔로는 안 되지.
 수백 번 물러서면서 몸이 어떻게 도는지 배웠잖아.
 @goto #W2
@@ -64,9 +74,12 @@
 물지게를 지고, 무릎을 굽혔다가, 허리를 돌리며 일어섰다.
 @vfx kind:beat
 들렸다.
+@set v2_gae=v2_gae+5
 ……어?
 다음 동이도 들렸다. 그다음도.
 해가 중천에 왔을 때 쉰 동을 채웠다. 지난번 이맘때는 서른둘이었다.
+@set v2_hpmax=v2_hpmax+2
+@set v2_hp=v2_hpmax
 @art char:n_gwakdu
 "막내야, 오늘 왜 이렇게 잘해?"
 "요령이 생겼어요."
@@ -97,7 +110,10 @@
 셈할 땐 입술을 깨문다.
 흥정에서 이기면 코를 찡긋하며 웃는다.
 지난번엔 이 아이 뒤통수만 봤다. 이번엔 얼굴을 봤다.
+@set v2_aff_yeoni=v2_aff_yeoni+1
 닷새 만에 동전 이백 닢. 둘이 하니 두 배였다.
+@set v2_coin=v2_coin+200
+@set v2_dday=2
 @page
 @art scene:v2_market
 @art char:n_macheolgu_angry
@@ -119,6 +135,7 @@
 "아저씨, 그 이빨요……."
 @art char:n_macheolgu_angry
 장터가 또 뒤집어졌다. 마철구가 또 국에 빠졌다. 또 통쾌했다.
+@set v2_hyeol=v2_hyeol+3
 @vfx kind:rewind
 @black text:"그날 밤, 또 대문이 부서졌다.|또 등이 차가웠다.|또 연이가 울었다." hold:2.2 red:true
 @page
@@ -158,12 +175,14 @@
 "지나가던 손님이요. 국밥 먹으러 왔는데 솥이 엎어져 있어서요."
 마철구가 주머니를 열었다.
 백오십 닢쯤 들어 있었다.
+@set v2_coin=v2_coin-150
 석 달 치엔 조금 모자랐다.
 마철구가 꼬맹이를 위아래로 훑었다. 꼬맹이는 눈을 피하지 않았다.
 "……모자란 건 다음 달에 받는다, 할멈."
 마철구가 주머니를 챙겨 돌아섰다.
 목에 건 이빨이 흔들렸다. 뭉툭했다. 돼지 거였다.
 입이 근질거렸다. 꾹 참았다.
+@set v2_hyeol=v2_hyeol-2
 @art char:n_yeoni_angry
 @vfx kind:hit
 "이 바보야! 내 돈! 닷새 동안 번 내 돈!"
@@ -179,6 +198,7 @@
 @art char:n_yeoni_smile
 연이가 한 점을 막내 그릇에 옮겨 줬다.
 "크는 애가 먹어야지."
+@set v2_aff_yeoni=v2_aff_yeoni+1
 @page
 @art scene:v2_room
 @art char:none

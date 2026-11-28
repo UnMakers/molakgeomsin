@@ -1,6 +1,7 @@
 ; ===== 몰락검신 새 이야기 — 0화. 떡 =====
 # Start
 @set v2_ch=0
+@set v2_on=0
 @set v2_grab=0
 @set v2_aff_jinu=0
 @set v2_aff_yeoni=0

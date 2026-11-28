@@ -1,6 +1,15 @@
 ; ===== 1화. 이백 동 =====
 # Start
 @set v2_ch=1
+@set v2_coin=0
+@set v2_debt=0
+@set v2_dday=-1
+@set v2_on=1
+@set v2_hp=10
+@set v2_hpmax=10
+@set v2_gae=0
+@set v2_hyeol=0
+@set v2_aff_seok=0
 @art scene:v2_well
 @art char:none
 @chapter text:"이백 동" sub:"1화" desc:"천하제일검, 물지게에 지다"
@@ -13,6 +22,7 @@
 @vfx kind:hit
 첫 번째에 무릎이 꺾였다.
 물이 쏟아져 마당으로 흘렀다.
+@set v2_hp=v2_hp-2
 단목천은 흙탕물에 주저앉아 제 팔을 내려다봤다.
 젓가락이었다. 그것도 한 번 쓰고 버린 젓가락.
 허, 참. 천하제일검이 물 두 동에 무릎을 꿇네.
@@ -210,6 +220,7 @@
 "그래? 그럼 이건 어떠냐."
 검날이 한 번 깜빡였다.
 "그믐까지 이레다."
+@set v2_dday=7
 @bgm mood:tensionv2
 그믐. 그 말은 안다.
 어느 삶에서 그의 발을 씻기던 늙은 하인이 있었다.

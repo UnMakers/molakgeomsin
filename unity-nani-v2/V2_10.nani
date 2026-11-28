@@ -1,6 +1,7 @@
 ; ===== 10화. 콩 세 알 =====
 # Start
 @set v2_ch=10
+@set v2_hp=v2_hpmax
 @art scene:v2_yard
 @art char:none
 @chapter text:"콩 세 알" sub:"10화" desc:"갚을 게 많다"
@@ -15,6 +16,7 @@
 멀쩡한 건 사부뿐이었다.
 @art char:n_seokun_smile
 "오늘은 내가 끓이마."
+@set v2_aff_seok=v2_aff_seok+1
 넷이 동시에 몸을 일으켰다.
 "사부님이요?"
 "왜, 못 미덥냐?"
@@ -101,6 +103,7 @@
 @art char:n_macheolgu
 첫 달 몫을 받으러 마철구가 산을 올라왔다.
 연이가 동전을 세어 건넸다.
+@set v2_coin=v2_coin-30
 마철구는 동전을 받고도 한참을 서서 막내를 힐끔거렸다.
 "……야, 꼬맹이. 너, 혹시 내 이빨……."
 마철구가 제 목의 이빨을 만지작거렸다. 뭉툭했다.
@@ -141,6 +144,7 @@
 그날 저녁, 막내는 제 그릇의 콩 세 알을 집어 연이 그릇에 옮겨 놓았다.
 "뭐야?"
 "갚는 거예요. 그동안 받은 콩."
+@set v2_aff_yeoni=v2_aff_yeoni+1
 "……삼 년 동안 매일 세 알이면……."
 연이가 손가락을 꼽았다.
 @art char:n_yeoni_smile
@@ -191,4 +195,5 @@
 @vfx kind:beat
 "이번엔 왜 안 오셨습니까."
 @black text:"1묶음 「녹슨 칼」 끝.|다음 이야기는 준비 중입니다." hold:3.0
+@set v2_on=0
 @goto Title
