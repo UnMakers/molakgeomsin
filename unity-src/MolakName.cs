@@ -154,7 +154,7 @@ public class MolakName : MonoBehaviour
         sBtn.fontSize = Mathf.RoundToInt(42 * u);
 
         float cw = Mathf.Min(W - 64 * u, 900 * u), cx = (W - cw) * 0.5f, y = H * 0.30f;
-        GUI.Label(new Rect(cx, y, cw, 90 * u), "청운 명부, 맨 끝 줄", sTitle); y += 110 * u;
+        GUI.Label(new Rect(cx, y, cw, 90 * u), "청운 명부의 맨 끝 줄", sTitle); y += 110 * u;
         GUI.Label(new Rect(cx, y, cw, 130 * u), "마당을 쓸던 막내에게도 이름이 있었다.\n사형들은 늘 막내라고만 불렀다.", sSub); y += 170 * u;
 
         var fr = new Rect(cx + cw * 0.15f, y, cw * 0.7f, 110 * u);
