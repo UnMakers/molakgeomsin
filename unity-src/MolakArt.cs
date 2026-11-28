@@ -423,6 +423,20 @@ public class MolakArt : MonoBehaviour
         switch (id) { case "soa_enter": return 1.55f; case "soa_attack": return 1.55f; }
         return 1f;
     }
+    /// <summary>2026-11-28 확대 기준(언메이커: 진우·연이·사부 크기가 일반, 백야 같은 건 특수 컷신): 원화마다 얼굴이 차지하는 크기가 달라
+    /// 머리(정수리~턱, 832×1216 원화 기준 화소)가 기준 400을 넘는 인물만 그만큼 줄인다. 표정 그림은 같은 사람 값을 쓴다.
+    /// 줄일 때는 창 아래를 받치는 하한을 넘어 작아지므로 원화 아랫변(부드럽게 풀어 둔 가장자리)이 창 안으로 올라온다.</summary>
+    static readonly Dictionary<string, float> HeadPx = new Dictionary<string, float> {
+        { "n_jinu", 380f }, { "n_yeoni", 450f }, { "n_seokun", 280f }, { "n_gwakdu", 530f }, { "n_macheolgu", 670f },
+        { "n_takjin", 490f }, { "n_baekya", 500f }, { "n_dan", 490f }, { "n_hahuyeon", 540f } };
+    public const float HeadStd = 400f, HeadLoose = 460f;
+    public static float HeadZoom (string id)
+    {
+        if (string.IsNullOrEmpty(id)) return 1f;
+        foreach (var kv in HeadPx)
+            if (id == kv.Key || id.StartsWith(kv.Key + "_")) return kv.Value > HeadLoose ? HeadStd / kv.Value : 1f;
+        return 1f;
+    }
     void MarkDirty () { if (!dirty) dirtyAt = Time.unscaledTime; dirty = true; }
 
     /// <summary>0.4.85 지금 정해진 그림을 화면에 올린다 — 마지막으로 보이던 그림에서 한 번만 넘어간다. 다음 글 직전·선택지·정지에서 부른다.</summary>
@@ -846,6 +860,7 @@ public class MolakArt : MonoBehaviour
             // 0.4.83 잘림 없게(언메이커: 움직임까지 고려해 잘리는 데가 없어야): 극장판은 정수리를 창 위 28단위 아래에 묶고(커지고 숨 쉬어도 머리가 창 밖으로 안 나간다),
             //   어떤 움직임에도 그림 아랫변(허벅지에서 끊긴 자리)이 창 안으로 올라오지 않게 키를 받친다. 좌우는 화면 밖으로 밀려나지 않을 만큼만 비켜 선다.
             if (thr) k = Mathf.Max(k, (bandH - 28f * unit + 30f * unit) / sh);
+            k *= HeadZoom(showCharId);   // 얼굴이 큰 원화는 기준 크기로 줄인다(하한 뒤에 곱해 실제로 작아지게)
             // 몸짓
             gestT += Time.unscaledDeltaTime;
             float gx = 0f, gy = 0f, gk = 1f;
