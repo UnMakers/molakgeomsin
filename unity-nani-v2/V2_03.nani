@@ -152,7 +152,6 @@
 @art char:n_yeoni_smile
 "막내야, 뭘 그렇게 봐."
 "사저, 장사 진짜 잘하네요."
-@set v2_aff_yeoni=v2_aff_yeoni+1
 "당연하지. 우리 집 쌀은 내가 사."
 @art char:n_yeoni_sad
 연이가 코를 찡긋하며 웃더니, 금세 시무룩해졌다.

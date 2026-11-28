@@ -129,6 +129,7 @@
 # Pick
 @choice "돼지 이빨을 또 꺼낸다" goto:#P1
 @choice "연이의 돈 주머니를 본다" goto:#P3
+@choice "못 본 척 지나간다" goto:#P2
 @stop
 # P1
 @set v2_pig=1

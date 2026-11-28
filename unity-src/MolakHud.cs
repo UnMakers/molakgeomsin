@@ -480,7 +480,7 @@ public class MolakHud : MonoBehaviour
     GUIStyle sCH, sCN, sCS, sCW, sCB, sSealN; float cineU = -1f;
     static Texture2D hpGlow;
     /// <summary>0.4.85 피통: 양끝이 가늘고 가운데가 밝게 번지는 붉은 획(시안 두 번째).</summary>
-    static Texture2D HpGlow
+    public static Texture2D HpGlow
     {
         get
         {
