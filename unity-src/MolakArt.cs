@@ -430,11 +430,19 @@ public class MolakArt : MonoBehaviour
         { "n_jinu", 380f }, { "n_yeoni", 450f }, { "n_seokun", 280f }, { "n_gwakdu", 530f }, { "n_macheolgu", 670f },
         { "n_takjin", 490f }, { "n_baekya", 500f }, { "n_dan", 490f }, { "n_hahuyeon", 540f } };
     public const float HeadStd = 400f, HeadLoose = 460f;
+    /// <summary>2026-11-28 잘린 어깨·상투를 이어 그리느라 판 안에 줄여 앉힌 원화(배율). 화면에서는 이만큼 되돌려 키운다.</summary>
+    static readonly Dictionary<string, float> OutScale = new Dictionary<string, float> {
+        { "n_gwakdu", 0.80f }, { "n_hahuyeon", 0.80f }, { "n_seokun", 0.84f }, { "n_macheolgu", 0.82f }, { "n_takjin", 0.86f }, { "n_dan", 0.88f } };
     public static float HeadZoom (string id)
     {
         if (string.IsNullOrEmpty(id)) return 1f;
         foreach (var kv in HeadPx)
-            if (id == kv.Key || id.StartsWith(kv.Key + "_")) return kv.Value > HeadLoose ? Mathf.Max(0.7f, HeadStd / kv.Value) : 1f;
+            if (id == kv.Key || id.StartsWith(kv.Key + "_"))
+            {
+                float z = kv.Value > HeadLoose ? Mathf.Max(0.7f, HeadStd / kv.Value) : 1f;
+                float os; if (OutScale.TryGetValue(kv.Key, out os)) z /= os;
+                return z;
+            }
         return 1f;
     }
     void MarkDirty () { if (!dirty) dirtyAt = Time.unscaledTime; dirty = true; }
@@ -886,7 +894,7 @@ public class MolakArt : MonoBehaviour
             slideT = Mathf.Min(1f, slideT + SlideStep());
             if (slideT < 1f) x += SlideOff(slideT) * camW;
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
-            if (thr && hz < 1f) y = Mathf.Min(y, bandCy - bandH*0.5f + sh*k*0.5f - 4f*unit);   // 줄인 그림은 아랫변을 창 아래에 붙여 떠 보이지 않게(언메이커: 확대 기준)
+            if (thr && hz < 1.001f) y = Mathf.Min(y, bandCy - bandH*0.5f + sh*k*0.5f - 4f*unit);   // 줄인 그림은 아랫변을 창 아래에 붙여 떠 보이지 않게(언메이커: 확대 기준)
             bool duo = (cine || thr) && partR != null && showPart != null;
             if (duo) x += (Person(showCharId) == leftPerson ? -1f : 1f) * camW * 0.21f;   // 0.4.88 두 사람: 제 자리(왼/오)에 선다
             else if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
