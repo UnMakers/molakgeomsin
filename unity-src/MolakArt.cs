@@ -432,10 +432,10 @@ public class MolakArt : MonoBehaviour
     public const float HeadStd = 400f, HeadLoose = 460f;
     /// <summary>2026-11-28 잘린 어깨·상투를 이어 그리느라 판 안에 줄여 앉힌 원화(배율). 화면에서는 이만큼 되돌려 키운다.</summary>
     static readonly Dictionary<string, float> OutScale = new Dictionary<string, float> {
-        { "n_gwakdu", 0.70f }, { "n_hahuyeon", 0.70f }, { "n_jinu", 0.70f }, { "n_yeoni", 0.70f }, { "n_macheolgu", 0.70f }, { "n_takjin", 0.70f }, { "n_baekya", 0.70f }, { "n_dan", 0.70f }, { "n_seokun", 0.84f } };
+        { "n_gwakdu", 0.70f }, { "n_hahuyeon", 0.70f }, { "n_jinu", 0.70f }, { "n_yeoni", 0.70f }, { "n_macheolgu", 0.70f }, { "n_takjin", 0.70f }, { "n_baekya", 0.70f }, { "n_dan", 0.70f }, { "n_seokun", 0.70f } };
     /// <summary>줄여 앉힐 때 원화 위에 둔 여백(원화 화소). 키운 만큼 정수리가 내려가지 않게 그만큼 위로 올린다.</summary>
     static readonly Dictionary<string, float> OutTop = new Dictionary<string, float> {
-        { "n_gwakdu", 120f }, { "n_hahuyeon", 120f }, { "n_jinu", 120f }, { "n_yeoni", 120f }, { "n_macheolgu", 120f }, { "n_takjin", 120f }, { "n_baekya", 120f }, { "n_dan", 120f }, { "n_seokun", 60f } };
+        { "n_gwakdu", 120f }, { "n_hahuyeon", 120f }, { "n_jinu", 120f }, { "n_yeoni", 120f }, { "n_macheolgu", 120f }, { "n_takjin", 120f }, { "n_baekya", 120f }, { "n_dan", 120f }, { "n_seokun", 120f } };
     public static float HeadLift (string id)
     {
         if (string.IsNullOrEmpty(id)) return 0f;
