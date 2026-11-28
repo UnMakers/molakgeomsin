@@ -425,7 +425,7 @@ public class MolakArt : MonoBehaviour
     }
     /// <summary>2026-11-28 확대 기준(언메이커: 진우·연이·사부 크기가 일반, 백야 같은 건 특수 컷신): 원화마다 얼굴이 차지하는 크기가 달라
     /// 머리(정수리~턱, 832×1216 원화 기준 화소)가 기준 400을 넘는 인물만 그만큼 줄인다. 표정 그림은 같은 사람 값을 쓴다.
-    /// 줄일 때는 창 아래를 받치는 하한을 넘어 작아지므로 원화 아랫변(부드럽게 풀어 둔 가장자리)이 창 안으로 올라온다.</summary>
+    /// 줄인 그림은 아랫변을 창 아래에 붙인다(마철구처럼 떠 보이지 않게). 너무 작아지지 않게 70%에서 멈춘다.</summary>
     static readonly Dictionary<string, float> HeadPx = new Dictionary<string, float> {
         { "n_jinu", 380f }, { "n_yeoni", 450f }, { "n_seokun", 280f }, { "n_gwakdu", 530f }, { "n_macheolgu", 670f },
         { "n_takjin", 490f }, { "n_baekya", 500f }, { "n_dan", 490f }, { "n_hahuyeon", 540f } };
@@ -434,7 +434,7 @@ public class MolakArt : MonoBehaviour
     {
         if (string.IsNullOrEmpty(id)) return 1f;
         foreach (var kv in HeadPx)
-            if (id == kv.Key || id.StartsWith(kv.Key + "_")) return kv.Value > HeadLoose ? HeadStd / kv.Value : 1f;
+            if (id == kv.Key || id.StartsWith(kv.Key + "_")) return kv.Value > HeadLoose ? Mathf.Max(0.7f, HeadStd / kv.Value) : 1f;
         return 1f;
     }
     void MarkDirty () { if (!dirty) dirtyAt = Time.unscaledTime; dirty = true; }
@@ -860,7 +860,8 @@ public class MolakArt : MonoBehaviour
             // 0.4.83 잘림 없게(언메이커: 움직임까지 고려해 잘리는 데가 없어야): 극장판은 정수리를 창 위 28단위 아래에 묶고(커지고 숨 쉬어도 머리가 창 밖으로 안 나간다),
             //   어떤 움직임에도 그림 아랫변(허벅지에서 끊긴 자리)이 창 안으로 올라오지 않게 키를 받친다. 좌우는 화면 밖으로 밀려나지 않을 만큼만 비켜 선다.
             if (thr) k = Mathf.Max(k, (bandH - 28f * unit + 30f * unit) / sh);
-            k *= HeadZoom(showCharId);   // 얼굴이 큰 원화는 기준 크기로 줄인다(하한 뒤에 곱해 실제로 작아지게)
+            float hz = HeadZoom(showCharId);
+            k *= hz;   // 얼굴이 큰 원화는 기준 크기로 줄인다(하한 뒤에 곱해 실제로 작아지게)
             // 몸짓
             gestT += Time.unscaledDeltaTime;
             float gx = 0f, gy = 0f, gk = 1f;
@@ -885,6 +886,7 @@ public class MolakArt : MonoBehaviour
             slideT = Mathf.Min(1f, slideT + SlideStep());
             if (slideT < 1f) x += SlideOff(slideT) * camW;
             float y = cine ? top - camH*0.105f - sh*k*0.5f : thr ? bandCy + bandH*0.5f - 28f*unit - sh*k*0.5f : bandCy + bandH*0.5f - sh*k*0.5f + 16f*unit;
+            if (thr && hz < 1f) y = Mathf.Min(y, bandCy - bandH*0.5f + sh*k*0.5f - 4f*unit);   // 줄인 그림은 아랫변을 창 아래에 붙여 떠 보이지 않게(언메이커: 확대 기준)
             bool duo = (cine || thr) && partR != null && showPart != null;
             if (duo) x += (Person(showCharId) == leftPerson ? -1f : 1f) * camW * 0.21f;   // 0.4.88 두 사람: 제 자리(왼/오)에 선다
             else if (thr) x += Mathf.Min(sw * k * 0.12f, Mathf.Max(0f, (camW - sw * k) * 0.5f));   // 시안처럼 조금 오른쪽 — 넓은 그림은 덜
