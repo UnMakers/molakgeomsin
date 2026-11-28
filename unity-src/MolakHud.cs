@@ -1,4 +1,4 @@
-using MolakVn;
+﻿using MolakVn;
 using UnityEngine;
 
 /// <summary>HUD v5 — 서울2033식 미니멀: 최상단 저주 스트립 + 한 줄 상태(한자 라벨) + 서열 연출.</summary>
@@ -722,7 +722,7 @@ public class MolakHud : MonoBehaviour
             GUI.Label(new Rect(rx, ry + 1*u, nw + 4*u, rowH), ns, sCN); rx += nw + gap;
         }
         { string rl = "<color=" + StatCol.Of(StatCol.Realm) + ">" + RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)] + "</color>"; var g0 = sCH.fontSize; sCH.fontSize = Mathf.RoundToInt(25*u); GUI.Label(new Rect(rx, ry + 2*u, 200*u, rowH), rl, sCH); sCH.fontSize = g0; }
-        {   // 피통: 수치 줄 아래, 줄 길이만큼
+        if (false) {   // 2026-11-27 언메이커: 피통(체력 바) 뺌 — 글 자리를 한 줄 더 얻는다
             string hpRl = RealmHanja[Mathf.Clamp(MolakRealm.Realm, 0, 8)];
             float hpEnd = rx + sCH.CalcSize(new GUIContent(hpRl)).x;
             float hbW = Mathf.Min(280*u, hpEnd - x), hbH = 12*u, hbY = l2 + rowH * 0.5f - 3*u;

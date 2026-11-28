@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -17,7 +17,7 @@ public class MolakAmbience : MonoBehaviour
 
     static readonly Dictionary<string, string> Map = new Dictionary<string, string>
     {
-        {"rain","amb_rain"},{"flood","amb_rain"},{"soanight","amb_rain"},
+        {"rain","amb_rain"},{"v2_cave","amb_rain"},{"v2_rainpath","amb_rain"},{"v2_market","amb_market"},{"v2_night","amb_night"},{"v2_room","amb_night"},{"v2_gate","amb_night"},{"v2_backyard","amb_night"},{"v2_falls","amb_river"},{"v2_tavern","amb_tavern"},{"v2_raid","amb_fire"},{"v2_gang","amb_fire"},{"v2_snow","amb_snow"},{"flood","amb_rain"},{"soanight","amb_rain"},
         {"manorfire","amb_fire"},{"herbfire","amb_fire"},{"raid","amb_fire"},{"bloodroof","amb_fire"},
         {"raidnight","amb_roof"},{"stairs","amb_roof"},
         {"market","amb_market"},{"marketday","amb_market"},{"ascend","amb_market"},{"drumtower","amb_market"},{"nightmarket","amb_market"},{"beggars","amb_market"},{"village","amb_market"},

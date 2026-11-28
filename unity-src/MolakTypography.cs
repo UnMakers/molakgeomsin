@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using UnityEngine;
 
 /// <summary>
@@ -13,7 +13,7 @@ public static class MolakTypography
     /// <summary>줄 간격(TMP 단위, 글자 높이의 1/100). 한국어 명조는 기본 줄 간격이 촘촘해 20 정도를 더한다.</summary>
     public const float BodyLineSpacing = 20f;
     /// <summary>문단(줄바꿈) 사이 간격. 대사와 서술을 빈 줄로 나누는 0.4.10 규칙과 함께 쓴다.</summary>
-    public const float BodyParagraphSpacing = 14f;
+    public const float BodyParagraphSpacing = 14f;   // 2026-11-27 언메이커: 소설처럼 문장마다 한 줄씩 비운다 (옛 값 14)
 
     public static Color Narration { get { return MolakTheme.Night ? new Color(0.80f, 0.76f, 0.70f, 1f) : new Color(0.25f, 0.21f, 0.18f, 1f); } }
     public static string DialogueHex { get { return MolakTheme.Night ? "#F6EFE2" : "#140E0A"; } }

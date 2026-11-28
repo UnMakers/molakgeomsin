@@ -1,4 +1,4 @@
-using MolakVn;
+﻿using MolakVn;
 using UnityEngine;
 
 /// <summary>
@@ -405,16 +405,16 @@ public class MolakTitle : MonoBehaviour
         // ---- 메뉴: 물안개 위 오른쪽 아래, 먹 글씨 ----
         GUI.color = new Color(1, 1, 1, Mathf.Clamp01((since - 1.2f) / 1.0f));
         // 패 하나 = 손가락 한 마디(약 9mm)보다 크게. 나가기는 폰의 홈·뒤로 가기에 맡긴다.
-        float bh = 96*u, gap = 20*u, ih = bh + gap, n = 6;
+        float bh = 96*u, gap = 20*u, ih = bh + gap, n = 3;   // 2026-11-27 새 이야기: 처음부터·이어하기·환경 설정
         float my0 = Mathf.Min(h * 0.56f, h - 200*u - n * ih);
         float rx = w - 52*u, mw = Mathf.Min(w * 0.52f, 560*u);
         Tex(new Rect(rx - mw * 1.3f, my0 - 80*u, mw * 1.6f, n * ih + 230*u), Dot, new Color(0.97f, 0.96f, 0.93f, dawn ? 0.25f : 0.35f));
-        string tag = dawn ? "끝내 그 밤을 넘긴 아침." : "죽으면 그 아침으로 돌아간다.";
+        string tag = "마흔아홉 번 천하제일, 마흔아홉 번 혼자 죽었다.";
         GUI.Label(new Rect(rx - mw, my0 - 60*u, mw, 40*u), tag, sTag);
         Box(new Rect(rx - 90*u, my0 - 16*u, 90*u, Mathf.Max(1f, 1f*u)), new Color(0.55f, 0.14f, 0.11f, 0.8f));
         bool busy = wakeAt > 0f;
         bool canContinue = state.AnyGameSaveExists || state.QuickLoadAvailable || state.AutoLoadAvailable;
-        if (Item(0, new Rect(rx - mw, my0, mw, bh), runs > 0 ? "다시 그 아침으로" : "처음부터", !busy, u, t, true) && !busy) { MolakStoryBook.RestoreGlobals(); MolakStats.Set("g_storypick", 0f); MolakStats.Set("g_storyroute", 0f); Wake(sp, state, t); }
+        if (Item(0, new Rect(rx - mw, my0, mw, bh), "처음부터", !busy, u, t, true) && !busy) { MolakStoryBook.RestoreGlobals(); MolakStats.Set("g_storypick", 0f); MolakStats.Set("g_storyroute", 0f); Wake(sp, state, t); }
         if (Item(1, new Rect(rx - mw, my0 + ih, mw, bh), "이어하기", canContinue && !busy, u, t, false))
         {
             // 가장 최근 기록(자동·빠른 저장)으로 곧장 — 없으면 저장 목록
@@ -425,10 +425,10 @@ public class MolakTitle : MonoBehaviour
             }
         }
         string codexLabel = seenEnds > 0 ? "말로록  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>末路 " + seenEnds + "/" + MolakEnd.All.Length + "</color></size>" : "말로록";
-        if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();
-        if (Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "비무 연습", !busy, u, t, false) && !busy) { MolakStoryBook.RestoreGlobals(); MolakPractice.Start(); }   // 0.4.55 합만 겨뤄 보는 판
+        if (false && Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), codexLabel, !busy, u, t, false)) MolakMenu.OpenCodex();   // 2026-11-27 옛 이야기 메뉴 숨김
+        if (false && Item(3, new Rect(rx - mw, my0 + 3 * ih, mw, bh), "비무 연습", !busy, u, t, false) && !busy) { MolakStoryBook.RestoreGlobals(); MolakPractice.Start(); }   // 0.4.55 합만 겨뤄 보는 판
         // 0.4.66 이야기 모드: 죽지 않고, 밤 수련을 건너뛰고, 이야기 마디만 이어 읽는다
-        if (Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "이야기 모드  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>장 고르기</color></size>", !busy, u, t, false) && !busy)
+        if (false && Item(4, new Rect(rx - mw, my0 + 4 * ih, mw, bh), "이야기 모드  <size=" + Mathf.RoundToInt(22*u) + "><color=#C9B58E>장 고르기</color></size>", !busy, u, t, false) && !busy)
         {
             // 0.4.78 장 고르기: 서장부터 또는 닿아 본 마디부터
             MolakStoryBook.Show(() =>
@@ -438,7 +438,7 @@ public class MolakTitle : MonoBehaviour
                 Wake(sp, state, t);
             });
         }
-        if (Item(5, new Rect(rx - mw, my0 + 5 * ih, mw, bh), "환경 설정", !busy, u, t, false))
+        if (Item(2, new Rect(rx - mw, my0 + 2 * ih, mw, bh), "환경 설정", !busy, u, t, false))
         {
             MolakSettings.Open();
         }
@@ -448,13 +448,13 @@ public class MolakTitle : MonoBehaviour
         float fy = my0 + n * ih + 4*u;
         var sLastR = new GUIStyle(sLast){ alignment = TextAnchor.MiddleRight };
         var sFootR = new GUIStyle(sFoot){ alignment = TextAnchor.MiddleRight };
-        if (runs > 0 && !string.IsNullOrEmpty(lastEnd) && lastEnd != "none")
+        if (false && runs > 0 && !string.IsNullOrEmpty(lastEnd) && lastEnd != "none")
         {
             var le = MolakEnd.Find(lastEnd);
             if (!string.IsNullOrEmpty(le.Hanja)) GUI.Label(new Rect(rx - mw * 1.4f, fy, mw * 1.4f, 30*u), "지난 생 · 末路 " + le.Hanja + " — " + le.Title, sLastR);
         }
         string foot = "운락객잔" + (runs > 0 ? "  ·  회귀 " + runs + "회" : "") + (clears > 0 ? "  ·  등극 " + clears + "회" : "");
-        GUI.Label(new Rect(rx - mw * 1.4f, fy + 32*u, mw * 1.4f, 28*u), foot, sFootR);
+        // GUI.Label(new Rect(rx - mw * 1.4f, fy + 32*u, mw * 1.4f, 28*u), foot, sFootR);   // 2026-11-27 옛 이야기 기록 숨김
 
         // ---- 먹이 덮는다 → "눈을 뜬다." ----
         // 0.4.40: 예전엔 타이틀만 따로 먹·글자·▼ 를 그렸다(그래서 본편 먹 연출과 따로 놀았다). 이제 같은 MolakBlackout 을 쓴다.
@@ -468,7 +468,7 @@ public class MolakTitle : MonoBehaviour
     void Wake (IScriptPlayer sp, IStateManager state, float t)
     {
         wakeAt = t; MolakSfx.Rewind();
-        MolakBlackout.Play(new[] { "눈을 뜬다." }, 1.8f, false, false, () =>
+        MolakBlackout.Play(new[] { "단목천은 죽었다." }, 1.8f, false, false, () =>
         {
             wakeFired = true; grace = 6f;
             state.ResetState(new string[0], () => MolakVn.ScriptTrackExtensions.LoadAndPlay(sp.MainTrack, "Entry"));

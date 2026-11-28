@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MolakVn;
 using MolakVn.Commands;
 using UnityEngine;
@@ -268,7 +268,7 @@ public class MolakFlow : MonoBehaviour
         if (!reset && !beat && runParas >= 2 && runChars >= RunBreakChars) beat = true;
         if (reset || beat) { runParas = 0; runChars = 0; }
         runParas++; runChars += len;
-        if (!reset) InsertBreak(beat ? "\n\n" : "\n");
+        if (!reset) InsertBreak("\n\n");   // 2026-11-27 언메이커: 소설처럼 줄마다 한 줄씩 비운다
         prevDlg = curDlg; prevSp = curSp;
         afterChoice = false;
         // 같은 단락(연속된 서사 문장)은 한 번의 탭으로 쭉 출력: 다음 명령이 또 본문이면 입력 대기 없이 이어간다.
