@@ -11,6 +11,7 @@ using UnityEngine;
 public class MolakV2Hud : MonoBehaviour
 {
     static MolakV2Hud inst;
+    static readonly string[] ChTitle = { "떡", "이백 동", "청운검법", "그믐까지 이레", "돼지 이빨", "이자", "쉰 번째", "두 번째 동굴", "같이 쓰는 검", "그믐", "콩 세 알" };
     public static bool On { get { return Engine.Initialized && MolakStats.Get("v2_on") >= 1f; } }
 
     /// <summary>깨침이 이 값에 닿으면 그 식을 깨친다.</summary>
@@ -156,6 +157,11 @@ public class MolakV2Hud : MonoBehaviour
         // 윗줄: 마디 이름(금) · 오른쪽에 빚 도장
         float l1 = top + (bandB - top) * 0.30f, l2 = top + (bandB - top) * 0.70f, rowH = 48 * u;
         string pin = MolakVfx.PinText;
+        if (string.IsNullOrEmpty(pin))
+        {   // 마디 이름이 없으면 화 이름을 금빛으로 — 「3화 그믐까지 이레」
+            int ch = Mathf.RoundToInt(MolakStats.Get("v2_ch"));
+            if (ch >= 0 && ch < ChTitle.Length) pin = "<size=" + Mathf.RoundToInt(22 * u) + "><color=" + Hex(new Color(Gold.r, Gold.g, Gold.b, 0.65f)) + ">" + ch + "화</color></size>  " + ChTitle[ch];
+        }
         if (!string.IsNullOrEmpty(pin)) GUI.Label(new Rect(x, l1 - rowH * 0.5f, W * 0.55f, rowH), pin, sPin);
         if (debt > 0f)
         {
